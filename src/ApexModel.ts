@@ -1,94 +1,100 @@
 export default class ApexModel {
-    rgstrScope: Array<string> = ["public"]; // TODO: We don't really want this
-    nameLine: string = '';
-    inameLine: number | undefined;
-    description: string = '';
-    author: string = '';
-    date: string = '';
-    returns: string = '';
-    example: string = '';
-    scope: string = '';
+  rgstrScope: Array<string> = ['public']; // TODO: We don't really want this
+  nameLine: string = '';
+  inameLine: number | undefined;
+  description: string = '';
+  author: string = '';
+  date: string = '';
+  returns: string = '';
+  example: string = '';
+  scope: string = '';
 
-    getNameLine() {
-        return this.nameLine;
-    }
+  getNameLine() {
+    return this.nameLine;
+  }
 
-    getInameLine() {
-        return this.inameLine;
-    }
+  getInameLine() {
+    return this.inameLine;
+  }
 
-    setNameLine(nameLine: string, iLine: number) {
-        this.nameLine = nameLine.trim();
-        this.inameLine = iLine;
-        this.parseScope();
-    }
+  someTest() {
+    console.log('Some Test');
 
-    getDescription() {
-        return this.description == null ? '' : this.description;
-    }
+    
+  }
 
-    setDescription(description: string) {
-        this.description = description;
-    }
+  setNameLine(nameLine: string, iLine: number) {
+    this.nameLine = nameLine.trim();
+    this.inameLine = iLine;
+    this.parseScope();
+  }
 
-    getAuthor() {
-        return this.author == null ? '' : this.author;
-    }
+  getDescription() {
+    return this.description == null ? '' : this.description;
+  }
 
-    setAuthor(author: string) {
-        this.author = author;
-    }
+  setDescription(description: string) {
+    this.description = description;
+  }
 
-    getDate() {
-        return this.date == null ? '' : this.date;
-    }
+  getAuthor() {
+    return this.author == null ? '' : this.author;
+  }
 
-    setDate(date: string) {
-        this.date = date;
-    }
+  setAuthor(author: string) {
+    this.author = author;
+  }
 
-    getReturns() {
-        return this.returns == null ? '' : this.returns;
-    }
+  getDate() {
+    return this.date == null ? '' : this.date;
+  }
 
-    setReturns(returns: string) {
-        this.returns = returns;
-    }
+  setDate(date: string) {
+    this.date = date;
+  }
 
-    getExample() {
-        return this.example == null ? '' : this.example;
-    }
+  getReturns() {
+    return this.returns == null ? '' : this.returns;
+  }
 
-    setExample(example: string) {
-        this.example = example;
-    }
+  setReturns(returns: string) {
+    this.returns = returns;
+  }
 
-    getScope() {
-        return this.scope == null ? '' : this.scope;
-    }
+  getExample() {
+    return this.example == null ? '' : this.example;
+  }
 
-    setScope(scope: string) {
-        this.scope = scope;
-    }
+  setExample(example: string) {
+    this.example = example;
+  }
 
-    parseScope() {
-        this.scope = '';
-        if (this.nameLine != null) {
-            let str = this.strContainsScope(this.nameLine);
-            if (str != null) {
-                this.scope = str;
-            } 
-        }
-    }
+  getScope() {
+    return this.scope == null ? '' : this.scope;
+  }
 
-    // TODO: This is used in both index and here, maybe we want some kind of utils class?
-    strContainsScope(str: string) {
-        str = str.toLowerCase();
-        for (let i = 0; i < this.rgstrScope.length; i++) {
-            if (str.toLowerCase().includes(this.rgstrScope[i].toLowerCase() + ' ')) {
-                return this.rgstrScope[i];
-            }
-        }
-        return null;
+  setScope(scope: string) {
+    this.scope = scope;
+  }
+
+  parseScope() {
+    this.scope = '';
+    if (this.nameLine != null) {
+      let str = this.strContainsScope(this.nameLine);
+      if (str != null) {
+        this.scope = str;
+      }
     }
+  }
+
+  // TODO: This is used in both index and here, maybe we want some kind of utils class?
+  strContainsScope(str: string) {
+    str = str.toLowerCase();
+    for (let i = 0; i < this.rgstrScope.length; i++) {
+      if (str.toLowerCase().includes(this.rgstrScope[i].toLowerCase() + ' ')) {
+        return this.rgstrScope[i];
+      }
+    }
+    return null;
+  }
 }
