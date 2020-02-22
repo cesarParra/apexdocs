@@ -17,12 +17,6 @@ export default class ApexModel {
     return this.inameLine;
   }
 
-  someTest() {
-    console.log('Some Test');
-
-    
-  }
-
   setNameLine(nameLine: string, iLine: number) {
     this.nameLine = nameLine.trim();
     this.inameLine = iLine;

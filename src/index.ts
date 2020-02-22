@@ -5,24 +5,23 @@ import * as shell from 'shelljs';
 import ClassModel from './ClassModel';
 import MethodModel from './MethodModel';
 import PropertyModel from './PropertyModel';
-import FileManager from './FileManager';
+//import FileManager from './FileManager';
 import { peek } from './utils';
 
 var rgstrScope = ['public'];
 
-function document() {
+export function generate() {
   let sourceDirectory = 'apex/';
-  let targetDirectory = 'docs/';
 
   let fileContents = shell.cat(`${sourceDirectory}test.cls`);
-  let cModel = parseFileContents(fileContents);
+  return parseFileContents(fileContents);
 
-  if (!cModel) {
-    console.error('Class model could not be built.');
-    return;
-  }
+  // if (!cModel) {
+  //   console.error('Class model could not be built.');
+  //   return;
+  // }
 
-  new FileManager(cModel).generate();
+  // new FileManager(cModel).generate();
 }
 
 function parseFileContents(contents: shell.ShellString): ClassModel | null {
@@ -398,5 +397,3 @@ function fillPropertyModel(propertyModel: PropertyModel, name: string, lstCommen
     }
   }
 }
-
-document();

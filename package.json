@@ -1,17 +1,17 @@
 {
   "name": "@cparra/apexdocs",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "",
   "main": "lib/index.js",
-  "bin": "lib/index.js",
-  "files": [
-    "lib/**/*"
-  ],
+  "types": "lib/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
+    "build": "tsc --declaration",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
-    "lint": "tslint -p tsconfig.json"
+    "lint": "tslint -p tsconfig.json",
+    "prepare": "npm run build",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
   },
   "author": "Cesar Parra",
   "license": "MIT",
@@ -19,12 +19,14 @@
     "type": "git",
     "url": "https://github.com/cesarParra/apexdocs"
   },
+  "dependencies": {
+    "shelljs": "^0.8.3"
+  },
   "devDependencies": {
     "@types/node": "^13.7.4",
     "@types/shelljs": "^0.8.6",
     "husky": "^4.2.3",
     "prettier": "^1.19.1",
-    "shelljs": "^0.8.3",
     "tslint": "^6.0.0",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.8.2"
