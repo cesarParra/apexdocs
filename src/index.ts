@@ -1,26 +1,31 @@
 #!/usr/bin/env node
 
-import shell from 'shelljs';
+import * as shell from 'shelljs';
 
-import ClassModel from './ClassModel.js';
-import MethodModel from './MethodModel.js';
-import PropertyModel from './PropertyModel.js';
-import FileManager from './FileManager.js';
-import {peek} from './utils.js';
+import ClassModel from './ClassModel';
+import MethodModel from './MethodModel';
+import PropertyModel from './PropertyModel';
+import FileManager from './FileManager';
+import { peek } from './utils';
 
 var rgstrScope = ["public"];
 
 function document() {
-    let sourceDirectory = 'src/';
+    let sourceDirectory = 'apex/';
     let targetDirectory = 'docs/';
 
     let fileContents = shell.cat(`${sourceDirectory}test.cls`);
     let cModel = parseFileContents(fileContents);
 
+    if (!cModel) {
+        console.error('Class model could not be built.');
+        return;
+    }
+
     new FileManager(cModel).generate();
 }
 
-function parseFileContents(contents) {
+function parseFileContents(contents: shell.ShellString): ClassModel | null {
     let commentsStarted = false;
     let docBlockStarted = false;
     let nestedCurlyBraceDepth = 0;
@@ -112,15 +117,15 @@ function parseFileContents(contents) {
         //ignore lines not dealing with scope
         if (strContainsScope(strLine) === null &&
             // interface methods don't have scope
-            !(cModel != null && cModel.getIsInterface() && strLine.contains("("))) {
+            !(cModel != null && cModel.getIsInterface() && strLine.includes("("))) {
             continue;
         }
 
         // look for a class
         if ((strLine.toLowerCase().includes(" class ") || strLine.toLowerCase().includes(" interface "))) {
             // create the new class
-            let cModelNew = new ClassModel(cModelParent);
-            fillClassModel(cModelParent, cModelNew, strLine, lstComments, iLine);
+            let cModelNew: ClassModel = new ClassModel(cModelParent);
+            fillClassModel(cModelNew, strLine, lstComments, iLine, cModelParent);
             lstComments.splice(0, lstComments.length); //clearing the array
 
             // keep track of the new class, as long as it wasn't a single liner {}
@@ -131,7 +136,7 @@ function parseFileContents(contents) {
             }
 
             // add it to its parent (or track the parent)
-            if (cModelParent != null)
+            if (cModelParent != null && cModelNew)
                 cModelParent.addChildClass(cModelNew);
             else
                 cModelParent = cModelNew;
@@ -142,7 +147,8 @@ function parseFileContents(contents) {
         if (strLine.includes("(")) {
             // deal with a method over multiple lines.
             while (!strLine.includes(")")) {
-                strLine += br.readLine();
+                i = i + 1;
+                strLine = contentLines[i];
                 iLine++;
             }
             let mModel = new MethodModel();
@@ -172,11 +178,11 @@ function parseFileContents(contents) {
     return cModelParent;
 }
 
-function countChars(str, ch) {
+function countChars(str: string, ch: string) {
     return str.split(ch).length - 1;
 }
 
-function strContainsScope(str) {
+function strContainsScope(str: string) {
     str = str.toLowerCase();
     for (let i = 0; i < rgstrScope.length; i++) {
         if (str.toLowerCase().includes(rgstrScope[i].toLowerCase() + " ")) {
@@ -186,7 +192,7 @@ function strContainsScope(str) {
     return null;
 }
 
-function fillClassModel(cModelParent, cModel, name, lstComments, iLine) {
+function fillClassModel(cModel: ClassModel, name: string, lstComments: Array<String>, iLine: number, cModelParent: ClassModel | null) {
     cModel.setNameLine(name, iLine);
     if (name.toLowerCase().includes(" interface "))
         cModel.setIsInterface(true);
@@ -230,7 +236,7 @@ function fillClassModel(cModelParent, cModel, name, lstComments, iLine) {
                 cModel.setDescription(comment.substring(idxStart + 12).trim());
             else {
                 let found = comment.match("\\s");
-                if (found) {
+                if (found && found.index) {
                     cModel.setDescription(comment.substring(found.index).trim());
                 }
             }
@@ -254,7 +260,7 @@ function fillClassModel(cModelParent, cModel, name, lstComments, iLine) {
     }
 }
 
-function fillMethodModel(mModel, name, lstComments, iLine) {
+function fillMethodModel(mModel: MethodModel, name: string, lstComments: Array<String>, iLine: number) {
     mModel.setNameLine(name, iLine);
     let inDescription = false;
     let inExample = false;
@@ -289,7 +295,7 @@ function fillMethodModel(mModel, name, lstComments, iLine) {
 
         idxStart = comment.toLowerCase().indexOf("@param");
         if (idxStart != -1) {
-            mModel.getParams().add(comment.substring(idxStart + 6).trim());
+            mModel.getParams().push(comment.substring(idxStart + 6).trim());
             inDescription = false;
             inExample = false;
             continue;
@@ -301,7 +307,7 @@ function fillMethodModel(mModel, name, lstComments, iLine) {
                 mModel.setDescription(comment.substring(idxStart + 12).trim());
             else {
                 let found = comment.match("\\s");
-                if (found) {
+                if (found && found.index) {
                     mModel.setDescription(comment.substring(found.index).trim());
                 }
             }
@@ -316,7 +322,7 @@ function fillMethodModel(mModel, name, lstComments, iLine) {
                 mModel.setExample(comment.substring(idxStart + 8).trim());
             } else {
                 let found = comment.match("\\s");
-                if (found) {
+                if (found && found.index) {
                     mModel.setExample(comment.substring(found.index).trim());
                 }
             }
@@ -352,7 +358,7 @@ function fillMethodModel(mModel, name, lstComments, iLine) {
     }
 }
 
-function fillPropertyModel(propertyModel, name, lstComments, iLine) {
+function fillPropertyModel(propertyModel: PropertyModel, name: string, lstComments: Array<String>, iLine: number) {
     propertyModel.setNameLine(name, iLine);
     let inDescription = false;
     let i = 0;
@@ -365,7 +371,7 @@ function fillPropertyModel(propertyModel, name, lstComments, iLine) {
                 propertyModel.setDescription(comment.substring(idxStart + 13).trim());
             else {
                 let found = comment.match("\\s");
-                if (found) {
+                if (found && found.index) {
                     propertyModel.setDescription(comment.substring(found.index).trim());
                 }
             }
@@ -390,4 +396,3 @@ function fillPropertyModel(propertyModel, name, lstComments, iLine) {
 }
 
 document();
-

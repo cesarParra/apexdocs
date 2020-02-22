@@ -1,18 +1,17 @@
-import ApexModel from './ApexModel.js';
-import {strPrevWord} from './utils.js';
+import ApexModel from './ApexModel';
+import { strPrevWord } from './utils';
 
 export default class MethodModel extends ApexModel {
-    constructor() {
-        super();
-        this.params = [];
-    }
+    params: Array<string> = [];
+    nameLine: string = '';
+    iLine: number | undefined;
+    returnType: string = '';
 
-    setNameLine(nameLine, iLine) {
+    setNameLine(nameLine: string, iLine: number) {
         // remove anything after the parameter list
         if (nameLine != null) {
-            let i = nameLine.lastIndexOf(")");
-            if (i >= 0)
-                nameLine = nameLine.substring(0, i + 1);
+            let i = nameLine.lastIndexOf(')');
+            if (i >= 0) nameLine = nameLine.substring(0, i + 1);
         }
         super.setNameLine(nameLine, iLine);
     }
@@ -21,7 +20,7 @@ export default class MethodModel extends ApexModel {
         return this.params;
     }
 
-    setParams(params) {
+    setParams(params: Array<string>) {
         this.params = params;
     }
 
@@ -29,19 +28,19 @@ export default class MethodModel extends ApexModel {
         return this.returnType;
     }
 
-    setReturnType(returnType) {
+    setReturnType(returnType: string) {
         this.returnType = returnType;
     }
 
-    getMethodName() {
+    getMethodName(): string {
         let nameLine = this.getNameLine().trim();
         if (nameLine != null && nameLine.length > 0) {
-            let lastindex = nameLine.indexOf("(");
+            let lastindex = nameLine.indexOf('(');
             if (lastindex >= 0) {
                 let methodName = strPrevWord(nameLine, lastindex);
-                return methodName;
+                return methodName ? methodName : '';
             }
         }
-        return "";
+        return '';
     }
 }
