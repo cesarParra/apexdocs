@@ -1,5 +1,5 @@
 import ApexModel from './ApexModel';
-import { strPrevWord } from './utils';
+import { findPreviousWord } from '../utils';
 
 export default class MethodModel extends ApexModel {
   params: Array<string> = [];
@@ -37,7 +37,7 @@ export default class MethodModel extends ApexModel {
     if (nameLine != null && nameLine.length > 0) {
       let lastindex = nameLine.indexOf('(');
       if (lastindex >= 0) {
-        let methodName = strPrevWord(nameLine, lastindex);
+        let methodName = findPreviousWord(nameLine, lastindex);
         return methodName ? methodName : '';
       }
     }

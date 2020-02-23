@@ -1,5 +1,6 @@
+import Scope from '../Scope';
+
 export default class ApexModel {
-  rgstrScope: Array<string> = ['public']; // TODO: We don't really want this
   nameLine: string = '';
   inameLine: number | undefined;
   description: string = '';
@@ -74,21 +75,21 @@ export default class ApexModel {
   parseScope() {
     this.scope = '';
     if (this.nameLine != null) {
-      let str = this.strContainsScope(this.nameLine);
+      const str = this.strContainsScope(this.nameLine);
       if (str != null) {
         this.scope = str;
       }
     }
   }
 
-  // TODO: This is used in both index and here, maybe we want some kind of utils class?
   strContainsScope(str: string) {
     str = str.toLowerCase();
-    for (let i = 0; i < this.rgstrScope.length; i++) {
-      if (str.toLowerCase().includes(this.rgstrScope[i].toLowerCase() + ' ')) {
-        return this.rgstrScope[i];
+    for (const currentScope of Scope.getInstance().get()) {
+      if (str.toLowerCase().includes(currentScope.toLowerCase() + ' ')) {
+        return currentScope;
       }
     }
+
     return null;
   }
 }

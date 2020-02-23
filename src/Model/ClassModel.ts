@@ -1,19 +1,19 @@
 import ApexModel from './ApexModel';
 import MethodModel from './MethodModel';
 import PropertyModel from './PropertyModel';
+import { toUnicode } from 'punycode';
 
 export default class ClassModel extends ApexModel {
-  methods: Array<MethodModel> = [];
-  properties: Array<PropertyModel> = [];
+  methods: MethodModel[] = [];
+  properties: PropertyModel[] = [];
   cmodelParent?: ClassModel;
-  childClasses: Array<ClassModel> = [];
+  childClasses: ClassModel[] = [];
   strClassGroup: string = '';
   strClassGroupContent: string = '';
   isInterface: boolean = false;
 
   constructor(parent?: any) {
     super();
-
     if (parent) {
       this.cmodelParent = parent as ClassModel;
     }
@@ -24,6 +24,8 @@ export default class ClassModel extends ApexModel {
   }
 
   getPropertiesSorted() {
+    // TODO
+
     // TreeMap<String, PropertyModel> tm = new TreeMap<String, PropertyModel>();
     // for (PropertyModel prop : properties)
     //     tm.put(prop.getPropertyName().toLowerCase(), prop);
@@ -31,7 +33,7 @@ export default class ClassModel extends ApexModel {
     return this.properties;
   }
 
-  setProperties(properties: Array<PropertyModel>) {
+  setProperties(properties: PropertyModel[]) {
     this.properties = properties;
   }
 
@@ -44,7 +46,7 @@ export default class ClassModel extends ApexModel {
     return this.methods;
   }
 
-  setMethods(methods: Array<MethodModel>) {
+  setMethods(methods: MethodModel[]) {
     this.methods = methods;
   }
 
@@ -59,20 +61,20 @@ export default class ClassModel extends ApexModel {
 
   getClassName(): string {
     let nameLine = this.getNameLine();
-    let strParent = this.cmodelParent == null ? '' : this.cmodelParent.getClassName() + '.';
+    const strParent = this.cmodelParent == null ? '' : this.cmodelParent.getClassName() + '.';
     if (nameLine != null) nameLine = nameLine.trim();
     if (nameLine != null && nameLine.trim().length > 0) {
       let fFound = nameLine.toLowerCase().indexOf('class ');
       let cch = 6;
-      if (fFound == -1) {
+      if (fFound === -1) {
         fFound = nameLine.toLowerCase().indexOf('interface ');
         cch = 10;
       }
       if (fFound > -1) nameLine = nameLine.substring(fFound + cch).trim();
-      let lFound = nameLine.indexOf(' ');
-      if (lFound == -1) return strParent + nameLine;
+      const lFound = nameLine.indexOf(' ');
+      if (lFound === -1) return strParent + nameLine;
       try {
-        let name = nameLine.substring(0, lFound);
+        const name = nameLine.substring(0, lFound);
         return strParent + name;
       } catch (ex) {
         return strParent + nameLine.substring(nameLine.lastIndexOf(' ') + 1);
@@ -100,6 +102,7 @@ export default class ClassModel extends ApexModel {
     return this.strClassGroupContent;
   }
 
+  // TODO: What is this for?
   setClassGroupContent(strGroupContent: string) {
     this.strClassGroupContent = strGroupContent;
   }

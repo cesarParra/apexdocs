@@ -3,9 +3,10 @@
   "version": "1.0.2",
   "description": "",
   "main": "lib/index.js",
+  "bin": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --coverage",
     "build": "tsc --declaration",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
@@ -19,14 +20,14 @@
     "type": "git",
     "url": "https://github.com/cesarParra/apexdocs"
   },
-  "dependencies": {
-    "shelljs": "^0.8.3"
-  },
   "devDependencies": {
+    "@types/jest": "^25.1.3",
     "@types/node": "^13.7.4",
     "@types/shelljs": "^0.8.6",
     "husky": "^4.2.3",
+    "jest": "^25.1.0",
     "prettier": "^1.19.1",
+    "ts-jest": "^25.2.1",
     "tslint": "^6.0.0",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.8.2"
@@ -35,5 +36,17 @@
     "hooks": {
       "pre-commit": "npm run format"
     }
+  },
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testResultsProcessor": "<rootDir>/node_modules/ts-jest/coverageprocessor.js",
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ]
   }
 }

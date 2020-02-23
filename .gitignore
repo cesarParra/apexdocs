@@ -6,3 +6,5 @@ npm-debug.log
 /lib
 docs/
 TODO.md
+/coverage
+/apex

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 
 import FileGenerator from './FileGenerator';
-import ClassModel from './ClassModel';
+import ClassModel from './Model/ClassModel';
 
 export default class FileManager {
   classModel: ClassModel;

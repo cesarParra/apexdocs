@@ -1,23 +1,39 @@
-function strPrevWord(str: string, iSearch: number): string | null {
-  if (str == null) return null;
-  if (iSearch >= str.length) return null;
+/**
+ * Returns the first word found looking backwards at the received string and starting at the received position.
+ * @param stringToSearch The string to extract the word from.
+ * @param startingPosition Starting postion to search
+ */
+function findPreviousWord(stringToSearch: string, startingPosition: number): string | null {
+  if (startingPosition >= stringToSearch.length) {
+    return null;
+  }
 
   let iStart;
   let iEnd;
-  for (iStart = iSearch - 1, iEnd = 0; iStart >= 0; iStart--) {
+  for (iStart = startingPosition - 1, iEnd = 0; iStart >= 0; iStart--) {
     if (iEnd == 0) {
-      if (str.charAt(iStart) == ' ') continue;
+      if (stringToSearch.charAt(iStart) == ' ') {
+        continue;
+      }
+
       iEnd = iStart + 1;
-    } else if (str.charAt(iStart) == ' ') {
+    } else if (stringToSearch.charAt(iStart) == ' ') {
       iStart++;
       break;
     }
   }
 
-  if (iStart == -1) return null;
-  else return str.substring(iStart, iEnd);
+  if (iStart == -1) {
+    return null;
+  }
+
+  return stringToSearch.substring(iStart, iEnd);
 }
 
+/**
+ * Returns the last item in the received array.
+ * @param array The array.
+ */
 function peek(array: Array<any> | null) {
   if (!array || array.length === 0) {
     return null;
@@ -25,4 +41,4 @@ function peek(array: Array<any> | null) {
   return array[array.length - 1];
 }
 
-export { strPrevWord, peek };
+export { findPreviousWord, peek };
