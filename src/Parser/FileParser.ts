@@ -1,6 +1,6 @@
 import ClassModel from '../Model/ClassModel';
 
-import Scope from '../Scope';
+import Settings from '../Settings';
 
 import ClassParser from './ClassParser';
 import MethodParser from './MethodParser';
@@ -184,15 +184,15 @@ export default class FileParser {
 
   strContainsScope(str: string) {
     str = str.toLowerCase();
-    for (let i = 0; i < Scope.getInstance().get().length; i++) {
+    for (let i = 0; i < Settings.getInstance().getScope().length; i++) {
       if (
         str.toLowerCase().includes(
-          Scope.getInstance()
-            .get()
+          Settings.getInstance()
+            .getScope()
             [i].toLowerCase() + ' ',
         )
       ) {
-        return Scope.getInstance().get()[i];
+        return Settings.getInstance().getScope()[i];
       }
     }
     return null;

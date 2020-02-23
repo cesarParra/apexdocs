@@ -1,4 +1,4 @@
-import Scope from '../Scope';
+import Settings from '../Settings';
 
 export default class ApexModel {
   nameLine: string = '';
@@ -84,7 +84,7 @@ export default class ApexModel {
 
   strContainsScope(str: string) {
     str = str.toLowerCase();
-    for (const currentScope of Scope.getInstance().get()) {
+    for (const currentScope of Settings.getInstance().getScope()) {
       if (str.toLowerCase().includes(currentScope.toLowerCase() + ' ')) {
         return currentScope;
       }

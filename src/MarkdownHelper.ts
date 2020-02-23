@@ -1,8 +1,8 @@
-export default class FileGenerator {
+export default class MarkdownHelper {
   contents: string = '';
 
   addBlankLine() {
-    this.contents += '\r\n';
+    this.contents += '\n';
   }
 
   addTitle(text: string, level: number) {

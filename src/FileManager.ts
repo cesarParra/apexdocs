@@ -1,27 +1,34 @@
 import * as fs from 'fs';
+import * as path from 'path';
 
-import FileGenerator from './FileGenerator';
+import Settings from './Settings';
+import MarkdownHelper from './MarkdownHelper';
 import ClassModel from './Model/ClassModel';
 
 export default class FileManager {
-  classModel: ClassModel;
+  classModels: ClassModel[];
 
-  constructor(classModel: ClassModel) {
-    this.classModel = classModel;
+  constructor(classModels: ClassModel[]) {
+    this.classModels = classModels;
   }
 
   generate() {
-    let generator = new FileGenerator();
-    this.generateDocsForClass(generator, this.classModel, 1);
+    this.classModels.forEach(classModel => {
+      let generator = new MarkdownHelper();
+      this.generateDocsForClass(generator, classModel, 1);
 
-    if (!fs.existsSync('./docs')) {
-      fs.mkdirSync('./docs');
-    }
+      let outputPath = Settings.getInstance().getOutputDir();
 
-    fs.writeFile('./docs/doc.md', generator.contents, 'utf8', () => console.log('done'));
+      if (!fs.existsSync(outputPath)) {
+        fs.mkdirSync(outputPath);
+      }
+
+      let filePath = path.join(outputPath, `${classModel.getClassName()}.md`);
+      fs.writeFile(filePath, generator.contents, 'utf8', () => console.log('Generated file', filePath));
+    });
   }
 
-  generateDocsForClass(generator: FileGenerator, classModel: ClassModel, level: number) {
+  generateDocsForClass(generator: MarkdownHelper, classModel: ClassModel, level: number) {
     generator.addTitle(`${classModel.getClassName()} class`, level);
 
     if (classModel.getDescription()) {
@@ -57,7 +64,6 @@ export default class FileManager {
       generator.addBlankLine();
     });
 
-    console.log('inner', classModel.getChildClassesSorted().length);
     if (classModel.getChildClassesSorted().length > 0) {
       generator.addTitle('Inner Classes', level + 1);
       generator.addBlankLine();
