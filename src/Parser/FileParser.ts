@@ -1,4 +1,4 @@
-import ClassModel from '../Model/ClassModel';
+import ClassModel from '../model/ClassModel';
 
 import Settings from '../Settings';
 

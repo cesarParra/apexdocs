@@ -3,7 +3,7 @@ import * as path from 'path';
 
 import Settings from './Settings';
 import MarkdownHelper from './MarkdownHelper';
-import ClassModel from './Model/ClassModel';
+import ClassModel from './model/ClassModel';
 
 export default class FileManager {
   classModels: ClassModel[];
@@ -24,7 +24,7 @@ export default class FileManager {
       }
 
       let filePath = path.join(outputPath, `${classModel.getClassName()}.md`);
-      fs.writeFile(filePath, generator.contents, 'utf8', () => console.log('Generated file', filePath));
+      fs.writeFile(filePath, generator.contents, 'utf8', () => {});
     });
   }
 

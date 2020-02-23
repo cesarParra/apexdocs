@@ -1,4 +1,4 @@
-import ClassModel from '../Model/ClassModel';
+import ClassModel from '../model/ClassModel';
 
 export default class ClassParser {
   getClass(strLine: string, lstComments: string[], iLine: number, parent?: ClassModel) {

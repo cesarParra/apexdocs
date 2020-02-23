@@ -1,4 +1,4 @@
-import PropertyModel from '../Model/PropertyModel';
+import PropertyModel from '../model/PropertyModel';
 
 export default class PropertyParser {
   getProperty(strLine: string, lstComments: string[], iLine: number) {

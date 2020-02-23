@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import * as yargs from 'yargs';
 
-import { generate } from './command/Generate';
-import FileManager from './FileManager';
+import { generate } from '../command/Generate';
+import FileManager from '../FileManager';
 
 const argv = yargs.options({
   sourceDir: {
@@ -31,7 +31,5 @@ const argv = yargs.options({
   },
 }).argv;
 
-console.log(argv);
-
-const generatedClassModels = generate('apex');
-//new FileManager(generatedClassModels).generate();
+const generatedClassModels = generate(argv.sourceDir, argv.recursive, argv.scope, argv.targetDir);
+new FileManager(generatedClassModels).generate();
