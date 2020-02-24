@@ -1,14 +1,14 @@
 # ApexDocs
 
 <p align="center">
-  <b >ApexDocs is a node.js library with CLI capabilities to generate documentation for Salesforce Apex classes.</b>
+  <b >ApexDocs is a Node.js library with CLI capabilities to generate documentation for Salesforce Apex classes.</b>
 </p>
 
 ## Description
 
-ApexDocs was built as an alternative to the [Java based ApexDoc tool](https://github.com/SalesforceFoundation/ApexDoc) originally created by Aslam Bari and later maintained by Salesforce.org, since that tool is no longer being maintained.
+ApexDocs was built as an alternative to the [Java based ApexDoc tool](https://github.com/SalesforceFoundation/ApexDoc) originally created by Aslam Bari and later maintained by Salesforce.org, as that tool is no longer being maintained.
 
-ApexDocs is a node.js library built on Typescript and hosted on [npm](https://www.npmjs.com/package/@cparra/apexdocs). It offers CLI capabilities to automatically generate a set of files that fully document each one of you classes. Additionally it can be imported and consumed directly by your JavaScript code.
+ApexDocs is a Node.js library built on Typescript and hosted on [npm](https://www.npmjs.com/package/@cparra/apexdocs). It offers CLI capabilities to automatically generate a set of files that fully document each one of you classes. Additionally it can be imported and consumed directly by your JavaScript code.
 
 There are some key differences between ApexDocs and the Java based ApexDoc tool:
 
@@ -40,10 +40,10 @@ Use the `generate` function to create a list of `ClassModel` that includes all o
 
 `generate(sourceDirectory[,recursive][,scope][,outputDir])`
 
-- `sourceDirectory` <string>
-- `recursive` <boolean>
-- `scope` <string[]>
-- `outpurDir` <string>
+- `sourceDirectory` \<string>
+- `recursive` \<boolean>
+- `scope` \<string[]>
+- `outpurDir` \<string>
 
 ```javascript
 var { generate } = require('@cparra/apexdocs');
