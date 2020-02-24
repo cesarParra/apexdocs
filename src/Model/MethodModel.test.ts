@@ -6,7 +6,7 @@ test('name line can be set', () => {
   method.setNameLine(nameLine, 1);
 
   // Expected everyhing after the parameter list to be removed
-  let expected = 'public static void testMethod()';
+  const expected = 'public static void testMethod()';
   expect(method.getNameLine()).toBe(expected);
 });
 

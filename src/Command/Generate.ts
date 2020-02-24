@@ -14,6 +14,7 @@ export function generate(
   Settings.getInstance().setScope(scope);
   Settings.getInstance().setOutputDir(outputDir);
 
+  // TODO: Assert data validation to avoid exposing 'fs' and 'path' errors to callers.
   const classes: ClassModel[] = getClassesFromDirectory(sourceDirectory, recursive);
   console.log(`Processed ${classes.length} files`);
   return classes;

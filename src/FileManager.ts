@@ -12,6 +12,7 @@ export default class FileManager {
     this.classModels = classModels;
   }
 
+  // TODO: Make static
   generate() {
     this.classModels.forEach(classModel => {
       let generator = new MarkdownHelper();

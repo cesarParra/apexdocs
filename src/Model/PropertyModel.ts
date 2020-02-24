@@ -2,13 +2,11 @@ import ApexModel from './ApexModel';
 
 export default class PropertyModel extends ApexModel {
   setNameLine(nameLine: string, iLine: number) {
-    if (nameLine != null) {
-      // remove any trailing stuff after property name. { =
-      let i = nameLine.indexOf('{');
-      if (i == -1) i = nameLine.indexOf('=');
-      if (i == -1) i = nameLine.indexOf(';');
-      if (i >= 0) nameLine = nameLine.substring(0, i);
-    }
+    // remove any trailing stuff after property name. { =
+    let i = nameLine.indexOf('{');
+    if (i == -1) i = nameLine.indexOf('=');
+    if (i == -1) i = nameLine.indexOf(';');
+    if (i >= 0) nameLine = nameLine.substring(0, i);
     super.setNameLine(nameLine, iLine);
   }
 
