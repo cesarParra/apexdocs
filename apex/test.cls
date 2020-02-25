@@ -1,5 +1,6 @@
 /**
  * @description This is my class description.
+ * @author John Doe
  */
 public with sharing class Test {
 

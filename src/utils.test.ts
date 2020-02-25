@@ -18,10 +18,10 @@ test('findPreviousWord correctly returns null when the starting position is long
   expect(utils.findPreviousWord(testString, startPotition)).toBeNull();
 });
 
-test('findPreviousWord returns null when there are no spaces backwards', () => {
+test('findPreviousWord returns all backward text when there are no spaces backwards', () => {
   const testString = 'abc(';
   const startPotition = testString.indexOf('(');
-  expect(utils.findPreviousWord(testString, startPotition)).toBeNull();
+  expect(utils.findPreviousWord(testString, startPotition)).toBe('abc');
 });
 
 test('peek returns null when the passed array is null', () => {

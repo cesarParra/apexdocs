@@ -41,11 +41,6 @@ export default class MethodModel extends ApexModel {
     return '';
   }
 
-  // TODO: This isn't actually referenced anywhere
-  // setReturnType(returnType: string) {
-  //   this.returnType = returnType;
-  // }
-
   getMethodName(): string {
     const nameLine = this.getNameLine().trim();
     if (nameLine != null && nameLine.length > 0) {

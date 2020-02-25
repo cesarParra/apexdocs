@@ -3,18 +3,12 @@ import ClassModel from '../model/ClassModel';
 export default class ClassParser {
   getClass(strLine: string, lstComments: string[], iLine: number, parent?: ClassModel) {
     // create the new class
-    let cModelNew: ClassModel = new ClassModel(parent);
-    this.fillClassModel(cModelNew, strLine, lstComments, iLine, parent);
+    const cModelNew: ClassModel = new ClassModel(parent);
+    this.fillClassModel(cModelNew, strLine, lstComments, iLine);
     return cModelNew;
   }
 
-  fillClassModel(
-    cModel: ClassModel,
-    name: string,
-    lstComments: Array<String>,
-    iLine: number,
-    cModelParent?: ClassModel,
-  ) {
+  private fillClassModel(cModel: ClassModel, name: string, lstComments: string[], iLine: number) {
     cModel.setNameLine(name, iLine);
     if (name.toLowerCase().includes(' interface ')) cModel.setIsInterface(true);
     let inDescription = false;
@@ -24,39 +18,39 @@ export default class ClassParser {
       comment = comment.trim();
 
       let idxStart = comment.toLowerCase().indexOf('@author');
-      if (idxStart != -1) {
+      if (idxStart !== -1) {
         cModel.setAuthor(comment.substring(idxStart + 7).trim());
         inDescription = false;
         continue;
       }
 
       idxStart = comment.toLowerCase().indexOf('@date');
-      if (idxStart != -1) {
+      if (idxStart !== -1) {
         cModel.setDate(comment.substring(idxStart + 5).trim());
         inDescription = false;
         continue;
       }
 
       idxStart = comment.toLowerCase().indexOf('@group '); // needed to include space to not match group-content.
-      if (idxStart != -1) {
+      if (idxStart !== -1) {
         cModel.setClassGroup(comment.substring(idxStart + 6).trim());
         inDescription = false;
         continue;
       }
 
       idxStart = comment.toLowerCase().indexOf('@group-content');
-      if (idxStart != -1) {
+      if (idxStart !== -1) {
         cModel.setClassGroupContent(comment.substring(idxStart + 14).trim());
         inDescription = false;
         continue;
       }
 
       idxStart = comment.toLowerCase().indexOf('@description');
-      if (idxStart != -1 || i == 1) {
-        if (idxStart != -1 && comment.length > idxStart + 13)
+      if (idxStart !== -1 || i === 1) {
+        if (idxStart !== -1 && comment.length > idxStart + 13)
           cModel.setDescription(comment.substring(idxStart + 12).trim());
         else {
-          let found = comment.match('\\s');
+          const found = comment.match('\\s');
           if (found && found.index) {
             cModel.setDescription(comment.substring(found.index).trim());
           }
@@ -69,8 +63,8 @@ export default class ClassParser {
       if (inDescription) {
         let j;
         for (j = 0; j < comment.length; j++) {
-          let ch = comment.charAt(j);
-          if (ch != '*' && ch != ' ') break;
+          const ch = comment.charAt(j);
+          if (ch !== '*' && ch !== ' ') break;
         }
         if (j < comment.length) {
           cModel.setDescription(cModel.getDescription() + ' ' + comment.substring(j));

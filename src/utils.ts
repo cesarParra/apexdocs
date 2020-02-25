@@ -11,20 +11,20 @@ function findPreviousWord(stringToSearch: string, startingPosition: number): str
   let iStart;
   let iEnd;
   for (iStart = startingPosition - 1, iEnd = 0; iStart >= 0; iStart--) {
-    if (iEnd == 0) {
-      if (stringToSearch.charAt(iStart) == ' ') {
+    if (iEnd === 0) {
+      if (stringToSearch.charAt(iStart) === ' ') {
         continue;
       }
 
       iEnd = iStart + 1;
-    } else if (stringToSearch.charAt(iStart) == ' ') {
+    } else if (stringToSearch.charAt(iStart) === ' ') {
       iStart++;
       break;
     }
   }
 
-  if (iStart == -1) {
-    return null;
+  if (iStart === -1) {
+    iStart = 0;
   }
 
   return stringToSearch.substring(iStart, iEnd);
@@ -34,7 +34,7 @@ function findPreviousWord(stringToSearch: string, startingPosition: number): str
  * Returns the last item in the received array.
  * @param array The array.
  */
-function peek(array: Array<any> | null) {
+function peek(array: any[] | null) {
   if (!array || array.length === 0) {
     return null;
   }
