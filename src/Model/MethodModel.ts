@@ -3,9 +3,9 @@ import { findPreviousWord } from '../utils';
 
 export default class MethodModel extends ApexModel {
   params: string[] = [];
-  nameLine: string = '';
   iLine: number | undefined;
   returnType: string = '';
+  private isConstructor: boolean = false;
 
   setNameLine(nameLine: string, iLine: number) {
     // remove anything after the parameter list
@@ -25,12 +25,26 @@ export default class MethodModel extends ApexModel {
   }
 
   getReturnType() {
-    return this.returnType;
+    if (this.isConstructor) {
+      // If the method is a constructor, then it return the same type as its name.
+      return this.getMethodName();
+    }
+
+    const nameLine = this.getNameLine().trim();
+    if (nameLine != null && nameLine.length > 0) {
+      const lastindex = nameLine.indexOf(this.getMethodName());
+      if (lastindex >= 0) {
+        const returnType = findPreviousWord(nameLine, lastindex);
+        return returnType ? returnType : '';
+      }
+    }
+    return '';
   }
 
-  setReturnType(returnType: string) {
-    this.returnType = returnType;
-  }
+  // TODO: This isn't actually referenced anywhere
+  // setReturnType(returnType: string) {
+  //   this.returnType = returnType;
+  // }
 
   getMethodName(): string {
     const nameLine = this.getNameLine().trim();
@@ -42,5 +56,21 @@ export default class MethodModel extends ApexModel {
       }
     }
     return '';
+  }
+
+  getSignature() {
+    const nameLine = this.getNameLine().trim();
+    if (nameLine != null && nameLine.length > 0) {
+      const beginParen = nameLine.indexOf('(');
+      return this.getMethodName() + nameLine.substring(beginParen);
+    }
+  }
+
+  setIsConstructor(isConstructor: boolean) {
+    this.isConstructor = isConstructor;
+  }
+
+  getIsConstructor() {
+    return this.isConstructor;
   }
 }

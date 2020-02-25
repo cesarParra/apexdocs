@@ -28,9 +28,9 @@ public with sharing class Test {
     /**
      * @description My property rules.
      */
-    public MyProp { get; set; }
+    public String MyProp { get; set; }
 
-    public AnotherProp { get; private set; }
+    public String AnotherProp { get; private set; }
 
     public class InnerClass {
         public InnerProp { get; set; }

@@ -30,45 +30,90 @@ export default class FileManager {
   }
 
   generateDocsForClass(generator: MarkdownHelper, classModel: ClassModel, level: number) {
-    generator.addTitle(`${classModel.getClassName()} class`, level);
+    let suffix = classModel.getIsInterface() ? 'interface' : 'class';
+    generator.addTitle(`${classModel.getClassName()} ${suffix}`, level);
 
     if (classModel.getDescription()) {
       generator.addBlankLine();
       generator.addText(classModel.getDescription());
+      generator.addBlankLine();
     }
 
-    generator.addBlankLine();
+    generator.addHorizontalRule();
+
+    this.addConstructors(generator, level, classModel);
+    this.addProperties(generator, level, classModel);
+    this.addMethods(generator, level, classModel);
+    this.addInnerClasses(classModel, generator, level);
+  }
+
+  private addProperties(generator: MarkdownHelper, level: number, classModel: ClassModel) {
+    if (classModel.getProperties().length === 0) {
+      return;
+    }
 
     generator.addTitle('Properties', level + 1);
     generator.addBlankLine();
     classModel.getProperties().forEach(propertyModel => {
       generator.addTitle(propertyModel.getPropertyName(), 3);
-
       if (propertyModel.getDescription()) {
         generator.addBlankLine();
         generator.addText(propertyModel.getDescription());
       }
-
       generator.addBlankLine();
     });
+
+    generator.addHorizontalRule();
+  }
+
+  private addConstructors(generator: MarkdownHelper, level: number, classModel: ClassModel) {
+    if (classModel.getMethods().filter(method => method.getIsConstructor()).length === 0) {
+      return;
+    }
+
+    generator.addTitle('Constructors', level + 1);
+    classModel
+      .getMethods()
+      .filter(method => method.getIsConstructor())
+      .forEach(methodModel => {
+        //generator.addTitle(methodModel.getMethodName(), level + 2);
+        generator.addTitle(`\`${methodModel.getSignature()}\``, level + 2);
+        if (methodModel.getDescription()) {
+          generator.addBlankLine();
+          generator.addText(methodModel.getDescription());
+        }
+        generator.addBlankLine();
+      });
+
+    generator.addHorizontalRule();
+  }
+
+  private addMethods(generator: MarkdownHelper, level: number, classModel: ClassModel) {
+    if (classModel.getMethods().filter(method => !method.getIsConstructor()).length === 0) {
+      return;
+    }
 
     generator.addTitle('Methods', level + 1);
-
-    classModel.getMethods().forEach(methodModel => {
-      generator.addTitle(methodModel.getMethodName(), 3);
-
-      if (methodModel.getDescription()) {
+    classModel
+      .getMethods()
+      .filter(method => !method.getIsConstructor())
+      .forEach(methodModel => {
+        //generator.addTitle(methodModel.getMethodName(), level + 2);
+        generator.addTitle(`\`${methodModel.getSignature()}\` → \`${methodModel.getReturnType()}\``, level + 2);
+        if (methodModel.getDescription()) {
+          generator.addBlankLine();
+          generator.addText(methodModel.getDescription());
+        }
         generator.addBlankLine();
-        generator.addText(methodModel.getDescription());
-      }
+      });
 
-      generator.addBlankLine();
-    });
+    generator.addHorizontalRule();
+  }
 
+  private addInnerClasses(classModel: ClassModel, generator: MarkdownHelper, level: number) {
     if (classModel.getChildClassesSorted().length > 0) {
       generator.addTitle('Inner Classes', level + 1);
       generator.addBlankLine();
-
       classModel.getChildClassesSorted().forEach(innerClass => {
         this.generateDocsForClass(generator, innerClass, level++);
       });

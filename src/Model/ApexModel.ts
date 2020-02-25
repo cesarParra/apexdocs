@@ -1,14 +1,14 @@
 import Settings from '../Settings';
 
 export default class ApexModel {
-  nameLine: string = '';
-  inameLine: number | undefined;
-  description: string = '';
-  author: string = '';
-  date: string = '';
-  returns: string = '';
-  example: string = '';
-  scope: string = '';
+  protected nameLine: string = '';
+  private inameLine: number | undefined;
+  private description: string = '';
+  private author: string = '';
+  private date: string = '';
+  private returns: string = '';
+  private example: string = '';
+  private scope: string = '';
 
   getNameLine() {
     return this.nameLine;

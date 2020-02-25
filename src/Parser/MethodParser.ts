@@ -1,15 +1,25 @@
 import MethodModel from '../model/MethodModel';
 
 export default class MethodParser {
-  getMethod(strLine: string, lstComments: string[], iLine: number) {
+  getMethod(parentClassName: string, strLine: string, lstComments: string[], iLine: number) {
     let mModel = new MethodModel();
-    this.fillMethodModel(mModel, strLine, lstComments, iLine);
+    this.fillMethodModel(parentClassName, mModel, strLine, lstComments, iLine);
 
     return mModel;
   }
 
-  fillMethodModel(mModel: MethodModel, name: string, lstComments: Array<String>, iLine: number) {
+  fillMethodModel(
+    parentClassName: string,
+    mModel: MethodModel,
+    name: string,
+    lstComments: Array<String>,
+    iLine: number,
+  ) {
     mModel.setNameLine(name, iLine);
+    const isConstructor = parentClassName === mModel.getMethodName();
+    console.log('Constructor?', isConstructor, parentClassName);
+    mModel.setIsConstructor(isConstructor);
+
     let inDescription = false;
     let inExample = false;
     let i = 0;

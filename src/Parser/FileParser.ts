@@ -18,7 +18,7 @@ export default class FileParser {
     let docBlockStarted = false;
     let nestedCurlyBraceDepth = 0;
     let lstComments = [];
-    let cModel = null;
+    let cModel: ClassModel | null = null;
     let cModelParent;
     let cModels = [];
 
@@ -141,7 +141,7 @@ export default class FileParser {
         }
 
         if (cModel) {
-          let mModel = new MethodParser().getMethod(strLine, lstComments, iLine);
+          let mModel = new MethodParser().getMethod(cModel.getClassName(), strLine, lstComments, iLine);
           cModel.getMethods().push(mModel);
         }
 

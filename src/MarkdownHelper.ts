@@ -21,4 +21,9 @@ export default class MarkdownHelper {
     this.contents += text;
     this.addBlankLine();
   }
+
+  addHorizontalRule() {
+    this.contents += '---';
+    this.addBlankLine();
+  }
 }

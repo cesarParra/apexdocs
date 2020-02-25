@@ -27,14 +27,14 @@ test('params can be set', () => {
   expect(method.getParams()).toBe(params);
 });
 
-test('return type can be set', () => {
-  const method = new MethodModel();
-  const returnType = 'void';
+// test('return type can be set', () => {
+//   const method = new MethodModel();
+//   const returnType = 'void';
 
-  method.setReturnType(returnType);
+//   method.setReturnType(returnType);
 
-  expect(method.getReturnType()).toBe(returnType);
-});
+//   expect(method.getReturnType()).toBe(returnType);
+// });
 
 test('method name is retrieved correctly', () => {
   const method = new MethodModel();
