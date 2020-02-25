@@ -54,14 +54,21 @@ export default class FileManager {
 
     generator.addTitle('Properties', level + 1);
     generator.addBlankLine();
-    classModel.getProperties().forEach(propertyModel => {
-      generator.addTitle(propertyModel.getPropertyName(), 3);
-      if (propertyModel.getDescription()) {
+    classModel
+      .getProperties()
+      .sort((propA, propB) => {
+        if (propA.getPropertyName() < propB.getPropertyName()) return -1;
+        if (propA.getPropertyName() > propB.getPropertyName()) return 1;
+        return 0;
+      })
+      .forEach(propertyModel => {
+        generator.addTitle(propertyModel.getPropertyName(), 3);
+        if (propertyModel.getDescription()) {
+          generator.addBlankLine();
+          generator.addText(propertyModel.getDescription());
+        }
         generator.addBlankLine();
-        generator.addText(propertyModel.getDescription());
-      }
-      generator.addBlankLine();
-    });
+      });
 
     generator.addHorizontalRule();
   }
@@ -96,6 +103,11 @@ export default class FileManager {
     generator.addTitle('Methods', level + 1);
     classModel
       .getMethods()
+      .sort((methodA, methodB) => {
+        if (methodA.getMethodName() < methodB.getMethodName()) return -1;
+        if (methodA.getMethodName() > methodB.getMethodName()) return 1;
+        return 0;
+      })
       .filter(method => !method.getIsConstructor())
       .forEach(methodModel => {
         //generator.addTitle(methodModel.getMethodName(), level + 2);
@@ -111,12 +123,19 @@ export default class FileManager {
   }
 
   private addInnerClasses(classModel: ClassModel, generator: MarkdownHelper, level: number) {
-    if (classModel.getChildClassesSorted().length > 0) {
+    if (classModel.getChildClasses().length > 0) {
       generator.addTitle('Inner Classes', level + 1);
       generator.addBlankLine();
-      classModel.getChildClassesSorted().forEach(innerClass => {
-        this.generateDocsForClass(generator, innerClass, level++);
-      });
+      classModel
+        .getChildClasses()
+        .sort((classA, classB) => {
+          if (classA.getClassName() < classB.getClassName()) return -1;
+          if (classA.getClassName() > classB.getClassName()) return 1;
+          return 0;
+        })
+        .forEach(innerClass => {
+          this.generateDocsForClass(generator, innerClass, level++);
+        });
     }
   }
 }

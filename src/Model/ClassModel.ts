@@ -23,16 +23,6 @@ export default class ClassModel extends ApexModel {
     return this.properties;
   }
 
-  getPropertiesSorted() {
-    // TODO
-
-    // TreeMap<String, PropertyModel> tm = new TreeMap<String, PropertyModel>();
-    // for (PropertyModel prop : properties)
-    //     tm.put(prop.getPropertyName().toLowerCase(), prop);
-    // return new ArrayList<PropertyModel>(tm.values());
-    return this.properties;
-  }
-
   setProperties(properties: PropertyModel[]) {
     this.properties = properties;
   }
@@ -41,17 +31,11 @@ export default class ClassModel extends ApexModel {
     return this.methods;
   }
 
-  getMethodsSorted() {
-    // TODO
-    return this.methods;
-  }
-
   setMethods(methods: MethodModel[]) {
     this.methods = methods;
   }
 
-  getChildClassesSorted() {
-    // TODO
+  getChildClasses() {
     return this.childClasses;
   }
 
@@ -102,7 +86,6 @@ export default class ClassModel extends ApexModel {
     return this.strClassGroupContent;
   }
 
-  // TODO: What is this for?
   setClassGroupContent(strGroupContent: string) {
     this.strClassGroupContent = strGroupContent;
   }

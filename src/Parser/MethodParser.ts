@@ -17,7 +17,6 @@ export default class MethodParser {
   ) {
     mModel.setNameLine(name, iLine);
     const isConstructor = parentClassName === mModel.getMethodName();
-    console.log('Constructor?', isConstructor, parentClassName);
     mModel.setIsConstructor(isConstructor);
 
     let inDescription = false;

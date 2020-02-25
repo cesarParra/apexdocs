@@ -7,7 +7,7 @@ test('new class model initializes correctly', () => {
 
   expect(classModel.getProperties()).toHaveLength(0);
   expect(classModel.getMethods()).toHaveLength(0);
-  expect(classModel.getChildClassesSorted()).toHaveLength(0);
+  expect(classModel.getChildClasses()).toHaveLength(0);
   expect(classModel.getClassName()).toBe('');
   expect(classModel.getTopmostClassName()).toBe('');
   expect(classModel.getClassGroup()).toBe('');
@@ -36,8 +36,8 @@ test('can add children', () => {
   const childClass = new ClassModel();
 
   classModel.addChildClass(childClass);
-  expect(classModel.getChildClassesSorted().length).toBe(1);
-  expect(classModel.getChildClassesSorted()[0]).toBe(childClass);
+  expect(classModel.getChildClasses().length).toBe(1);
+  expect(classModel.getChildClasses()[0]).toBe(childClass);
 });
 
 test('class name can be set and retrieved correctly', () => {

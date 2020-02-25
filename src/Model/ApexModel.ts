@@ -2,7 +2,7 @@ import Settings from '../Settings';
 
 export default class ApexModel {
   protected nameLine: string = '';
-  private inameLine: number | undefined;
+  private nameLineIndex: number | undefined;
   private description: string = '';
   private author: string = '';
   private date: string = '';
@@ -15,12 +15,12 @@ export default class ApexModel {
   }
 
   getInameLine() {
-    return this.inameLine;
+    return this.nameLineIndex;
   }
 
   setNameLine(nameLine: string, iLine: number) {
     this.nameLine = nameLine.trim();
-    this.inameLine = iLine;
+    this.nameLineIndex = iLine;
     this.parseScope();
   }
 
@@ -72,17 +72,15 @@ export default class ApexModel {
     this.scope = scope;
   }
 
-  parseScope() {
+  private parseScope() {
     this.scope = '';
-    if (this.nameLine != null) {
-      const str = this.strContainsScope(this.nameLine);
-      if (str != null) {
-        this.scope = str;
-      }
+    const str = this.getScopeFromSettings(this.nameLine);
+    if (str != null) {
+      this.scope = str;
     }
   }
 
-  strContainsScope(str: string) {
+  private getScopeFromSettings(str: string) {
     str = str.toLowerCase();
     for (const currentScope of Settings.getInstance().getScope()) {
       if (str.toLowerCase().includes(currentScope.toLowerCase() + ' ')) {
