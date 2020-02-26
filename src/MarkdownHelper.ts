@@ -5,7 +5,7 @@ export default class MarkdownHelper {
     this.contents += '\n';
   }
 
-  addTitle(text: string, level: number) {
+  addTitle(text: string, level: number = 1) {
     let title = '';
     for (let i = 0; i < level; i++) {
       title += '#';
@@ -25,5 +25,17 @@ export default class MarkdownHelper {
   addHorizontalRule() {
     this.contents += '---';
     this.addBlankLine();
+  }
+
+  addLink(title: string, url: string) {
+    this.contents += `[${title}](${url})`;
+  }
+
+  startCodeBlock() {
+    this.contents += '```';
+  }
+
+  endCodeBlock() {
+    this.contents += '```';
   }
 }

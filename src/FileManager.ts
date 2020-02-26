@@ -14,8 +14,33 @@ export default class FileManager {
 
   // TODO: Make static
   generate() {
+    // Generate index.md listing all classes
+    let generator = new MarkdownHelper();
+    generator.addTitle('Classes');
     this.classModels.forEach(classModel => {
-      let generator = new MarkdownHelper();
+      generator.addBlankLine();
+      generator.addLink(classModel.getClassName(), `/${classModel.getClassName()}.md/`);
+      generator.addBlankLine();
+      generator.addBlankLine();
+      generator.addText(classModel.getDescription());
+
+      generator.addBlankLine();
+      generator.addBlankLine();
+
+      let outputPath = Settings.getInstance().getOutputDir();
+
+      if (!fs.existsSync(outputPath)) {
+        fs.mkdirSync(outputPath);
+      }
+
+      let filePath = path.join(outputPath, 'index.md');
+      fs.writeFile(filePath, generator.contents, 'utf8', () => {
+        console.log('Index page created.');
+      });
+    });
+
+    this.classModels.forEach(classModel => {
+      generator = new MarkdownHelper();
       this.generateDocsForClass(generator, classModel, 1);
 
       let outputPath = Settings.getInstance().getOutputDir();
@@ -89,6 +114,14 @@ export default class FileManager {
           generator.addBlankLine();
           generator.addText(methodModel.getDescription());
         }
+
+        if (methodModel.getExample() !== '') {
+          generator.startCodeBlock();
+          generator.addText(methodModel.getExample());
+          generator.endCodeBlock();
+          generator.addBlankLine();
+        }
+
         generator.addBlankLine();
       });
 
@@ -116,6 +149,14 @@ export default class FileManager {
           generator.addBlankLine();
           generator.addText(methodModel.getDescription());
         }
+
+        if (methodModel.getExample() !== '') {
+          generator.startCodeBlock();
+          generator.addText(methodModel.getExample());
+          generator.endCodeBlock();
+          generator.addBlankLine();
+        }
+
         generator.addBlankLine();
       });
 
@@ -124,7 +165,7 @@ export default class FileManager {
 
   private addInnerClasses(classModel: ClassModel, generator: MarkdownHelper, level: number) {
     if (classModel.getChildClasses().length > 0) {
-      generator.addTitle('Inner Classes', level + 1);
+      generator.addTitle('Inner Classes', ++level);
       generator.addBlankLine();
       classModel
         .getChildClasses()
@@ -134,7 +175,7 @@ export default class FileManager {
           return 0;
         })
         .forEach(innerClass => {
-          this.generateDocsForClass(generator, innerClass, level++);
+          this.generateDocsForClass(generator, innerClass, ++level);
         });
     }
   }
