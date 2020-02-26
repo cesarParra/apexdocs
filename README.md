@@ -17,7 +17,7 @@ There are some key differences between ApexDocs and the Java based ApexDoc tool:
 
 ## Demo
 
-- Example of a site hosted in Github Pages using the generated markdown files from the CLI: [Link](https://cesarparra.github.io/apexdocs/)
+- [Github Pages](https://cesarparra.github.io/apexdocs/) - Example of a site hosted in Github Pages using the generated markdown files from the CLI.
 
 ## Installation
 
