@@ -1,9 +1,15 @@
+---
+layout: home
+---
+
 # SampleInterface interface
 
 This is an interface description.
 
 ---
+
 ## Methods
+
 ### `execute()` → `void`
 
 Executes the command.

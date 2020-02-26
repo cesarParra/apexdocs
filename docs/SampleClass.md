@@ -1,12 +1,19 @@
+---
+layout: home
+---
+
 # SampleClass class
 
 This is a class description.
 
 ---
+
 ## Constructors
+
 ### `SampleClass()`
 
 Constructs a SampleClass without any arguments.
+
 ```<pre>
 SampleClass sampleInstance = new SampleClass();
 ```
@@ -16,6 +23,7 @@ SampleClass sampleInstance = new SampleClass();
 Constructs a SampleClass with an argument.
 
 ---
+
 ## Properties
 
 ### AnotherProp
@@ -27,7 +35,9 @@ This is a Decimal property.
 This is a String property.
 
 ---
+
 ## Methods
+
 ### `call()` → `void`
 
 Calls the method. This methods allows you to call it.
@@ -35,12 +45,14 @@ Calls the method. This methods allows you to call it.
 ### `testMethod(String argument)` → `String`
 
 Executes commands based on the passed in argument.
+
 ```<pre>
 String result = SampleClass.testMethod();
 System.debug(result);
 ```
 
 ---
+
 ## Inner Classes
 
 ### SampleClass.AnotherInnerClass class
@@ -48,6 +60,7 @@ System.debug(result);
 Inner class belonging to SampleClass.
 
 ---
+
 #### Properties
 
 ### InnerProp
@@ -55,17 +68,21 @@ Inner class belonging to SampleClass.
 Description of the inner property.
 
 ---
+
 #### Methods
+
 ##### `innerMethod()` → `void`
 
 Executes from the inner class.
 
 ---
+
 #### SampleClass.InnerClass class
 
 Inner class belonging to SampleClass.
 
 ---
+
 ##### Properties
 
 ### InnerProp
@@ -73,7 +90,9 @@ Inner class belonging to SampleClass.
 Description of the inner property.
 
 ---
+
 ##### Methods
+
 ###### `innerMethod()` → `void`
 
 Executes from the inner class.
