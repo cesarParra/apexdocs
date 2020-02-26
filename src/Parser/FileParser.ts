@@ -17,12 +17,12 @@ export default class FileParser {
     let commentsStarted = false;
     let docBlockStarted = false;
     let nestedCurlyBraceDepth = 0;
-    let lstComments = [];
+    const lstComments = [];
     let cModel: ClassModel | null = null;
     let cModelParent;
-    let cModels = [];
+    const cModels = [];
 
-    let contentLines = this.splitAndClean(rawFileContents);
+    const contentLines = this.splitAndClean(rawFileContents);
     // TODO: There is no difference between iLine and i, let's get rid of one
     let iLine = 0;
 
@@ -78,14 +78,14 @@ export default class FileParser {
       }
 
       // keep track of our nesting so we know which class we are in
-      let openCurlies = this.countChars(strLine, '{');
-      let closeCurlies = this.countChars(strLine, '}');
+      const openCurlies = this.countChars(strLine, '{');
+      const closeCurlies = this.countChars(strLine, '}');
       nestedCurlyBraceDepth += openCurlies;
       nestedCurlyBraceDepth -= closeCurlies;
 
       // if we are in a nested class, and we just got back to nesting level 1,
       // then we are done with the nested class, and should set its props and methods.
-      if (nestedCurlyBraceDepth == 1 && openCurlies != closeCurlies && cModels.length > 1 && cModel != null) {
+      if (nestedCurlyBraceDepth === 1 && openCurlies !== closeCurlies && cModels.length > 1 && cModel != null) {
         cModels.pop();
         cModel = peek(cModels);
         continue;
@@ -103,7 +103,7 @@ export default class FileParser {
         strLine = strLine.substring(0, ich);
       }
 
-      //ignore lines not dealing with scope
+      // Ignore lines not dealing with scope
       if (
         this.strContainsScope(strLine) === null &&
         // interface methods don't have scope
@@ -115,12 +115,12 @@ export default class FileParser {
       // look for a class
       if (strLine.toLowerCase().includes(' class ') || strLine.toLowerCase().includes(' interface ')) {
         // create the new class
-        let cModelNew = new ClassParser().getClass(strLine, lstComments, iLine, cModelParent);
-        lstComments.splice(0, lstComments.length); //clearing the array
+        const cModelNew = new ClassParser().getClass(strLine, lstComments, iLine, cModelParent);
+        lstComments.splice(0, lstComments.length);
 
         // keep track of the new class, as long as it wasn't a single liner {}
         // but handle not having any curlies on the class line!
-        if (openCurlies == 0 || openCurlies != closeCurlies) {
+        if (openCurlies === 0 || openCurlies !== closeCurlies) {
           cModels.push(cModelNew);
           cModel = cModelNew;
         }
@@ -141,11 +141,11 @@ export default class FileParser {
         }
 
         if (cModel) {
-          let mModel = new MethodParser().getMethod(cModel.getClassName(), strLine, lstComments, iLine);
+          const mModel = new MethodParser().getMethod(cModel.getClassName(), strLine, lstComments, iLine);
           cModel.getMethods().push(mModel);
         }
 
-        lstComments.splice(0, lstComments.length); //clearing the array
+        lstComments.splice(0, lstComments.length);
         continue;
       }
 
@@ -162,11 +162,11 @@ export default class FileParser {
 
       // must be a property
       if (cModel) {
-        let propertyModel = new PropertyParser().getProperty(strLine, lstComments, iLine);
+        const propertyModel = new PropertyParser().getProperty(strLine, lstComments, iLine);
         cModel.getProperties().push(propertyModel);
       }
 
-      lstComments.splice(0, lstComments.length); //clearing the array
+      lstComments.splice(0, lstComments.length);
       continue;
     }
 
@@ -174,7 +174,7 @@ export default class FileParser {
   }
 
   splitAndClean(rawFileContents: string) {
-    let contentLines = rawFileContents.split('\n');
+    const contentLines = rawFileContents.split('\n');
     return contentLines.map(line => line.replace('\r', ''));
   }
 

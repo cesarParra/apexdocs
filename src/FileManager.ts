@@ -27,15 +27,16 @@ export default class FileManager {
       generator.addBlankLine();
       generator.addBlankLine();
 
-      let outputPath = Settings.getInstance().getOutputDir();
+      const outputPath = Settings.getInstance().getOutputDir();
 
       if (!fs.existsSync(outputPath)) {
         fs.mkdirSync(outputPath);
       }
 
-      let filePath = path.join(outputPath, 'index.md');
+      const filePath = path.join(outputPath, 'index.md');
       fs.writeFile(filePath, generator.contents, 'utf8', () => {
-        console.log('Index page created.');
+        // tslint:disable-next-line:no-console
+        console.log('Index page generated.');
       });
     });
 
@@ -43,19 +44,22 @@ export default class FileManager {
       generator = new MarkdownHelper();
       this.generateDocsForClass(generator, classModel, 1);
 
-      let outputPath = Settings.getInstance().getOutputDir();
+      const outputPath = Settings.getInstance().getOutputDir();
 
       if (!fs.existsSync(outputPath)) {
         fs.mkdirSync(outputPath);
       }
 
-      let filePath = path.join(outputPath, `${classModel.getClassName()}.md`);
-      fs.writeFile(filePath, generator.contents, 'utf8', () => {});
+      const filePath = path.join(outputPath, `${classModel.getClassName()}.md`);
+      fs.writeFile(filePath, generator.contents, 'utf8', () => {
+        // tslint:disable-next-line:no-console
+        console.log(`${classModel.getClassName} processed.`);
+      });
     });
   }
 
   generateDocsForClass(generator: MarkdownHelper, classModel: ClassModel, level: number) {
-    let suffix = classModel.getIsInterface() ? 'interface' : 'class';
+    const suffix = classModel.getIsInterface() ? 'interface' : 'class';
     generator.addTitle(`${classModel.getClassName()} ${suffix}`, level);
 
     if (classModel.getDescription()) {
@@ -108,7 +112,6 @@ export default class FileManager {
       .getMethods()
       .filter(method => method.getIsConstructor())
       .forEach(methodModel => {
-        //generator.addTitle(methodModel.getMethodName(), level + 2);
         generator.addTitle(`\`${methodModel.getSignature()}\``, level + 2);
         if (methodModel.getDescription()) {
           generator.addBlankLine();
@@ -143,7 +146,6 @@ export default class FileManager {
       })
       .filter(method => !method.getIsConstructor())
       .forEach(methodModel => {
-        //generator.addTitle(methodModel.getMethodName(), level + 2);
         generator.addTitle(`\`${methodModel.getSignature()}\` → \`${methodModel.getReturnType()}\``, level + 2);
         if (methodModel.getDescription()) {
           generator.addBlankLine();

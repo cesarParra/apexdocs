@@ -16,6 +16,7 @@ export function generate(
 
   // TODO: Assert data validation to avoid exposing 'fs' and 'path' errors to callers.
   const classes: ClassModel[] = getClassesFromDirectory(sourceDirectory, recursive);
+  // tslint:disable-next-line:no-console
   console.log(`Processed ${classes.length} files`);
   return classes;
 }
@@ -34,8 +35,8 @@ function getClassesFromDirectory(sourceDirectory: string, recursive: boolean) {
       return;
     }
 
-    let rawFile = fs.readFileSync(currentPath);
-    let response = new FileParser().parseFileContents(rawFile.toString());
+    const rawFile = fs.readFileSync(currentPath);
+    const response = new FileParser().parseFileContents(rawFile.toString());
     if (!response) {
       return;
     }
