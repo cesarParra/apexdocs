@@ -15,6 +15,10 @@ There are some key differences between ApexDocs and the Java based ApexDoc tool:
 - **Recursive file search through your module directory structure**. In an `sfdx` based project, all of your classes will be documented by specifying the top-most directory where file search should begin.
 - **Unopinionated documentation site generation**. Instead of creating HTML files, ApexDocs generates a Markdown (.md) file per Apex class being documented. This means you can host your files in static web hosting services that parse Markdown like Github Pages or Netlify, and use site generators like Jekyll or Gatsby. This gives you the freedom to decide how to style your site to match your needs.
 
+## Demo
+
+- Example of a site hosted in Github Pages using the generated markdown files from the CLI: [Link](https://cesarparra.github.io/apexdocs/)
+
 ## Installation
 
 ```bash
