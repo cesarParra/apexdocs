@@ -1,8 +1,13 @@
+import DocsProcessor from './DocsProcessor';
+import DocsifyDocsProcessor from './DocsifyDocsProcessor';
+import JekyllDocsProcessor from './JekyllDocsProcessor';
+
 export default class Settings {
   private static instance: Settings;
 
   private desiredScope: string[] = ['global', 'public'];
   private outputDir: string = 'docs';
+  private generator: string = 'jekyll';
 
   private constructor() {}
 
@@ -28,5 +33,17 @@ export default class Settings {
 
   getOutputDir() {
     return this.outputDir;
+  }
+
+  setGenerator(generator: string) {
+    this.generator = generator;
+  }
+
+  getDocsProcessor(): DocsProcessor {
+    if (this.generator == 'jekyll') {
+      return new JekyllDocsProcessor();
+    }
+
+    return new DocsifyDocsProcessor();
   }
 }

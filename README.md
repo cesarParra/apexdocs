@@ -17,7 +17,8 @@ There are some key differences between ApexDocs and the Java based ApexDoc tool:
 
 ## Demo
 
-- [Github Pages](https://cesarparra.github.io/apexdocs/) - Example of a site hosted in Github Pages using the generated markdown files from the CLI.
+- [Jekyll](https://cesarparra.github.io/apexdocs/) - Pages formatted for [Jekyll](https://jekyllrb.com/).
+- [Doscisy]() - Pages formatted for the [docsify](https://docsify.js.org/) site generator.
 
 ## Installation
 
@@ -29,12 +30,13 @@ npm i @cparra/apexdocs
 
 ### CLI
 
-| Parameter   | Alias | Description                                                                                     | Default         | Required |
-| ----------- | ----- | ----------------------------------------------------------------------------------------------- | --------------- | -------- |
-| --sourceDir | -s    | The directory location which contains your apex .cls classes.                                   | N/A             | Yes      |
-| --targetDir | -t    | The directory location where documentation will be generated to.                                | `docs`          | No       |
-| --recursive | -r    | Whether .cls classes will be searched for recursively in the directory provided.                | `true`          | No       |
-| --scope     | -p    | A list of scopes to document. Values should be separated by a space, e.g --scope public private | `global public` | No       |
+| Parameter         | Alias | Description                                                                                                      | Default         | Required |
+| ----------------- | ----- | ---------------------------------------------------------------------------------------------------------------- | --------------- | -------- |
+| --sourceDir       | -s    | The directory location which contains your apex .cls classes.                                                    | N/A             | Yes      |
+| --targetDir       | -t    | The directory location where documentation will be generated to.                                                 | `docs`          | No       |
+| --recursive       | -r    | Whether .cls classes will be searched for recursively in the directory provided.                                 | `true`          | No       |
+| --scope           | -p    | A list of scopes to document. Values should be separated by a space, e.g --scope public private                  | `global public` | No       |
+| --targetGenerator | -g    | Define the static file generator for which the documents will be created. Currently supports jekyll and docsify. | `jekyll`        | No       |
 
 ### Importing to your project
 

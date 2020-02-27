@@ -10,9 +10,11 @@ export function generate(
   recursive: boolean = true,
   scope: string[] = ['global', 'public'],
   outputDir: string = 'docs',
+  targetGenerator: string = 'jekyll',
 ): ClassModel[] {
   Settings.getInstance().setScope(scope);
   Settings.getInstance().setOutputDir(outputDir);
+  Settings.getInstance().setGenerator(targetGenerator);
 
   // TODO: Assert data validation to avoid exposing 'fs' and 'path' errors to callers.
   const classes: ClassModel[] = getClassesFromDirectory(sourceDirectory, recursive);
