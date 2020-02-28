@@ -18,7 +18,7 @@ There are some key differences between ApexDocs and the Java based ApexDoc tool:
 ## Demo
 
 - [Jekyll](https://cesarparra.github.io/apexdocs/) - Pages formatted for [Jekyll](https://jekyllrb.com/).
-- [Doscisy](https://cesarparra.github.io/apexdocs-docsify-example/) - Pages formatted for the [docsify](https://docsify.js.org/) site generator.
+- [Docsify](https://cesarparra.github.io/apexdocs-docsify-example/) - Pages formatted for the [docsify](https://docsify.js.org/) site generator.
 
 ## Installation
 
