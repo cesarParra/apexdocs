@@ -37,7 +37,19 @@ const argv = yargs.options({
     describe:
       'Define the static file generator for which the documents will be created. Currently supports jekyll and docsify.',
   },
+  configPath: {
+    type: 'string',
+    alias: 'c',
+    describe: 'The path to the JSON configuration file that defines the structure of the documents to generate.',
+  },
 }).argv;
 
-const generatedClassModels = generate(argv.sourceDir, argv.recursive, argv.scope, argv.targetDir, argv.targetGenerator);
+const generatedClassModels = generate(
+  argv.sourceDir,
+  argv.recursive,
+  argv.scope,
+  argv.targetDir,
+  argv.targetGenerator,
+  argv.configPath,
+);
 new FileManager(generatedClassModels).generate();

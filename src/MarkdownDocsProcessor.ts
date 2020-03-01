@@ -4,6 +4,7 @@ import * as path from 'path';
 import DocsProcessor from './DocsProcessor';
 import MarkdownHelper from './MarkdownHelper';
 import ClassModel from './model/ClassModel';
+import Settings from './Settings';
 
 export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   abstract getHomeFileName(): string;
@@ -11,10 +12,35 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   onBeforeClassFileCreated(generator: MarkdownHelper) {}
 
   onBeforeProcess(classes: ClassModel[], outputDir: string) {
-    // Generate README.md listing all classes
+    let headerContent;
+    let configPath = Settings.getInstance().getConfigPath();
+    if (configPath) {
+      let config;
+      try {
+        const rawFile = fs.readFileSync(configPath);
+        config = JSON.parse(rawFile.toString());
+      } catch (error) {
+        throw new Error('Error occurred while reading the configuration file ' + error.toString());
+      }
+
+      if (config.home && config.home.header) {
+        const headerFilePath = config.home.header;
+        try {
+          const rawHeader = fs.readFileSync(headerFilePath);
+          headerContent = rawHeader.toString();
+        } catch (error) {
+          throw new Error('Error occurred while reading the header file ' + error.toString());
+        }
+      }
+    }
+
+    // Generate home page listing all classes.
     const generator = new MarkdownHelper();
 
     this.onBeforeHomeFileCreated(generator);
+    if (headerContent) {
+      generator.addText(headerContent);
+    }
 
     generator.addTitle('Classes');
     classes.forEach(classModel => {

@@ -8,6 +8,7 @@ export default class Settings {
   private desiredScope: string[] = ['global', 'public'];
   private outputDir: string = 'docs';
   private generator: string = 'jekyll';
+  private configPath: string | null = null;
 
   private constructor() {}
 
@@ -45,5 +46,13 @@ export default class Settings {
     }
 
     return new DocsifyDocsProcessor();
+  }
+
+  setConfigPath(configPath: string) {
+    this.configPath = configPath;
+  }
+
+  getConfigPath() {
+    return this.configPath;
   }
 }

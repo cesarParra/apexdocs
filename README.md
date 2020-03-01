@@ -4,6 +4,8 @@
   <b >ApexDocs is a Node.js library with CLI capabilities to generate documentation for Salesforce Apex classes.</b>
 </p>
 
+[![License](https://img.shields.io/github/license/cesarParra/apexdocs)](https://github.com/cesarParra/apexdocs/blob/master/LICENSE)
+
 ## Description
 
 ApexDocs was built as an alternative to the [Java based ApexDoc tool](https://github.com/SalesforceFoundation/ApexDoc) originally created by Aslam Bari and later maintained by Salesforce.org, as that tool is no longer being maintained.
@@ -30,6 +32,8 @@ npm i @cparra/apexdocs
 
 ### CLI
 
+Use the CLI tool to generate a static site using the following parameters:
+
 | Parameter         | Alias | Description                                                                                                      | Default         | Required |
 | ----------------- | ----- | ---------------------------------------------------------------------------------------------------------------- | --------------- | -------- |
 | --sourceDir       | -s    | The directory location which contains your apex .cls classes.                                                    | N/A             | Yes      |
@@ -37,6 +41,19 @@ npm i @cparra/apexdocs
 | --recursive       | -r    | Whether .cls classes will be searched for recursively in the directory provided.                                 | `true`          | No       |
 | --scope           | -p    | A list of scopes to document. Values should be separated by a space, e.g --scope public private                  | `global public` | No       |
 | --targetGenerator | -g    | Define the static file generator for which the documents will be created. Currently supports jekyll and docsify. | `jekyll`        | No       |
+| --configPath      | -c    | The path to the JSON configuration file that defines the structure of the documents to generate.                 | N/A             | No       |
+
+#### Configuration File
+
+You can optionally specify the path to a configuration JSON file through the `--configPath` parameter. This let's you embedd custom content into your home page, by using the `header` property to point to the a file which contents will be added to the top of the generated home page.
+
+```
+{
+  "home": {
+    "header": "./examples/includes/header.md"
+  }
+}
+```
 
 ### Importing to your project
 
