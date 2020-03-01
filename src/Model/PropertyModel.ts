@@ -1,4 +1,5 @@
 import ApexModel from './ApexModel';
+import { findPreviousWord } from '../utils';
 
 export default class PropertyModel extends ApexModel {
   setNameLine(nameLine: string, iLine: number) {
@@ -17,6 +18,18 @@ export default class PropertyModel extends ApexModel {
       if (lastindex >= 0) {
         const propertyName = nameLine.substring(lastindex + 1);
         return propertyName;
+      }
+    }
+    return '';
+  }
+
+  getReturnType() {
+    const nameLine = this.getNameLine().trim();
+    if (nameLine != null && nameLine.length > 0) {
+      const lastindex = nameLine.indexOf(this.getPropertyName());
+      if (lastindex >= 0) {
+        const returnType = findPreviousWord(nameLine, lastindex);
+        return returnType ? returnType : '';
       }
     }
     return '';

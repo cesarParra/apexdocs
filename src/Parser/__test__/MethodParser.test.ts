@@ -1,5 +1,5 @@
-import MethoModel from '../model/MethodModel';
-import MethodParser from './MethodParser';
+import MethoModel from '../../model/MethodModel';
+import MethodParser from '../MethodParser';
 
 const nameLine = 'public static void testMethod() {';
 const commentLines = [

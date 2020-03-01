@@ -1,5 +1,5 @@
-import MethoModel from '../model/PropertyModel';
-import PropertyParser from './PropertyParser';
+import MethoModel from '../../model/PropertyModel';
+import PropertyParser from '../PropertyParser';
 
 const nameLine = 'public String TestPropery { get; set; }';
 const commentLines = [

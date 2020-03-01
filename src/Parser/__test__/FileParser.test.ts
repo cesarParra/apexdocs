@@ -1,4 +1,4 @@
-import FileParser from './FileParser';
+import FileParser from '../FileParser';
 import { contents } from './testFileContents';
 
 test('empty string returns null', () => {

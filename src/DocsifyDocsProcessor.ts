@@ -81,7 +81,7 @@ export default class DocsifyDocsProcessor extends DocsProcessor {
         return 0;
       })
       .forEach(propertyModel => {
-        generator.addTitle(propertyModel.getPropertyName(), 3);
+        generator.addTitle(`\`${propertyModel.getPropertyName()}\` → \`${propertyModel.getReturnType()}\``, level + 2);
         if (propertyModel.getDescription()) {
           generator.addBlankLine();
           generator.addText(propertyModel.getDescription());
