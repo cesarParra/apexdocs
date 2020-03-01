@@ -1,7 +1,7 @@
 # ApexDocs
 
 <p align="center">
-  <b >ApexDocs is a Node.js library with CLI capabilities to generate documentation for Salesforce Apex classes.</b>
+  <b>ApexDocs is a Node.js library with CLI capabilities to generate documentation for Salesforce Apex classes.</b>
 </p>
 
 [![License](https://img.shields.io/github/license/cesarParra/apexdocs)](https://github.com/cesarParra/apexdocs/blob/master/LICENSE)
