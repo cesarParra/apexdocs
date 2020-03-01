@@ -8,7 +8,7 @@ import ClassModel from './model/ClassModel';
 export default class JekyllDocsProcessor extends DocsProcessor {
   onBeforeProcess(classes: ClassModel[], outputDir: string) {
     // Generate index.md listing all classes
-    let generator = new MarkdownHelper();
+    const generator = new MarkdownHelper();
 
     this.addFrontMatterHeader(generator);
 
@@ -42,7 +42,7 @@ export default class JekyllDocsProcessor extends DocsProcessor {
   }
 
   process(classModel: ClassModel, outputDir: string) {
-    let generator = new MarkdownHelper();
+    const generator = new MarkdownHelper();
     this.addFrontMatterHeader(generator);
     this.generateDocsForClass(generator, classModel, 1);
 

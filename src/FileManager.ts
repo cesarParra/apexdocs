@@ -14,7 +14,7 @@ export default class FileManager {
 
   // TODO: Make static
   generate() {
-    let outputDir = Settings.getInstance().getOutputDir();
+    const outputDir = Settings.getInstance().getOutputDir();
     Settings.getInstance()
       .getDocsProcessor()
       .onBeforeProcess(this.classModels, Settings.getInstance().getOutputDir());

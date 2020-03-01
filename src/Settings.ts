@@ -40,7 +40,7 @@ export default class Settings {
   }
 
   getDocsProcessor(): DocsProcessor {
-    if (this.generator == 'jekyll') {
+    if (this.generator === 'jekyll') {
       return new JekyllDocsProcessor();
     }
 

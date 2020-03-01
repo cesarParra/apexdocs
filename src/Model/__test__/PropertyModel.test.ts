@@ -1,4 +1,4 @@
-import PropertyModel from './PropertyModel';
+import PropertyModel from '../PropertyModel';
 
 test('has no name by defaullt', () => {
   const property = new PropertyModel();

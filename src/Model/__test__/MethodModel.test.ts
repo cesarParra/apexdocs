@@ -1,4 +1,4 @@
-import MethodModel from './MethodModel';
+import MethodModel from '../MethodModel';
 
 test('name line can be set', () => {
   const method = new MethodModel();

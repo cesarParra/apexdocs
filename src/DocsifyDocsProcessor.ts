@@ -8,7 +8,7 @@ import ClassModel from './model/ClassModel';
 export default class DocsifyDocsProcessor extends DocsProcessor {
   onBeforeProcess(classes: ClassModel[], outputDir: string) {
     // Generate README.md listing all classes
-    let generator = new MarkdownHelper();
+    const generator = new MarkdownHelper();
 
     generator.addTitle('Classes');
     classes.forEach(classModel => {
@@ -34,7 +34,7 @@ export default class DocsifyDocsProcessor extends DocsProcessor {
   }
 
   process(classModel: ClassModel, outputDir: string) {
-    let generator = new MarkdownHelper();
+    const generator = new MarkdownHelper();
     this.generateDocsForClass(generator, classModel, 1);
 
     if (!fs.existsSync(outputDir)) {

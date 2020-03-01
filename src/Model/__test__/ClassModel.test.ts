@@ -1,6 +1,6 @@
-import ClassModel from './ClassModel';
-import PropertyModel from './PropertyModel';
-import MethodModel from './MethodModel';
+import ClassModel from '../ClassModel';
+import PropertyModel from '../PropertyModel';
+import MethodModel from '../MethodModel';
 
 test('new class model initializes correctly', () => {
   const classModel = new ClassModel();
