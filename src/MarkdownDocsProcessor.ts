@@ -8,12 +8,14 @@ import Settings from './Settings';
 
 export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   abstract getHomeFileName(): string;
+  // tslint:disable-next-line:no-empty
   onBeforeHomeFileCreated(generator: MarkdownHelper) {}
+  // tslint:disable-next-line:no-empty
   onBeforeClassFileCreated(generator: MarkdownHelper) {}
 
   onBeforeProcess(classes: ClassModel[], outputDir: string) {
     let headerContent;
-    let configPath = Settings.getInstance().getConfigPath();
+    const configPath = Settings.getInstance().getConfigPath();
     if (configPath) {
       let config;
       try {
