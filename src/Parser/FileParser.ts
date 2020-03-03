@@ -141,7 +141,9 @@ export default class FileParser {
         }
 
         if (cModel) {
-          const mModel = new MethodParser().getMethod(cModel.getClassName(), strLine, lstComments, iLine);
+          // If we are dealing with an inner class, we want the contents to the right of the period
+          const parsedClassName = cModel.getClassName().substr(cModel.getClassName().indexOf('.') + 1);
+          const mModel = new MethodParser().getMethod(parsedClassName, strLine, lstComments, iLine);
           cModel.getMethods().push(mModel);
         }
 
