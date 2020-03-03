@@ -10,12 +10,18 @@ export default class FileManager {
 
   // TODO: Make static
   generate() {
+    const sortedClasses = this.classModels.sort((classA, classB) => {
+      if (classA.getClassName() < classB.getClassName()) return -1;
+      if (classA.getClassName() > classB.getClassName()) return 1;
+      return 0;
+    });
+
     const outputDir = Settings.getInstance().getOutputDir();
     Settings.getInstance()
       .getDocsProcessor()
-      .onBeforeProcess(this.classModels, Settings.getInstance().getOutputDir());
+      .onBeforeProcess(sortedClasses, Settings.getInstance().getOutputDir());
 
-    this.classModels.forEach(classModel => {
+    sortedClasses.forEach(classModel => {
       Settings.getInstance()
         .getDocsProcessor()
         .process(classModel, outputDir);
