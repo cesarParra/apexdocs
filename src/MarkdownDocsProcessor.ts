@@ -191,6 +191,17 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
           generator.addText(methodModel.getDescription());
         }
 
+        if (methodModel.getParams().length) {
+          generator.addTitle('Parametes', level + 3);
+          methodModel.getParams().forEach(param => {
+            const firstWord = param.substr(0, param.indexOf(' '));
+            const paramDescription = param.substr(param.indexOf(' '));
+            generator.addBlankLine();
+            generator.addText(`\`${firstWord}\` ${paramDescription}`);
+            generator.addBlankLine();
+          });
+        }
+
         if (methodModel.getExample() !== '') {
           generator.startCodeBlock();
           generator.addText(methodModel.getExample());
@@ -223,6 +234,17 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
         if (methodModel.getDescription()) {
           generator.addBlankLine();
           generator.addText(methodModel.getDescription());
+        }
+
+        if (methodModel.getParams().length) {
+          generator.addTitle('Parametes', level + 3);
+          methodModel.getParams().forEach(param => {
+            const firstWord = param.substr(0, param.indexOf(' '));
+            const paramDescription = param.substr(param.indexOf(' '));
+            generator.addBlankLine();
+            generator.addText(`\`${firstWord}\` ${paramDescription}`);
+            generator.addBlankLine();
+          });
         }
 
         if (methodModel.getExample() !== '') {
