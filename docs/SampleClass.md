@@ -64,20 +64,20 @@ Description of the inner property.
 Executes from the inner class.
 
 ---
-#### SampleClass.InnerClass class
+### SampleClass.InnerClass class
 
 Inner class belonging to SampleClass.
 
 ---
-##### Properties
+#### Properties
 
-###### `InnerProp` → `public`
+##### `InnerProp` → `public`
 
 Description of the inner property.
 
 ---
-##### Methods
-###### `innerMethod()` → `void`
+#### Methods
+##### `innerMethod()` → `void`
 
 Executes from the inner class.
 

@@ -1,14 +1,13 @@
 import ApexModel from './ApexModel';
 import MethodModel from './MethodModel';
 import PropertyModel from './PropertyModel';
-import { toUnicode } from 'punycode';
 
 export default class ClassModel extends ApexModel {
   methods: MethodModel[] = [];
   properties: PropertyModel[] = [];
   cmodelParent?: ClassModel;
   childClasses: ClassModel[] = [];
-  strClassGroup: string = '';
+  strClassGroup: string = 'Miscellaneous';
   strClassGroupContent: string = '';
   isInterface: boolean = false;
 

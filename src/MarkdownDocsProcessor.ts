@@ -40,6 +40,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     const generator = new MarkdownHelper();
 
     this.onBeforeHomeFileCreated(generator);
+
     if (headerContent) {
       generator.addText(headerContent);
     }
@@ -55,6 +56,28 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
       generator.addBlankLine();
       generator.addBlankLine();
     });
+
+    // const groupedClasses: Map<string, ClassModel[]> = this.group(classes);
+
+    // generator.addTitle('Classes');
+
+    // groupedClasses.forEach((value: ClassModel[], key: string) => {
+    //   generator.addTitle(key, 2);
+
+    //   value.forEach(classModel => {
+    //     generator.addBlankLine();
+    //     generator.addTitle(
+    //       `[${classModel.getClassName()}](/${this.getSanitizedGroup(classModel)}/${classModel.getClassName()}.md)`,
+    //       3,
+    //     );
+    //     generator.addBlankLine();
+    //     generator.addBlankLine();
+    //     generator.addText(classModel.getDescription());
+
+    //     generator.addBlankLine();
+    //     generator.addBlankLine();
+    //   });
+    // });
 
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir);
@@ -77,6 +100,14 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     }
 
     const filePath = path.join(outputDir, `${classModel.getClassName()}.md`);
+
+    // const classGroupPath = path.join(outputDir, this.getSanitizedGroup(classModel));
+    // if (!fs.existsSync(classGroupPath)) {
+    //   fs.mkdirSync(classGroupPath);
+    // }
+
+    // const filePath = path.join(classGroupPath, `${classModel.getClassName()}.md`);
+
     fs.writeFile(filePath, generator.contents, 'utf8', () => {
       // tslint:disable-next-line:no-console
       console.log(`${classModel.getClassName()} processed.`);
@@ -99,6 +130,23 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     this.addProperties(generator, level, classModel);
     this.addMethods(generator, level, classModel);
     this.addInnerClasses(classModel, generator, level);
+  }
+
+  private getSanitizedGroup(classModel: ClassModel) {
+    return classModel
+      .getClassGroup()
+      .replace(/ /g, '-')
+      .replace('.', '');
+  }
+
+  private group(classes: ClassModel[]): Map<string, ClassModel[]> {
+    return classes.reduce((groups, currentClass) => {
+      const key = currentClass.getClassGroup();
+      const group: ClassModel[] = groups.get(key) || [];
+      group.push(currentClass);
+      groups.set(key, group);
+      return groups;
+    }, new Map());
   }
 
   private addProperties(generator: MarkdownHelper, level: number, classModel: ClassModel) {
@@ -193,6 +241,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   private addInnerClasses(classModel: ClassModel, generator: MarkdownHelper, level: number) {
     if (classModel.getChildClasses().length > 0) {
       generator.addTitle('Inner Classes', ++level);
+      level++;
       generator.addBlankLine();
       classModel
         .getChildClasses()
@@ -202,7 +251,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
           return 0;
         })
         .forEach(innerClass => {
-          this.generateDocsForClass(generator, innerClass, ++level);
+          this.generateDocsForClass(generator, innerClass, level);
         });
     }
   }

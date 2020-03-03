@@ -19,8 +19,19 @@ There are some key differences between ApexDocs and the Java based ApexDoc tool:
 
 ## Demo
 
-- [Jekyll](https://cesarparra.github.io/apexdocs/) - Pages formatted for [Jekyll](https://jekyllrb.com/).
-- [Docsify](https://cesarparra.github.io/apexdocs-docsify-example/) - Pages formatted for the [docsify](https://docsify.js.org/) site generator.
+ApexDocs currently supports generating markdown files for Jekyll and Docsify sites.
+
+### [Jekyll](https://jekyllrb.com/)
+
+Demo
+
+- [Jekyll](https://cesarparra.github.io/apexdocs/)
+
+### [Docsify](https://docsify.js.org/)
+
+Demo
+
+- [Docsify](https://cesarparra.github.io/apexdocs-docsify-example/)
 
 ## Installation
 
@@ -32,7 +43,15 @@ npm i @cparra/apexdocs
 
 ### CLI
 
-Use the CLI tool to generate a static site using the following parameters:
+```bash
+apexdocs-generate
+    -s src
+    -t docs
+    -p global
+    -g docsify
+```
+
+The CLI supports the following parameters:
 
 | Parameter         | Alias | Description                                                                                                      | Default         | Required |
 | ----------------- | ----- | ---------------------------------------------------------------------------------------------------------------- | --------------- | -------- |

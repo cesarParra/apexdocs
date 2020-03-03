@@ -10,6 +10,7 @@ export default class MethodParser {
 
   fillMethodModel(parentClassName: string, mModel: MethodModel, name: string, lstComments: string[], iLine: number) {
     mModel.setNameLine(name, iLine);
+
     const isConstructor = parentClassName === mModel.getMethodName();
     mModel.setIsConstructor(isConstructor);
 

@@ -10,7 +10,7 @@ test('new class model initializes correctly', () => {
   expect(classModel.getChildClasses()).toHaveLength(0);
   expect(classModel.getClassName()).toBe('');
   expect(classModel.getTopmostClassName()).toBe('');
-  expect(classModel.getClassGroup()).toBe('');
+  expect(classModel.getClassGroup()).toBe('Miscellaneous');
   expect(classModel.getClassGroupContent()).toBe('');
   expect(classModel.getIsInterface()).toBe(false);
 });

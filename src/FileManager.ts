@@ -1,8 +1,4 @@
-import * as fs from 'fs';
-import * as path from 'path';
-
 import Settings from './Settings';
-import MarkdownHelper from './MarkdownHelper';
 import ClassModel from './model/ClassModel';
 
 export default class FileManager {
