@@ -93,6 +93,70 @@ var { generate } = require('@cparra/apexdocs');
 let documentedClasses = generate('src', true, ['global'], 'docs');
 ```
 
+## Documentation Format
+
+ApexDocs picks up blocks of comments throughout your `.cls` files. The block must begin with `/**` and span through multiple lines, ending with `*/`.
+
+### Documenting Classes
+
+The following tags are supported on the class level:
+
+| Tag            | Description                             |
+| -------------- | --------------------------------------- |
+| `@description` | One or more lines describing the class. |
+
+**Example**
+
+```java
+/**
+ * @description This is my class description.
+ */
+ public with sharing class TestClass { }
+```
+
+### Documenting Properties
+
+The following tags are supported on the property level:
+
+| Tag            | Description                                |
+| -------------- | ------------------------------------------ |
+| `@description` | One or more lines describing the property. |
+
+**Example**
+
+```java
+/**
+ * @description This is my property description.
+ */
+ public String ExampleProperty { get; set; }
+```
+
+### Documenting Methods and Constructors
+
+Methods and constructors support the same tags.
+
+The following tags are supported on the method level:
+
+| Tag                  | Description                                    |
+| -------------------- | ---------------------------------------------- |
+| `@description`       | One or more lines describing the method.       |
+| `@param` _paramName_ | Description of a single parameter.             |
+| `@return`            | Description of the return value of the method. |
+| `@example`           | Example of how the code can be used or called. |
+
+**Example**
+
+```java
+/**
+ * @description This is my method description.
+ * @param action The action to execute.
+ * @return The result of the operation.
+ * @example
+ * Object result = SampleClass.call('exampleAction');
+ */
+ public static Object call(String action) {
+```
+
 ## Typescript
 
 ApexDocs provides all necessary type definitions.
