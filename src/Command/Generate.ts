@@ -12,10 +12,16 @@ export function generate(
   outputDir: string = 'docs',
   targetGenerator: string = 'jekyll',
   configPath?: string,
+  group?: boolean,
 ): ClassModel[] {
   Settings.getInstance().setScope(scope);
   Settings.getInstance().setOutputDir(outputDir);
   Settings.getInstance().setGenerator(targetGenerator);
+
+  if (group !== undefined) {
+    Settings.getInstance().setShouldGroup(group);
+  }
+
   if (configPath) {
     Settings.getInstance().setConfigPath(configPath);
   }

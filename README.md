@@ -61,6 +61,7 @@ The CLI supports the following parameters:
 | --scope           | -p    | A list of scopes to document. Values should be separated by a space, e.g --scope public private                  | `global public` | No       |
 | --targetGenerator | -g    | Define the static file generator for which the documents will be created. Currently supports jekyll and docsify. | `jekyll`        | No       |
 | --configPath      | -c    | The path to the JSON configuration file that defines the structure of the documents to generate.                 | N/A             | No       |
+| --group           | -o    | Define whether the generated files should be grouped by the @group tag on the top level classes.                 | `true`          | No       |
 
 #### Configuration File
 
@@ -101,9 +102,10 @@ ApexDocs picks up blocks of comments throughout your `.cls` files. The block mus
 
 The following tags are supported on the class level:
 
-| Tag            | Description                             |
-| -------------- | --------------------------------------- |
-| `@description` | One or more lines describing the class. |
+| Tag            | Description                              |
+| -------------- | ---------------------------------------- |
+| `@description` | One or more lines describing the class.  |
+| `@group`       | The group to which the class belongs to. |
 
 **Example**
 

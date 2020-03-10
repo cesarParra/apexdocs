@@ -46,38 +46,40 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     }
 
     generator.addTitle('Classes');
-    classes.forEach(classModel => {
-      generator.addBlankLine();
-      generator.addTitle(`[${classModel.getClassName()}](/${classModel.getClassName()}.md)`, 2);
-      generator.addBlankLine();
-      generator.addBlankLine();
-      generator.addText(classModel.getDescription());
 
-      generator.addBlankLine();
-      generator.addBlankLine();
-    });
+    if (!Settings.getInstance().getShouldGroup()) {
+      console.log('not grouping');
+      classes.forEach(classModel => {
+        generator.addBlankLine();
+        generator.addTitle(`[${classModel.getClassName()}](/${classModel.getClassName()}.md)`, 2);
+        generator.addBlankLine();
+        generator.addBlankLine();
+        generator.addText(classModel.getDescription());
 
-    // const groupedClasses: Map<string, ClassModel[]> = this.group(classes);
+        generator.addBlankLine();
+        generator.addBlankLine();
+      });
+    } else {
+      const groupedClasses: Map<string, ClassModel[]> = this.group(classes);
 
-    // generator.addTitle('Classes');
+      groupedClasses.forEach((value: ClassModel[], key: string) => {
+        generator.addTitle(key, 2);
 
-    // groupedClasses.forEach((value: ClassModel[], key: string) => {
-    //   generator.addTitle(key, 2);
+        value.forEach(classModel => {
+          generator.addBlankLine();
+          generator.addTitle(
+            `[${classModel.getClassName()}](/${this.getSanitizedGroup(classModel)}/${classModel.getClassName()}.md)`,
+            3,
+          );
+          generator.addBlankLine();
+          generator.addBlankLine();
+          generator.addText(classModel.getDescription());
 
-    //   value.forEach(classModel => {
-    //     generator.addBlankLine();
-    //     generator.addTitle(
-    //       `[${classModel.getClassName()}](/${this.getSanitizedGroup(classModel)}/${classModel.getClassName()}.md)`,
-    //       3,
-    //     );
-    //     generator.addBlankLine();
-    //     generator.addBlankLine();
-    //     generator.addText(classModel.getDescription());
-
-    //     generator.addBlankLine();
-    //     generator.addBlankLine();
-    //   });
-    // });
+          generator.addBlankLine();
+          generator.addBlankLine();
+        });
+      });
+    }
 
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir);
@@ -99,14 +101,17 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
       fs.mkdirSync(outputDir);
     }
 
-    const filePath = path.join(outputDir, `${classModel.getClassName()}.md`);
+    let filePath;
+    if (!Settings.getInstance().getShouldGroup()) {
+      filePath = path.join(outputDir, `${classModel.getClassName()}.md`);
+    } else {
+      const classGroupPath = path.join(outputDir, this.getSanitizedGroup(classModel));
+      if (!fs.existsSync(classGroupPath)) {
+        fs.mkdirSync(classGroupPath);
+      }
 
-    // const classGroupPath = path.join(outputDir, this.getSanitizedGroup(classModel));
-    // if (!fs.existsSync(classGroupPath)) {
-    //   fs.mkdirSync(classGroupPath);
-    // }
-
-    // const filePath = path.join(classGroupPath, `${classModel.getClassName()}.md`);
+      filePath = path.join(classGroupPath, `${classModel.getClassName()}.md`);
+    }
 
     fs.writeFile(filePath, generator.contents, 'utf8', () => {
       // tslint:disable-next-line:no-console

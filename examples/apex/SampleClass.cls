@@ -1,5 +1,6 @@
 /**
  * @description This is a class description.
+ * @group Sample Classes
  */
 public with sharing class SampleClass {
     /**

@@ -9,6 +9,7 @@ export default class Settings {
   private outputDir: string = 'docs';
   private generator: string = 'jekyll';
   private configPath: string | null = null;
+  private shouldGroup: boolean | null = true;
 
   private constructor() {}
 
@@ -54,5 +55,13 @@ export default class Settings {
 
   getConfigPath() {
     return this.configPath;
+  }
+
+  setShouldGroup(shouldGroup: boolean) {
+    this.shouldGroup = shouldGroup;
+  }
+
+  getShouldGroup() {
+    return this.shouldGroup;
   }
 }

@@ -1,5 +1,6 @@
 /**
  * @description This is an interface description.
+ * @group Sample Interfaces
  */
 public interface SampleInterface {
     /**

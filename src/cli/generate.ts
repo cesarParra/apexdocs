@@ -42,6 +42,14 @@ const argv = yargs.options({
     alias: 'c',
     describe: 'The path to the JSON configuration file that defines the structure of the documents to generate.',
   },
+  group: {
+    type: 'boolean',
+    alias: 'o',
+    default: true,
+    describe:
+      'Define whether the generated files should be grouped by the @group tag on the top level classes.' +
+      'If set to true, a sub directory will be created per group inside of the specified target directory.',
+  },
 }).argv;
 
 const generatedClassModels = generate(
@@ -51,5 +59,6 @@ const generatedClassModels = generate(
   argv.targetDir,
   argv.targetGenerator,
   argv.configPath,
+  argv.group,
 );
 new FileManager(generatedClassModels).generate();
