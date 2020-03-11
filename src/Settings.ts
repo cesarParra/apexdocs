@@ -1,15 +1,13 @@
 import DocsProcessor from './DocsProcessor';
-import DocsifyDocsProcessor from './DocsifyDocsProcessor';
-import JekyllDocsProcessor from './JekyllDocsProcessor';
 
 export default class Settings {
   private static instance: Settings;
 
   private desiredScope: string[] = ['global', 'public'];
   private outputDir: string = 'docs';
-  private generator: string = 'jekyll';
   private configPath: string | null = null;
   private shouldGroup: boolean | null = true;
+  private processor: DocsProcessor | null = null;
 
   private constructor() {}
 
@@ -37,16 +35,12 @@ export default class Settings {
     return this.outputDir;
   }
 
-  setGenerator(generator: string) {
-    this.generator = generator;
+  setDocsProcessor(processor: DocsProcessor) {
+    this.processor = processor;
   }
 
-  getDocsProcessor(): DocsProcessor {
-    if (this.generator === 'jekyll') {
-      return new JekyllDocsProcessor();
-    }
-
-    return new DocsifyDocsProcessor();
+  getDocsProcessor(): DocsProcessor | null {
+    return this.processor;
   }
 
   setConfigPath(configPath: string) {

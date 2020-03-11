@@ -48,7 +48,6 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     generator.addTitle('Classes');
 
     if (!Settings.getInstance().getShouldGroup()) {
-      console.log('not grouping');
       classes.forEach(classModel => {
         generator.addBlankLine();
         generator.addTitle(`[${classModel.getClassName()}](/${classModel.getClassName()}.md)`, 2);

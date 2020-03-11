@@ -5,6 +5,9 @@ import Settings from '../Settings';
 import ClassModel from '../model/ClassModel';
 import FileParser from '../parser/FileParser';
 
+import DocsifyDocsProcessor from '../DocsifyDocsProcessor';
+import JekyllDocsProcessor from '../JekyllDocsProcessor';
+
 export function generate(
   sourceDirectory: string,
   recursive: boolean = true,
@@ -16,7 +19,12 @@ export function generate(
 ): ClassModel[] {
   Settings.getInstance().setScope(scope);
   Settings.getInstance().setOutputDir(outputDir);
-  Settings.getInstance().setGenerator(targetGenerator);
+
+  if (targetGenerator === 'jekyll') {
+    Settings.getInstance().setDocsProcessor(new JekyllDocsProcessor());
+  } else {
+    Settings.getInstance().setDocsProcessor(new DocsifyDocsProcessor());
+  }
 
   if (group !== undefined) {
     Settings.getInstance().setShouldGroup(group);
