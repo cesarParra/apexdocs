@@ -16,15 +16,17 @@ export default class FileManager {
       return 0;
     });
 
+    const docsProcessor = Settings.getInstance().getDocsProcessor();
+
+    if (!docsProcessor) {
+      return;
+    }
+
     const outputDir = Settings.getInstance().getOutputDir();
-    Settings.getInstance()
-      .getDocsProcessor()
-      .onBeforeProcess(sortedClasses, Settings.getInstance().getOutputDir());
+    docsProcessor.onBeforeProcess(sortedClasses, Settings.getInstance().getOutputDir());
 
     sortedClasses.forEach(classModel => {
-      Settings.getInstance()
-        .getDocsProcessor()
-        .process(classModel, outputDir);
+      docsProcessor.process(classModel, outputDir);
     });
   }
 }

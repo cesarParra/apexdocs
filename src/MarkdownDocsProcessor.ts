@@ -5,6 +5,7 @@ import DocsProcessor from './DocsProcessor';
 import MarkdownHelper from './MarkdownHelper';
 import ClassModel from './model/ClassModel';
 import Settings from './Settings';
+import MethodModel from './model/MethodModel';
 
 export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   abstract getHomeFileName(): string;
@@ -196,21 +197,11 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
         }
 
         if (methodModel.getParams().length) {
-          generator.addTitle('Parametes', level + 3);
-          methodModel.getParams().forEach(param => {
-            const firstWord = param.substr(0, param.indexOf(' '));
-            const paramDescription = param.substr(param.indexOf(' '));
-            generator.addBlankLine();
-            generator.addText(`\`${firstWord}\` ${paramDescription}`);
-            generator.addBlankLine();
-          });
+          this.addParameters(generator, level, methodModel);
         }
 
         if (methodModel.getExample() !== '') {
-          generator.startCodeBlock();
-          generator.addText(methodModel.getExample());
-          generator.endCodeBlock();
-          generator.addBlankLine();
+          this.addExample(generator, methodModel, level);
         }
 
         generator.addBlankLine();
@@ -241,21 +232,11 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
         }
 
         if (methodModel.getParams().length) {
-          generator.addTitle('Parametes', level + 3);
-          methodModel.getParams().forEach(param => {
-            const firstWord = param.substr(0, param.indexOf(' '));
-            const paramDescription = param.substr(param.indexOf(' '));
-            generator.addBlankLine();
-            generator.addText(`\`${firstWord}\` ${paramDescription}`);
-            generator.addBlankLine();
-          });
+          this.addParameters(generator, level, methodModel);
         }
 
         if (methodModel.getExample() !== '') {
-          generator.startCodeBlock();
-          generator.addText(methodModel.getExample());
-          generator.endCodeBlock();
-          generator.addBlankLine();
+          this.addExample(generator, methodModel, level);
         }
 
         generator.addBlankLine();
@@ -280,5 +261,29 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
           this.generateDocsForClass(generator, innerClass, level);
         });
     }
+  }
+
+  private addParameters(generator: MarkdownHelper, level: number, methodModel: MethodModel) {
+    generator.addTitle('Parametes', level + 3);
+    // Building a table to display the parameters
+    generator.addText('|Param|Description|');
+    generator.addText('|-----|-----------|');
+
+    methodModel.getParams().forEach(param => {
+      const paramName = param.substr(0, param.indexOf(' '));
+      const paramDescription = param.substr(param.indexOf(' '));
+
+      generator.addText(`|\`${paramName}\` | ${paramDescription} |`);
+    });
+
+    generator.addBlankLine();
+  }
+
+  private addExample(generator: MarkdownHelper, methodModel: MethodModel, level: number) {
+    generator.addTitle('Example', level + 3);
+    generator.startCodeBlock();
+    generator.addText(methodModel.getExample());
+    generator.endCodeBlock();
+    generator.addBlankLine();
   }
 }
