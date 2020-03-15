@@ -10,6 +10,7 @@ export default class ClassModel extends ApexModel {
   strClassGroup: string = 'Miscellaneous';
   strClassGroupContent: string = '';
   isInterface: boolean = false;
+  seeList: string[] = [];
 
   constructor(parent?: any) {
     super();
@@ -95,5 +96,13 @@ export default class ClassModel extends ApexModel {
 
   setIsInterface(isInterface: boolean) {
     this.isInterface = isInterface;
+  }
+
+  addSee(seeClassName: string) {
+    this.seeList.push(seeClassName);
+  }
+
+  getSeeList() {
+    return this.seeList;
   }
 }

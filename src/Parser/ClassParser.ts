@@ -31,6 +31,13 @@ export default class ClassParser {
         continue;
       }
 
+      idxStart = comment.toLowerCase().indexOf('@see');
+      if (idxStart !== -1) {
+        cModel.addSee(comment.substring(idxStart + 4).trim());
+        inDescription = false;
+        continue;
+      }
+
       idxStart = comment.toLowerCase().indexOf('@group '); // needed to include space to not match group-content.
       if (idxStart !== -1) {
         cModel.setClassGroup(comment.substring(idxStart + 6).trim());

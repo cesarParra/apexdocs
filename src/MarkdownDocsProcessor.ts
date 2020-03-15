@@ -8,6 +8,8 @@ import Settings from './Settings';
 import MethodModel from './model/MethodModel';
 
 export default abstract class MarkdownDocsProcessor extends DocsProcessor {
+  private classes: ClassModel[] = [];
+
   abstract getHomeFileName(): string;
   // tslint:disable-next-line:no-empty
   onBeforeHomeFileCreated(generator: MarkdownHelper) {}
@@ -15,6 +17,8 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   onBeforeClassFileCreated(generator: MarkdownHelper) {}
 
   onBeforeProcess(classes: ClassModel[], outputDir: string) {
+    this.classes = classes;
+
     let headerContent;
     const configPath = Settings.getInstance().getConfigPath();
     if (configPath) {
@@ -51,7 +55,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     if (!Settings.getInstance().getShouldGroup()) {
       classes.forEach(classModel => {
         generator.addBlankLine();
-        generator.addTitle(`[${classModel.getClassName()}](/${classModel.getClassName()}.md)`, 2);
+        generator.addTitle(this.getFileLink(classModel), 2);
         generator.addBlankLine();
         generator.addBlankLine();
         generator.addText(classModel.getDescription());
@@ -67,10 +71,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
 
         value.forEach(classModel => {
           generator.addBlankLine();
-          generator.addTitle(
-            `[${classModel.getClassName()}](/${this.getSanitizedGroup(classModel)}/${classModel.getClassName()}.md)`,
-            3,
-          );
+          generator.addTitle(this.getFileLink(classModel), 3);
           generator.addBlankLine();
           generator.addBlankLine();
           generator.addText(classModel.getDescription());
@@ -127,6 +128,22 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
       generator.addBlankLine();
       generator.addText(classModel.getDescription());
       generator.addBlankLine();
+    }
+
+    if (classModel.getSeeList().length !== 0) {
+      generator.addTitle('Related', level + 1);
+      classModel.getSeeList().forEach(relatedClassName => {
+        const relatedClass = this.classes.find(classModel => classModel.getClassName() === relatedClassName);
+
+        generator.addBlankLine();
+        if (relatedClass) {
+          generator.addText(this.getFileLink(relatedClass));
+        } else {
+          generator.addText(relatedClassName);
+        }
+
+        generator.addBlankLine();
+      });
     }
 
     generator.addHorizontalRule();
@@ -285,5 +302,13 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     generator.addText(methodModel.getExample());
     generator.endCodeBlock();
     generator.addBlankLine();
+  }
+
+  private getFileLink(classModel: ClassModel) {
+    if (Settings.getInstance().getShouldGroup()) {
+      return `[${classModel.getClassName()}](/${this.getSanitizedGroup(classModel)}/${classModel.getClassName()}.md)`;
+    }
+
+    return `[${classModel.getClassName()}](/${classModel.getClassName()}.md)`;
   }
 }
