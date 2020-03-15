@@ -105,6 +105,7 @@ The following tags are supported on the class level:
 | Tag            | Description                              |
 | -------------- | ---------------------------------------- |
 | `@description` | One or more lines describing the class.  |
+| `@see`         | The name of a related class.             |
 | `@group`       | The group to which the class belongs to. |
 
 **Example**
