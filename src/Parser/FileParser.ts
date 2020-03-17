@@ -5,6 +5,7 @@ import Settings from '../Settings';
 import ClassParser from './ClassParser';
 import MethodParser from './MethodParser';
 import PropertyParser from './PropertyParser';
+import EnumParser from './EnumParser';
 
 import { peek } from '../utils';
 
@@ -128,6 +129,28 @@ export default class FileParser {
         // add it to its parent (or track the parent)
         if (cModelParent != null && cModelNew) cModelParent.addChildClass(cModelNew);
         else cModelParent = cModelNew;
+        continue;
+      }
+
+      // look for an enum
+      if (strLine.toLowerCase().includes(' enum ')) {
+        // deal with the enum over multiple lines.
+        const enumSignatureLine = strLine;
+        while (!strLine.includes('}')) {
+          i = i + 1;
+          strLine = contentLines[i];
+          iLine++;
+        }
+
+        const enumModel = new EnumParser().getEnum(enumSignatureLine, lstComments, iLine);
+        if (cModel) {
+          cModel.addChildEnum(enumModel);
+        } else {
+          // If there is no class model defined that means this enum lives in a stand alone file.
+          return enumModel;
+        }
+
+        lstComments.splice(0, lstComments.length);
         continue;
       }
 

@@ -1,4 +1,5 @@
 import Settings from './Settings';
+import DocsProcessor from './DocsProcessor';
 
 test('has global and public as default scope', () => {
   expect(Settings.getInstance().getScope()).toHaveLength(2);
@@ -25,4 +26,28 @@ test('can set output directory', () => {
   Settings.getInstance().setOutputDir(directory);
 
   expect(Settings.getInstance().getOutputDir()).toBe(directory);
+});
+
+test('that the processor can be set', () => {
+  const docsProcessor = jest.genMockFromModule('./DocsProcessor') as DocsProcessor;
+
+  Settings.getInstance().setDocsProcessor(docsProcessor);
+
+  expect(Settings.getInstance().getDocsProcessor()).toBe(docsProcessor);
+});
+
+test('that the config path can be set', () => {
+  const configPath = './config.json';
+
+  Settings.getInstance().setConfigPath(configPath);
+
+  expect(Settings.getInstance().getConfigPath()).toBe(configPath);
+});
+
+test('that shouldGroup can be set', () => {
+  const shouldGroup = false;
+
+  Settings.getInstance().setShouldGroup(shouldGroup);
+
+  expect(Settings.getInstance().getShouldGroup()).toBe(shouldGroup);
 });

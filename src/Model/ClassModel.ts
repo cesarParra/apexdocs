@@ -1,15 +1,18 @@
 import ApexModel from './ApexModel';
 import MethodModel from './MethodModel';
 import PropertyModel from './PropertyModel';
+import EnumModel from './EnumModel';
 
 export default class ClassModel extends ApexModel {
   methods: MethodModel[] = [];
   properties: PropertyModel[] = [];
   cmodelParent?: ClassModel;
   childClasses: ClassModel[] = [];
+  childEnums: EnumModel[] = [];
   strClassGroup: string = 'Miscellaneous';
   strClassGroupContent: string = '';
   isInterface: boolean = false;
+  isEnum: boolean = false;
   seeList: string[] = [];
 
   constructor(parent?: any) {
@@ -41,6 +44,14 @@ export default class ClassModel extends ApexModel {
 
   addChildClass(child: ClassModel) {
     this.childClasses.push(child);
+  }
+
+  addChildEnum(childEnum: EnumModel) {
+    this.childEnums.push(childEnum);
+  }
+
+  getChildEnums() {
+    return this.childEnums;
   }
 
   getClassName(): string {
@@ -96,6 +107,14 @@ export default class ClassModel extends ApexModel {
 
   setIsInterface(isInterface: boolean) {
     this.isInterface = isInterface;
+  }
+
+  getIsEnum() {
+    return this.isEnum;
+  }
+
+  setIsEnum(isEnum: boolean) {
+    this.isEnum = isEnum;
   }
 
   addSee(seeClassName: string) {

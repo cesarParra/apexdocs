@@ -1,4 +1,3 @@
-import ClassModel from '../../model/ClassModel';
 import ClassParser from '../ClassParser';
 
 const nameLine = 'public with sharing class Test {';

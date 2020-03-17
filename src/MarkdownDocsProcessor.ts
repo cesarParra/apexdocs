@@ -121,7 +121,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   }
 
   generateDocsForClass(generator: MarkdownHelper, classModel: ClassModel, level: number) {
-    const suffix = classModel.getIsInterface() ? 'interface' : 'class';
+    const suffix = classModel.getIsInterface() ? 'interface' : classModel.getIsEnum() ? 'enum' : 'class';
     generator.addTitle(`${classModel.getClassName()} ${suffix}`, level);
 
     if (classModel.getDescription()) {
@@ -133,7 +133,9 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     if (classModel.getSeeList().length !== 0) {
       generator.addTitle('Related', level + 1);
       classModel.getSeeList().forEach(relatedClassName => {
-        const relatedClass = this.classes.find(classModel => classModel.getClassName() === relatedClassName);
+        const relatedClass = this.classes.find(
+          currentClassModel => currentClassModel.getClassName() === relatedClassName,
+        );
 
         generator.addBlankLine();
         if (relatedClass) {
@@ -149,6 +151,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     generator.addHorizontalRule();
 
     this.addConstructors(generator, level, classModel);
+    this.addEnums(generator, level, classModel);
     this.addProperties(generator, level, classModel);
     this.addMethods(generator, level, classModel);
     this.addInnerClasses(classModel, generator, level);
@@ -222,6 +225,33 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
         }
 
         generator.addBlankLine();
+      });
+
+    generator.addHorizontalRule();
+  }
+
+  private addEnums(generator: MarkdownHelper, level: number, classModel: ClassModel) {
+    if (classModel.getChildEnums().length === 0) {
+      return;
+    }
+
+    generator.addTitle('Enums', level + 1);
+    classModel
+      .getChildEnums()
+      .sort((enumA, enumB) => {
+        if (enumA.getClassName() < enumB.getClassName()) return -1;
+        if (enumA.getClassName() > enumB.getClassName()) return 1;
+        return 0;
+      })
+      .forEach(enumModel => {
+        generator.addTitle(enumModel.getClassName(), level + 2);
+        generator.addBlankLine();
+
+        if (enumModel.getDescription()) {
+          generator.addBlankLine();
+          generator.addText(enumModel.getDescription());
+          generator.addBlankLine();
+        }
       });
 
     generator.addHorizontalRule();
