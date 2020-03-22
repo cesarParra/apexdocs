@@ -21,17 +21,17 @@ There are some key differences between ApexDocs and the Java based ApexDoc tool:
 
 ApexDocs currently supports generating markdown files for Jekyll and Docsify sites.
 
-### [Jekyll](https://jekyllrb.com/)
-
-Demo
-
-- [Jekyll](https://cesarparra.github.io/apexdocs/)
-
 ### [Docsify](https://docsify.js.org/)
 
 Demo
 
 - [Docsify](https://cesarparra.github.io/apexdocs-docsify-example/)
+
+### [Jekyll](https://jekyllrb.com/)
+
+Demo
+
+- [Jekyll](https://cesarparra.github.io/apexdocs/)
 
 ## Installation
 
@@ -117,6 +117,23 @@ The following tags are supported on the class level:
  public with sharing class TestClass { }
 ```
 
+### Documenting Enums
+
+The following tags are supported on the enum level:
+
+| Tag            | Description                            |
+| -------------- | -------------------------------------- |
+| `@description` | One or more lines describing the enum. |
+
+**Example**
+
+```java
+/**
+ * @description This is my enum description.
+ */
+ public Enum ExampleEnum { VALUE_1, VALUE_2 }
+```
+
 ### Documenting Properties
 
 The following tags are supported on the property level:
@@ -158,6 +175,22 @@ The following tags are supported on the method level:
  * Object result = SampleClass.call('exampleAction');
  */
  public static Object call(String action) {
+```
+
+### Inline linking
+
+Apexdocs allows you to reference other classes from anywhere in your docs, and automatically creates a link to that class
+file for easy navigation. To let Apexdocs know that you are reference another class, wrap the class name in between `<<` `>>`.
+
+**Example**
+
+```java
+/**
+ * @description This is my method description. This method receives an <<ExampleClass>>.
+ * @param param1 An <<ExampleClass>> instance.
+ * @return The result of the operation.
+ */
+ public static Object class(ExampleClass param1) {
 ```
 
 ## Typescript

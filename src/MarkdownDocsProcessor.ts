@@ -6,6 +6,7 @@ import MarkdownHelper from './MarkdownHelper';
 import ClassModel from './model/ClassModel';
 import Settings from './Settings';
 import MethodModel from './model/MethodModel';
+import ClassFileGeneratorHelper from './ClassFileGeneratorHelper';
 
 export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   private classes: ClassModel[] = [];
@@ -19,30 +20,10 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   onBeforeProcess(classes: ClassModel[], outputDir: string) {
     this.classes = classes;
 
-    let headerContent;
-    const configPath = Settings.getInstance().getConfigPath();
-    if (configPath) {
-      let config;
-      try {
-        const rawFile = fs.readFileSync(configPath);
-        config = JSON.parse(rawFile.toString());
-      } catch (error) {
-        throw new Error('Error occurred while reading the configuration file ' + error.toString());
-      }
-
-      if (config.home && config.home.header) {
-        const headerFilePath = config.home.header;
-        try {
-          const rawHeader = fs.readFileSync(headerFilePath);
-          headerContent = rawHeader.toString();
-        } catch (error) {
-          throw new Error('Error occurred while reading the header file ' + error.toString());
-        }
-      }
-    }
+    const headerContent = this.getHeader();
 
     // Generate home page listing all classes.
-    const generator = new MarkdownHelper();
+    const generator = new MarkdownHelper(classes);
 
     this.onBeforeHomeFileCreated(generator);
 
@@ -55,7 +36,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     if (!Settings.getInstance().getShouldGroup()) {
       classes.forEach(classModel => {
         generator.addBlankLine();
-        generator.addTitle(this.getFileLink(classModel), 2);
+        generator.addTitle(ClassFileGeneratorHelper.getFileLink(classModel), 2);
         generator.addBlankLine();
         generator.addBlankLine();
         generator.addText(classModel.getDescription());
@@ -71,7 +52,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
 
         value.forEach(classModel => {
           generator.addBlankLine();
-          generator.addTitle(this.getFileLink(classModel), 3);
+          generator.addTitle(ClassFileGeneratorHelper.getFileLink(classModel), 3);
           generator.addBlankLine();
           generator.addBlankLine();
           generator.addText(classModel.getDescription());
@@ -94,7 +75,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   }
 
   process(classModel: ClassModel, outputDir: string) {
-    const generator = new MarkdownHelper();
+    const generator = new MarkdownHelper(this.classes);
     this.onBeforeClassFileCreated(generator);
     this.generateDocsForClass(generator, classModel, 1);
 
@@ -106,7 +87,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     if (!Settings.getInstance().getShouldGroup()) {
       filePath = path.join(outputDir, `${classModel.getClassName()}.md`);
     } else {
-      const classGroupPath = path.join(outputDir, this.getSanitizedGroup(classModel));
+      const classGroupPath = path.join(outputDir, ClassFileGeneratorHelper.getSanitizedGroup(classModel));
       if (!fs.existsSync(classGroupPath)) {
         fs.mkdirSync(classGroupPath);
       }
@@ -139,7 +120,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
 
         generator.addBlankLine();
         if (relatedClass) {
-          generator.addText(this.getFileLink(relatedClass));
+          generator.addText(ClassFileGeneratorHelper.getFileLink(relatedClass));
         } else {
           generator.addText(relatedClassName);
         }
@@ -157,11 +138,28 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     this.addInnerClasses(classModel, generator, level);
   }
 
-  private getSanitizedGroup(classModel: ClassModel) {
-    return classModel
-      .getClassGroup()
-      .replace(/ /g, '-')
-      .replace('.', '');
+  private getHeader() {
+    let headerContent;
+    const configPath = Settings.getInstance().getConfigPath();
+    if (configPath) {
+      let config;
+      try {
+        const rawFile = fs.readFileSync(configPath);
+        config = JSON.parse(rawFile.toString());
+      } catch (error) {
+        throw new Error('Error occurred while reading the configuration file ' + error.toString());
+      }
+      if (config.home && config.home.header) {
+        const headerFilePath = config.home.header;
+        try {
+          const rawHeader = fs.readFileSync(headerFilePath);
+          headerContent = rawHeader.toString();
+        } catch (error) {
+          throw new Error('Error occurred while reading the header file ' + error.toString());
+        }
+      }
+    }
+    return headerContent;
   }
 
   private group(classes: ClassModel[]): Map<string, ClassModel[]> {
@@ -332,13 +330,5 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     generator.addText(methodModel.getExample());
     generator.endCodeBlock();
     generator.addBlankLine();
-  }
-
-  private getFileLink(classModel: ClassModel) {
-    if (Settings.getInstance().getShouldGroup()) {
-      return `[${classModel.getClassName()}](/${this.getSanitizedGroup(classModel)}/${classModel.getClassName()}.md)`;
-    }
-
-    return `[${classModel.getClassName()}](/${classModel.getClassName()}.md)`;
   }
 }
