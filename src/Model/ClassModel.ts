@@ -14,6 +14,7 @@ export default class ClassModel extends ApexModel {
   isInterface: boolean = false;
   isEnum: boolean = false;
   seeList: string[] = [];
+  className: string = '';
 
   constructor(parent?: any) {
     super();
@@ -55,6 +56,10 @@ export default class ClassModel extends ApexModel {
   }
 
   getClassName(): string {
+    if (this.className !== '') {
+      return this.className;
+    }
+
     let nameLine = this.getNameLine();
     const strParent = this.cmodelParent == null ? '' : this.cmodelParent.getClassName() + '.';
     if (nameLine != null) nameLine = nameLine.trim();
@@ -77,6 +82,10 @@ export default class ClassModel extends ApexModel {
     } else {
       return '';
     }
+  }
+
+  setClassName(className: string) {
+    this.className = className;
   }
 
   getTopmostClassName() {
