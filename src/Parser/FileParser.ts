@@ -134,15 +134,7 @@ export default class FileParser {
 
       // look for an enum
       if (strLine.toLowerCase().includes(' enum ')) {
-        // deal with the enum over multiple lines.
-        const enumSignatureLine = strLine;
-        while (!strLine.includes('}')) {
-          i = i + 1;
-          strLine = contentLines[i];
-          iLine++;
-        }
-
-        const enumModel = new EnumParser().getEnum(enumSignatureLine, lstComments, iLine);
+        const enumModel = new EnumParser().getEnum(strLine, lstComments, iLine);
         if (cModel) {
           cModel.addChildEnum(enumModel);
         } else {
