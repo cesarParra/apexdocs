@@ -52,9 +52,11 @@ export default class MarkdownHelper {
 
   startCodeBlock() {
     this.contents += '```';
+    this.addBlankLine();
   }
 
   endCodeBlock() {
     this.contents += '```';
+    this.addBlankLine();
   }
 }
