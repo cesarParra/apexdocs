@@ -65,12 +65,20 @@ The CLI supports the following parameters:
 
 #### Configuration File
 
-You can optionally specify the path to a configuration JSON file through the `--configPath` parameter. This let's you embedd custom content into your home page, by using the `header` property to point to the a file which contents will be added to the top of the generated home page.
+You can optionally specify the path to a configuration JSON file through the `--configPath` parameter. This let's you have some additional control over the content outputs.
+
+For instance, you can embedd custom content into your home page by using the `header` property to point to the a file which contents will be added to the top of the generated home page.
+
+Additionally, the `@author` and `@date` tags at the class level are not automatically added to the files by default. But to specify that you want this data added you can use the `content` property to set the author and date flags on.
 
 ```
 {
   "home": {
     "header": "./examples/includes/header.md"
+  },
+  "content": {
+    "includeAuthor": true,
+    "includeDate": true
   }
 }
 ```
@@ -102,11 +110,13 @@ ApexDocs picks up blocks of comments throughout your `.cls` files. The block mus
 
 The following tags are supported on the class level:
 
-| Tag            | Description                              |
-| -------------- | ---------------------------------------- |
-| `@description` | One or more lines describing the class.  |
-| `@see`         | The name of a related class.             |
-| `@group`       | The group to which the class belongs to. |
+| Tag            | Description                                                                                                                                |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `@description` | One or more lines describing the class.                                                                                                    |
+| `@see`         | The name of a related class.                                                                                                               |
+| `@group`       | The group to which the class belongs to.                                                                                                   |
+| `@author`      | The author of the class. Note that this only gets added if it is explicitly defined through the configuration class that it should.        |
+| `@date`        | The date the class was created. Note that this only gets added if it is explicitly defined through the configuration class that it should. |
 
 **Example**
 
