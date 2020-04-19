@@ -5,6 +5,7 @@ import DocsProcessor from './DocsProcessor';
 import MarkdownHelper from './MarkdownHelper';
 import ClassModel from './model/ClassModel';
 import Settings from './Settings';
+import Configuration from './Configuration';
 import MethodModel from './model/MethodModel';
 import ClassFileGeneratorHelper from './ClassFileGeneratorHelper';
 
@@ -20,7 +21,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   onBeforeProcess(classes: ClassModel[], outputDir: string) {
     this.classes = classes;
 
-    const headerContent = this.getHeader();
+    const headerContent = Configuration.getHeader();
 
     // Generate home page listing all classes.
     const generator = new MarkdownHelper(classes);
@@ -111,6 +112,16 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
       generator.addBlankLine();
     }
 
+    if (Configuration.shouldIncludeAuthor() && classModel.getAuthor()) {
+      generator.addBlankLine();
+      generator.addText(`**Author:** ${classModel.getAuthor()}`);
+    }
+
+    if (Configuration.shouldIncludeDate() && classModel.getDate()) {
+      generator.addBlankLine();
+      generator.addText(`**Date:** ${classModel.getDate()}`);
+    }
+
     if (classModel.getSeeList().length !== 0) {
       generator.addTitle('Related', level + 1);
       classModel.getSeeList().forEach(relatedClassName => {
@@ -136,30 +147,6 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     this.addProperties(generator, level, classModel);
     this.addMethods(generator, level, classModel);
     this.addInnerClasses(classModel, generator, level);
-  }
-
-  private getHeader() {
-    let headerContent;
-    const configPath = Settings.getInstance().getConfigPath();
-    if (configPath) {
-      let config;
-      try {
-        const rawFile = fs.readFileSync(configPath);
-        config = JSON.parse(rawFile.toString());
-      } catch (error) {
-        throw new Error('Error occurred while reading the configuration file ' + error.toString());
-      }
-      if (config.home && config.home.header) {
-        const headerFilePath = config.home.header;
-        try {
-          const rawHeader = fs.readFileSync(headerFilePath);
-          headerContent = rawHeader.toString();
-        } catch (error) {
-          throw new Error('Error occurred while reading the header file ' + error.toString());
-        }
-      }
-    }
-    return headerContent;
   }
 
   private group(classes: ClassModel[]): Map<string, ClassModel[]> {
