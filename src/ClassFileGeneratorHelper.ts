@@ -1,5 +1,6 @@
 import ClassModel from './model/ClassModel';
 import Settings from './Settings';
+import Configuration from './Configuration';
 
 export default class ClassFileGeneratorHelper {
   public static getSanitizedGroup(classModel: ClassModel) {
@@ -10,10 +11,16 @@ export default class ClassFileGeneratorHelper {
   }
 
   public static getFileLink(classModel: ClassModel) {
+    const root = Configuration.getConfig()?.root ? Configuration.getConfig()?.root : '';
+    let fileLink;
     if (Settings.getInstance().getShouldGroup()) {
-      return `[${classModel.getClassName()}](/${this.getSanitizedGroup(classModel)}/${classModel.getClassName()}.md)`;
+      fileLink = `[${classModel.getClassName()}](${root}/${this.getSanitizedGroup(
+        classModel,
+      )}/${classModel.getClassName()}.md)`;
+    } else {
+      fileLink = `[${classModel.getClassName()}](${root}/${classModel.getClassName()}.md)`;
     }
 
-    return `[${classModel.getClassName()}](/${classModel.getClassName()}.md)`;
+    return fileLink;
   }
 }

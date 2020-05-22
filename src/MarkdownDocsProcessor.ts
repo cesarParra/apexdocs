@@ -21,7 +21,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   onBeforeProcess(classes: ClassModel[], outputDir: string) {
     this.classes = classes;
 
-    const headerContent = Configuration.getHeader();
+    const headerContent = Configuration.getConfig()?.home?.header;
 
     // Generate home page listing all classes.
     const generator = new MarkdownHelper(classes);
@@ -78,7 +78,8 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   process(classModel: ClassModel, outputDir: string) {
     const generator = new MarkdownHelper(this.classes);
     this.onBeforeClassFileCreated(generator);
-    this.generateDocsForClass(generator, classModel, 1);
+    const startingHeadingLevel = Configuration.getConfig()?.content?.startingHeadingLevel || 1;
+    this.generateDocsForClass(generator, classModel, startingHeadingLevel);
 
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir);
@@ -112,12 +113,12 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
       generator.addBlankLine();
     }
 
-    if (Configuration.shouldIncludeAuthor() && classModel.getAuthor()) {
+    if (Configuration.getConfig()?.content?.includeAuthor && classModel.getAuthor()) {
       generator.addBlankLine();
       generator.addText(`**Author:** ${classModel.getAuthor()}`);
     }
 
-    if (Configuration.shouldIncludeDate() && classModel.getDate()) {
+    if (Configuration.getConfig()?.content?.includeDate && classModel.getDate()) {
       generator.addBlankLine();
       generator.addText(`**Date:** ${classModel.getDate()}`);
     }

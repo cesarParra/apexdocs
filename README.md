@@ -67,16 +67,20 @@ The CLI supports the following parameters:
 
 You can optionally specify the path to a configuration JSON file through the `--configPath` parameter. This let's you have some additional control over the content outputs.
 
-For instance, you can embedd custom content into your home page by using the `header` property to point to the a file which contents will be added to the top of the generated home page.
+For instance, you can specify the root directory for where the files are being generated. This can be helpful when embedding the generated docs into an existing site so that the links are generated correctly.
+
+You can also embedd custom content into your home page by using the `header` property to point to the a file which contents will be added to the top of the generated home page.
 
 Additionally, the `@author` and `@date` tags at the class level are not automatically added to the files by default. But to specify that you want this data added you can use the `content` property to set the author and date flags on.
 
 ```
 {
+  "root": "root-directory",
   "home": {
     "header": "./examples/includes/header.md"
   },
   "content": {
+    "startingHeadingLevel": 1,
     "includeAuthor": true,
     "includeDate": true
   }
