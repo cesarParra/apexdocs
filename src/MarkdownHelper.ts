@@ -1,5 +1,6 @@
 import ClassModel from './model/ClassModel';
 import ClassFileGeneratorHelper from './ClassFileGeneratorHelper';
+import Configuration from './Configuration';
 
 export default class MarkdownHelper {
   contents: string = '';
@@ -37,6 +38,19 @@ export default class MarkdownHelper {
       });
     });
 
+    // Parsing links using {@link ClassName} format
+    const linkFormatRegEx = '{@link (.*?)}';
+    const expression = new RegExp(linkFormatRegEx, 'gi');
+    const matches = text.matchAll(expression) || [];
+
+    for (const match of matches) {
+      this.classes.forEach(classModel => {
+        if (classModel.getClassName() === match[1]) {
+          text = text.replace(match[0], ClassFileGeneratorHelper.getFileLink(classModel));
+        }
+      });
+    }
+
     this.contents += text;
     this.addBlankLine();
   }
@@ -52,6 +66,10 @@ export default class MarkdownHelper {
 
   startCodeBlock() {
     this.contents += '```';
+    const sourceLanguage = Configuration.getConfig()?.sourceLanguage;
+    if (sourceLanguage) {
+      this.contents += sourceLanguage;
+    }
     this.addBlankLine();
   }
 

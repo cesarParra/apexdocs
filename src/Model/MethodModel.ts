@@ -3,6 +3,7 @@ import { findPreviousWord } from '../utils';
 
 export default class MethodModel extends ApexModel {
   params: string[] = [];
+  thrownExceptions: string[] = [];
   iLine: number | undefined;
   returnType: string = '';
   private isConstructor: boolean = false;
@@ -22,6 +23,14 @@ export default class MethodModel extends ApexModel {
 
   setParams(params: string[]) {
     this.params = params;
+  }
+
+  getThrownExceptions() {
+    return this.thrownExceptions;
+  }
+
+  setThrownExceptions(thrownExceptions: string[]) {
+    this.thrownExceptions = thrownExceptions;
   }
 
   getReturnType() {

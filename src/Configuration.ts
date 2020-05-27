@@ -9,9 +9,12 @@ interface ConfigContent {
   startingHeadingLevel?: number;
   includeAuthor?: string;
   includeDate?: string;
+  plugins: string[];
 }
 interface Config {
   root?: string;
+  defaultGroupName?: string;
+  sourceLanguage?: string;
   home?: ConfigHome;
   content?: ConfigContent;
 }

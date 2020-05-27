@@ -68,6 +68,14 @@ export default class MethodParser {
         continue;
       }
 
+      idxStart = comment.toLowerCase().indexOf('@throws');
+      if (idxStart !== -1) {
+        mModel.getThrownExceptions().push(comment.substring(idxStart + 7).trim());
+        inDescription = false;
+        inExample = false;
+        continue;
+      }
+
       idxStart = comment.toLowerCase().indexOf('@example');
       if (idxStart !== -1 || i === 1) {
         if (idxStart !== -1 && comment.length >= idxStart + 8) {

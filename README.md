@@ -67,15 +67,69 @@ The CLI supports the following parameters:
 
 You can optionally specify the path to a configuration JSON file through the `--configPath` parameter. This let's you have some additional control over the content outputs.
 
-For instance, you can specify the root directory for where the files are being generated. This can be helpful when embedding the generated docs into an existing site so that the links are generated correctly.
+The configuration file allows you to specify the following:
 
-You can also embedd custom content into your home page by using the `header` property to point to the a file which contents will be added to the top of the generated home page.
+_Note_: Everything in the configuration file is optional. When something is not specified, the default will be used.
 
-Additionally, the `@author` and `@date` tags at the class level are not automatically added to the files by default. But to specify that you want this data added you can use the `content` property to set the author and date flags on.
+`root` (String)
+
+Default: None
+
+Allows you to specify the root directory for where the files are being generated. This can be helpful when embedding the generated docs into an existing site so that the links are generated correctly.
+
+`defaultGroupName`
+
+Default: Miscellaneous
+
+Defines the `@group` name to be used when a file does not specify it.
+
+`sourceLanguage`
+
+Default: None
+
+Defines the name of the language that will be used when generating `@example` blocks. Use this when you are interested in using syntax highlighting for your project.
+
+Even though the source code material for which documentation is generated is always `Apex`, generally you will be able to use a syntax highlighter that recognizes `java` source code, so set this value to `java` in those cases.
+
+`home` (Object)
+
+Gives you control over the home page.
+
+`home.header` (String)
+
+Default: None
+
+Allows you to embedd custom content into your home page by using the `header` property to point to the a file which contents will be added to the top of the generated home page.
+
+Specify the path with the content that you want to embed.
+
+`content` (Object)
+
+Gives you control over the content pages.
+
+`content.includeAuthor` (Boolean)
+
+Default: false
+
+Whether the `@author` tag should be used to add the file's author to the page.
+
+`content.date` (Boolean)
+
+Default: false
+
+Whether the `@date` tag should be used to add the file's date to the page.
+
+`content.startingHeadingLevel` (Number)
+
+Default: 1
+
+The starting H tag level for the document. Each title will use this as the starting point to generate the approaprite `<h#>` tag. For example, if set to 1, the class' file name at the top of the file will use an `<h1>` tag, the `Properties` title will be `<h2>`, each property name will be an `<h3>`, etc.
 
 ```
 {
   "root": "root-directory",
+  "defaultGrouName": "api",
+  "sourceLanguage": "java",
   "home": {
     "header": "./examples/includes/header.md"
   },
@@ -194,14 +248,19 @@ The following tags are supported on the method level:
 ### Inline linking
 
 Apexdocs allows you to reference other classes from anywhere in your docs, and automatically creates a link to that class
-file for easy navigation. To let Apexdocs know that you are reference another class, wrap the class name in between `<<` `>>`.
+file for easy navigation.
+
+Apexdocs recognizes 2 different syntax when linking files:
+
+- Javadoc's `{@link FileName}` syntax
+- A class name wrapped in between `<<` `>>`.
 
 **Example**
 
 ```java
 /**
  * @description This is my method description. This method receives an <<ExampleClass>>.
- * @param param1 An <<ExampleClass>> instance.
+ * @param param1 An <<ExampleClass>> instance. Can also do {@link ExampleClass}
  * @return The result of the operation.
  */
  public static Object class(ExampleClass param1) {

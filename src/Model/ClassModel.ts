@@ -2,6 +2,7 @@ import ApexModel from './ApexModel';
 import MethodModel from './MethodModel';
 import PropertyModel from './PropertyModel';
 import EnumModel from './EnumModel';
+import Configuration from '../Configuration';
 
 export default class ClassModel extends ApexModel {
   methods: MethodModel[] = [];
@@ -9,7 +10,7 @@ export default class ClassModel extends ApexModel {
   cmodelParent?: ClassModel;
   childClasses: ClassModel[] = [];
   childEnums: EnumModel[] = [];
-  strClassGroup: string = 'Miscellaneous';
+  strClassGroup: string = Configuration.getConfig()?.defaultGroupName || 'Miscellaneous';
   strClassGroupContent: string = '';
   isInterface: boolean = false;
   isEnum: boolean = false;

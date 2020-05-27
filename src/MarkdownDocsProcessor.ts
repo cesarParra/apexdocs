@@ -206,6 +206,10 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
           this.addParameters(generator, level, methodModel);
         }
 
+        if (methodModel.getThrownExceptions().length) {
+          this.addThrowsBlock(generator, level, methodModel);
+        }
+
         if (methodModel.getExample() !== '') {
           this.addExample(generator, methodModel, level);
         }
@@ -268,6 +272,10 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
           this.addParameters(generator, level, methodModel);
         }
 
+        if (methodModel.getThrownExceptions().length) {
+          this.addThrowsBlock(generator, level, methodModel);
+        }
+
         if (methodModel.getExample() !== '') {
           this.addExample(generator, methodModel, level);
         }
@@ -297,7 +305,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   }
 
   private addParameters(generator: MarkdownHelper, level: number, methodModel: MethodModel) {
-    generator.addTitle('Parametes', level + 3);
+    generator.addTitle('Parameters', level + 3);
     // Building a table to display the parameters
     generator.addText('|Param|Description|');
     generator.addText('|-----|-----------|');
@@ -307,6 +315,22 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
       const paramDescription = param.substr(param.indexOf(' '));
 
       generator.addText(`|\`${paramName}\` | ${paramDescription} |`);
+    });
+
+    generator.addBlankLine();
+  }
+
+  private addThrowsBlock(generator: MarkdownHelper, level: number, methodModel: MethodModel) {
+    generator.addTitle('Throws', level + 3);
+    // Building a table to display the exceptions
+    generator.addText('|Exception|Description|');
+    generator.addText('|---------|-----------|');
+
+    methodModel.getThrownExceptions().forEach(param => {
+      const exceptionName = param.substr(0, param.indexOf(' '));
+      const exceptionDescription = param.substr(param.indexOf(' '));
+
+      generator.addText(`|\`${exceptionName}\` | ${exceptionDescription} |`);
     });
 
     generator.addBlankLine();
