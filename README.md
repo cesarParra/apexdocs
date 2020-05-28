@@ -225,12 +225,13 @@ Methods and constructors support the same tags.
 
 The following tags are supported on the method level:
 
-| Tag                  | Description                                    |
-| -------------------- | ---------------------------------------------- |
-| `@description`       | One or more lines describing the method.       |
-| `@param` _paramName_ | Description of a single parameter.             |
-| `@return`            | Description of the return value of the method. |
-| `@example`           | Example of how the code can be used or called. |
+| Tag                       | Description                                       |
+| ------------------------- | ------------------------------------------------- |
+| `@description`            | One or more lines describing the method.          |
+| `@param` _paramName_      | Description of a single parameter.                |
+| `@return`                 | Description of the return value of the method.    |
+| `@example`                | Example of how the code can be used or called.    |
+| `@throws` _ExceptionName_ | Description of an exception thrown by the method. |
 
 **Example**
 

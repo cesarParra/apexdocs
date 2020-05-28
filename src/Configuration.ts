@@ -9,7 +9,7 @@ interface ConfigContent {
   startingHeadingLevel?: number;
   includeAuthor?: string;
   includeDate?: string;
-  plugins: string[];
+  injections?: Injection;
 }
 interface Config {
   root?: string;
@@ -17,6 +17,22 @@ interface Config {
   sourceLanguage?: string;
   home?: ConfigHome;
   content?: ConfigContent;
+}
+
+interface Injection {
+  doc: DocInjection;
+}
+
+interface DocInjection {
+  onInit: string[];
+  onEnd: string[];
+  method: MethodInjection;
+}
+
+interface MethodInjection {
+  onInit: string[];
+  onEnd: string[];
+  onBeforeExample: string[];
 }
 
 export default class Configuration {
