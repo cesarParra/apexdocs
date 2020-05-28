@@ -41,7 +41,15 @@ export default class MarkdownHelper {
     // Parsing links using {@link ClassName} format
     const linkFormatRegEx = '{@link (.*?)}';
     const expression = new RegExp(linkFormatRegEx, 'gi');
-    const matches = text.matchAll(expression) || [];
+    let match;
+    let matches = [];
+
+    do {
+      match = expression.exec(text);
+      if (match) {
+        matches.push(match);
+      }
+    } while (match);
 
     for (const match of matches) {
       this.classes.forEach(classModel => {
