@@ -104,7 +104,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   }
 
   generateDocsForClass(generator: MarkdownHelper, classModel: ClassModel, level: number) {
-    Configuration.getConfig()?.content?.injections?.doc.onInit.forEach(injection => {
+    Configuration.getConfig()?.content?.injections?.doc?.onInit?.forEach(injection => {
       generator.addText(injection);
     });
     const suffix = classModel.getIsInterface() ? 'interface' : classModel.getIsEnum() ? 'enum' : 'class';
@@ -152,7 +152,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     this.addMethods(generator, level, classModel);
     this.addInnerClasses(classModel, generator, level);
 
-    Configuration.getConfig()?.content?.injections?.doc.onEnd.forEach(injection => {
+    Configuration.getConfig()?.content?.injections?.doc?.onEnd?.forEach(injection => {
       generator.addText(injection);
     });
   }
@@ -203,7 +203,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
       .getMethods()
       .filter(method => method.getIsConstructor())
       .forEach(methodModel => {
-        Configuration.getConfig()?.content?.injections?.doc.method.onInit.forEach(injection => {
+        Configuration.getConfig()?.content?.injections?.doc?.method?.onInit?.forEach(injection => {
           generator.addText(injection);
         });
 
@@ -222,14 +222,14 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
         }
 
         if (methodModel.getExample() !== '') {
-          Configuration.getConfig()?.content?.injections?.doc.method.onBeforeExample.forEach(injection => {
+          Configuration.getConfig()?.content?.injections?.doc?.method?.onBeforeExample?.forEach(injection => {
             generator.addText(injection);
           });
 
           this.addExample(generator, methodModel, level);
         }
 
-        Configuration.getConfig()?.content?.injections?.doc.method.onEnd.forEach(injection => {
+        Configuration.getConfig()?.content?.injections?.doc?.method?.onEnd?.forEach(injection => {
           generator.addText(injection);
         });
       });
@@ -279,7 +279,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
       })
       .filter(method => !method.getIsConstructor())
       .forEach(methodModel => {
-        Configuration.getConfig()?.content?.injections?.doc.method.onInit.forEach(injection => {
+        Configuration.getConfig()?.content?.injections?.doc?.method?.onInit?.forEach(injection => {
           generator.addText(injection);
         });
 
@@ -298,13 +298,13 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
         }
 
         if (methodModel.getExample() !== '') {
-          Configuration.getConfig()?.content?.injections?.doc.method.onBeforeExample.forEach(injection => {
+          Configuration.getConfig()?.content?.injections?.doc?.method?.onBeforeExample?.forEach(injection => {
             generator.addText(injection);
           });
           this.addExample(generator, methodModel, level);
         }
 
-        Configuration.getConfig()?.content?.injections?.doc.method.onEnd.forEach(injection => {
+        Configuration.getConfig()?.content?.injections?.doc?.method?.onEnd?.forEach(injection => {
           generator.addText(injection);
         });
       });
