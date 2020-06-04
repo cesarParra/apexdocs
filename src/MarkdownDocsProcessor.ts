@@ -21,7 +21,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   onBeforeProcess(classes: ClassModel[], outputDir: string) {
     this.classes = classes;
 
-    const headerContent = Configuration.getConfig()?.home?.header;
+    const headerContent = Configuration.getHeader();
 
     // Generate home page listing all classes.
     const generator = new MarkdownHelper(classes);

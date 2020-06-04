@@ -36,6 +36,21 @@ interface MethodInjection {
 }
 
 export default class Configuration {
+  public static getHeader() {
+    let config = this.getConfig();
+    if (!config?.home?.header) {
+      return undefined;
+    }
+
+    const headerFilePath = config.home.header;
+    try {
+      const rawHeader = fs.readFileSync(headerFilePath);
+      return rawHeader.toString();
+    } catch (error) {
+      throw new Error('Error occurred while reading the header file ' + error.toString());
+    }
+  }
+
   public static getConfig(): Config | undefined {
     const configPath = Settings.getInstance().getConfigPath();
     if (!configPath) {
