@@ -21,9 +21,9 @@ There are some key differences between ApexDocs and the Java based ApexDoc tool:
 
 ApexDocs currently supports generating markdown files for Jekyll and Docsify sites.
 
-## In the wild
+### In the wild
 
-[Nimble AMS Docs](https://nimbleuser.github.io/nams-api-docs/#/public-apis/)
+- [Nimble AMS Docs](https://nimbleuser.github.io/nams-api-docs/#/public-apis/)
 
 ### [Docsify](https://docsify.js.org/)
 
