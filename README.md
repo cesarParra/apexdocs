@@ -24,6 +24,7 @@ ApexDocs currently supports generating markdown files for Jekyll and Docsify sit
 ### In the wild
 
 - [Nimble AMS Docs](https://nimbleuser.github.io/nams-api-docs/#/public-apis/)
+- [Yet Another Salesforce Logger](https://cesarparra.github.io/yet-another-salesforce-logger/#/)
 
 ### [Docsify](https://docsify.js.org/)
 
