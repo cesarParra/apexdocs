@@ -21,6 +21,10 @@ There are some key differences between ApexDocs and the Java based ApexDoc tool:
 
 ApexDocs currently supports generating markdown files for Jekyll and Docsify sites.
 
+## In the wild
+
+[Nimble AMS Docs](https://nimbleuser.github.io/nams-api-docs/#/public-apis/)
+
 ### [Docsify](https://docsify.js.org/)
 
 Demo
@@ -113,7 +117,7 @@ Default: false
 
 Whether the `@author` tag should be used to add the file's author to the page.
 
-`content.date` (Boolean)
+`content.includeDate` (Boolean)
 
 Default: false
 
