@@ -11,7 +11,7 @@ import JekyllDocsProcessor from '../JekyllDocsProcessor';
 export function generate(
   sourceDirectory: string,
   recursive: boolean = true,
-  scope: string[] = ['global', 'public'],
+  scope: string[] = ['global', 'public', 'namespaceaccessible'],
   outputDir: string = 'docs',
   targetGenerator: string = 'jekyll',
   configPath?: string,

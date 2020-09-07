@@ -17,6 +17,7 @@ export default class FileParser {
 
     let commentsStarted = false;
     let docBlockStarted = false;
+    let namespaceAccessible: boolean | undefined = undefined;
     let nestedCurlyBraceDepth = 0;
     const lstComments = [];
     let cModel: ClassModel | null = null;
@@ -104,12 +105,22 @@ export default class FileParser {
         strLine = strLine.substring(0, ich);
       }
 
+      if (namespaceAccessible === undefined) {
+        namespaceAccessible =
+          strLine.toLowerCase().includes('@namespaceaccessible') && Settings.getInstance().includeNamespaceAccessible();
+      }
+
       // Ignore lines not dealing with scope
       if (
-        this.strContainsScope(strLine) === null &&
+        this.strContainsScope(strLine, namespaceAccessible) === null &&
         // interface methods don't have scope
         !(cModel != null && cModel.getIsInterface() && strLine.includes('('))
       ) {
+        if (!namespaceAccessible) {
+          // If not namespace accessible and not within the scope, then namespace accessibility scope should
+          // be calculated again on the next pass.
+          namespaceAccessible = undefined;
+        }
         continue;
       }
 
@@ -117,6 +128,9 @@ export default class FileParser {
       if (strLine.toLowerCase().includes(' class ') || strLine.toLowerCase().includes(' interface ')) {
         // create the new class
         const cModelNew = new ClassParser().getClass(strLine, lstComments, iLine, cModelParent);
+        cModelNew.setIsNamespaceAccessible(namespaceAccessible);
+        // Resetting namespace accessible flag once it has been set.
+        namespaceAccessible = undefined;
         lstComments.splice(0, lstComments.length);
 
         // keep track of the new class, as long as it wasn't a single liner {}
@@ -135,6 +149,9 @@ export default class FileParser {
       // look for an enum
       if (strLine.toLowerCase().includes(' enum ')) {
         const enumModel = new EnumParser().getEnum(strLine, lstComments, iLine);
+        enumModel.setIsNamespaceAccessible(namespaceAccessible);
+        // Resetting namespace accessible flag once it has been set.
+        namespaceAccessible = undefined;
         if (cModel) {
           cModel.addChildEnum(enumModel);
         } else {
@@ -159,6 +176,9 @@ export default class FileParser {
           // If we are dealing with an inner class, we want the contents to the right of the period
           const parsedClassName = cModel.getClassName().substr(cModel.getClassName().indexOf('.') + 1);
           const mModel = new MethodParser().getMethod(parsedClassName, strLine, lstComments, iLine);
+          mModel.setIsNamespaceAccessible(namespaceAccessible);
+          // Resetting namespace accessible flag once it has been set.
+          namespaceAccessible = undefined;
           cModel.getMethods().push(mModel);
         }
 
@@ -180,6 +200,9 @@ export default class FileParser {
       // must be a property
       if (cModel) {
         const propertyModel = new PropertyParser().getProperty(strLine, lstComments, iLine);
+        propertyModel.setIsNamespaceAccessible(namespaceAccessible);
+        // Resetting namespace accessible flag once it has been set.
+        namespaceAccessible = undefined;
         cModel.getProperties().push(propertyModel);
       }
 
@@ -199,7 +222,7 @@ export default class FileParser {
     return str.split(ch).length - 1;
   }
 
-  strContainsScope(str: string) {
+  strContainsScope(str: string, isNamespaceAccessible: boolean) {
     str = str.toLowerCase();
     for (let i = 0; i < Settings.getInstance().getScope().length; i++) {
       if (
@@ -207,11 +230,22 @@ export default class FileParser {
           Settings.getInstance()
             .getScope()
             [i].toLowerCase() + ' ',
-        )
+        ) ||
+        this.inNamespaceAccessibleScope(isNamespaceAccessible, str)
       ) {
         return Settings.getInstance().getScope()[i];
       }
     }
     return null;
+  }
+
+  private inNamespaceAccessibleScope(isNamespaceAccessible: boolean, str: string): boolean {
+    return (
+      isNamespaceAccessible &&
+      Settings.getInstance().includeNamespaceAccessible() &&
+      (str.toLowerCase().includes('global') ||
+        str.toLowerCase().includes('public') ||
+        str.toLowerCase().includes('protected'))
+    );
   }
 }

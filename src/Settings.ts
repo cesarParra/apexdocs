@@ -3,7 +3,7 @@ import DocsProcessor from './DocsProcessor';
 export default class Settings {
   private static instance: Settings;
 
-  private desiredScope: string[] = ['global', 'public'];
+  private desiredScope: string[] = ['global', 'public', 'namespaceaccessible'];
   private outputDir: string = 'docs';
   private configPath: string | null = null;
   private shouldGroup: boolean | null = true;
@@ -57,5 +57,9 @@ export default class Settings {
 
   getShouldGroup() {
     return this.shouldGroup;
+  }
+
+  includeNamespaceAccessible() {
+    return this.getScope().includes('namespaceaccessible');
   }
 }

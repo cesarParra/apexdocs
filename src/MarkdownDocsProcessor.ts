@@ -110,6 +110,11 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     const suffix = classModel.getIsInterface() ? 'interface' : classModel.getIsEnum() ? 'enum' : 'class';
     generator.addTitle(`${classModel.getClassName()} ${suffix}`, level);
 
+    if (classModel.getIsNamespaceAccessible()) {
+      generator.addBlankLine();
+      generator.addText('`NamespaceAccessible`');
+    }
+
     if (classModel.getDescription()) {
       generator.addBlankLine();
       generator.addText(classModel.getDescription());
@@ -183,6 +188,12 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
       })
       .forEach(propertyModel => {
         generator.addTitle(`\`${propertyModel.getPropertyName()}\` → \`${propertyModel.getReturnType()}\``, level + 2);
+
+        if (classModel.getIsNamespaceAccessible()) {
+          generator.addBlankLine();
+          generator.addText('`NamespaceAccessible`');
+        }
+
         if (propertyModel.getDescription()) {
           generator.addBlankLine();
           generator.addText(propertyModel.getDescription());
@@ -208,6 +219,12 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
         });
 
         generator.addTitle(`\`${methodModel.getSignature()}\``, level + 2);
+
+        if (classModel.getIsNamespaceAccessible()) {
+          generator.addBlankLine();
+          generator.addText('`NamespaceAccessible`');
+        }
+
         if (methodModel.getDescription()) {
           generator.addBlankLine();
           generator.addText(methodModel.getDescription());
@@ -254,6 +271,11 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
         generator.addTitle(enumModel.getClassName(), level + 2);
         generator.addBlankLine();
 
+        if (classModel.getIsNamespaceAccessible()) {
+          generator.addBlankLine();
+          generator.addText('`NamespaceAccessible`');
+        }
+
         if (enumModel.getDescription()) {
           generator.addBlankLine();
           generator.addText(enumModel.getDescription());
@@ -284,6 +306,12 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
         });
 
         generator.addTitle(`\`${methodModel.getSignature()}\` → \`${methodModel.getReturnType()}\``, level + 2);
+
+        if (classModel.getIsNamespaceAccessible()) {
+          generator.addBlankLine();
+          generator.addText('`NamespaceAccessible`');
+        }
+
         if (methodModel.getDescription()) {
           generator.addBlankLine();
           generator.addText(methodModel.getDescription());

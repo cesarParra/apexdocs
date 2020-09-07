@@ -2,6 +2,7 @@
  * @description This is a class description.
  * @group Sample Classes
  */
+@NamespaceAccessible
 public with sharing class SampleClass {
     /**
      * @description Constructs a SampleClass without any arguments.
@@ -9,6 +10,7 @@ public with sharing class SampleClass {
      * <pre>
      * SampleClass sampleInstance = new SampleClass();
      */
+    @NamespaceAccessible
     public SampleClass() {
         System.debug('Constructor');
     }
@@ -27,6 +29,7 @@ public with sharing class SampleClass {
      * String result = SampleClass.testMethod();
      * System.debug(result);
      */
+    @NamespaceAccessible
     public static String testMethod(String argument) {
         System.debug('Execute');
         return '';

@@ -9,6 +9,7 @@ export default class ApexModel {
   private returns: string = '';
   private example: string = '';
   private scope: string = '';
+  private isNamespaceAccessible: boolean = false;
 
   getNameLine() {
     return this.nameLine;
@@ -70,6 +71,14 @@ export default class ApexModel {
 
   setScope(scope: string) {
     this.scope = scope;
+  }
+
+  setIsNamespaceAccessible(isNamespaceAccessible: boolean) {
+    this.isNamespaceAccessible = isNamespaceAccessible;
+  }
+
+  getIsNamespaceAccessible() {
+    return this.isNamespaceAccessible;
   }
 
   private parseScope() {

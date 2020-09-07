@@ -26,7 +26,7 @@ const argv = yargs.options({
   scope: {
     type: 'array',
     alias: 'p',
-    default: ['global', 'public'],
+    default: ['global', 'public', 'namespaceaccessible'],
     describe: 'A list of scopes to document. Values should be separated by a space, e.g --scope public private.',
   },
   targetGenerator: {
