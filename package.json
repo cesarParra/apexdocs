@@ -61,6 +61,6 @@
     ]
   },
   "dependencies": {
-    "yargs": "^15.1.0"
+    "yargs": "^16.0.3"
   }
 }

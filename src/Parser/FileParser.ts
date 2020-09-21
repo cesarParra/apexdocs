@@ -168,7 +168,7 @@ export default class FileParser {
         // deal with a method over multiple lines.
         while (!strLine.includes(')')) {
           i = i + 1;
-          strLine = contentLines[i];
+          strLine += contentLines[i].trim();
           iLine++;
         }
 
