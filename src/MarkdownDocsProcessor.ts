@@ -315,6 +315,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
         if (methodModel.getDescription()) {
           generator.addBlankLine();
           generator.addText(methodModel.getDescription());
+          generator.addBlankLine();
         }
 
         if (methodModel.getParams().length) {
