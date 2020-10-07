@@ -38,7 +38,8 @@ export default class FileParser {
       }
 
       // ignore anything after // style comments. this allows hiding of tokens from ApexDoc.
-      let ich = strLine.indexOf('//');
+      let match = strLine.match(/(?<!https?:)\/\//gi);
+      let ich = match != undefined ? strLine.indexOf(match[0]) : strLine.indexOf('//');
       if (ich > -1) {
         strLine = strLine.substring(0, ich);
       }
