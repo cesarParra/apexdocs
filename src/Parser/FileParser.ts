@@ -37,9 +37,9 @@ export default class FileParser {
         continue;
       }
 
-      // ignore anything after // style comments. this allows hiding of tokens from ApexDoc.
+      // If not within a code block, ignore anything after // style comments.
       let ich = strLine.indexOf('//');
-      if (ich > -1) {
+      if (ich > -1 && !docBlockStarted) {
         strLine = strLine.substring(0, ich);
       }
 
