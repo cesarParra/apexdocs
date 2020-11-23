@@ -322,6 +322,10 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
           this.addParameters(generator, level, methodModel);
         }
 
+        if (methodModel.getReturns().length) {
+          this.addReturns(generator, level, methodModel);
+        }
+
         if (methodModel.getThrownExceptions().length) {
           this.addThrowsBlock(generator, level, methodModel);
         }
@@ -374,6 +378,19 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
 
     generator.addBlankLine();
   }
+
+  private addReturns(generator: MarkdownHelper, level: number, methodModel: MethodModel) {
+    generator.addTitle('Return', level + 3);
+    generator.addBlankLine();
+    generator.addText('**Type**');
+    generator.addBlankLine();
+    generator.addText(methodModel.getReturnType());
+    generator.addBlankLine();
+    generator.addText('**Description**');
+    generator.addBlankLine();
+    generator.addText(methodModel.getReturns());
+    generator.addBlankLine();
+}
 
   private addThrowsBlock(generator: MarkdownHelper, level: number, methodModel: MethodModel) {
     generator.addTitle('Throws', level + 3);
