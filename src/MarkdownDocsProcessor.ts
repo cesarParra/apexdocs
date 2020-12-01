@@ -390,7 +390,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     generator.addBlankLine();
     generator.addText(methodModel.getReturns());
     generator.addBlankLine();
-}
+  }
 
   private addThrowsBlock(generator: MarkdownHelper, level: number, methodModel: MethodModel) {
     generator.addTitle('Throws', level + 3);
