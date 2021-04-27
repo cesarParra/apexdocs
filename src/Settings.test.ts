@@ -1,10 +1,11 @@
 import Settings from './Settings';
 import DocsProcessor from './DocsProcessor';
 
-test('has global and public as default scope', () => {
-  expect(Settings.getInstance().getScope()).toHaveLength(2);
+test('has global, public and namespaceaccessbile as default scope', () => {
+  expect(Settings.getInstance().getScope()).toHaveLength(3);
   expect(Settings.getInstance().getScope()).toContain('global');
   expect(Settings.getInstance().getScope()).toContain('public');
+  expect(Settings.getInstance().getScope()).toContain('namespaceaccessible');
 });
 
 test('can set scope', () => {
