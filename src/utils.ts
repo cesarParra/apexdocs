@@ -10,14 +10,22 @@ function findPreviousWord(stringToSearch: string, startingPosition: number): str
 
   let iStart;
   let iEnd;
+  let insideOfLessThanGreaterThanSigns = false;
   for (iStart = startingPosition - 1, iEnd = 0; iStart >= 0; iStart--) {
+    if (stringToSearch.charAt(iStart) === '>') {
+      insideOfLessThanGreaterThanSigns = true;
+    }
+    if (insideOfLessThanGreaterThanSigns && stringToSearch.charAt(iStart) === '<') {
+      insideOfLessThanGreaterThanSigns = false;
+    }
+
     if (iEnd === 0) {
       if (stringToSearch.charAt(iStart) === ' ') {
         continue;
       }
 
       iEnd = iStart + 1;
-    } else if (stringToSearch.charAt(iStart) === ' ') {
+    } else if (stringToSearch.charAt(iStart) === ' ' && !insideOfLessThanGreaterThanSigns) {
       iStart++;
       break;
     }
