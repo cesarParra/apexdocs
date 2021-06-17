@@ -36,7 +36,7 @@
     "@types/shelljs": "^0.8.6",
     "@types/yargs": "^15.0.3",
     "husky": "^4.2.3",
-    "jest": "^25.1.0",
+    "jest": "^27.0.4",
     "prettier": "^1.19.1",
     "ts-jest": "^27.0.3",
     "tslint": "^6.0.0",
