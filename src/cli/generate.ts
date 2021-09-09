@@ -33,7 +33,7 @@ const argv = yargs.options({
     type: 'string',
     alias: 'g',
     default: 'jekyll',
-    choices: ['jekyll', 'docsify'],
+    choices: ['jekyll', 'docsify', 'jsdoc'],
     describe:
       'Define the static file generator for which the documents will be created. Currently supports jekyll and docsify.',
   },
