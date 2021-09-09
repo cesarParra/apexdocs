@@ -16,7 +16,7 @@ export default class JsHelper {
   }
 
   declareType(className: string, docDescription: string) {
-    this.contents += ` * @typeDef {Object} ${className} ${docDescription}`;
+    this.contents += ` * @typedef {Object} ${className} ${docDescription}`;
     this.addBlankLine();
   }
 
