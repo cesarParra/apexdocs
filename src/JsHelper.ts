@@ -62,7 +62,8 @@ export default class JsHelper {
 
   extractTypeFromList(propertyType: string) {
     const propertyWithoutList = this.replaceAll(propertyType, 'list', '');
-    return propertyWithoutList.replace('list', '')
+    return propertyWithoutList
+      .replace('list', '')
       .replace('<', '')
       .replace('>', '');
   }
