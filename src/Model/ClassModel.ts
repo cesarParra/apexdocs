@@ -56,13 +56,16 @@ export default class ClassModel extends ApexModel {
     return this.childEnums;
   }
 
-  getClassName(): string {
+  getClassName(includeParent: boolean = true): string {
     if (this.className !== '') {
       return this.className;
     }
 
     let nameLine = this.getNameLine();
-    const strParent = this.cmodelParent == null ? '' : this.cmodelParent.getClassName() + '.';
+    let strParent = '';
+    if (includeParent) {
+      strParent = this.cmodelParent == null ? '' : this.cmodelParent.getClassName() + '.';
+    }
     if (nameLine != null) nameLine = nameLine.trim();
     if (nameLine != null && nameLine.trim().length > 0) {
       let fFound = nameLine.toLowerCase().indexOf('class ');

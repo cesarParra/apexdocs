@@ -7,6 +7,7 @@ import FileParser from '../parser/FileParser';
 
 import DocsifyDocsProcessor from '../DocsifyDocsProcessor';
 import JekyllDocsProcessor from '../JekyllDocsProcessor';
+import AsJsDocsProcessor from '../AsJsDocsProcessor';
 
 export function generate(
   sourceDirectory: string,
@@ -22,8 +23,10 @@ export function generate(
 
   if (targetGenerator === 'jekyll') {
     Settings.getInstance().setDocsProcessor(new JekyllDocsProcessor());
-  } else {
+  } else if (targetGenerator === 'docsify') {
     Settings.getInstance().setDocsProcessor(new DocsifyDocsProcessor());
+  } else {
+    Settings.getInstance().setDocsProcessor(new AsJsDocsProcessor());
   }
 
   if (group !== undefined) {

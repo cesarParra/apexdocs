@@ -42,7 +42,11 @@ export default class AsJsDocsProcessor extends DocsProcessor {
         return 0;
       })
       .forEach(propertyModel => {
-        generator.declareProperty(propertyModel.getReturnType(), propertyModel.getPropertyName(), propertyModel.getDescription());
+        generator.declareProperty(
+          propertyModel.getReturnType(),
+          propertyModel.getPropertyName(),
+          propertyModel.getDescription(),
+        );
       });
   }
 
