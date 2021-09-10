@@ -13,10 +13,14 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   private classes: ClassModel[] = [];
 
   abstract getHomeFileName(): string;
+
   // tslint:disable-next-line:no-empty
-  onBeforeHomeFileCreated(generator: MarkdownHelper) {}
+  onBeforeHomeFileCreated(generator: MarkdownHelper) {
+  }
+
   // tslint:disable-next-line:no-empty
-  onBeforeClassFileCreated(generator: MarkdownHelper) {}
+  onBeforeClassFileCreated(generator: MarkdownHelper) {
+  }
 
   onBeforeProcess(classes: ClassModel[], outputDir: string) {
     this.classes = classes;
@@ -411,7 +415,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   private addExample(generator: MarkdownHelper, methodModel: MethodModel, level: number) {
     generator.addTitle('Example', level + 3);
     generator.startCodeBlock();
-    generator.addText(methodModel.getExample());
+    generator.addText(methodModel.getExample(), false);
     generator.endCodeBlock();
     generator.addBlankLine();
   }

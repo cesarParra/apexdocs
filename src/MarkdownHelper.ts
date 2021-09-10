@@ -1,3 +1,5 @@
+import { encode } from 'html-entities';
+
 import ClassModel from './model/ClassModel';
 import ClassFileGeneratorHelper from './ClassFileGeneratorHelper';
 import Configuration from './Configuration';
@@ -26,7 +28,7 @@ export default class MarkdownHelper {
     this.addBlankLine();
   }
 
-  addText(text: string) {
+  addText(text: string, encodeHtml: boolean = true) {
     // Parsing text to extract possible linking classes.
     const possibleLinks = text.match(/<<.*?>>/g);
     possibleLinks?.forEach(currentMatch => {
@@ -42,7 +44,7 @@ export default class MarkdownHelper {
     const linkFormatRegEx = '{@link (.*?)}';
     const expression = new RegExp(linkFormatRegEx, 'gi');
     let match;
-    let matches = [];
+    const matches = [];
 
     do {
       match = expression.exec(text);
@@ -51,15 +53,16 @@ export default class MarkdownHelper {
       }
     } while (match);
 
-    for (const match of matches) {
+    for (const currentMatch of matches) {
       this.classes.forEach(classModel => {
-        if (classModel.getClassName() === match[1]) {
-          text = text.replace(match[0], ClassFileGeneratorHelper.getFileLink(classModel));
+        if (classModel.getClassName() === currentMatch[1]) {
+          text = text.replace(currentMatch[0], ClassFileGeneratorHelper.getFileLink(classModel));
         }
       });
     }
 
-    this.contents += text;
+    const textToAdd = encodeHtml ? encode(text) : text;
+    this.contents += textToAdd;
     this.addBlankLine();
   }
 
