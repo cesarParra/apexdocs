@@ -4,11 +4,21 @@
  */
 @NamespaceAccessible
 public with sharing class SampleClass {
+    @NamespaceAccessible
+    public enum InnerEnum {
+        A,
+        B,
+        C
+    }
+
     /**
      * @description Constructs a SampleClass without any arguments.
+     * @throws ExcName some exception
      * @example
      * <pre>
+     * // <strong>Example</strong>
      * SampleClass sampleInstance = new SampleClass();
+     * </pre>
      */
     @NamespaceAccessible
     public SampleClass() {

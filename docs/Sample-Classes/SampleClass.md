@@ -9,14 +9,42 @@ This is a class description.
 
 ---
 ## Constructors
+### `SampleClass()`
+
+`NamespaceAccessible`
 
 Constructs a SampleClass without any arguments.
+#### Throws
+|Exception|Description|
+|---------|-----------|
+|`ExcName` | some exception |
+
+#### Example
+```
+<pre>
+// <strong>Example</strong>
+SampleClass sampleInstance = new SampleClass();
+</pre>
+```
+
+### `SampleClass(String argument)`
 
 Constructs a SampleClass with an argument.
 #### Parameters
 |Param|Description|
 |-----|-----------|
 |`argument` | TODO |
+
+#### Throws
+|Exception|Description|
+|---------|-----------|
+
+---
+## Enums
+### InnerEnum
+
+
+`NamespaceAccessible`
 
 ---
 ## Properties

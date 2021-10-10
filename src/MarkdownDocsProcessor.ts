@@ -1,12 +1,27 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { ClassMirror, ConstructorMirror, InterfaceMirror, MethodMirror, Type } from '@cparra/apex-reflection';
+import {
+  ClassMirror,
+  ConstructorMirror, DocComment,
+  InterfaceMirror,
+  MethodMirror,
+  Type,
+} from '@cparra/apex-reflection';
 
 import DocsProcessor from './DocsProcessor';
 import MarkdownHelper from './MarkdownHelper';
 import Settings from './Settings';
 import Configuration from './Configuration';
 import ClassFileGeneratorHelper from './ClassFileGeneratorHelper';
+import { Annotation } from '@cparra/apex-reflection/index';
+
+type AnnotationsAware = {
+  annotations: Annotation[]
+}
+
+type DocCommentAware = {
+  docComment?: DocComment;
+}
 
 export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   private classes: Type[] = [];
@@ -14,10 +29,12 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   abstract getHomeFileName(): string;
 
   // tslint:disable-next-line:no-empty
-  onBeforeHomeFileCreated(generator: MarkdownHelper) {}
+  onBeforeHomeFileCreated(generator: MarkdownHelper) {
+  }
 
   // tslint:disable-next-line:no-empty
-  onBeforeClassFileCreated(generator: MarkdownHelper) {}
+  onBeforeClassFileCreated(generator: MarkdownHelper) {
+  }
 
   onBeforeProcess(classes: Type[], outputDir: string) {
     this.classes = classes;
@@ -111,8 +128,6 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     const suffix = classModel.type_name;
     generator.addTitle(`${classModel.name} ${suffix}`, level);
 
-    // TODO: These kind of stuff gets repetitive. We want to either wrap stuff or have the apex-reflection lib
-    // contain helper methods similar to the Dart code
     const isNamespaceAccessible = this.isNamespaceAccessible(classModel);
     if (isNamespaceAccessible) {
       generator.addBlankLine();
@@ -175,8 +190,8 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     });
   }
 
-  private isNamespaceAccessible(classModel: Type): boolean {
-    return !!classModel.annotations.find(annotation => annotation.name === 'namespaceaccessible');
+  private isNamespaceAccessible(annotationsAware: AnnotationsAware): boolean {
+    return !!annotationsAware.annotations.find(annotation => annotation.name === 'namespaceaccessible');
   }
 
   // TODO: This code is repeated here and in ClassFileGeneratorHelper
@@ -237,15 +252,21 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
         generator.addText(injection);
       });
 
-      // TODO: We'll need a replacement for this
-      // generator.addTitle(`\`${currentConstructor.getSignature()}\``, level + 2);
+      function constructorSignature(constructorMirror: ConstructorMirror): string {
+        let signature = `${classModel.name}(`;
+        const signatureParameters = constructorMirror.parameters.map(param => {
+          signature += `${param.type} ${param.name}`;
+        });
+        signature += signatureParameters.join(', ');
+        return signature += ')';
+      }
 
-      // TODO: This is actually wrong. It is checking if the class is NamespaceAccessible, but it should be checking
-      // if the constructor itself is
-      // if (classModel.getIsNamespaceAccessible()) {
-      //   generator.addBlankLine();
-      //   generator.addText('`NamespaceAccessible`');
-      // }
+      generator.addTitle(`\`${constructorSignature(currentConstructor)}\``, level + 2);
+
+      if (this.isNamespaceAccessible(currentConstructor)) {
+        generator.addBlankLine();
+        generator.addText('`NamespaceAccessible`');
+      }
 
       if (currentConstructor.docComment?.description) {
         generator.addBlankLine();
@@ -256,20 +277,15 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
         this.addParameters(generator, level, currentConstructor);
       }
 
-      // TODO
-      // if (currentConstructor.getThrownExceptions().length) {
-      //   this.addThrowsBlock(generator, level, currentConstructor);
-      // }
+      this.addThrowsBlock(generator, level, currentConstructor);
 
-      // TODO
-      // TODO: And remember that we now want to respect printing any HTML that is in the doc comment body
-      // if (currentConstructor.getExample() !== '') {
-      //   Configuration.getConfig()?.content?.injections?.doc?.method?.onBeforeExample?.forEach(injection => {
-      //     generator.addText(injection);
-      //   });
-      //
-      //   this.addExample(generator, currentConstructor, level);
-      // }
+      if (currentConstructor.docComment?.exampleAnnotation) {
+        Configuration.getConfig()?.content?.injections?.doc?.method?.onBeforeExample?.forEach(injection => {
+          generator.addText(injection);
+        });
+
+        this.addExample(generator, currentConstructor, level);
+      }
 
       Configuration.getConfig()?.content?.injections?.doc?.method?.onEnd?.forEach(injection => {
         generator.addText(injection);
@@ -295,11 +311,11 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
         generator.addTitle(enumModel.name, level + 2);
         generator.addBlankLine();
 
-        // TODO: This should be checking if the current enumModel is accessible, not the parent class itself
-        // if (classModel.getIsNamespaceAccessible()) {
-        //   generator.addBlankLine();
-        //   generator.addText('`NamespaceAccessible`');
-        // }
+        if (this.isNamespaceAccessible(enumModel)) {
+          generator.addBlankLine();
+          generator.addText('`NamespaceAccessible`');
+          generator.addBlankLine();
+        }
 
         if (enumModel.docComment?.description) {
           generator.addBlankLine();
@@ -423,29 +439,30 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   //   generator.addBlankLine();
   // }
 
-  // TODO
-  // private addThrowsBlock(generator: MarkdownHelper, level: number, methodModel: MethodModel) {
-  //   generator.addTitle('Throws', level + 3);
-  //   // Building a table to display the exceptions
-  //   generator.addText('|Exception|Description|');
-  //   generator.addText('|---------|-----------|');
-  //
-  //   methodModel.getThrownExceptions().forEach(param => {
-  //     const exceptionName = param.substr(0, param.indexOf(' '));
-  //     const exceptionDescription = param.substr(param.indexOf(' '));
-  //
-  //     generator.addText(`|\`${exceptionName}\` | ${exceptionDescription} |`);
-  //   });
-  //
-  //   generator.addBlankLine();
-  // }
+  private addThrowsBlock(generator: MarkdownHelper, level: number, docCommentAware: DocCommentAware) {
+    generator.addTitle('Throws', level + 3);
+    // Building a table to display the exceptions
+    generator.addText('|Exception|Description|');
+    generator.addText('|---------|-----------|');
 
-  // TODO
-  // private addExample(generator: MarkdownHelper, methodModel: MethodModel, level: number) {
-  //   generator.addTitle('Example', level + 3);
-  //   generator.startCodeBlock();
-  //   generator.addText(methodModel.getExample(), false);
-  //   generator.endCodeBlock();
-  //   generator.addBlankLine();
-  // }
+    docCommentAware.docComment?.throwsAnnotations
+      .forEach(annotation => {
+        const exceptionName = annotation.exceptionName;
+        const exceptionDescription = annotation.bodyLines.join(' ');
+
+        generator.addText(`|\`${exceptionName}\` | ${exceptionDescription} |`);
+      });
+
+    generator.addBlankLine();
+  }
+
+  private addExample(generator: MarkdownHelper, docCommentAware: DocCommentAware, level: number) {
+    generator.addTitle('Example', level + 3);
+    generator.startCodeBlock();
+    docCommentAware.docComment?.exampleAnnotation.bodyLines.forEach(line => {
+      generator.addText(line, false);
+    });
+    generator.endCodeBlock();
+    generator.addBlankLine();
+  }
 }
