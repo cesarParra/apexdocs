@@ -11,6 +11,7 @@ interface ConfigContent {
   includeDate?: string;
   injections?: Injection;
 }
+
 interface Config {
   root?: string;
   defaultGroupName?: string;
@@ -37,7 +38,7 @@ interface MethodInjection {
 
 export default class Configuration {
   public static getHeader() {
-    let config = this.getConfig();
+    const config = this.getConfig();
     if (!config?.home?.header) {
       return undefined;
     }

@@ -1,3 +1,4 @@
+// TODO: I don't think I'll need any of this anymore
 /**
  * Returns the first word found looking backwards at the received string and starting at the received position.
  * @param stringToSearch The string to extract the word from.

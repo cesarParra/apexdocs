@@ -1,3 +1,6 @@
+---
+layout: default
+---
 # SampleClass class
 
 `NamespaceAccessible`
@@ -6,25 +9,77 @@ This is a class description.
 
 ---
 ## Constructors
-### `SampleClass()`
 
 Constructs a SampleClass without any arguments.
-#### Example
-```
-<pre>
-SampleClass sampleInstance = new SampleClass();
-```
+
+Constructs a SampleClass with an argument.
+#### Parameters
+|Param|Description|
+|-----|-----------|
+|`argument` | TODO |
+
+---
+## Properties
+
+### `AnotherProp` → `Decimal`
+
+`NamespaceAccessible`
+
+This is a Decimal property.
+
+### `MyProp` → `String`
+
+`NamespaceAccessible`
+
+This is a String property.
 
 ---
 ## Methods
-### `testMethod(String argument)` → `String`
+
+Calls the method. This methods allows you to call it.
+
 
 Executes commands based on the passed in argument.
-#### Example
-```
-<pre>
-String result = SampleClass.testMethod();
-System.debug(result);
-```
+
+#### Parameters
+|Param|Description|
+|-----|-----------|
+|`argument` | TODO |
+
+---
+## Inner Classes
+
+### AnotherInnerClass class
+
+Inner class belonging to SampleClass.
+
+---
+#### Properties
+
+##### `InnerProp` → `String`
+
+Description of the inner property.
+
+---
+#### Methods
+
+Executes from the inner class.
+
+---
+### InnerClass class
+
+Inner class belonging to SampleClass.
+
+---
+#### Properties
+
+##### `InnerProp` → `String`
+
+Description of the inner property.
+
+---
+#### Methods
+
+Executes from the inner class.
 
 ---

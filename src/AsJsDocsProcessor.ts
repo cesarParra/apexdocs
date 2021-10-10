@@ -1,62 +1,68 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { ClassMirror, Type } from '@cparra/apex-reflection';
 
 import DocsProcessor from './DocsProcessor';
 import JsHelper from './JsHelper';
-import ClassModel from './model/ClassModel';
 
 export default class AsJsDocsProcessor extends DocsProcessor {
-  process(classModel: ClassModel, outputDir: string) {
+  process(classModel: Type, outputDir: string) {
     const jsHelper = new JsHelper();
     this.generateDocsForClass(jsHelper, classModel);
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir);
     }
 
-    const filePath = path.join(outputDir, `${classModel.getClassName()}.doc.js`);
+    const filePath = path.join(outputDir, `${classModel.name}.doc.js`);
 
     fs.writeFile(filePath, jsHelper.contents, 'utf8', () => {
       // tslint:disable-next-line:no-console
-      console.log(`${classModel.getClassName()} processed.`);
+      console.log(`${classModel.name} processed.`);
     });
   }
 
-  generateDocsForClass(generator: JsHelper, classModel: ClassModel) {
+  generateDocsForClass(generator: JsHelper, typeModel: Type) {
     generator.initializeBlock();
-    generator.declareType(classModel.getClassName(false), classModel.getDescription());
+    generator.declareType(typeModel.name, typeModel.docComment?.description ?? '');
+
+    if (typeModel.type_name !== 'class') {
+      return;
+    }
+
+    const classModel = typeModel as ClassMirror;
+
     this.addProperties(generator, classModel);
     generator.finalizeBlock();
     this.addInnerClasses(classModel, generator);
   }
 
-  private addProperties(generator: JsHelper, classModel: ClassModel) {
-    if (classModel.getProperties().length === 0) {
+  private addProperties(generator: JsHelper, classModel: ClassMirror) {
+    if (classModel.properties.length === 0) {
       return;
     }
 
-    classModel
-      .getProperties()
+    classModel.properties
       .sort((propA, propB) => {
-        if (propA.getPropertyName() < propB.getPropertyName()) return -1;
-        if (propA.getPropertyName() > propB.getPropertyName()) return 1;
+        if (propA.name < propB.name) return -1;
+        if (propA.name > propB.name) return 1;
         return 0;
       })
       .forEach(propertyModel => {
         generator.declareProperty(
-          propertyModel.getReturnType(),
-          propertyModel.getPropertyName(),
-          propertyModel.getDescription(),
+          propertyModel.type,
+          propertyModel.name,
+          propertyModel.docComment?.description ?? '',
         );
       });
   }
 
-  private addInnerClasses(classModel: ClassModel, generator: JsHelper) {
-    if (classModel.getChildClasses().length > 0) {
+  private addInnerClasses(classModel: ClassMirror, generator: JsHelper) {
+    if (classModel.classes.length > 0) {
       classModel
-        .getChildClasses()
+        .classes
         .sort((classA, classB) => {
-          if (classA.getClassName() < classB.getClassName()) return -1;
-          if (classA.getClassName() > classB.getClassName()) return 1;
+          if (classA.name < classB.name) return -1;
+          if (classA.name > classB.name) return 1;
           return 0;
         })
         .forEach(innerClass => {

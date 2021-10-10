@@ -1,26 +1,27 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { ClassMirror, ConstructorMirror, InterfaceMirror, MethodMirror, Type } from '@cparra/apex-reflection';
 
 import DocsProcessor from './DocsProcessor';
 import MarkdownHelper from './MarkdownHelper';
-import ClassModel from './model/ClassModel';
 import Settings from './Settings';
 import Configuration from './Configuration';
-import MethodModel from './model/MethodModel';
 import ClassFileGeneratorHelper from './ClassFileGeneratorHelper';
 
 export default abstract class MarkdownDocsProcessor extends DocsProcessor {
-  private classes: ClassModel[] = [];
+  private classes: Type[] = [];
 
   abstract getHomeFileName(): string;
 
   // tslint:disable-next-line:no-empty
-  onBeforeHomeFileCreated(generator: MarkdownHelper) {}
+  onBeforeHomeFileCreated(generator: MarkdownHelper) {
+  }
 
   // tslint:disable-next-line:no-empty
-  onBeforeClassFileCreated(generator: MarkdownHelper) {}
+  onBeforeClassFileCreated(generator: MarkdownHelper) {
+  }
 
-  onBeforeProcess(classes: ClassModel[], outputDir: string) {
+  onBeforeProcess(classes: Type[], outputDir: string) {
     this.classes = classes;
 
     const headerContent = Configuration.getHeader();
@@ -42,15 +43,15 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
         generator.addTitle(ClassFileGeneratorHelper.getFileLink(classModel), 2);
         generator.addBlankLine();
         generator.addBlankLine();
-        generator.addText(classModel.getDescription());
+        generator.addText(classModel.docComment?.description ?? '');
 
         generator.addBlankLine();
         generator.addBlankLine();
       });
     } else {
-      const groupedClasses: Map<string, ClassModel[]> = this.group(classes);
+      const groupedClasses: Map<string, Type[]> = this.group(classes);
 
-      groupedClasses.forEach((value: ClassModel[], key: string) => {
+      groupedClasses.forEach((value: Type[], key: string) => {
         generator.addTitle(key, 2);
 
         value.forEach(classModel => {
@@ -58,7 +59,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
           generator.addTitle(ClassFileGeneratorHelper.getFileLink(classModel), 3);
           generator.addBlankLine();
           generator.addBlankLine();
-          generator.addText(classModel.getDescription());
+          generator.addText(classModel.docComment?.description ?? '');
 
           generator.addBlankLine();
           generator.addBlankLine();
@@ -77,7 +78,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     });
   }
 
-  process(classModel: ClassModel, outputDir: string) {
+  process(classModel: Type, outputDir: string) {
     const generator = new MarkdownHelper(this.classes);
     this.onBeforeClassFileCreated(generator);
     const startingHeadingLevel = Configuration.getConfig()?.content?.startingHeadingLevel || 1;
@@ -89,62 +90,67 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
 
     let filePath;
     if (!Settings.getInstance().getShouldGroup()) {
-      filePath = path.join(outputDir, `${classModel.getClassName()}.md`);
+      filePath = path.join(outputDir, `${classModel.name}.md`);
     } else {
       const classGroupPath = path.join(outputDir, ClassFileGeneratorHelper.getSanitizedGroup(classModel));
       if (!fs.existsSync(classGroupPath)) {
         fs.mkdirSync(classGroupPath);
       }
 
-      filePath = path.join(classGroupPath, `${classModel.getClassName()}.md`);
+      filePath = path.join(classGroupPath, `${classModel.name}.md`);
     }
 
     fs.writeFile(filePath, generator.contents, 'utf8', () => {
       // tslint:disable-next-line:no-console
-      console.log(`${classModel.getClassName()} processed.`);
+      console.log(`${classModel.name} processed.`);
     });
   }
 
-  generateDocsForClass(generator: MarkdownHelper, classModel: ClassModel, level: number) {
+  generateDocsForClass(generator: MarkdownHelper, classModel: Type, level: number) {
     Configuration.getConfig()?.content?.injections?.doc?.onInit?.forEach(injection => {
       generator.addText(injection);
     });
-    const suffix = classModel.getIsInterface() ? 'interface' : classModel.getIsEnum() ? 'enum' : 'class';
-    generator.addTitle(`${classModel.getClassName()} ${suffix}`, level);
+    const suffix = classModel.type_name;
+    generator.addTitle(`${classModel.name} ${suffix}`, level);
 
-    if (classModel.getIsNamespaceAccessible()) {
+    // TODO: These kind of stuff gets repetitive. We want to either wrap stuff or have the apex-reflection lib
+    // contain helper methods similar to the Dart code
+    const isNamespaceAccessible = this.isNamespaceAccessible(classModel);
+    if (isNamespaceAccessible) {
       generator.addBlankLine();
       generator.addText('`NamespaceAccessible`');
     }
 
-    if (classModel.getDescription()) {
+    if (classModel.docComment?.description) {
       generator.addBlankLine();
-      generator.addText(classModel.getDescription());
+      generator.addText(classModel.docComment.description);
       generator.addBlankLine();
     }
 
-    if (Configuration.getConfig()?.content?.includeAuthor && classModel.getAuthor()) {
+    const author = classModel.docComment?.annotations.find(annotation => annotation.name === 'author');
+    if (Configuration.getConfig()?.content?.includeAuthor && !!author) {
       generator.addBlankLine();
-      generator.addText(`**Author:** ${classModel.getAuthor()}`);
+      generator.addText(`**Author:** ${author.body}`);
+    }
+    const date = classModel.docComment?.annotations.find(annotation => annotation.name === 'date');
+    if (Configuration.getConfig()?.content?.includeDate && !!date) {
+      generator.addBlankLine();
+      generator.addText(`**Date:** ${date.body}`);
     }
 
-    if (Configuration.getConfig()?.content?.includeDate && classModel.getDate()) {
-      generator.addBlankLine();
-      generator.addText(`**Date:** ${classModel.getDate()}`);
-    }
-
-    if (classModel.getSeeList().length !== 0) {
+    const seeList = classModel.docComment?.annotations.filter(annotation => annotation.name === 'see') ?? [];
+    if (seeList.length !== 0) {
       generator.addTitle('Related', level + 1);
-      classModel.getSeeList().forEach(relatedClassName => {
+      seeList.forEach(seeAnnotation => {
         const relatedClass = this.classes.find(
-          currentClassModel => currentClassModel.getClassName() === relatedClassName,
+          currentClassModel => currentClassModel.name === seeAnnotation.body,
         );
 
         generator.addBlankLine();
         if (relatedClass) {
           generator.addText(ClassFileGeneratorHelper.getFileLink(relatedClass));
         } else {
-          generator.addText(relatedClassName);
+          generator.addText(seeAnnotation.body);
         }
 
         generator.addBlankLine();
@@ -153,52 +159,71 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
 
     generator.addHorizontalRule();
 
-    this.addConstructors(generator, level, classModel);
-    this.addEnums(generator, level, classModel);
-    this.addProperties(generator, level, classModel);
-    this.addMethods(generator, level, classModel);
-    this.addInnerClasses(classModel, generator, level);
+    if (classModel.type_name === 'enum') {
+      return;
+    }
+    if (classModel.type_name === 'interface') {
+      this.addMethods(generator, level, classModel as InterfaceMirror);
+      return;
+    }
+
+    // TODO: We also now want to add fields
+    this.addConstructors(generator, level, classModel as ClassMirror);
+    this.addEnums(generator, level, classModel as ClassMirror);
+    this.addProperties(generator, level, classModel as ClassMirror);
+    this.addMethods(generator, level, classModel as ClassMirror);
+    this.addInnerClasses(classModel as ClassMirror, generator, level);
 
     Configuration.getConfig()?.content?.injections?.doc?.onEnd?.forEach(injection => {
       generator.addText(injection);
     });
   }
 
-  private group(classes: ClassModel[]): Map<string, ClassModel[]> {
+  private isNamespaceAccessible(classModel: Type): boolean {
+    return !!classModel.annotations.find(annotation => annotation.name === 'namespaceaccessible');
+  }
+
+// TODO: This code is repeated here and in ClassFileGeneratorHelper
+  private getClassGroup(classModel: Type): string {
+    const groupAnnotation = classModel.docComment?.annotations.find(annotation => annotation.name === 'group');
+    return groupAnnotation?.body ?? '';
+  }
+
+  private group(classes: Type[]): Map<string, Type[]> {
     return classes.reduce((groups, currentClass) => {
-      const key = currentClass.getClassGroup();
-      const group: ClassModel[] = groups.get(key) || [];
+      const key = this.getClassGroup(currentClass);
+      const group: Type[] = groups.get(key) || [];
       group.push(currentClass);
       groups.set(key, group);
       return groups;
     }, new Map());
   }
 
-  private addProperties(generator: MarkdownHelper, level: number, classModel: ClassModel) {
-    if (classModel.getProperties().length === 0) {
+  private addProperties(generator: MarkdownHelper, level: number, classModel: ClassMirror) {
+    if (classModel.properties.length === 0) {
       return;
     }
 
     generator.addTitle('Properties', level + 1);
     generator.addBlankLine();
     classModel
-      .getProperties()
+      .properties
       .sort((propA, propB) => {
-        if (propA.getPropertyName() < propB.getPropertyName()) return -1;
-        if (propA.getPropertyName() > propB.getPropertyName()) return 1;
+        if (propA.name < propB.name) return -1;
+        if (propA.name > propB.name) return 1;
         return 0;
       })
       .forEach(propertyModel => {
-        generator.addTitle(`\`${propertyModel.getPropertyName()}\` → \`${propertyModel.getReturnType()}\``, level + 2);
+        generator.addTitle(`\`${propertyModel.name}\` → \`${propertyModel.type}\``, level + 2);
 
-        if (classModel.getIsNamespaceAccessible()) {
+        if (this.isNamespaceAccessible(classModel)) {
           generator.addBlankLine();
           generator.addText('`NamespaceAccessible`');
         }
 
-        if (propertyModel.getDescription()) {
+        if (propertyModel.docComment?.description) {
           generator.addBlankLine();
-          generator.addText(propertyModel.getDescription());
+          generator.addText(propertyModel.docComment.description);
         }
         generator.addBlankLine();
       });
@@ -206,47 +231,52 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     generator.addHorizontalRule();
   }
 
-  private addConstructors(generator: MarkdownHelper, level: number, classModel: ClassModel) {
-    if (classModel.getMethods().filter(method => method.getIsConstructor()).length === 0) {
+  private addConstructors(generator: MarkdownHelper, level: number, classModel: ClassMirror) {
+    if (classModel.constructors.length === 0) {
       return;
     }
 
     generator.addTitle('Constructors', level + 1);
     classModel
-      .getMethods()
-      .filter(method => method.getIsConstructor())
-      .forEach(methodModel => {
+      .constructors
+      .forEach(currentConstructor => {
         Configuration.getConfig()?.content?.injections?.doc?.method?.onInit?.forEach(injection => {
           generator.addText(injection);
         });
 
-        generator.addTitle(`\`${methodModel.getSignature()}\``, level + 2);
+        // TODO: We'll need a replacement for this
+        // generator.addTitle(`\`${currentConstructor.getSignature()}\``, level + 2);
 
-        if (classModel.getIsNamespaceAccessible()) {
+        // TODO: This is actually wrong. It is checking if the class is NamespaceAccessible, but it should be checking
+        // if the constructor itself is
+        // if (classModel.getIsNamespaceAccessible()) {
+        //   generator.addBlankLine();
+        //   generator.addText('`NamespaceAccessible`');
+        // }
+
+        if (currentConstructor.docComment?.description) {
           generator.addBlankLine();
-          generator.addText('`NamespaceAccessible`');
+          generator.addText(currentConstructor.docComment.description);
         }
 
-        if (methodModel.getDescription()) {
-          generator.addBlankLine();
-          generator.addText(methodModel.getDescription());
+        if (currentConstructor.parameters.length) {
+          this.addParameters(generator, level, currentConstructor);
         }
 
-        if (methodModel.getParams().length) {
-          this.addParameters(generator, level, methodModel);
-        }
+        // TODO
+        // if (currentConstructor.getThrownExceptions().length) {
+        //   this.addThrowsBlock(generator, level, currentConstructor);
+        // }
 
-        if (methodModel.getThrownExceptions().length) {
-          this.addThrowsBlock(generator, level, methodModel);
-        }
-
-        if (methodModel.getExample() !== '') {
-          Configuration.getConfig()?.content?.injections?.doc?.method?.onBeforeExample?.forEach(injection => {
-            generator.addText(injection);
-          });
-
-          this.addExample(generator, methodModel, level);
-        }
+        // TODO
+        // TODO: And remember that we now want to respect printing any HTML that is in the doc comment body
+        // if (currentConstructor.getExample() !== '') {
+        //   Configuration.getConfig()?.content?.injections?.doc?.method?.onBeforeExample?.forEach(injection => {
+        //     generator.addText(injection);
+        //   });
+        //
+        //   this.addExample(generator, currentConstructor, level);
+        // }
 
         Configuration.getConfig()?.content?.injections?.doc?.method?.onEnd?.forEach(injection => {
           generator.addText(injection);
@@ -256,31 +286,32 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     generator.addHorizontalRule();
   }
 
-  private addEnums(generator: MarkdownHelper, level: number, classModel: ClassModel) {
-    if (classModel.getChildEnums().length === 0) {
+  private addEnums(generator: MarkdownHelper, level: number, classModel: ClassMirror) {
+    if (classModel.enums.length === 0) {
       return;
     }
 
     generator.addTitle('Enums', level + 1);
     classModel
-      .getChildEnums()
+      .enums
       .sort((enumA, enumB) => {
-        if (enumA.getClassName() < enumB.getClassName()) return -1;
-        if (enumA.getClassName() > enumB.getClassName()) return 1;
+        if (enumA.name < enumB.name) return -1;
+        if (enumA.name > enumB.name) return 1;
         return 0;
       })
       .forEach(enumModel => {
-        generator.addTitle(enumModel.getClassName(), level + 2);
+        generator.addTitle(enumModel.name, level + 2);
         generator.addBlankLine();
 
-        if (classModel.getIsNamespaceAccessible()) {
-          generator.addBlankLine();
-          generator.addText('`NamespaceAccessible`');
-        }
+        // TODO: This should be checking if the current enumModel is accessible, not the parent class itself
+        // if (classModel.getIsNamespaceAccessible()) {
+        //   generator.addBlankLine();
+        //   generator.addText('`NamespaceAccessible`');
+        // }
 
-        if (enumModel.getDescription()) {
+        if (enumModel.docComment?.description) {
           generator.addBlankLine();
-          generator.addText(enumModel.getDescription());
+          generator.addText(enumModel.docComment.description);
           generator.addBlankLine();
         }
       });
@@ -288,56 +319,60 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     generator.addHorizontalRule();
   }
 
-  private addMethods(generator: MarkdownHelper, level: number, classModel: ClassModel) {
-    if (classModel.getMethods().filter(method => !method.getIsConstructor()).length === 0) {
+  private addMethods(generator: MarkdownHelper, level: number, classModel: ClassMirror | InterfaceMirror) {
+    if (classModel.methods.length === 0) {
       return;
     }
 
     generator.addTitle('Methods', level + 1);
     classModel
-      .getMethods()
+      .methods
       .sort((methodA, methodB) => {
-        if (methodA.getMethodName() < methodB.getMethodName()) return -1;
-        if (methodA.getMethodName() > methodB.getMethodName()) return 1;
+        if (methodA.name < methodB.name) return -1;
+        if (methodA.name > methodB.name) return 1;
         return 0;
       })
-      .filter(method => !method.getIsConstructor())
       .forEach(methodModel => {
         Configuration.getConfig()?.content?.injections?.doc?.method?.onInit?.forEach(injection => {
           generator.addText(injection);
         });
 
-        generator.addTitle(`\`${methodModel.getSignature()}\` → \`${methodModel.getReturnType()}\``, level + 2);
+        // TODO: We need to find a replacement for this
+        // generator.addTitle(`\`${methodModel.getSignature()}\` → \`${methodModel.getReturnType()}\``, level + 2);
 
-        if (classModel.getIsNamespaceAccessible()) {
+        // TODO: We want to check if the method itself is NSAccessible
+        // if (classModel.getIsNamespaceAccessible()) {
+        //   generator.addBlankLine();
+        //   generator.addText('`NamespaceAccessible`');
+        // }
+
+        if (methodModel.docComment?.description) {
           generator.addBlankLine();
-          generator.addText('`NamespaceAccessible`');
+          generator.addText(methodModel.docComment.description);
+          generator.addBlankLine();
         }
 
-        if (methodModel.getDescription()) {
-          generator.addBlankLine();
-          generator.addText(methodModel.getDescription());
-          generator.addBlankLine();
-        }
-
-        if (methodModel.getParams().length) {
+        if (methodModel.parameters.length) {
           this.addParameters(generator, level, methodModel);
         }
 
-        if (methodModel.getReturns().length) {
-          this.addReturns(generator, level, methodModel);
-        }
-
-        if (methodModel.getThrownExceptions().length) {
-          this.addThrowsBlock(generator, level, methodModel);
-        }
-
-        if (methodModel.getExample() !== '') {
-          Configuration.getConfig()?.content?.injections?.doc?.method?.onBeforeExample?.forEach(injection => {
-            generator.addText(injection);
-          });
-          this.addExample(generator, methodModel, level);
-        }
+        // TODO
+        // if (methodModel.getReturns().length) {
+        //   this.addReturns(generator, level, methodModel);
+        // }
+        //
+        // TODO
+        // if (methodModel.getThrownExceptions().length) {
+        //   this.addThrowsBlock(generator, level, methodModel);
+        // }
+        //
+        // TODO
+        // if (methodModel.getExample() !== '') {
+        //   Configuration.getConfig()?.content?.injections?.doc?.method?.onBeforeExample?.forEach(injection => {
+        //     generator.addText(injection);
+        //   });
+        //   this.addExample(generator, methodModel, level);
+        // }
 
         Configuration.getConfig()?.content?.injections?.doc?.method?.onEnd?.forEach(injection => {
           generator.addText(injection);
@@ -347,16 +382,17 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     generator.addHorizontalRule();
   }
 
-  private addInnerClasses(classModel: ClassModel, generator: MarkdownHelper, level: number) {
-    if (classModel.getChildClasses().length > 0) {
+  private addInnerClasses(classModel: ClassMirror, generator: MarkdownHelper, level: number) {
+    if (classModel.classes.length > 0) {
+      // TODO: We should try to avoid hardcoding the titles like this, and make that configurable to allow for I18N
       generator.addTitle('Inner Classes', ++level);
       level++;
       generator.addBlankLine();
       classModel
-        .getChildClasses()
+        .classes
         .sort((classA, classB) => {
-          if (classA.getClassName() < classB.getClassName()) return -1;
-          if (classA.getClassName() > classB.getClassName()) return 1;
+          if (classA.name < classB.name) return -1;
+          if (classA.name > classB.name) return 1;
           return 0;
         })
         .forEach(innerClass => {
@@ -365,15 +401,17 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     }
   }
 
-  private addParameters(generator: MarkdownHelper, level: number, methodModel: MethodModel) {
+  private addParameters(generator: MarkdownHelper, level: number, methodModel: MethodMirror | ConstructorMirror) {
     generator.addTitle('Parameters', level + 3);
     // Building a table to display the parameters
     generator.addText('|Param|Description|');
     generator.addText('|-----|-----------|');
 
-    methodModel.getParams().forEach(param => {
-      const paramName = param.substr(0, param.indexOf(' '));
-      const paramDescription = param.substr(param.indexOf(' '));
+    methodModel.parameters.forEach(param => {
+      const paramName = param.name;
+      // TODO: This comes from the parent method so we'll need to parse it or return it from the reflection
+      const paramDescription = 'TODO';
+      // const paramDescription = param.substr(param.indexOf(' '));
 
       generator.addText(`|\`${paramName}\` | ${paramDescription} |`);
     });
@@ -381,40 +419,43 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     generator.addBlankLine();
   }
 
-  private addReturns(generator: MarkdownHelper, level: number, methodModel: MethodModel) {
-    generator.addTitle('Return', level + 3);
-    generator.addBlankLine();
-    generator.addText('**Type**');
-    generator.addBlankLine();
-    generator.addText(methodModel.getReturnType());
-    generator.addBlankLine();
-    generator.addText('**Description**');
-    generator.addBlankLine();
-    generator.addText(methodModel.getReturns());
-    generator.addBlankLine();
-  }
+  // TODO
+  // private addReturns(generator: MarkdownHelper, level: number, methodModel: MethodMirror) {
+  //   generator.addTitle('Return', level + 3);
+  //   generator.addBlankLine();
+  //   generator.addText('**Type**');
+  //   generator.addBlankLine();
+  //   generator.addText(methodModel.getReturnType());
+  //   generator.addBlankLine();
+  //   generator.addText('**Description**');
+  //   generator.addBlankLine();
+  //   generator.addText(methodModel.getReturns());
+  //   generator.addBlankLine();
+  // }
 
-  private addThrowsBlock(generator: MarkdownHelper, level: number, methodModel: MethodModel) {
-    generator.addTitle('Throws', level + 3);
-    // Building a table to display the exceptions
-    generator.addText('|Exception|Description|');
-    generator.addText('|---------|-----------|');
+  // TODO
+  // private addThrowsBlock(generator: MarkdownHelper, level: number, methodModel: MethodModel) {
+  //   generator.addTitle('Throws', level + 3);
+  //   // Building a table to display the exceptions
+  //   generator.addText('|Exception|Description|');
+  //   generator.addText('|---------|-----------|');
+  //
+  //   methodModel.getThrownExceptions().forEach(param => {
+  //     const exceptionName = param.substr(0, param.indexOf(' '));
+  //     const exceptionDescription = param.substr(param.indexOf(' '));
+  //
+  //     generator.addText(`|\`${exceptionName}\` | ${exceptionDescription} |`);
+  //   });
+  //
+  //   generator.addBlankLine();
+  // }
 
-    methodModel.getThrownExceptions().forEach(param => {
-      const exceptionName = param.substr(0, param.indexOf(' '));
-      const exceptionDescription = param.substr(param.indexOf(' '));
-
-      generator.addText(`|\`${exceptionName}\` | ${exceptionDescription} |`);
-    });
-
-    generator.addBlankLine();
-  }
-
-  private addExample(generator: MarkdownHelper, methodModel: MethodModel, level: number) {
-    generator.addTitle('Example', level + 3);
-    generator.startCodeBlock();
-    generator.addText(methodModel.getExample(), false);
-    generator.endCodeBlock();
-    generator.addBlankLine();
-  }
+  // TODO
+  // private addExample(generator: MarkdownHelper, methodModel: MethodModel, level: number) {
+  //   generator.addTitle('Example', level + 3);
+  //   generator.startCodeBlock();
+  //   generator.addText(methodModel.getExample(), false);
+  //   generator.endCodeBlock();
+  //   generator.addBlankLine();
+  // }
 }

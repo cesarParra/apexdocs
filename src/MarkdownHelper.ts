@@ -1,14 +1,14 @@
 import { encode } from 'html-entities';
+import { Type } from '@cparra/apex-reflection';
 
-import ClassModel from './model/ClassModel';
 import ClassFileGeneratorHelper from './ClassFileGeneratorHelper';
 import Configuration from './Configuration';
 
 export default class MarkdownHelper {
   contents: string = '';
-  classes: ClassModel[];
+  classes: Type[];
 
-  constructor(classes: ClassModel[]) {
+  constructor(classes: Type[]) {
     this.classes = classes;
   }
 
@@ -34,7 +34,7 @@ export default class MarkdownHelper {
     possibleLinks?.forEach(currentMatch => {
       const classNameForMatch = currentMatch.replace('<<', '').replace('>>', '');
       this.classes.forEach(classModel => {
-        if (classModel.getClassName() === classNameForMatch) {
+        if (classModel.name === classNameForMatch) {
           text = text.replace(currentMatch, ClassFileGeneratorHelper.getFileLink(classModel));
         }
       });
@@ -55,7 +55,7 @@ export default class MarkdownHelper {
 
     for (const currentMatch of matches) {
       this.classes.forEach(classModel => {
-        if (classModel.getClassName() === currentMatch[1]) {
+        if (classModel.name === currentMatch[1]) {
           text = text.replace(currentMatch[0], ClassFileGeneratorHelper.getFileLink(classModel));
         }
       });
