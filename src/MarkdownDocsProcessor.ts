@@ -2,7 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {
   ClassMirror,
-  ConstructorMirror, DocComment,
+  ConstructorMirror,
+  DocComment,
   InterfaceMirror,
   MethodMirror,
   Type,
@@ -13,14 +14,27 @@ import MarkdownHelper from './MarkdownHelper';
 import Settings from './Settings';
 import Configuration from './Configuration';
 import ClassFileGeneratorHelper from './ClassFileGeneratorHelper';
-import { Annotation } from '@cparra/apex-reflection/index';
+import { Annotation, ParameterMirror } from '@cparra/apex-reflection/index';
 
 type AnnotationsAware = {
-  annotations: Annotation[]
-}
+  annotations: Annotation[];
+};
 
 type DocCommentAware = {
   docComment?: DocComment;
+};
+
+type ParameterAware = {
+  parameters: ParameterMirror[];
+}
+
+function buildSignature(name: string, parameterAware: ParameterAware): string {
+  let signature = `${name}(`;
+  const signatureParameters = parameterAware.parameters.map(param => {
+    signature += `${param.type} ${param.name}`;
+  });
+  signature += signatureParameters.join(', ');
+  return (signature += ')');
 }
 
 export default abstract class MarkdownDocsProcessor extends DocsProcessor {
@@ -252,16 +266,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
         generator.addText(injection);
       });
 
-      function constructorSignature(constructorMirror: ConstructorMirror): string {
-        let signature = `${classModel.name}(`;
-        const signatureParameters = constructorMirror.parameters.map(param => {
-          signature += `${param.type} ${param.name}`;
-        });
-        signature += signatureParameters.join(', ');
-        return signature += ')';
-      }
-
-      generator.addTitle(`\`${constructorSignature(currentConstructor)}\``, level + 2);
+      generator.addTitle(`\`${buildSignature(classModel.name, currentConstructor)}\``, level + 2);
 
       if (this.isNamespaceAccessible(currentConstructor)) {
         generator.addBlankLine();
@@ -344,14 +349,12 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
           generator.addText(injection);
         });
 
-        // TODO: We need to find a replacement for this
-        // generator.addTitle(`\`${methodModel.getSignature()}\` → \`${methodModel.getReturnType()}\``, level + 2);
+        generator.addTitle(`\`${buildSignature(methodModel.name, methodModel)}\` → \`${methodModel.type}\``, level + 2);
 
-        // TODO: We want to check if the method itself is NSAccessible
-        // if (classModel.getIsNamespaceAccessible()) {
-        //   generator.addBlankLine();
-        //   generator.addText('`NamespaceAccessible`');
-        // }
+        if (this.isNamespaceAccessible(methodModel)) {
+          generator.addBlankLine();
+          generator.addText('`NamespaceAccessible`');
+        }
 
         if (methodModel.docComment?.description) {
           generator.addBlankLine();
@@ -363,23 +366,17 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
           this.addParameters(generator, level, methodModel);
         }
 
-        // TODO
-        // if (methodModel.getReturns().length) {
-        //   this.addReturns(generator, level, methodModel);
-        // }
-        //
-        // TODO
-        // if (methodModel.getThrownExceptions().length) {
-        //   this.addThrowsBlock(generator, level, methodModel);
-        // }
-        //
-        // TODO
-        // if (methodModel.getExample() !== '') {
-        //   Configuration.getConfig()?.content?.injections?.doc?.method?.onBeforeExample?.forEach(injection => {
-        //     generator.addText(injection);
-        //   });
-        //   this.addExample(generator, methodModel, level);
-        // }
+        this.addReturns(generator, level, methodModel);
+        // TODO: Long duplicate fragment detected
+        this.addThrowsBlock(generator, level, methodModel);
+
+        if (methodModel.docComment?.exampleAnnotation) {
+          Configuration.getConfig()?.content?.injections?.doc?.method?.onBeforeExample?.forEach(injection => {
+            generator.addText(injection);
+          });
+
+          this.addExample(generator, methodModel, level);
+        }
 
         Configuration.getConfig()?.content?.injections?.doc?.method?.onEnd?.forEach(injection => {
           generator.addText(injection);
@@ -413,45 +410,47 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     generator.addText('|Param|Description|');
     generator.addText('|-----|-----------|');
 
-    methodModel.parameters.forEach(param => {
-      const paramName = param.name;
-      // TODO: This comes from the parent method so we'll need to parse it or return it from the reflection
-      const paramDescription = 'TODO';
-      // const paramDescription = param.substr(param.indexOf(' '));
-
+    methodModel.docComment?.paramAnnotations.forEach(paramAnnotation => {
+      const paramName = paramAnnotation.paramName;
+      const paramDescription = paramAnnotation.bodyLines.join(' ');
       generator.addText(`|\`${paramName}\` | ${paramDescription} |`);
     });
 
     generator.addBlankLine();
   }
 
-  // TODO
-  // private addReturns(generator: MarkdownHelper, level: number, methodModel: MethodMirror) {
-  //   generator.addTitle('Return', level + 3);
-  //   generator.addBlankLine();
-  //   generator.addText('**Type**');
-  //   generator.addBlankLine();
-  //   generator.addText(methodModel.getReturnType());
-  //   generator.addBlankLine();
-  //   generator.addText('**Description**');
-  //   generator.addBlankLine();
-  //   generator.addText(methodModel.getReturns());
-  //   generator.addBlankLine();
-  // }
+  private addReturns(generator: MarkdownHelper, level: number, methodModel: MethodMirror) {
+    if (!methodModel.docComment?.returnAnnotation) {
+      return;
+    }
+
+    generator.addTitle('Return', level + 3);
+    generator.addBlankLine();
+    generator.addText('**Type**');
+    generator.addBlankLine();
+    generator.addText(methodModel.type);
+    generator.addBlankLine();
+    generator.addText('**Description**');
+    generator.addBlankLine();
+    generator.addText(methodModel.docComment?.returnAnnotation.bodyLines.join(' '));
+    generator.addBlankLine();
+  }
 
   private addThrowsBlock(generator: MarkdownHelper, level: number, docCommentAware: DocCommentAware) {
+    if (!docCommentAware.docComment?.throwsAnnotations) {
+      return;
+    }
     generator.addTitle('Throws', level + 3);
     // Building a table to display the exceptions
     generator.addText('|Exception|Description|');
     generator.addText('|---------|-----------|');
 
-    docCommentAware.docComment?.throwsAnnotations
-      .forEach(annotation => {
-        const exceptionName = annotation.exceptionName;
-        const exceptionDescription = annotation.bodyLines.join(' ');
+    docCommentAware.docComment?.throwsAnnotations.forEach(annotation => {
+      const exceptionName = annotation.exceptionName;
+      const exceptionDescription = annotation.bodyLines.join(' ');
 
-        generator.addText(`|\`${exceptionName}\` | ${exceptionDescription} |`);
-      });
+      generator.addText(`|\`${exceptionName}\` | ${exceptionDescription} |`);
+    });
 
     generator.addBlankLine();
   }

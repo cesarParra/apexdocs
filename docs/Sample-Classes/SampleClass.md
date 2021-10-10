@@ -33,7 +33,7 @@ Constructs a SampleClass with an argument.
 #### Parameters
 |Param|Description|
 |-----|-----------|
-|`argument` | TODO |
+|`argument` | Argument definition |
 
 #### Throws
 |Exception|Description|
@@ -63,16 +63,45 @@ This is a String property.
 
 ---
 ## Methods
+### `call()` → `void`
 
 Calls the method. This methods allows you to call it.
 
+#### Throws
+|Exception|Description|
+|---------|-----------|
+
+### `sampleMethod(String argument)` → `String`
+
+`NamespaceAccessible`
 
 Executes commands based on the passed in argument.
 
 #### Parameters
 |Param|Description|
 |-----|-----------|
-|`argument` | TODO |
+|`argument` | Argument to debug |
+
+#### Return
+
+**Type**
+
+String
+
+**Description**
+
+Empty string
+
+#### Throws
+|Exception|Description|
+|---------|-----------|
+
+#### Example
+```
+<pre>
+String result = SampleClass.testMethod();
+System.debug(result);
+```
 
 ---
 ## Inner Classes
@@ -90,8 +119,13 @@ Description of the inner property.
 
 ---
 #### Methods
+##### `innerMethod()` → `void`
 
 Executes from the inner class.
+
+###### Throws
+|Exception|Description|
+|---------|-----------|
 
 ---
 ### InnerClass class
@@ -107,7 +141,12 @@ Description of the inner property.
 
 ---
 #### Methods
+##### `innerMethod()` → `void`
 
 Executes from the inner class.
+
+###### Throws
+|Exception|Description|
+|---------|-----------|
 
 ---
