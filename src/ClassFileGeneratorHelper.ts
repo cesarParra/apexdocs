@@ -13,9 +13,7 @@ export default class ClassFileGeneratorHelper {
     const root = Configuration.getConfig()?.root ? Configuration.getConfig()?.root : '';
     let fileLink;
     if (Settings.getInstance().getShouldGroup()) {
-      fileLink = `[${classModel.name}](${root}/${this.getSanitizedGroup(
-        classModel,
-      )}/${classModel.name}.md)`;
+      fileLink = `[${classModel.name}](${root}/${this.getSanitizedGroup(classModel)}/${classModel.name}.md)`;
     } else {
       fileLink = `[${classModel.name}](${root}/${classModel.name}.md)`;
     }

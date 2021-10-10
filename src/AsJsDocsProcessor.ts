@@ -48,18 +48,13 @@ export default class AsJsDocsProcessor extends DocsProcessor {
         return 0;
       })
       .forEach(propertyModel => {
-        generator.declareProperty(
-          propertyModel.type,
-          propertyModel.name,
-          propertyModel.docComment?.description ?? '',
-        );
+        generator.declareProperty(propertyModel.type, propertyModel.name, propertyModel.docComment?.description ?? '');
       });
   }
 
   private addInnerClasses(classModel: ClassMirror, generator: JsHelper) {
     if (classModel.classes.length > 0) {
-      classModel
-        .classes
+      classModel.classes
         .sort((classA, classB) => {
           if (classA.name < classB.name) return -1;
           if (classA.name > classB.name) return 1;

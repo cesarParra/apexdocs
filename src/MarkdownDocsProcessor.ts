@@ -14,12 +14,10 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   abstract getHomeFileName(): string;
 
   // tslint:disable-next-line:no-empty
-  onBeforeHomeFileCreated(generator: MarkdownHelper) {
-  }
+  onBeforeHomeFileCreated(generator: MarkdownHelper) {}
 
   // tslint:disable-next-line:no-empty
-  onBeforeClassFileCreated(generator: MarkdownHelper) {
-  }
+  onBeforeClassFileCreated(generator: MarkdownHelper) {}
 
   onBeforeProcess(classes: Type[], outputDir: string) {
     this.classes = classes;
@@ -142,9 +140,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     if (seeList.length !== 0) {
       generator.addTitle('Related', level + 1);
       seeList.forEach(seeAnnotation => {
-        const relatedClass = this.classes.find(
-          currentClassModel => currentClassModel.name === seeAnnotation.body,
-        );
+        const relatedClass = this.classes.find(currentClassModel => currentClassModel.name === seeAnnotation.body);
 
         generator.addBlankLine();
         if (relatedClass) {
@@ -183,7 +179,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     return !!classModel.annotations.find(annotation => annotation.name === 'namespaceaccessible');
   }
 
-// TODO: This code is repeated here and in ClassFileGeneratorHelper
+  // TODO: This code is repeated here and in ClassFileGeneratorHelper
   private getClassGroup(classModel: Type): string {
     const groupAnnotation = classModel.docComment?.annotations.find(annotation => annotation.name === 'group');
     return groupAnnotation?.body ?? '';
@@ -206,8 +202,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
 
     generator.addTitle('Properties', level + 1);
     generator.addBlankLine();
-    classModel
-      .properties
+    classModel.properties
       .sort((propA, propB) => {
         if (propA.name < propB.name) return -1;
         if (propA.name > propB.name) return 1;
@@ -237,51 +232,49 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     }
 
     generator.addTitle('Constructors', level + 1);
-    classModel
-      .constructors
-      .forEach(currentConstructor => {
-        Configuration.getConfig()?.content?.injections?.doc?.method?.onInit?.forEach(injection => {
-          generator.addText(injection);
-        });
-
-        // TODO: We'll need a replacement for this
-        // generator.addTitle(`\`${currentConstructor.getSignature()}\``, level + 2);
-
-        // TODO: This is actually wrong. It is checking if the class is NamespaceAccessible, but it should be checking
-        // if the constructor itself is
-        // if (classModel.getIsNamespaceAccessible()) {
-        //   generator.addBlankLine();
-        //   generator.addText('`NamespaceAccessible`');
-        // }
-
-        if (currentConstructor.docComment?.description) {
-          generator.addBlankLine();
-          generator.addText(currentConstructor.docComment.description);
-        }
-
-        if (currentConstructor.parameters.length) {
-          this.addParameters(generator, level, currentConstructor);
-        }
-
-        // TODO
-        // if (currentConstructor.getThrownExceptions().length) {
-        //   this.addThrowsBlock(generator, level, currentConstructor);
-        // }
-
-        // TODO
-        // TODO: And remember that we now want to respect printing any HTML that is in the doc comment body
-        // if (currentConstructor.getExample() !== '') {
-        //   Configuration.getConfig()?.content?.injections?.doc?.method?.onBeforeExample?.forEach(injection => {
-        //     generator.addText(injection);
-        //   });
-        //
-        //   this.addExample(generator, currentConstructor, level);
-        // }
-
-        Configuration.getConfig()?.content?.injections?.doc?.method?.onEnd?.forEach(injection => {
-          generator.addText(injection);
-        });
+    classModel.constructors.forEach(currentConstructor => {
+      Configuration.getConfig()?.content?.injections?.doc?.method?.onInit?.forEach(injection => {
+        generator.addText(injection);
       });
+
+      // TODO: We'll need a replacement for this
+      // generator.addTitle(`\`${currentConstructor.getSignature()}\``, level + 2);
+
+      // TODO: This is actually wrong. It is checking if the class is NamespaceAccessible, but it should be checking
+      // if the constructor itself is
+      // if (classModel.getIsNamespaceAccessible()) {
+      //   generator.addBlankLine();
+      //   generator.addText('`NamespaceAccessible`');
+      // }
+
+      if (currentConstructor.docComment?.description) {
+        generator.addBlankLine();
+        generator.addText(currentConstructor.docComment.description);
+      }
+
+      if (currentConstructor.parameters.length) {
+        this.addParameters(generator, level, currentConstructor);
+      }
+
+      // TODO
+      // if (currentConstructor.getThrownExceptions().length) {
+      //   this.addThrowsBlock(generator, level, currentConstructor);
+      // }
+
+      // TODO
+      // TODO: And remember that we now want to respect printing any HTML that is in the doc comment body
+      // if (currentConstructor.getExample() !== '') {
+      //   Configuration.getConfig()?.content?.injections?.doc?.method?.onBeforeExample?.forEach(injection => {
+      //     generator.addText(injection);
+      //   });
+      //
+      //   this.addExample(generator, currentConstructor, level);
+      // }
+
+      Configuration.getConfig()?.content?.injections?.doc?.method?.onEnd?.forEach(injection => {
+        generator.addText(injection);
+      });
+    });
 
     generator.addHorizontalRule();
   }
@@ -292,8 +285,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     }
 
     generator.addTitle('Enums', level + 1);
-    classModel
-      .enums
+    classModel.enums
       .sort((enumA, enumB) => {
         if (enumA.name < enumB.name) return -1;
         if (enumA.name > enumB.name) return 1;
@@ -325,8 +317,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     }
 
     generator.addTitle('Methods', level + 1);
-    classModel
-      .methods
+    classModel.methods
       .sort((methodA, methodB) => {
         if (methodA.name < methodB.name) return -1;
         if (methodA.name > methodB.name) return 1;
@@ -388,8 +379,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
       generator.addTitle('Inner Classes', ++level);
       level++;
       generator.addBlankLine();
-      classModel
-        .classes
+      classModel.classes
         .sort((classA, classB) => {
           if (classA.name < classB.name) return -1;
           if (classA.name > classB.name) return 1;
