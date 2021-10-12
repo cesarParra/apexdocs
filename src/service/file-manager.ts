@@ -2,8 +2,7 @@ import { Type } from '@cparra/apex-reflection';
 import { Settings } from '../Settings';
 
 export default class FileManager {
-  constructor(public types: Type[]) {
-  }
+  constructor(public types: Type[]) {}
 
   // TODO: Make static
   generate() {
