@@ -1,4 +1,4 @@
-import MarkdownDocsProcessor from './MarkdownDocsProcessor';
+import MarkdownDocsProcessor from './../markdown-docs-processor';
 
 export default class DocsifyDocsProcessor extends MarkdownDocsProcessor {
   getHomeFileName(): string {

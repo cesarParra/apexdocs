@@ -9,13 +9,13 @@ import {
   Type,
 } from '@cparra/apex-reflection';
 
-import DocsProcessor from './DocsProcessor';
-import MarkdownHelper from './MarkdownHelper';
-import Configuration from './Configuration';
-import ClassFileGeneratorHelper from './ClassFileGeneratorHelper';
+import DocsProcessor from './docs-processor';
+import MarkdownHelper from './markdown-helper';
+import Configuration from './../Configuration';
+import ClassFileGeneratorHelper from './class-file-generatorHelper';
 import { Annotation, ParameterMirror } from '@cparra/apex-reflection/index';
-import { Logger } from './util/logger';
-import { Settings } from './Settings';
+import { Logger } from '../util/logger';
+import { Settings } from '../Settings';
 
 type AnnotationsAware = {
   annotations: Annotation[];

@@ -2,9 +2,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { ClassMirror, Type } from '@cparra/apex-reflection';
 
-import DocsProcessor from './DocsProcessor';
-import JsHelper from './JsHelper';
-import { Logger } from './util/logger';
+import DocsProcessor from '../docs-processor';
+import JsHelper from './helper/js-helper';
+import { Logger } from '../../util/logger';
 
 export default class AsJsDocsProcessor extends DocsProcessor {
   process(classModel: Type, outputDir: string) {

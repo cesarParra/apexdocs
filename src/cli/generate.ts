@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import * as yargs from 'yargs';
 
-import FileManager from '../FileManager';
+import FileManager from '../service/file-manager';
 import { GeneratorChoices, Settings } from '../Settings';
 import { generateDocs } from '../service/doc-generator';
 

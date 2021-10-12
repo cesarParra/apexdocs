@@ -1,8 +1,8 @@
 import { encode } from 'html-entities';
 import { Type } from '@cparra/apex-reflection';
 
-import ClassFileGeneratorHelper from './ClassFileGeneratorHelper';
-import Configuration from './Configuration';
+import ClassFileGeneratorHelper from './class-file-generatorHelper';
+import Configuration from './../Configuration';
 
 export default class MarkdownHelper {
   contents: string = '';

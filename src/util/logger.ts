@@ -26,8 +26,6 @@ export class Logger {
   }
 
   private static logSingle(message: string) {
-    process.stdout.write(
-      `${chalk.green(new Date().toLocaleString() + ': ')}${message}\n`,
-    );
+    process.stdout.write(`${chalk.green(new Date().toLocaleString() + ': ')}${message}\n`);
   }
 }

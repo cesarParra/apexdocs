@@ -1,18 +1,18 @@
-import DocsProcessor from './DocsProcessor';
-import JekyllDocsProcessor from './JekyllDocsProcessor';
-import DocsifyDocsProcessor from './DocsifyDocsProcessor';
-import AsJsDocsProcessor from './AsJsDocsProcessor';
+import DocsProcessor from './processor/docs-processor';
+import JekyllDocsProcessor from './processor/jekyll/jekyll-docsProcessor';
+import DocsifyDocsProcessor from './processor/docsify/docsify-docs-processor';
+import AsJsDocsProcessor from './processor/jsdoc/as-js-docs-processor';
 
 export type GeneratorChoices = 'jekyll' | 'docsify' | 'jsdocs';
 
 export interface SettingsConfig {
-  sourceDirectory: string,
-  recursive: boolean,
-  scope: string[],
-  outputDir: string,
-  targetGenerator: GeneratorChoices,
-  configPath?: string,
-  group?: boolean
+  sourceDirectory: string;
+  recursive: boolean;
+  scope: string[];
+  outputDir: string;
+  targetGenerator: GeneratorChoices;
+  configPath?: string;
+  group?: boolean;
 }
 
 export class Settings {

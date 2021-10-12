@@ -1,5 +1,5 @@
-import MarkdownDocsProcessor from './MarkdownDocsProcessor';
-import MarkdownHelper from './MarkdownHelper';
+import MarkdownDocsProcessor from '../markdown-docs-processor';
+import MarkdownHelper from '../markdown-helper';
 
 export default class JekyllDocsProcessor extends MarkdownDocsProcessor {
   getHomeFileName(): string {
