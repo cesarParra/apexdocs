@@ -64,4 +64,4 @@ Settings.build({
 });
 
 const generatedClassModels = generateDocs();
-new FileManager(generatedClassModels).generate();
+FileManager.generate(generatedClassModels);

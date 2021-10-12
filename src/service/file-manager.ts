@@ -2,11 +2,8 @@ import { Type } from '@cparra/apex-reflection';
 import { Settings } from '../Settings';
 
 export default class FileManager {
-  constructor(public types: Type[]) {}
-
-  // TODO: Make static
-  generate() {
-    const sortedClasses = this.types.sort((classA, classB) => {
+  static generate(types: Type[]) {
+    const sortedClasses = types.sort((classA, classB) => {
       if (classA.name < classB.name) return -1;
       if (classA.name > classB.name) return 1;
       return 0;
