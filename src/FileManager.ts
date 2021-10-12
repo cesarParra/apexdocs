@@ -1,9 +1,9 @@
 import { Type } from '@cparra/apex-reflection';
-
-import Settings from './Settings';
+import { Settings } from './Settings';
 
 export default class FileManager {
-  constructor(public types: Type[]) {}
+  constructor(public types: Type[]) {
+  }
 
   // TODO: Make static
   generate() {
@@ -13,14 +13,14 @@ export default class FileManager {
       return 0;
     });
 
-    const docsProcessor = Settings.getInstance().getDocsProcessor();
+    const docsProcessor = Settings.getInstance().docsProcessor;
 
     if (!docsProcessor) {
       return;
     }
 
-    const outputDir = Settings.getInstance().getOutputDir();
-    docsProcessor.onBeforeProcess(sortedClasses, Settings.getInstance().getOutputDir());
+    const outputDir = Settings.getInstance().outputDir;
+    docsProcessor.onBeforeProcess(sortedClasses, Settings.getInstance().outputDir);
 
     sortedClasses.forEach(classModel => {
       docsProcessor.process(classModel, outputDir);

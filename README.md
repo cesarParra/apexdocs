@@ -1,7 +1,7 @@
 # ApexDocs
 
 <p align="center">
-  <b>ApexDocs is a Node.js library with CLI capabilities to generate documentation for Salesforce Apex classes.</b>
+  <b>ApexDocs is a Node.js library with CLI capabilities to docGenerator documentation for Salesforce Apex classes.</b>
 </p>
 
 [![License](https://img.shields.io/github/license/cesarParra/apexdocs)](https://github.com/cesarParra/apexdocs/blob/master/LICENSE)
@@ -10,7 +10,7 @@
 
 ApexDocs was built as an alternative to the [Java based ApexDoc tool](https://github.com/SalesforceFoundation/ApexDoc) originally created by Aslam Bari and later maintained by Salesforce.org, as that tool is no longer being maintained.
 
-ApexDocs is a Node.js library built on Typescript and hosted on [npm](https://www.npmjs.com/package/@cparra/apexdocs). It offers CLI capabilities to automatically generate a set of files that fully document each one of you classes. Additionally it can be imported and consumed directly by your JavaScript code.
+ApexDocs is a Node.js library built on Typescript and hosted on [npm](https://www.npmjs.com/package/@cparra/apexdocs). It offers CLI capabilities to automatically docGenerator a set of files that fully document each one of you classes. Additionally it can be imported and consumed directly by your JavaScript code.
 
 There are some key differences between ApexDocs and the Java based ApexDoc tool:
 
@@ -49,7 +49,7 @@ npm i @cparra/apexdocs
 ### CLI
 
 ```bash
-apexdocs-generate
+apexdocs-docGenerator
     -s src
     -t docs
     -p global
@@ -65,7 +65,7 @@ The CLI supports the following parameters:
 | --recursive       | -r    | Whether .cls classes will be searched for recursively in the directory provided.                                 | `true`                              | No       |
 | --scope           | -p    | A list of scopes to document. Values should be separated by a space, e.g --scope public private                  | `global namespaceaccessible public` | No       |
 | --targetGenerator | -g    | Define the static file generator for which the documents will be created. Currently supports jekyll and docsify. | `jekyll`                            | No       |
-| --configPath      | -c    | The path to the JSON configuration file that defines the structure of the documents to generate.                 | N/A                                 | No       |
+| --configPath      | -c    | The path to the JSON configuration file that defines the structure of the documents to docGenerator.                 | N/A                                 | No       |
 | --group           | -o    | Define whether the generated files should be grouped by the @group tag on the top level classes.                 | `true`                              | No       |
 
 #### Configuration File
@@ -128,7 +128,7 @@ Whether the `@date` tag should be used to add the file's date to the page.
 
 Default: 1
 
-The starting H tag level for the document. Each title will use this as the starting point to generate the approaprite `<h#>` tag. For example, if set to 1, the class' file name at the top of the file will use an `<h1>` tag, the `Properties` title will be `<h2>`, each property name will be an `<h3>`, etc.
+The starting H tag level for the document. Each title will use this as the starting point to docGenerator the approaprite `<h#>` tag. For example, if set to 1, the class' file name at the top of the file will use an `<h1>` tag, the `Properties` title will be `<h2>`, each property name will be an `<h3>`, etc.
 
 ```
 {
@@ -150,9 +150,9 @@ The starting H tag level for the document. Each title will use this as the start
 
 If you are just interested in the documentation parsing capabilities, you can import ApexDocs into your own project.
 
-Use the `generate` function to create a list of `ClassModel` that includes all of the parsed information from your .cls files.
+Use the `docGenerator` function to create a list of `ClassModel` that includes all of the parsed information from your .cls files.
 
-`generate(sourceDirectory[,recursive][,scope][,outputDir])`
+`docGenerator(sourceDirectory[,recursive][,scope][,outputDir])`
 
 - `sourceDirectory` \<string>
 - `recursive` \<boolean>
@@ -160,9 +160,9 @@ Use the `generate` function to create a list of `ClassModel` that includes all o
 - `outpurDir` \<string>
 
 ```javascript
-var { generate } = require('@cparra/apexdocs');
+var { docGenerator } = require('@cparra/apexdocs');
 
-let documentedClasses = generate('src', true, ['global'], 'docs');
+let documentedClasses = docGenerator('src', true, ['global'], 'docs');
 ```
 
 ## Documentation Format

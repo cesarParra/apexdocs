@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import * as yargs from 'yargs';
 
-import { generate } from '../command/Generate';
 import FileManager from '../FileManager';
+import { GeneratorChoices, Settings } from '../Settings';
+import { generateDocs } from '../service/doc-generator';
 
 const argv = yargs.options({
   sourceDir: {
@@ -52,13 +53,15 @@ const argv = yargs.options({
   },
 }).argv;
 
-const generatedClassModels = generate(
-  argv.sourceDir,
-  argv.recursive,
-  argv.scope,
-  argv.targetDir,
-  argv.targetGenerator,
-  argv.configPath,
-  argv.group,
-);
+Settings.build({
+  sourceDirectory: argv.sourceDir,
+  recursive: argv.recursive,
+  scope: argv.scope,
+  outputDir: argv.targetDir,
+  targetGenerator: argv.targetGenerator as GeneratorChoices,
+  configPath: argv.configPath,
+  group: argv.group,
+});
+
+const generatedClassModels = generateDocs();
 new FileManager(generatedClassModels).generate();

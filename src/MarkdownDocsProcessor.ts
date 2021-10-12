@@ -11,10 +11,11 @@ import {
 
 import DocsProcessor from './DocsProcessor';
 import MarkdownHelper from './MarkdownHelper';
-import Settings from './Settings';
 import Configuration from './Configuration';
 import ClassFileGeneratorHelper from './ClassFileGeneratorHelper';
 import { Annotation, ParameterMirror } from '@cparra/apex-reflection/index';
+import { Logger } from './util/logger';
+import { Settings } from './Settings';
 
 type AnnotationsAware = {
   annotations: Annotation[];
@@ -26,7 +27,7 @@ type DocCommentAware = {
 
 type ParameterAware = {
   parameters: ParameterMirror[];
-}
+};
 
 function buildSignature(name: string, parameterAware: ParameterAware): string {
   let signature = `${name}(`;
@@ -66,7 +67,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
 
     generator.addTitle('Classes');
 
-    if (!Settings.getInstance().getShouldGroup()) {
+    if (!Settings.getInstance().shouldGroup) {
       classes.forEach(classModel => {
         generator.addBlankLine();
         generator.addTitle(ClassFileGeneratorHelper.getFileLink(classModel), 2);
@@ -102,8 +103,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
 
     const filePath = path.join(outputDir, this.getHomeFileName());
     fs.writeFile(filePath, generator.contents, 'utf8', () => {
-      // tslint:disable-next-line:no-console
-      console.log('Home page generated.');
+      Logger.log('Home page generated.');
     });
   }
 
@@ -118,7 +118,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     }
 
     let filePath;
-    if (!Settings.getInstance().getShouldGroup()) {
+    if (!Settings.getInstance().shouldGroup) {
       filePath = path.join(outputDir, `${classModel.name}.md`);
     } else {
       const classGroupPath = path.join(outputDir, ClassFileGeneratorHelper.getSanitizedGroup(classModel));
@@ -130,8 +130,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     }
 
     fs.writeFile(filePath, generator.contents, 'utf8', () => {
-      // tslint:disable-next-line:no-console
-      console.log(`${classModel.name} processed.`);
+      Logger.log(`${classModel.name} processed.`);
     });
   }
 

@@ -1,65 +1,68 @@
 import DocsProcessor from './DocsProcessor';
+import JekyllDocsProcessor from './JekyllDocsProcessor';
+import DocsifyDocsProcessor from './DocsifyDocsProcessor';
+import AsJsDocsProcessor from './AsJsDocsProcessor';
 
-export default class Settings {
+export type GeneratorChoices = 'jekyll' | 'docsify' | 'jsdocs';
+
+export interface SettingsConfig {
+  sourceDirectory: string,
+  recursive: boolean,
+  scope: string[],
+  outputDir: string,
+  targetGenerator: GeneratorChoices,
+  configPath?: string,
+  group?: boolean
+}
+
+export class Settings {
   private static instance: Settings;
 
-  private desiredScope: string[] = ['global', 'public', 'namespaceaccessible'];
-  private outputDir: string = 'docs';
-  private configPath: string | null = null;
-  private shouldGroup: boolean | null = true;
-  private processor: DocsProcessor | null = null;
+  _config!: SettingsConfig;
 
-  private constructor() {}
+  static build(config: SettingsConfig) {
+    Settings.instance = new Settings();
+    Settings.instance._config = config;
+  }
 
   static getInstance(): Settings {
-    if (!Settings.instance) {
-      Settings.instance = new Settings();
-    }
-
     return Settings.instance;
   }
 
-  setScope(desiredScope: string[]) {
-    this.desiredScope = desiredScope;
+  get sourceDirectory(): string {
+    return this._config.sourceDirectory;
   }
 
-  getScope() {
-    return this.desiredScope;
+  get recursive(): boolean {
+    return this._config.recursive;
   }
 
-  setOutputDir(outputDir: string) {
-    this.outputDir = outputDir;
+  get scope(): string[] {
+    return this._config.scope;
   }
 
-  getOutputDir() {
-    return this.outputDir;
+  get outputDir(): string {
+    return this._config.outputDir;
   }
 
-  setDocsProcessor(processor: DocsProcessor) {
-    this.processor = processor;
+  get docsProcessor(): DocsProcessor {
+    switch (this._config.targetGenerator) {
+      case 'jekyll':
+        return new JekyllDocsProcessor();
+      case 'docsify':
+        return new DocsifyDocsProcessor();
+      case 'jsdocs':
+        return new AsJsDocsProcessor();
+      default:
+        throw Error('Invalid target generator');
+    }
   }
 
-  getDocsProcessor(): DocsProcessor | null {
-    return this.processor;
+  get configPath(): string | undefined {
+    return this._config.configPath;
   }
 
-  setConfigPath(configPath: string) {
-    this.configPath = configPath;
-  }
-
-  getConfigPath() {
-    return this.configPath;
-  }
-
-  setShouldGroup(shouldGroup: boolean) {
-    this.shouldGroup = shouldGroup;
-  }
-
-  getShouldGroup() {
-    return this.shouldGroup;
-  }
-
-  includeNamespaceAccessible() {
-    return this.getScope().includes('namespaceaccessible');
+  get shouldGroup(): boolean | undefined {
+    return this._config.group;
   }
 }

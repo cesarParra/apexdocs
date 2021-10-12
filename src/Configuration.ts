@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import Settings from './Settings';
+import { Settings } from './Settings';
 
 interface ConfigHome {
   header?: string;
@@ -53,7 +53,7 @@ export default class Configuration {
   }
 
   public static getConfig(): Config | undefined {
-    const configPath = Settings.getInstance().getConfigPath();
+    const configPath = Settings.getInstance().configPath;
     if (!configPath) {
       return undefined;
     }

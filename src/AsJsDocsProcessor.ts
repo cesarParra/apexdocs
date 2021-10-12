@@ -4,6 +4,7 @@ import { ClassMirror, Type } from '@cparra/apex-reflection';
 
 import DocsProcessor from './DocsProcessor';
 import JsHelper from './JsHelper';
+import { Logger } from './util/logger';
 
 export default class AsJsDocsProcessor extends DocsProcessor {
   process(classModel: Type, outputDir: string) {
@@ -16,8 +17,7 @@ export default class AsJsDocsProcessor extends DocsProcessor {
     const filePath = path.join(outputDir, `${classModel.name}.doc.js`);
 
     fs.writeFile(filePath, jsHelper.contents, 'utf8', () => {
-      // tslint:disable-next-line:no-console
-      console.log(`${classModel.name} processed.`);
+      Logger.log(`${classModel.name} processed.`);
     });
   }
 
