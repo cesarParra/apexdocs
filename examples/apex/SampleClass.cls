@@ -4,11 +4,21 @@
  */
 @NamespaceAccessible
 public with sharing class SampleClass {
+    @NamespaceAccessible
+    public enum InnerEnum {
+        A,
+        B,
+        C
+    }
+
     /**
      * @description Constructs a SampleClass without any arguments.
+     * @throws ExcName some exception
      * @example
      * <pre>
+     * // <strong>Example</strong>
      * SampleClass sampleInstance = new SampleClass();
+     * </pre>
      */
     @NamespaceAccessible
     public SampleClass() {
@@ -17,6 +27,7 @@ public with sharing class SampleClass {
 
     /**
      * @description Constructs a SampleClass with an argument.
+     * @param argument Argument definition
      */
     public SampleClass(String argument) {
         System.debug('Constructor');
@@ -28,9 +39,11 @@ public with sharing class SampleClass {
      * <pre>
      * String result = SampleClass.testMethod();
      * System.debug(result);
+     * @param argument Argument to debug
+     * @return Empty string
      */
     @NamespaceAccessible
-    public static String testMethod(String argument) {
+    public static String sampleMethod(String argument) {
         System.debug('Execute');
         return '';
     }
@@ -40,7 +53,8 @@ public with sharing class SampleClass {
      * @description Calls the method.
      * This methods allows you to call it.
      */
-    public static void call() { }
+    public static void call() {
+    }
 
     /**
      * @description This is a String property.
@@ -59,7 +73,10 @@ public with sharing class SampleClass {
         /**
          * @description Description of the inner property.
          */
-        public InnerProp { get; set; }
+        public String InnerProp {
+            get;
+            set;
+        }
 
         /**
          * @description Executes from the inner class.
@@ -71,12 +88,15 @@ public with sharing class SampleClass {
 
     /**
      * @description Inner class belonging to SampleClass.
-    */
+     */
     public class AnotherInnerClass {
         /**
          * @description Description of the inner property.
          */
-        public InnerProp { get; set; }
+        public String InnerProp {
+            get;
+            set;
+        }
 
         /**
          * @description Executes from the inner class.

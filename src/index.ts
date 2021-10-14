@@ -1,1 +1,1 @@
-export * from './command/Generate';
+export * from './service/manifest-factory';

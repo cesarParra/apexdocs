@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 import * as yargs from 'yargs';
 
-import { generate } from '../command/Generate';
-import FileManager from '../FileManager';
+import FileManager from '../service/file-manager';
+import { GeneratorChoices, Settings } from '../Settings';
+import { createManifest } from '../service/manifest-factory';
+import { Logger } from '../util/logger';
+import { RawBodyParser } from '../service/parser';
+import { ApexFileReader } from '../service/apex-file-reader';
 
 const argv = yargs.options({
   sourceDir: {
@@ -14,7 +18,7 @@ const argv = yargs.options({
   targetDir: {
     type: 'string',
     alias: 't',
-    default: 'docs',
+    default: './docs/',
     describe: 'The directory location where documentation will be generated to.',
   },
   recursive: {
@@ -35,7 +39,7 @@ const argv = yargs.options({
     default: 'jekyll',
     choices: ['jekyll', 'docsify', 'jsdoc'],
     describe:
-      'Define the static file generator for which the documents will be created. Currently supports jekyll and docsify.',
+      'Define the static file generator for which the documents will be created. Currently supports jekyll, docsify, and jsdoc.',
   },
   configPath: {
     type: 'string',
@@ -52,13 +56,17 @@ const argv = yargs.options({
   },
 }).argv;
 
-const generatedClassModels = generate(
-  argv.sourceDir,
-  argv.recursive,
-  argv.scope,
-  argv.targetDir,
-  argv.targetGenerator,
-  argv.configPath,
-  argv.group,
-);
-new FileManager(generatedClassModels).generate();
+Settings.build({
+  sourceDirectory: argv.sourceDir,
+  recursive: argv.recursive,
+  scope: argv.scope,
+  outputDir: argv.targetDir,
+  targetGenerator: argv.targetGenerator as GeneratorChoices,
+  configPath: argv.configPath,
+  group: argv.group,
+});
+
+const fileBodies = new ApexFileReader().processFiles();
+const manifest = createManifest(new RawBodyParser(fileBodies));
+Logger.log(`Parsed ${manifest.types.length} files`);
+FileManager.generate(manifest.types);

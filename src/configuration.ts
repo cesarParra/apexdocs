@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import Settings from './Settings';
+import { Settings } from './Settings';
 
 interface ConfigHome {
   header?: string;
@@ -11,6 +11,7 @@ interface ConfigContent {
   includeDate?: string;
   injections?: Injection;
 }
+
 interface Config {
   root?: string;
   defaultGroupName?: string;
@@ -37,7 +38,7 @@ interface MethodInjection {
 
 export default class Configuration {
   public static getHeader() {
-    let config = this.getConfig();
+    const config = this.getConfig();
     if (!config?.home?.header) {
       return undefined;
     }
@@ -52,7 +53,7 @@ export default class Configuration {
   }
 
   public static getConfig(): Config | undefined {
-    const configPath = Settings.getInstance().getConfigPath();
+    const configPath = Settings.getInstance().configPath;
     if (!configPath) {
       return undefined;
     }
