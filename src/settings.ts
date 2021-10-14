@@ -18,35 +18,38 @@ export interface SettingsConfig {
 export class Settings {
   private static instance: Settings;
 
-  _config!: SettingsConfig;
-
-  static build(config: SettingsConfig) {
-    Settings.instance = new Settings();
-    Settings.instance._config = config;
+  private constructor(public config: SettingsConfig) {
   }
 
-  static getInstance(): Settings {
+  public static build(config: SettingsConfig) {
+    Settings.instance = new Settings(config);
+  }
+
+  public static getInstance(): Settings {
+    if (!Settings.instance) {
+      throw new Error('Settings has not been initialized');
+    }
     return Settings.instance;
   }
 
   get sourceDirectory(): string {
-    return this._config.sourceDirectory;
+    return this.config.sourceDirectory;
   }
 
   get recursive(): boolean {
-    return this._config.recursive;
+    return this.config.recursive;
   }
 
   get scope(): string[] {
-    return this._config.scope;
+    return this.config.scope;
   }
 
   get outputDir(): string {
-    return this._config.outputDir;
+    return this.config.outputDir;
   }
 
   get docsProcessor(): DocsProcessor {
-    switch (this._config.targetGenerator) {
+    switch (this.config.targetGenerator) {
       case 'jekyll':
         return new JekyllDocsProcessor();
       case 'docsify':
@@ -59,10 +62,10 @@ export class Settings {
   }
 
   get configPath(): string | undefined {
-    return this._config.configPath;
+    return this.config.configPath;
   }
 
   get shouldGroup(): boolean | undefined {
-    return this._config.group;
+    return this.config.group;
   }
 }

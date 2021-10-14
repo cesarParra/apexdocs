@@ -1,1 +1,1 @@
-export * from './service/doc-generator';
+export * from './service/manifest-factory';
