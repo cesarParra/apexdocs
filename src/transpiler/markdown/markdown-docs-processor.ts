@@ -9,7 +9,7 @@ import {
   Type,
 } from '@cparra/apex-reflection';
 
-import DocsProcessor from './docs-processor';
+import ProcessorTypeTranspiler from './processor-type-transpiler';
 import MarkdownHelper from './markdown-helper';
 import Configuration from './../Configuration';
 import ClassFileGeneratorHelper from './class-file-generatorHelper';
@@ -38,7 +38,7 @@ function buildSignature(name: string, parameterAware: ParameterAware): string {
   return (signature += ')');
 }
 
-export default abstract class MarkdownDocsProcessor extends DocsProcessor {
+export default abstract class MarkdownDocsProcessor extends ProcessorTypeTranspiler {
   private classes: Type[] = [];
 
   abstract getHomeFileName(): string;
@@ -135,12 +135,6 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   }
 
   generateDocsForClass(generator: MarkdownHelper, classModel: Type, level: number) {
-    Configuration.getConfig()?.content?.injections?.doc?.onInit?.forEach(injection => {
-      generator.addText(injection);
-    });
-    const suffix = classModel.type_name;
-    generator.addTitle(`${classModel.name} ${suffix}`, level);
-
     const isNamespaceAccessible = this.isNamespaceAccessible(classModel);
     if (isNamespaceAccessible) {
       generator.addBlankLine();

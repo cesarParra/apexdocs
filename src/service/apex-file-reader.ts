@@ -1,6 +1,7 @@
-import * as fs from 'fs';
-import * as path from 'path';
 import { Settings } from '../Settings';
+import { FileSystem } from './file-system';
+
+const APEX_FILE_EXTENSION = '.cls';
 
 /**
  * Reads from .cls files and returns their raw body.
@@ -9,31 +10,36 @@ export class ApexFileReader {
   /**
    * Reads from .cls files and returns their raw body.
    */
-  processFiles(): string[] {
+  static processFiles(fileSystem: FileSystem): string[] {
     let bodies: string[] = [];
 
-    const directoryContents = fs.readdirSync(this.sourceDirectory);
-    directoryContents.forEach(currentFile => {
-      const currentPath = path.join(this.sourceDirectory, currentFile);
-      if (this.readRecursively && fs.statSync(currentPath).isDirectory()) {
-        bodies = bodies.concat(this.processFiles());
+    const directoryContents = fileSystem.readDirectory(this.sourceDirectory);
+
+    directoryContents.forEach(currentFilePath => {
+      const currentPath = fileSystem.joinPath(this.sourceDirectory, currentFilePath);
+      if (this.readRecursively && fileSystem.isDirectory(currentPath)) {
+        bodies = bodies.concat(this.processFiles(fileSystem));
       }
 
-      if (!currentFile.endsWith('.cls')) {
+      if (!this.isApexFile(currentFilePath)) {
         return;
       }
 
-      const rawFile = fs.readFileSync(currentPath);
-      bodies.push(rawFile.toString());
+      const rawFile = fileSystem.readFile(currentPath);
+      bodies.push(rawFile);
     });
     return bodies;
   }
 
-  get sourceDirectory() {
+  private static isApexFile(currentFile: string): boolean {
+    return currentFile.endsWith(APEX_FILE_EXTENSION);
+  }
+
+  private static get sourceDirectory() {
     return Settings.getInstance().sourceDirectory;
   }
 
-  get readRecursively() {
+  private static get readRecursively() {
     return Settings.getInstance().recursive;
   }
 }

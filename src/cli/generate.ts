@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 import * as yargs from 'yargs';
 
-import FileManager from '../service/file-manager';
+import Transpiler from '../service/transpiler';
 import { GeneratorChoices, Settings } from '../Settings';
 import { createManifest } from '../service/manifest-factory';
 import { Logger } from '../util/logger';
 import { RawBodyParser } from '../service/parser';
 import { ApexFileReader } from '../service/apex-file-reader';
+import { reflect } from '@cparra/apex-reflection';
+import { DefaultFileSystem } from '../service/file-system';
 
 const argv = yargs.options({
   sourceDir: {
@@ -66,7 +68,10 @@ Settings.build({
   group: argv.group,
 });
 
-const fileBodies = new ApexFileReader().processFiles();
-const manifest = createManifest(new RawBodyParser(fileBodies));
+const fileBodies = ApexFileReader.processFiles(new DefaultFileSystem());
+const manifest = createManifest(new RawBodyParser(fileBodies), reflect);
 Logger.log(`Parsed ${manifest.types.length} files`);
-FileManager.generate(manifest.types);
+const processor = Settings.getInstance().docsProcessor;
+Transpiler.generate(manifest.types, processor);
+const generatedFiles = processor.fileBuilder().files();
+// TODO: Persist the generated files

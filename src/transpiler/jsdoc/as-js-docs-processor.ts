@@ -2,11 +2,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { ClassMirror, Type } from '@cparra/apex-reflection';
 
-import DocsProcessor from '../docs-processor';
+import ProcessorTypeTranspiler from '../processor-type-transpiler';
 import JsHelper from './helper/js-helper';
 import { Logger } from '../../util/logger';
 
-export default class AsJsDocsProcessor extends DocsProcessor {
+export default class AsJsDocsProcessor extends ProcessorTypeTranspiler {
   process(classModel: Type, outputDir: string) {
     const jsHelper = new JsHelper();
     this.generateDocsForClass(jsHelper, classModel);

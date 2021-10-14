@@ -18,8 +18,7 @@ export interface SettingsConfig {
 export class Settings {
   private static instance: Settings;
 
-  private constructor(public config: SettingsConfig) {
-  }
+  private constructor(public config: SettingsConfig) {}
 
   public static build(config: SettingsConfig) {
     Settings.instance = new Settings(config);
