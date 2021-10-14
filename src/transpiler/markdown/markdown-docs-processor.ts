@@ -44,12 +44,10 @@ export default abstract class MarkdownDocsProcessor extends ProcessorTypeTranspi
   abstract getHomeFileName(): string;
 
   // tslint:disable-next-line:no-empty
-  onBeforeHomeFileCreated(generator: MarkdownHelper) {
-  }
+  onBeforeHomeFileCreated(generator: MarkdownHelper) {}
 
   // tslint:disable-next-line:no-empty
-  onBeforeClassFileCreated(generator: MarkdownHelper) {
-  }
+  onBeforeClassFileCreated(generator: MarkdownHelper) {}
 
   onBeforeProcess(classes: Type[], outputDir: string) {
     this.classes = classes;
