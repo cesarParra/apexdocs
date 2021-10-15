@@ -1,8 +1,13 @@
-import { Walker } from './walker';
-import DocsProcessor from '../../../lib/DocsProcessor';
+import { Walker, WalkerListener } from './walker';
+import { EnumMirror } from '@cparra/apex-reflection';
 
 export class EnumWalker extends Walker {
-  walk(): void {
-    this.onTypeDeclaration?.(this.type);
+  walk(listener: WalkerListener): void {
+    const enumMirror = this.type as EnumMirror;
+    if (enumMirror.annotations.length) {
+      listener.onAnnotationsDeclaration(enumMirror.annotations);
+    }
+
+    listener.onTypeDeclaration(this.type);
   }
 }

@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { Settings } from './Settings';
+import { Settings } from './settings';
 
 interface ConfigHome {
   header?: string;

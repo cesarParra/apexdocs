@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import * as yargs from 'yargs';
 
-import Transpiler from '../service/transpiler';
-import { GeneratorChoices, Settings } from '../Settings';
+import Transpiler from '../transpiler/transpiler';
+import { GeneratorChoices, Settings } from '../settings';
 import { createManifest } from '../service/manifest-factory';
 import { Logger } from '../util/logger';
 import { RawBodyParser } from '../service/parser';
@@ -71,7 +71,8 @@ Settings.build({
 const fileBodies = ApexFileReader.processFiles(new DefaultFileSystem());
 const manifest = createManifest(new RawBodyParser(fileBodies), reflect);
 Logger.log(`Parsed ${manifest.types.length} files`);
-const processor = Settings.getInstance().docsProcessor;
+const processor = Settings.getInstance().typeTranspiler;
 Transpiler.generate(manifest.types, processor);
 const generatedFiles = processor.fileBuilder().files();
 // TODO: Persist the generated files
+console.log(generatedFiles);

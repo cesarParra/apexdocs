@@ -1,4 +1,4 @@
-import { Settings } from '../Settings';
+import { Settings } from '../settings';
 import { FileSystem } from './file-system';
 
 const APEX_FILE_EXTENSION = '.cls';

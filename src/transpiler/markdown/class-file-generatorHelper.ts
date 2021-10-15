@@ -1,6 +1,6 @@
 import { Type } from '@cparra/apex-reflection';
-import Configuration from '../Configuration';
-import { Settings } from '../Settings';
+import Configuration from '../../configuration';
+import { Settings } from '../../settings';
 
 export default class ClassFileGeneratorHelper {
   public static getSanitizedGroup(classModel: Type) {
