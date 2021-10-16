@@ -6,8 +6,7 @@ export interface TypeParser {
 }
 
 export class RawBodyParser implements TypeParser {
-  constructor(public typeBodies: string[]) {
-  }
+  constructor(public typeBodies: string[]) {}
 
   parse(reflect: (typeBody: string) => ReflectionResult): Type[] {
     return this.typeBodies

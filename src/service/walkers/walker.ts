@@ -29,8 +29,7 @@ export interface WalkerListener {
 }
 
 export abstract class Walker {
-  constructor(public type: Type) {
-  }
+  constructor(public type: Type) {}
 
   abstract walk(listener: WalkerListener): void;
 }

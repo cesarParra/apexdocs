@@ -8,15 +8,9 @@ This is an interface description.
 ### `execute()`
 
 Executes the command.
-#### Throws
-|Exception|Description|
-|---------|-----------|
 
 ### `getValue()`
 
 Returns a value based on the executed command.
-#### Throws
-|Exception|Description|
-|---------|-----------|
 
 ---
