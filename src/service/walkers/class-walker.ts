@@ -3,12 +3,8 @@ import { ClassMirror } from '@cparra/apex-reflection';
 
 export class ClassWalker extends Walker {
   walk(listener: WalkerListener): void {
-    const classMirror = this.type as ClassMirror;
-    if (classMirror.annotations.length) {
-      listener.onAnnotationsDeclaration(classMirror.annotations);
-    }
-
     listener.onTypeDeclaration(this.type);
+    const classMirror = this.type as ClassMirror;
 
     if (classMirror.constructors.length) {
       listener.onConstructorDeclaration(this.type.name, classMirror.constructors);

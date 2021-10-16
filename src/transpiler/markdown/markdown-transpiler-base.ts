@@ -18,14 +18,10 @@ export class MarkdownTranspilerBase extends ProcessorTypeTranspiler {
 
   onBeforeProcess = (types: Type[]) => {
     // TODO: Avoid hardcoding the file name as there are different type of files
-    this._fileContainer.pushFile(new MarkdownHomeFile('index.md', types));
+    this._fileContainer.pushFile(new MarkdownHomeFile('index', types));
   };
 
   onProcess(type: Type): void {
     this._fileContainer.pushFile(new MarkdownTypeFile(type));
   }
-
-  onAfterProcess = (types: Type[]) => {
-    // TODO: Make sure that we resolve all links
-  };
 }

@@ -1,17 +1,17 @@
----
-layout: default
----
-# SampleClass class
+# SampleClass
 
-`NamespaceAccessible`
+`namespaceAccessible`
 
 This is a class description.
 
----
+
+**group** Sample Classes
+
+**author** Cesar Parra
 ## Constructors
 ### `SampleClass()`
 
-`NamespaceAccessible`
+`namespaceAccessible`
 
 Constructs a SampleClass without any arguments.
 #### Throws
@@ -20,7 +20,7 @@ Constructs a SampleClass without any arguments.
 |`ExcName` | some exception |
 
 #### Example
-```
+```apex
 <pre>
 // <strong>Example</strong>
 SampleClass sampleInstance = new SampleClass();
@@ -40,43 +40,23 @@ Constructs a SampleClass with an argument.
 |---------|-----------|
 
 ---
-## Enums
-### InnerEnum
-
-
-`NamespaceAccessible`
-
----
-## Properties
+## Fields
 
 ### `AnotherProp` → `Decimal`
-
-`NamespaceAccessible`
 
 This is a Decimal property.
 
 ### `MyProp` → `String`
 
-`NamespaceAccessible`
-
 This is a String property.
 
 ---
 ## Methods
-### `call()` → `void`
+### `sampleMethod(String argument)`
 
-Calls the method. This methods allows you to call it.
-
-#### Throws
-|Exception|Description|
-|---------|-----------|
-
-### `sampleMethod(String argument)` → `String`
-
-`NamespaceAccessible`
+`namespaceAccessible`
 
 Executes commands based on the passed in argument.
-
 #### Parameters
 |Param|Description|
 |-----|-----------|
@@ -97,56 +77,67 @@ Empty string
 |---------|-----------|
 
 #### Example
-```
+```apex
 <pre>
 String result = SampleClass.testMethod();
 System.debug(result);
 ```
 
----
-## Inner Classes
+### `call()`
 
-### AnotherInnerClass class
-
-Inner class belonging to SampleClass.
-
----
-#### Properties
-
-##### `InnerProp` → `String`
-
-Description of the inner property.
-
----
-#### Methods
-##### `innerMethod()` → `void`
-
-Executes from the inner class.
-
-###### Throws
+Calls the method. This methods allows you to call it.
+#### Throws
 |Exception|Description|
 |---------|-----------|
 
 ---
-### InnerClass class
+## Enums
+## InnerEnum
+
+`namespaceAccessible`
+
+---
+## Classes
+## AnotherInnerClass
 
 Inner class belonging to SampleClass.
 
----
-#### Properties
+### Fields
 
-##### `InnerProp` → `String`
+#### `InnerProp` → `String`
 
 Description of the inner property.
 
 ---
-#### Methods
-##### `innerMethod()` → `void`
+### Methods
+#### `innerMethod()`
 
 Executes from the inner class.
-
-###### Throws
+##### Throws
 |Exception|Description|
 |---------|-----------|
+
+---
+
+## InnerClass
+
+Inner class belonging to SampleClass.
+
+### Fields
+
+#### `InnerProp` → `String`
+
+Description of the inner property.
+
+---
+### Methods
+#### `innerMethod()`
+
+Executes from the inner class.
+##### Throws
+|Exception|Description|
+|---------|-----------|
+
+---
 
 ---

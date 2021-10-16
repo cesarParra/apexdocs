@@ -13,8 +13,6 @@ import { Annotation } from '@cparra/apex-reflection/index';
 export interface WalkerListener {
   onTypeDeclaration(typeMirror: Type): void;
 
-  onAnnotationsDeclaration(annotations: Annotation[]): void;
-
   onConstructorDeclaration(className: string, constructors: ConstructorMirror[]): void;
 
   onFieldsDeclaration(fields: FieldMirror[]): void;
@@ -31,7 +29,8 @@ export interface WalkerListener {
 }
 
 export abstract class Walker {
-  constructor(public type: Type) {}
+  constructor(public type: Type) {
+  }
 
   abstract walk(listener: WalkerListener): void;
 }

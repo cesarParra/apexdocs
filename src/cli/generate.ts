@@ -9,6 +9,8 @@ import { RawBodyParser } from '../service/parser';
 import { ApexFileReader } from '../service/apex-file-reader';
 import { reflect } from '@cparra/apex-reflection';
 import { DefaultFileSystem } from '../service/file-system';
+import { FileWriter } from '../service/file-writer';
+import { ReflectionResult } from '@cparra/apex-reflection/index';
 
 const argv = yargs.options({
   sourceDir: {
@@ -47,10 +49,18 @@ Settings.build({
 });
 
 const fileBodies = ApexFileReader.processFiles(new DefaultFileSystem());
-const manifest = createManifest(new RawBodyParser(fileBodies), reflect);
+const reflectionWithLogger = (declarationBody: string): ReflectionResult => {
+  const result = reflect(declarationBody);
+  if (result.error) {
+    Logger.log(`Parsing error ${result.error?.message}`);
+  }
+  return result;
+};
+const manifest = createManifest(new RawBodyParser(fileBodies), reflectionWithLogger);
 Logger.log(`Parsed ${manifest.types.length} files`);
 const processor = Settings.getInstance().typeTranspiler;
 Transpiler.generate(manifest.types, processor);
 const generatedFiles = processor.fileBuilder().files();
-// TODO: Persist the generated files
-console.log(generatedFiles);
+FileWriter.write(generatedFiles, (fileName: string) => {
+  Logger.log(`${fileName} processed.`);
+});
