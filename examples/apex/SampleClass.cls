@@ -1,6 +1,7 @@
 /**
  * @description This is a class description.
  * @group Sample Classes
+ * @author Cesar Parra
  */
 @NamespaceAccessible
 public with sharing class SampleClass {

@@ -9,7 +9,6 @@ export interface SettingsConfig {
   scope: string[];
   outputDir: string;
   targetGenerator: GeneratorChoices;
-  configPath?: string;
   group?: boolean;
 }
 
@@ -58,10 +57,6 @@ export class Settings {
     //     throw Error('Invalid target generator');
     // }
     return new MarkdownTranspilerBase();
-  }
-
-  get configPath(): string | undefined {
-    return this.config.configPath;
   }
 
   get shouldGroup(): boolean | undefined {

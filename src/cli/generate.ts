@@ -43,11 +43,6 @@ const argv = yargs.options({
     describe:
       'Define the static file generator for which the documents will be created. Currently supports jekyll, docsify, and jsdoc.',
   },
-  configPath: {
-    type: 'string',
-    alias: 'c',
-    describe: 'The path to the JSON configuration file that defines the structure of the documents to generate.',
-  },
   group: {
     type: 'boolean',
     alias: 'o',
@@ -64,7 +59,6 @@ Settings.build({
   scope: argv.scope,
   outputDir: argv.targetDir,
   targetGenerator: argv.targetGenerator as GeneratorChoices,
-  configPath: argv.configPath,
   group: argv.group,
 });
 

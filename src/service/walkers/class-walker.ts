@@ -11,7 +11,7 @@ export class ClassWalker extends Walker {
     listener.onTypeDeclaration(this.type);
 
     if (classMirror.constructors.length) {
-      listener.onConstructorDeclaration(classMirror.constructors);
+      listener.onConstructorDeclaration(this.type.name, classMirror.constructors);
     }
     if (classMirror.fields.length) {
       listener.onFieldsDeclaration(classMirror.fields);

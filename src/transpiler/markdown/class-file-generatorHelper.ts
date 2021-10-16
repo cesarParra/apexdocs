@@ -1,5 +1,4 @@
 import { Type } from '@cparra/apex-reflection';
-import Configuration from '../../configuration';
 import { Settings } from '../../settings';
 
 export default class ClassFileGeneratorHelper {
@@ -10,12 +9,11 @@ export default class ClassFileGeneratorHelper {
   }
 
   public static getFileLink(classModel: Type) {
-    const root = Configuration.getConfig()?.root ? Configuration.getConfig()?.root : '';
     let fileLink;
     if (Settings.getInstance().shouldGroup) {
-      fileLink = `[${classModel.name}](${root}/${this.getSanitizedGroup(classModel)}/${classModel.name}.md)`;
+      fileLink = `[${classModel.name}](/${this.getSanitizedGroup(classModel)}/${classModel.name}.md)`;
     } else {
-      fileLink = `[${classModel.name}](${root}/${classModel.name}.md)`;
+      fileLink = `[${classModel.name}](/${classModel.name}.md)`;
     }
 
     return fileLink;
