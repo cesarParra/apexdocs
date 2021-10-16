@@ -29,37 +29,21 @@ const argv = yargs.options({
     default: true,
     describe: 'Whether .cls classes will be searched for recursively in the directory provided.',
   },
-  scope: {
-    type: 'array',
-    alias: 'p',
-    default: ['global', 'public', 'namespaceaccessible'],
-    describe: 'A list of scopes to document. Values should be separated by a space, e.g --scope public private.',
-  },
   targetGenerator: {
     type: 'string',
     alias: 'g',
     default: 'jekyll',
-    choices: ['jekyll', 'docsify', 'jsdoc'],
+    choices: ['jekyll', 'docsify'],
     describe:
-      'Define the static file generator for which the documents will be created. Currently supports jekyll, docsify, and jsdoc.',
-  },
-  group: {
-    type: 'boolean',
-    alias: 'o',
-    default: true,
-    describe:
-      'Define whether the generated files should be grouped by the @group tag on the top level classes.' +
-      'If set to true, a sub directory will be created per group inside of the specified target directory.',
+      'Define the static file generator for which the documents will be created. Currently supports jekyll, and docsify.',
   },
 }).argv;
 
 Settings.build({
   sourceDirectory: argv.sourceDir,
   recursive: argv.recursive,
-  scope: argv.scope,
   outputDir: argv.targetDir,
   targetGenerator: argv.targetGenerator as GeneratorChoices,
-  group: argv.group,
 });
 
 const fileBodies = ApexFileReader.processFiles(new DefaultFileSystem());

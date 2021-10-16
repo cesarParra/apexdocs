@@ -9,14 +9,7 @@ export default class ClassFileGeneratorHelper {
   }
 
   public static getFileLink(classModel: Type) {
-    let fileLink;
-    if (Settings.getInstance().shouldGroup) {
-      fileLink = `[${classModel.name}](/${this.getSanitizedGroup(classModel)}/${classModel.name}.md)`;
-    } else {
-      fileLink = `[${classModel.name}](/${classModel.name}.md)`;
-    }
-
-    return fileLink;
+    return `[${classModel.name}](/${this.getSanitizedGroup(classModel)}/${classModel.name}.md)`;
   }
 
   private static getClassGroup(classModel: Type): string {
