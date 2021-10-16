@@ -1,26 +1,34 @@
 ---
 layout: default
 ---
-# SampleClass class
 
-`NamespaceAccessible`
+# SampleClass
+
+`NAMESPACEACCESSIBLE`
 
 This is a class description.
 
----
+**group** Sample Classes
+
+**author** Cesar Parra
+
 ## Constructors
+
 ### `SampleClass()`
 
-`NamespaceAccessible`
+`NAMESPACEACCESSIBLE`
 
 Constructs a SampleClass without any arguments.
+
 #### Throws
+
 |Exception|Description|
-|---------|-----------|
-|`ExcName` | some exception |
+|---|---|
+|`ExcName`|some exception|
 
 #### Example
-```
+
+```apex
 <pre>
 // <strong>Example</strong>
 SampleClass sampleInstance = new SampleClass();
@@ -30,57 +38,44 @@ SampleClass sampleInstance = new SampleClass();
 ### `SampleClass(String argument)`
 
 Constructs a SampleClass with an argument.
+
 #### Parameters
+
 |Param|Description|
-|-----|-----------|
-|`argument` | Argument definition |
-
-#### Throws
-|Exception|Description|
-|---------|-----------|
+|---|---|
+|`argument`|Argument definition|
 
 ---
-## Enums
-### InnerEnum
 
-
-`NamespaceAccessible`
-
----
 ## Properties
 
 ### `AnotherProp` → `Decimal`
 
-`NamespaceAccessible`
+`AURAENABLED`
 
 This is a Decimal property.
 
 ### `MyProp` → `String`
 
-`NamespaceAccessible`
+`AURAENABLED`
 
 This is a String property.
 
 ---
+
 ## Methods
-### `call()` → `void`
 
-Calls the method. This methods allows you to call it.
+### `sampleMethod(String argument)`
 
-#### Throws
-|Exception|Description|
-|---------|-----------|
-
-### `sampleMethod(String argument)` → `String`
-
-`NamespaceAccessible`
+`NAMESPACEACCESSIBLE`
 
 Executes commands based on the passed in argument.
 
 #### Parameters
+
 |Param|Description|
-|-----|-----------|
-|`argument` | Argument to debug |
+|---|---|
+|`argument`|Argument to debug|
 
 #### Return
 
@@ -92,25 +87,34 @@ String
 
 Empty string
 
-#### Throws
-|Exception|Description|
-|---------|-----------|
-
 #### Example
-```
+
+```apex
 <pre>
 String result = SampleClass.testMethod();
 System.debug(result);
 ```
 
----
-## Inner Classes
+### `call()`
 
-### AnotherInnerClass class
+Calls the method. This methods allows you to call it.
+
+---
+
+## Enums
+
+### InnerEnum
+
+`NAMESPACEACCESSIBLE`
+
+---
+
+## Classes
+
+### AnotherInnerClass
 
 Inner class belonging to SampleClass.
 
----
 #### Properties
 
 ##### `InnerProp` → `String`
@@ -118,21 +122,19 @@ Inner class belonging to SampleClass.
 Description of the inner property.
 
 ---
+
 #### Methods
-##### `innerMethod()` → `void`
+
+##### `innerMethod()`
 
 Executes from the inner class.
 
-###### Throws
-|Exception|Description|
-|---------|-----------|
-
 ---
-### InnerClass class
+
+### InnerClass
 
 Inner class belonging to SampleClass.
 
----
 #### Properties
 
 ##### `InnerProp` → `String`
@@ -140,13 +142,13 @@ Inner class belonging to SampleClass.
 Description of the inner property.
 
 ---
+
 #### Methods
-##### `innerMethod()` → `void`
+
+##### `innerMethod()`
 
 Executes from the inner class.
 
-###### Throws
-|Exception|Description|
-|---------|-----------|
+---
 
 ---

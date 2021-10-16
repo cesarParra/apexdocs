@@ -1,7 +1,7 @@
-// import MarkdownDocsProcessor from './../markdown-docs-processor';
-//
-// export default class DocsifyDocsProcessor extends MarkdownDocsProcessor {
-//   getHomeFileName(): string {
-//     return 'README.md';
-//   }
-// }
+import { MarkdownTranspilerBase } from '../markdown-transpiler-base';
+
+export default class DocsifyDocsProcessor extends MarkdownTranspilerBase {
+  homeFileName(): string {
+    return 'README';
+  }
+}

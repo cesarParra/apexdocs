@@ -2,6 +2,7 @@ TODO:
 
 [] Ability to specify access modifiers to filter by
 [] Ability to specify annotations to filter by (NSAccessible, Rest, Invocables, etc.)
+[] Automatic Resolution of links (@see and {@link FileName})
 [] Versioning capabilities. When creating the doc you specify a version number, and a new directory is created for the
 files, instead of just overriding
 [] New generatortype: To JsDocs from AuraEnabled

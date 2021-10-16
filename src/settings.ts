@@ -1,5 +1,6 @@
 import ProcessorTypeTranspiler from './transpiler/processor-type-transpiler';
-import { MarkdownTranspilerBase } from './transpiler/markdown/markdown-transpiler-base';
+import { JekyllDocsProcessor } from './transpiler/markdown/jekyll/jekyll-docsProcessor';
+import DocsifyDocsProcessor from './transpiler/markdown/docsify/docsify-docs-processor';
 
 export type GeneratorChoices = 'jekyll' | 'docsify';
 
@@ -13,7 +14,8 @@ export interface SettingsConfig {
 export class Settings {
   private static instance: Settings;
 
-  private constructor(public config: SettingsConfig) {}
+  private constructor(public config: SettingsConfig) {
+  }
 
   public static build(config: SettingsConfig) {
     Settings.instance = new Settings(config);
@@ -39,16 +41,13 @@ export class Settings {
   }
 
   get typeTranspiler(): ProcessorTypeTranspiler {
-    // switch (this.config.targetGenerator) {
-    //   case 'jekyll':
-    //     return new JekyllDocsProcessor();
-    //   case 'docsify':
-    //     return new DocsifyDocsProcessor();
-    //   case 'jsdocs':
-    //     return new AsJsDocsProcessor();
-    //   default:
-    //     throw Error('Invalid target generator');
-    // }
-    return new MarkdownTranspilerBase();
+    switch (this.config.targetGenerator) {
+      case 'jekyll':
+        return new JekyllDocsProcessor();
+      case 'docsify':
+        return new DocsifyDocsProcessor();
+      default:
+        throw Error('Invalid target generator');
+    }
   }
 }

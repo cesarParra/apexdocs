@@ -60,11 +60,13 @@ public with sharing class SampleClass {
     /**
      * @description This is a String property.
      */
+    @AuraEnabled
     public String MyProp { get; set; }
 
     /**
      * @description This is a Decimal property.
      */
+    @AuraEnabled
     public Decimal AnotherProp { get; private set; }
 
     /**
