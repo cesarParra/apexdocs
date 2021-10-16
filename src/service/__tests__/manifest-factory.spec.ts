@@ -9,6 +9,8 @@ class TestParser implements TypeParser {
 }
 
 it('creates a manifest from the result of a type parser', () => {
-  const manifest = createManifest(new TestParser());
+  const manifest = createManifest(new TestParser(), (typeBody: string) => {
+    return {};
+  });
   expect(manifest.types.length).toBe(0);
 });
