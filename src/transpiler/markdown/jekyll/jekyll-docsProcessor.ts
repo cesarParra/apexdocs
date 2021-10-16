@@ -1,22 +1,22 @@
-// import MarkdownDocsProcessor from '../markdown-docs-processor';
-// import MarkdownHelper from '../markdown-helper';
-//
-// export default class JekyllDocsProcessor extends MarkdownDocsProcessor {
-//   getHomeFileName(): string {
-//     return 'index.md';
-//   }
-//
-//   onBeforeHomeFileCreated(generator: MarkdownHelper) {
-//     this.addFrontMatterHeader(generator);
-//   }
-//
-//   onBeforeClassFileCreated(generator: MarkdownHelper) {
-//     this.addFrontMatterHeader(generator);
-//   }
-//
-//   private addFrontMatterHeader(generator: MarkdownHelper) {
-//     generator.addText('---');
-//     generator.addText('layout: default');
-//     generator.addText('---');
-//   }
-// }
+import { MarkdownTranspilerBase } from '../markdown-transpiler-base';
+import { Type } from '@cparra/apex-reflection';
+import { MarkdownHomeFile } from '../../../model/markdown-home-file';
+import { MarkdownTypeFile } from '../../../model/markdown-type-file';
+
+export class JekyllDocsProcessor extends MarkdownTranspilerBase {
+  homeFileName(): string {
+    return 'index';
+  }
+
+  onBeforeProcess = (types: Type[]) => {
+    this._fileContainer.pushFile(new MarkdownHomeFile(this.homeFileName(), types, this.frontMatterHeader));
+  };
+
+  onProcess(type: Type): void {
+    this._fileContainer.pushFile(new MarkdownTypeFile(type, 1, this.frontMatterHeader));
+  }
+
+  get frontMatterHeader(): string {
+    return '---\nlayout: default\n---';
+  }
+}

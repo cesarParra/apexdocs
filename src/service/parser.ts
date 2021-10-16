@@ -1,12 +1,12 @@
 import { Type, ReflectionResult } from '@cparra/apex-reflection';
-import { Logger } from '../util/logger';
 
 export interface TypeParser {
   parse(reflect: (typeBody: string) => ReflectionResult): Type[];
 }
 
 export class RawBodyParser implements TypeParser {
-  constructor(public typeBodies: string[]) {}
+  constructor(public typeBodies: string[]) {
+  }
 
   parse(reflect: (typeBody: string) => ReflectionResult): Type[] {
     return this.typeBodies

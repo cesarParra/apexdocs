@@ -4,21 +4,22 @@ import { FileContainer } from '../file-container';
 import { MarkdownHomeFile } from '../../model/markdown-home-file';
 import { MarkdownTypeFile } from '../../model/markdown-type-file';
 
-export class MarkdownTranspilerBase extends ProcessorTypeTranspiler {
-  private readonly _fileContainer: FileContainer;
+export abstract class MarkdownTranspilerBase extends ProcessorTypeTranspiler {
+  protected readonly _fileContainer: FileContainer;
 
   constructor() {
     super();
     this._fileContainer = new FileContainer();
   }
 
+  abstract homeFileName(): string;
+
   fileBuilder(): FileContainer {
     return this._fileContainer;
   }
 
   onBeforeProcess = (types: Type[]) => {
-    // TODO: Avoid hardcoding the file name as there are different type of files
-    this._fileContainer.pushFile(new MarkdownHomeFile('index', types));
+    this._fileContainer.pushFile(new MarkdownHomeFile(this.homeFileName(), types));
   };
 
   onProcess(type: Type): void {
