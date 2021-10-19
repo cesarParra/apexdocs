@@ -23,6 +23,12 @@ const argv = yargs.options({
     default: true,
     describe: 'Whether .cls classes will be searched for recursively in the directory provided.',
   },
+  scope: {
+    type: 'array',
+    alias: 'p',
+    default: ['global'],
+    describe: 'A list of scopes to document. Values should be separated by a space, e.g --scope public private.',
+  },
   targetGenerator: {
     type: 'string',
     alias: 'g',
@@ -36,6 +42,7 @@ const argv = yargs.options({
 Settings.build({
   sourceDirectory: argv.sourceDir,
   recursive: argv.recursive,
+  scope: argv.scope,
   outputDir: argv.targetDir,
   targetGenerator: argv.targetGenerator as GeneratorChoices,
 });

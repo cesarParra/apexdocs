@@ -7,6 +7,7 @@ export type GeneratorChoices = 'jekyll' | 'docsify';
 export interface SettingsConfig {
   sourceDirectory: string;
   recursive: boolean;
+  scope: string[];
   outputDir: string;
   targetGenerator: GeneratorChoices;
 }
@@ -14,8 +15,7 @@ export interface SettingsConfig {
 export class Settings {
   private static instance: Settings;
 
-  private constructor(public config: SettingsConfig) {
-  }
+  private constructor(public config: SettingsConfig) {}
 
   public static build(config: SettingsConfig) {
     Settings.instance = new Settings(config);
@@ -34,6 +34,10 @@ export class Settings {
 
   get recursive(): boolean {
     return this.config.recursive;
+  }
+
+  get scope(): string[] {
+    return this.config.scope;
   }
 
   get outputDir(): string {
