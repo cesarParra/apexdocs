@@ -6,7 +6,7 @@ layout: default
 This is an interface description.
 
 
-**group** Sample Interfaces
+**Group** Sample Interfaces
 
 ## Methods
 ### `execute()`
