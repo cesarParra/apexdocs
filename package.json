@@ -23,7 +23,7 @@
     "prepare": "npm run build",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags",
-    "execute:example": "node lib/cli/generate.js -s examples/apex -t docs"
+    "execute:example": "node lib/cli/generate.js -s examples/apex -t docs --scope global public"
   },
   "author": "Cesar Parra",
   "license": "MIT",

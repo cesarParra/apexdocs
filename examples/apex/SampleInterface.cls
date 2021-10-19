@@ -2,7 +2,7 @@
  * @description This is an interface description.
  * @group Sample Interfaces
  */
-public interface SampleInterface {
+global interface SampleInterface {
     /**
      * @description Executes the command.
      */
@@ -10,6 +10,7 @@ public interface SampleInterface {
 
     /**
      * @description Returns a value based on the executed command.
+     * @return The value
      */
     String getValue();
 }

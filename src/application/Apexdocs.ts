@@ -19,9 +19,12 @@ export class Apexdocs {
   static generate(): void {
     const fileBodies = ApexFileReader.processFiles(new DefaultFileSystem());
     const manifest = createManifest(new RawBodyParser(fileBodies), this._reflectionWithLogger);
-    Logger.log(`Parsed ${manifest.types.length} files`);
+    
+    const filteredManifest = manifest.filteredByAccessModifiers(Settings.getInstance().scope);
+
+    Logger.log(`Parsed ${filteredManifest.length} files`);
     const processor = Settings.getInstance().typeTranspiler;
-    Transpiler.generate(manifest.types, processor);
+    Transpiler.generate(filteredManifest, processor);
     const generatedFiles = processor.fileBuilder().files();
     FileWriter.write(generatedFiles, (fileName: string) => {
       Logger.log(`${fileName} processed.`);
