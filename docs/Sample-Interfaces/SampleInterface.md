@@ -17,4 +17,14 @@ Executes the command.
 
 Returns a value based on the executed command.
 
+#### Return
+
+**Type**
+
+String
+
+**Description**
+
+The value
+
 ---
