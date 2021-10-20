@@ -10,7 +10,7 @@ export class FileWriter {
       fs.mkdirSync(outputDir);
     }
 
-    files.forEach(file => {
+    files.forEach((file) => {
       const dirPath = path.join(outputDir, file.dir);
       if (!fs.existsSync(dirPath)) {
         fs.mkdirSync(dirPath);

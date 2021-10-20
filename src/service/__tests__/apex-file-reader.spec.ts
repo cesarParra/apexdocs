@@ -1,5 +1,4 @@
-import { Settings } from '../../settings';
-import { FileSystem } from '../file-system';
+import { Settings, SettingsConfig } from '../../settings';
 import { ApexFileReader } from '../apex-file-reader';
 
 describe('File Reader', () => {
@@ -12,21 +11,25 @@ describe('File Reader', () => {
       group: true,
       outputDir: '',
       scope: [],
-    });
+    } as SettingsConfig);
   });
 
   it('returns an empty list when there are no files in the directory', () => {
     const result = ApexFileReader.processFiles({
-      isDirectory(path: string): boolean {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      isDirectory(_: string): boolean {
         return false;
       },
-      joinPath(paths: string): string {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      joinPath(_: string): string {
         return '';
       },
-      readDirectory(sourceDirectory: string): string[] {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      readDirectory(_: string): string[] {
         return [];
       },
-      readFile(path: string): string {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      readFile(_: string): string {
         return '';
       },
     });
@@ -35,16 +38,16 @@ describe('File Reader', () => {
 
   it('returns an empty list when there are no Apex files in the directory', () => {
     const result = ApexFileReader.processFiles({
-      isDirectory(path: string): boolean {
+      isDirectory(_: string): boolean {
         return false;
       },
-      joinPath(paths: string): string {
+      joinPath(_: string): string {
         return '';
       },
-      readDirectory(sourceDirectory: string): string[] {
+      readDirectory(_: string): string[] {
         return ['SomeFile.md'];
       },
-      readFile(path: string): string {
+      readFile(_: string): string {
         return '';
       },
     });
@@ -53,16 +56,20 @@ describe('File Reader', () => {
 
   it('returns the file contents for an Apex file', () => {
     const result = ApexFileReader.processFiles({
-      isDirectory(path: string): boolean {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      isDirectory(_: string): boolean {
         return false;
       },
-      joinPath(paths: string): string {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      joinPath(_: string): string {
         return '';
       },
-      readDirectory(sourceDirectory: string): string[] {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      readDirectory(_: string): string[] {
         return ['SomeApexFile.cls'];
       },
-      readFile(path: string): string {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      readFile(_: string): string {
         return 'public class MyClass{}';
       },
     });

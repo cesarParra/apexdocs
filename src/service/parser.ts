@@ -9,10 +9,10 @@ export class RawBodyParser implements TypeParser {
 
   parse(reflect: (typeBody: string) => ReflectionResult): Type[] {
     return this.typeBodies
-      .map(rawBody => reflect(rawBody))
-      .filter(reflectionResult => {
+      .map((rawBody) => reflect(rawBody))
+      .filter((reflectionResult) => {
         return reflectionResult.typeMirror;
       })
-      .map(reflectionResult => reflectionResult.typeMirror!);
+      .map((reflectionResult) => reflectionResult.typeMirror!);
   }
 }

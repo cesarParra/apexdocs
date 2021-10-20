@@ -18,8 +18,7 @@
   "scripts": {
     "test": "jest --coverage",
     "build": "rimraf ./lib && npm run lint && tsc --declaration",
-    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
-    "lint": "tslint -p tsconfig.json",
+    "lint": "eslint ./src/**/*.{js,ts} --quiet --fix",
     "prepare": "npm run build",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags",
@@ -37,19 +36,27 @@
     "@types/node": "^13.7.4",
     "@types/shelljs": "^0.8.6",
     "@types/yargs": "^15.0.3",
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/parser": "^5.1.0",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
     "husky": "^4.2.3",
     "jest": "^27.0.4",
-    "prettier": "^1.19.1",
+    "prettier": "^2.4.1",
     "rimraf": "^3.0.2",
     "ts-jest": "^27.0.3",
-    "tslint": "^6.0.0",
-    "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.8.2"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run format"
+      "pre-commit": "lint-staged"
     }
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "eslint --fix"
+    ]
   },
   "jest": {
     "transform": {

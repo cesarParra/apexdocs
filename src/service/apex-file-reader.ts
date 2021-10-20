@@ -15,7 +15,7 @@ export class ApexFileReader {
 
     const directoryContents = fileSystem.readDirectory(this.sourceDirectory);
 
-    directoryContents.forEach(currentFilePath => {
+    directoryContents.forEach((currentFilePath) => {
       const currentPath = fileSystem.joinPath(this.sourceDirectory, currentFilePath);
       if (this.readRecursively && fileSystem.isDirectory(currentPath)) {
         bodies = bodies.concat(this.processFiles(fileSystem));
