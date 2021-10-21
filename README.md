@@ -8,14 +8,69 @@
 
 ## Description
 
-ApexDocs was built as an alternative to the [Java based ApexDoc tool](https://github.com/SalesforceFoundation/ApexDoc) originally created by Aslam Bari and later maintained by Salesforce.org, as that tool is no longer being maintained.
+ApexDocs was originally built as an alternative to
+the [Java based ApexDoc tool](https://github.com/SalesforceFoundation/ApexDoc) originally created by Aslam Bari and
+later maintained by Salesforce.org, as that tool is no longer being maintained.
 
-ApexDocs is a Node.js library built on Typescript and hosted on [npm](https://www.npmjs.com/package/@cparra/apexdocs). It offers CLI capabilities to automatically docGenerator a set of files that fully document each one of you classes. Additionally it can be imported and consumed directly by your JavaScript code.
+ApexDocs is a Node.js library built on Typescript and hosted on [npm](https://www.npmjs.com/package/@cparra/apexdocs).
+It offers CLI capabilities to automatically docGenerator a set of files that fully document each one of you classes.
+Additionally, it can be imported and consumed directly by your JavaScript code.
 
 There are some key differences between ApexDocs and the Java based ApexDoc tool:
 
-- **Recursive file search through your module directory structure**. In an `sfdx` based project, all of your classes will be documented by specifying the top-most directory where file search should begin.
-- **Unopinionated documentation site generation**. Instead of creating HTML files, ApexDocs generates a Markdown (.md) file per Apex class being documented. This means you can host your files in static web hosting services that parse Markdown like Github Pages or Netlify, and use site generators like Jekyll or Gatsby. This gives you the freedom to decide how to style your site to match your needs.
+- **Recursive file search through your module directory structure**. In an `sfdx` based project, all of your classes
+  will be documented by specifying the top-most directory where file search should begin.
+- **Unopinionated documentation site generation**. Instead of creating HTML files, ApexDocs generates a Markdown (.md)
+  file per Apex class being documented. This means you can host your files in static web hosting services that parse
+  Markdown like Github Pages or Netlify, and use site generators like Jekyll or Gatsby. This gives you the freedom to
+  decide how to style your site to match your needs.
+
+## Version 2.X
+
+Version shares almost* all the same functionality (and more) of 1.X , but is a rewrite from the ground up of the tool,
+so please be aware if migrating from a 1.X version.
+
+The Apex code parsing logic for the 1.X codebase was almost a one-to-one translation of the Java based ApexDoc tool to
+Javascript. With 2.X the parsing logic has been improved and extracted out of this codebase, and into its own standalone
+NPM module which is solely focused on Apex code reflection: https://www.npmjs.com/package/@cparra/apex-reflection
+
+This allows for an improved code quality of both code bases and an increased ease of introducing future improvements and
+fixing issues.
+
+But please be aware: migration to 2.X is not recommended at this time for production until a GA release.
+
+### Differences between the versions
+
+When migrating from 1.X please be aware of these changes between the major versions:
+
+#### Deprecated features
+
+* The `--group` CLI parameter has been deprecated. All files are grouped by default.
+
+#### Features not yet migrated to 2.X
+
+* The `--configPath` CLI parameter has been temporarily deprecated. We are planning on reintroducing it but the config
+  file will use a different format.
+* Internal linking between files using the `@see` annotation and {@link FileName} and <<FileName>> syntax has not been
+  implemented.
+
+#### New features
+
+* All Apex annotations are now supported through the `--scope` CLI parameter, not just `namespaceaccessible`. This means
+  that scopes like `auraenabled`, `invocablemethod`, `invocablevariable`, `remoteaction`, and all other valid Apex
+  annotations are supported.
+* Just like Javadoc, both `@throws` and `@exception` are supported when referencing an exception thrown by a method or
+  constructor.
+* Any custom annotation defined in the Apexdoc is at the class level are supported, for example the following will be
+  output to the resulting markdown file:
+
+```apex
+/**
+ * @MyCustomAnnotation This is a custom annotation
+ */
+public class MyClass {
+}
+```
 
 ### Demo
 
@@ -23,7 +78,7 @@ ApexDocs currently supports generating markdown files for Jekyll and Docsify sit
 
 ### In the wild
 
-- [Nimble AMS Docs](https://nimbleuser.github.io/nams-api-docs/#/public-apis/)
+- [Nimble AMS Docs](https://nimbleuser.github.io/nams-api-docs/#/api-reference/)
 - [Yet Another Salesforce Logger](https://cesarparra.github.io/yet-another-salesforce-logger/#/)
 
 ### [Docsify](https://docsify.js.org/)
@@ -41,7 +96,7 @@ Demo
 ## Installation
 
 ```bash
-npm i @cparra/apexdocs
+npm i -g @cparra/apexdocs
 ```
 
 ## Usage
@@ -49,7 +104,7 @@ npm i @cparra/apexdocs
 ### CLI
 
 ```bash
-apexdocs-docGenerator
+apexdocs-generate
     -s src
     -t docs
     -p global
@@ -70,7 +125,8 @@ The CLI supports the following parameters:
 
 #### Configuration File
 
-You can optionally specify the path to a configuration JSON file through the `--configPath` parameter. This let's you have some additional control over the content outputs.
+You can optionally specify the path to a configuration JSON file through the `--configPath` parameter. This let's you
+have some additional control over the content outputs.
 
 The configuration file allows you to specify the following:
 
@@ -80,7 +136,8 @@ _Note_: Everything in the configuration file is optional. When something is not 
 
 Default: None
 
-Allows you to specify the root directory for where the files are being generated. This can be helpful when embedding the generated docs into an existing site so that the links are generated correctly.
+Allows you to specify the root directory for where the files are being generated. This can be helpful when embedding the
+generated docs into an existing site so that the links are generated correctly.
 
 `defaultGroupName`
 
@@ -92,9 +149,11 @@ Defines the `@group` name to be used when a file does not specify it.
 
 Default: None
 
-Defines the name of the language that will be used when generating `@example` blocks. Use this when you are interested in using syntax highlighting for your project.
+Defines the name of the language that will be used when generating `@example` blocks. Use this when you are interested
+in using syntax highlighting for your project.
 
-Even though the source code material for which documentation is generated is always `Apex`, generally you will be able to use a syntax highlighter that recognizes `java` source code, so set this value to `java` in those cases.
+Even though the source code material for which documentation is generated is always `Apex`, generally you will be able
+to use a syntax highlighter that recognizes `java` source code, so set this value to `java` in those cases.
 
 `home` (Object)
 
@@ -104,7 +163,8 @@ Gives you control over the home page.
 
 Default: None
 
-Allows you to embedd custom content into your home page by using the `header` property to point to the a file which contents will be added to the top of the generated home page.
+Allows you to embed custom content into your home page by using the `header` property to point to the file which
+contents will be added to the top of the generated home page.
 
 Specify the path with the content that you want to embed.
 
@@ -128,7 +188,9 @@ Whether the `@date` tag should be used to add the file's date to the page.
 
 Default: 1
 
-The starting H tag level for the document. Each title will use this as the starting point to docGenerator the approaprite `<h#>` tag. For example, if set to 1, the class' file name at the top of the file will use an `<h1>` tag, the `Properties` title will be `<h2>`, each property name will be an `<h3>`, etc.
+The starting H tag level for the document. Each title will use this as the starting point to docGenerator the
+appropriate `<h#>` tag. For example, if set to 1, the class' file name at the top of the file will use an `<h1>` tag,
+the `Properties` title will be `<h2>`, each property name will be an `<h3>`, etc.
 
 ```
 {
@@ -150,7 +212,8 @@ The starting H tag level for the document. Each title will use this as the start
 
 If you are just interested in the documentation parsing capabilities, you can import ApexDocs into your own project.
 
-Use the `docGenerator` function to create a list of `ClassModel` that includes all of the parsed information from your .cls files.
+Use the `docGenerator` function to create a list of `ClassModel` that includes all the parsed information from your .cls
+files.
 
 `docGenerator(sourceDirectory[,recursive][,scope][,outputDir])`
 
@@ -167,7 +230,8 @@ let documentedClasses = docGenerator('src', true, ['global'], 'docs');
 
 ## Documentation Format
 
-ApexDocs picks up blocks of comments throughout your `.cls` files. The block must begin with `/**` and span through multiple lines, ending with `*/`.
+ApexDocs picks up blocks of comments throughout your `.cls` files. The block must begin with `/**` and span through
+multiple lines, ending with `*/`.
 
 ### Documenting Classes
 
@@ -183,11 +247,12 @@ The following tags are supported on the class level:
 
 **Example**
 
-```java
+```apex
 /**
  * @description This is my class description.
  */
- public with sharing class TestClass { }
+public with sharing class TestClass {
+}
 ```
 
 ### Documenting Enums
@@ -200,11 +265,13 @@ The following tags are supported on the enum level:
 
 **Example**
 
-```java
+```apex
 /**
  * @description This is my enum description.
  */
- public Enum ExampleEnum { VALUE_1, VALUE_2 }
+public Enum ExampleEnum {
+    VALUE_1, VALUE_2
+}
 ```
 
 ### Documenting Properties
@@ -217,11 +284,11 @@ The following tags are supported on the property level:
 
 **Example**
 
-```java
+```apex
 /**
  * @description This is my property description.
  */
- public String ExampleProperty { get; set; }
+public String ExampleProperty { get; set; }
 ```
 
 ### Documenting Methods and Constructors
@@ -240,7 +307,7 @@ The following tags are supported on the method level:
 
 **Example**
 
-```java
+```apex
 /**
  * @description This is my method description.
  * @param action The action to execute.
@@ -248,13 +315,13 @@ The following tags are supported on the method level:
  * @example
  * Object result = SampleClass.call('exampleAction');
  */
- public static Object call(String action) {
+public static Object call(String action) {
 ```
 
 ### Inline linking
 
-Apexdocs allows you to reference other classes from anywhere in your docs, and automatically creates a link to that class
-file for easy navigation.
+Apexdocs allows you to reference other classes from anywhere in your docs, and automatically creates a link to that
+class file for easy navigation.
 
 Apexdocs recognizes 2 different syntax when linking files:
 
@@ -263,13 +330,13 @@ Apexdocs recognizes 2 different syntax when linking files:
 
 **Example**
 
-```java
+```apex
 /**
  * @description This is my method description. This method receives an <<ExampleClass>>.
  * @param param1 An <<ExampleClass>> instance. Can also do {@link ExampleClass}
  * @return The result of the operation.
  */
- public static Object class(ExampleClass param1) {
+public static Object class(ExampleClass param1) {
 ```
 
 ## Typescript

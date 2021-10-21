@@ -1,6 +1,7 @@
 /**
  * @description This is a class description.
  * @group Sample Classes
+ * @CustomAnnotation A Custom annotation
  * @author Cesar Parra
  */
 @NamespaceAccessible
@@ -15,6 +16,7 @@ public with sharing class SampleClass {
     /**
      * @description Constructs a SampleClass without any arguments.
      * @throws ExcName some exception
+     * @CustomAnnotation A Custom annotation
      * @example
      * <pre>
      * // <strong>Example</strong>

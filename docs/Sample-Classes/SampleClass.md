@@ -11,6 +11,9 @@ This is a class description.
 **Group** Sample Classes
 
 
+**CustomAnnotation** A Custom annotation
+
+
 **Author** Cesar Parra
 
 ## Constructors

@@ -1,8 +1,6 @@
-TODO:
-
 [] Automatic Resolution of links (@see and {@link FileName})
 
-[] Respect access modifiers where the properties/methods are different than the class declaration. For example,
+[] Respect access modifiers where the properties/methods are different from the class declaration. For example,
 AuraEnabled properties do not live in an AuraEnabled class, so there's no way to just generate docs to showcase the
 AuraEnabled properties of a class without some sort of combination of also exposing other public/globals
 
