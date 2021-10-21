@@ -27,7 +27,9 @@ const argv = yargs.options({
     type: 'array',
     alias: 'p',
     default: ['global'],
-    describe: 'A list of scopes to document. Values should be separated by a space, e.g --scope public private.',
+    describe:
+      'A list of scopes to document. Values should be separated by a space, e.g --scope global public namespaceaccessible. ' +
+      'Annotations are supported and should be passed lowercased and without the @ symbol, e.g. namespaceaccessible auraenabled',
   },
   targetGenerator: {
     type: 'string',
