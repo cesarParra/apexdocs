@@ -10,7 +10,7 @@ export default class Transpiler {
     });
 
     processor.onBeforeProcess?.(sortedTypes);
-    sortedTypes.forEach(currentType => {
+    sortedTypes.forEach((currentType) => {
       processor.onProcess(currentType);
     });
     processor.onAfterProcess?.(sortedTypes);

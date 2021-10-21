@@ -57,7 +57,7 @@ This is a String property.
 
 ---
 ## Methods
-### `sampleMethod(String argument)`
+### `static sampleMethod(String argument)`
 
 `NAMESPACEACCESSIBLE`
 
@@ -84,7 +84,7 @@ String result = SampleClass.testMethod();
 System.debug(result);
 ```
 
-### `call()`
+### `static call()`
 
 Calls the method. This methods allows you to call it.
 

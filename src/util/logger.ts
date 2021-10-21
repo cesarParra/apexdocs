@@ -11,7 +11,7 @@ export class Logger {
    */
   public static log(message: string, ...args: string[]) {
     this.logSingle(message);
-    args.forEach(arg => {
+    args.forEach((arg) => {
       this.logSingle(arg);
     });
   }

@@ -1,8 +1,13 @@
 import { MarkdownFile } from '../markdown-file';
 import { FieldMirror, PropertyMirror } from '@cparra/apex-reflection';
 
-export function declareField(markdownFile: MarkdownFile, fields: FieldMirror[] | PropertyMirror[], startingHeadingLevel: number) {
-  markdownFile.addTitle('Fields', startingHeadingLevel + 1);
+export function declareField(
+  title: string,
+  markdownFile: MarkdownFile,
+  fields: FieldMirror[] | PropertyMirror[],
+  startingHeadingLevel: number,
+) {
+  markdownFile.addTitle(title, startingHeadingLevel + 1);
   markdownFile.addBlankLine();
   fields
     .sort((propA, propB) => {
@@ -10,20 +15,28 @@ export function declareField(markdownFile: MarkdownFile, fields: FieldMirror[] |
       if (propA.name > propB.name) return 1;
       return 0;
     })
-    .forEach(propertyModel => {
-      markdownFile.addTitle(`\`${propertyModel.name}\` → \`${propertyModel.type}\``, startingHeadingLevel + 2);
-
-      propertyModel.annotations.forEach(annotation => {
-        markdownFile.addBlankLine();
-        markdownFile.addText(`\`${annotation.type}\``);
-      });
-
-      if (propertyModel.docComment?.description) {
-        markdownFile.addBlankLine();
-        markdownFile.addText(propertyModel.docComment.description);
-      }
-      markdownFile.addBlankLine();
+    .forEach((propertyModel) => {
+      addFieldSection(markdownFile, propertyModel, startingHeadingLevel);
     });
 
   markdownFile.addHorizontalRule();
+}
+
+function addFieldSection(
+  markdownFile: MarkdownFile,
+  propertyModel: FieldMirror | PropertyMirror,
+  startingHeadingLevel: number,
+) {
+  markdownFile.addTitle(`\`${propertyModel.name}\` → \`${propertyModel.type}\``, startingHeadingLevel + 2);
+
+  propertyModel.annotations.forEach((annotation) => {
+    markdownFile.addBlankLine();
+    markdownFile.addText(`\`${annotation.type.toUpperCase()}\``);
+  });
+
+  if (propertyModel.docComment?.description) {
+    markdownFile.addBlankLine();
+    markdownFile.addText(propertyModel.docComment.description);
+  }
+  markdownFile.addBlankLine();
 }

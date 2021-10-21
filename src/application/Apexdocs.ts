@@ -20,7 +20,7 @@ export class Apexdocs {
     const fileBodies = ApexFileReader.processFiles(new DefaultFileSystem());
     const manifest = createManifest(new RawBodyParser(fileBodies), this._reflectionWithLogger);
 
-    const filteredManifest = manifest.filteredByAccessModifiers(Settings.getInstance().scope);
+    const filteredManifest = manifest.filteredByAccessModifierAndAnnotations(Settings.getInstance().scope);
 
     Logger.log(`Parsed ${filteredManifest.length} files`);
     const processor = Settings.getInstance().typeTranspiler;
