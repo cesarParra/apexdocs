@@ -1,7 +1,5 @@
-// tslint:disable-next-line:no-var-requires
-const sanitize = req;
-uire('sanitize-filename');
 import ClassModel from '../model/ClassModel';
+import * as sanitize from 'sanitize-filename-ts';
 
 export default class ClassParser {
   getClass(strLine: string, lstComments: string[], iLine: number, parent?: ClassModel) {
@@ -43,7 +41,7 @@ export default class ClassParser {
 
       idxStart = comment.toLowerCase().indexOf('@group '); // needed to include space to not match group-content.
       if (idxStart !== -1) {
-        const group = sanitize(comment.substring(idxStart + 6).trim());
+        const group = sanitize.sanitize(comment.substring(idxStart + 6).trim());
         if (group) {
           cModel.setClassGroup(group);
         }
