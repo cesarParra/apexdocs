@@ -1,5 +1,5 @@
 // tslint:disable-next-line:no-var-requires
-const sanitize = req
+const sanitize = req;
 uire('sanitize-filename');
 import ClassModel from '../model/ClassModel';
 
