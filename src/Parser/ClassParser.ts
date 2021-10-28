@@ -1,3 +1,4 @@
+const sanitize = require('sanitize-filename');
 import ClassModel from '../model/ClassModel';
 
 export default class ClassParser {
@@ -40,7 +41,11 @@ export default class ClassParser {
 
       idxStart = comment.toLowerCase().indexOf('@group '); // needed to include space to not match group-content.
       if (idxStart !== -1) {
-        cModel.setClassGroup(comment.substring(idxStart + 6).trim());
+        const group = sanitize(comment.substring(idxStart + 6).trim());
+        if (group) {
+          cModel.setClassGroup(group);
+        }
+
         inDescription = false;
         continue;
       }
