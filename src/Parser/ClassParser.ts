@@ -1,4 +1,6 @@
-const sanitize = require('sanitize-filename');
+// tslint:disable-next-line:no-var-requires
+const sanitize = req
+uire('sanitize-filename');
 import ClassModel from '../model/ClassModel';
 
 export default class ClassParser {
