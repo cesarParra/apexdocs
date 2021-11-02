@@ -15,10 +15,12 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   abstract getHomeFileName(): string;
 
   // tslint:disable-next-line:no-empty
-  onBeforeHomeFileCreated(generator: MarkdownHelper) {}
+  onBeforeHomeFileCreated(generator: MarkdownHelper) {
+  }
 
   // tslint:disable-next-line:no-empty
-  onBeforeClassFileCreated(generator: MarkdownHelper) {}
+  onBeforeClassFileCreated(generator: MarkdownHelper) {
+  }
 
   onBeforeProcess(classes: ClassModel[], outputDir: string) {
     this.classes = classes;
@@ -367,11 +369,10 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
 
   private addParameters(generator: MarkdownHelper, level: number, methodModel: MethodModel) {
     generator.addTitle('Parameters', level + 3);
+    generator.addBlankLine();
     // Building a table to display the parameters
-    generator.addText('|Param|Description|');
-    generator.addBlankLine();
-    generator.addText('|-----|-----------|');
-    generator.addBlankLine();
+    generator.addText('| Param | Description |');
+    generator.addText('| ----- | ----------- |');
 
     methodModel.getParams().forEach(param => {
       const paramName = param.substr(0, param.indexOf(' '));
@@ -398,11 +399,10 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
 
   private addThrowsBlock(generator: MarkdownHelper, level: number, methodModel: MethodModel) {
     generator.addTitle('Throws', level + 3);
+    generator.addBlankLine();
     // Building a table to display the exceptions
-    generator.addText('|Exception|Description|');
-    generator.addBlankLine();
-    generator.addText('|---------|-----------|');
-    generator.addBlankLine();
+    generator.addText('| Exception | Description |');
+    generator.addText('| --------- | ----------- |');
 
     methodModel.getThrownExceptions().forEach(param => {
       const exceptionName = param.substr(0, param.indexOf(' '));

@@ -33,10 +33,9 @@ SampleClass sampleInstance = new SampleClass();
 
 Constructs a SampleClass with an argument.
 #### Parameters
-|Param|Description|
 
-|-----|-----------|
-
+| Param | Description |
+| ----- | ----------- |
 |`argument` |  Some argument |
 
 ---
