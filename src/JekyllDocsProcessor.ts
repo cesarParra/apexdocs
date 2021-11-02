@@ -14,6 +14,10 @@ export default class JekyllDocsProcessor extends MarkdownDocsProcessor {
     this.addFrontMatterHeader(generator);
   }
 
+  defaultRoot(): string {
+    return '..';
+  }
+
   private addFrontMatterHeader(generator: MarkdownHelper) {
     generator.addText('---');
     generator.addText('layout: default');

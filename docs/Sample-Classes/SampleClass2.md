@@ -1,7 +1,7 @@
 ---
 layout: default
 ---
-# SampleClass class
+# SampleClass2 class
 
 `NamespaceAccessible`
 
@@ -12,26 +12,26 @@ This is a class description.
 [SampleInterface](../Sample-Interfaces/SampleInterface.md)
 
 
-[SampleClass2](../Sample-Classes/SampleClass2.md)
+[SampleClass](../Sample-Classes/SampleClass.md)
 
 ---
 ## Constructors
-### `SampleClass()`
+### `SampleClass2()`
 
 `NamespaceAccessible`
 
-Constructs a SampleClass without any arguments.
+Constructs a SampleClass2 without any arguments.
 #### Example
 ```
 <pre>
-SampleClass sampleInstance = new SampleClass();
+SampleClass2 sampleInstance = new SampleClass2();
 ```
 
-### `SampleClass(String argument)`
+### `SampleClass2(String argument)`
 
 `NamespaceAccessible`
 
-Constructs a SampleClass with an argument.
+Constructs a SampleClass2 with an argument.
 #### Parameters
 |Param|Description|
 |-----|-----------|
@@ -69,16 +69,16 @@ Executes commands based on the passed in argument.
 #### Example
 ```
 <pre>
-String result = SampleClass.testMethod();
+String result = SampleClass2.testMethod();
 System.debug(result);
 ```
 
 ---
 ## Inner Classes
 
-### SampleClass.AnotherInnerClass class
+### SampleClass2.AnotherInnerClass class
 
-Inner class belonging to SampleClass.
+Inner class belonging to SampleClass2.
 
 ---
 #### Properties
@@ -94,9 +94,9 @@ Description of the inner property.
 Executes from the inner class.
 
 ---
-### SampleClass.InnerClass class
+### SampleClass2.InnerClass class
 
-Inner class belonging to SampleClass.
+Inner class belonging to SampleClass2.
 
 ---
 #### Properties

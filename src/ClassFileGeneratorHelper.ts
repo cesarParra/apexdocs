@@ -1,6 +1,7 @@
 import ClassModel from './model/ClassModel';
 import Settings from './Settings';
 import Configuration from './Configuration';
+import DocsProcessor from './DocsProcessor';
 
 export default class ClassFileGeneratorHelper {
   public static getSanitizedGroup(classModel: ClassModel) {
@@ -11,7 +12,8 @@ export default class ClassFileGeneratorHelper {
   }
 
   public static getFileLink(classModel: ClassModel) {
-    const root = Configuration.getConfig()?.root ? Configuration.getConfig()?.root : '';
+    const defaultRoot = Settings.getInstance().getDocsProcessor()?.defaultRoot() ?? '';
+    const root = Configuration.getConfig()?.root ? Configuration.getConfig()?.root : defaultRoot;
     let fileLink;
     if (Settings.getInstance().getShouldGroup()) {
       fileLink = `[${classModel.getClassName()}](${root}/${this.getSanitizedGroup(
