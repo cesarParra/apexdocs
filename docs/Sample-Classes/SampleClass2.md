@@ -34,7 +34,9 @@ SampleClass2 sampleInstance = new SampleClass2();
 Constructs a SampleClass2 with an argument.
 #### Parameters
 |Param|Description|
+
 |-----|-----------|
+
 |`argument` |  Some argument |
 
 ---
