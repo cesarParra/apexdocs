@@ -371,7 +371,9 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     generator.addTitle('Parameters', level + 3);
     // Building a table to display the parameters
     generator.addText('|Param|Description|');
+    generator.addBlankLine();
     generator.addText('|-----|-----------|');
+    generator.addBlankLine();
 
     methodModel.getParams().forEach(param => {
       const paramName = param.substr(0, param.indexOf(' '));
@@ -400,7 +402,9 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     generator.addTitle('Throws', level + 3);
     // Building a table to display the exceptions
     generator.addText('|Exception|Description|');
+    generator.addBlankLine();
     generator.addText('|---------|-----------|');
+    generator.addBlankLine();
 
     methodModel.getThrownExceptions().forEach(param => {
       const exceptionName = param.substr(0, param.indexOf(' '));

@@ -2,24 +2,22 @@
 layout: default
 ---
 # Classes
-## Sample Classes
 
-### [SampleClass](/Sample-Classes/SampleClass.md)
+## [SampleClass](/SampleClass.md)
+
+
+This is a class description.
+
+
+
+## [SampleClass2](/SampleClass2.md)
 
 
 This is a class description.
 
 
 
-### [SampleClass2](/Sample-Classes/SampleClass2.md)
-
-
-This is a class description.
-
-
-## Sample Interfaces
-
-### [SampleInterface](/Sample-Interfaces/SampleInterface.md)
+## [SampleInterface](/SampleInterface.md)
 
 
 This is an interface description.

@@ -13,7 +13,7 @@ export default class ClassFileGeneratorHelper {
 
   public static getFileLink(classModel: ClassModel, forRelatedReference: boolean = false) {
     let defaultRoot = '';
-    if (forRelatedReference) {
+    if (forRelatedReference && Settings.getInstance().getShouldGroup()) {
       defaultRoot =
         Settings.getInstance()
           .getDocsProcessor()
