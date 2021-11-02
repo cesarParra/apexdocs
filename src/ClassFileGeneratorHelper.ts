@@ -11,8 +11,15 @@ export default class ClassFileGeneratorHelper {
       .replace('.', '');
   }
 
-  public static getFileLink(classModel: ClassModel) {
-    const defaultRoot = Settings.getInstance().getDocsProcessor()?.defaultRoot() ?? '';
+  public static getFileLink(classModel: ClassModel, forRelatedReference: boolean = false) {
+    let defaultRoot = '';
+    if (forRelatedReference) {
+      defaultRoot =
+        Settings.getInstance()
+          .getDocsProcessor()
+          ?.defaultRoot() ?? '';
+    }
+
     const root = Configuration.getConfig()?.root ? Configuration.getConfig()?.root : defaultRoot;
     let fileLink;
     if (Settings.getInstance().getShouldGroup()) {

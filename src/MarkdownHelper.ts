@@ -35,7 +35,7 @@ export default class MarkdownHelper {
       const classNameForMatch = currentMatch.replace('<<', '').replace('>>', '');
       this.classes.forEach(classModel => {
         if (classModel.getClassName() === classNameForMatch) {
-          text = text.replace(currentMatch, ClassFileGeneratorHelper.getFileLink(classModel));
+          text = text.replace(currentMatch, ClassFileGeneratorHelper.getFileLink(classModel, true));
         }
       });
     });
@@ -56,7 +56,7 @@ export default class MarkdownHelper {
     for (const currentMatch of matches) {
       this.classes.forEach(classModel => {
         if (classModel.getClassName() === currentMatch[1]) {
-          text = text.replace(currentMatch[0], ClassFileGeneratorHelper.getFileLink(classModel));
+          text = text.replace(currentMatch[0], ClassFileGeneratorHelper.getFileLink(classModel, true));
         }
       });
     }

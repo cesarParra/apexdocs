@@ -15,10 +15,12 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   abstract getHomeFileName(): string;
 
   // tslint:disable-next-line:no-empty
-  onBeforeHomeFileCreated(generator: MarkdownHelper) {}
+  onBeforeHomeFileCreated(generator: MarkdownHelper) {
+  }
 
   // tslint:disable-next-line:no-empty
-  onBeforeClassFileCreated(generator: MarkdownHelper) {}
+  onBeforeClassFileCreated(generator: MarkdownHelper) {
+  }
 
   onBeforeProcess(classes: ClassModel[], outputDir: string) {
     this.classes = classes;
@@ -142,7 +144,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
 
         generator.addBlankLine();
         if (relatedClass) {
-          generator.addText(ClassFileGeneratorHelper.getFileLink(relatedClass));
+          generator.addText(ClassFileGeneratorHelper.getFileLink(relatedClass, true));
         } else {
           generator.addText(relatedClassName);
         }

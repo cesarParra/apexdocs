@@ -4,14 +4,14 @@ layout: default
 # Classes
 ## Sample Classes
 
-### [SampleClass](../Sample-Classes/SampleClass.md)
+### [SampleClass](/Sample-Classes/SampleClass.md)
 
 
 This is a class description.
 
 
 
-### [SampleClass2](../Sample-Classes/SampleClass2.md)
+### [SampleClass2](/Sample-Classes/SampleClass2.md)
 
 
 This is a class description.
@@ -19,7 +19,7 @@ This is a class description.
 
 ## Sample Interfaces
 
-### [SampleInterface](../Sample-Interfaces/SampleInterface.md)
+### [SampleInterface](/Sample-Interfaces/SampleInterface.md)
 
 
 This is an interface description.
