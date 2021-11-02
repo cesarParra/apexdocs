@@ -1,6 +1,7 @@
 /**
  * @description This is an interface description.
  * @group Sample Interfaces
+ * @see SampleClass
  */
 public interface SampleInterface {
     /**
@@ -10,6 +11,7 @@ public interface SampleInterface {
 
     /**
      * @description Returns a value based on the executed command.
+     * @return Empty value
      */
     String getValue();
 }

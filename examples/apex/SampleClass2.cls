@@ -2,26 +2,26 @@
  * @description This is a class description.
  * @group Sample Classes
  * @see SampleInterface
- * @see SampleClass2
+ * @see SampleClass
  */
 @NamespaceAccessible
-public with sharing class SampleClass {
+public with sharing class SampleClass2 {
     /**
-     * @description Constructs a SampleClass without any arguments.
+     * @description Constructs a SampleClass2 without any arguments.
      * @example
      * <pre>
-     * SampleClass sampleInstance = new SampleClass();
+     * SampleClass2 sampleInstance = new SampleClass2();
      */
     @NamespaceAccessible
-    public SampleClass() {
+    public SampleClass2() {
         System.debug('Constructor');
     }
 
     /**
-     * @description Constructs a SampleClass with an argument.
+     * @description Constructs a SampleClass2 with an argument.
      * @param argument Some argument
      */
-    public SampleClass(String argument) {
+    public SampleClass2(String argument) {
         System.debug('Constructor');
     }
 
@@ -29,7 +29,7 @@ public with sharing class SampleClass {
      * @description Executes commands based on the passed in argument.
      * @example
      * <pre>
-     * String result = SampleClass.testMethod();
+     * String result = SampleClass2.testMethod();
      * System.debug(result);
      */
     @NamespaceAccessible
@@ -57,7 +57,7 @@ public with sharing class SampleClass {
     public Decimal AnotherProp { get; private set; }
 
     /**
-     * @description Inner class belonging to SampleClass.
+     * @description Inner class belonging to SampleClass2.
      */
     public class InnerClass {
         /**
@@ -76,7 +76,7 @@ public with sharing class SampleClass {
     }
 
     /**
-     * @description Inner class belonging to SampleClass.
+     * @description Inner class belonging to SampleClass2.
      */
     public class AnotherInnerClass {
         /**
