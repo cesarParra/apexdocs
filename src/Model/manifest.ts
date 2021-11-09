@@ -10,6 +10,7 @@ export default class Manifest {
   /**
    * Constructs a new Manifest object.
    * @param types List of types to be wrapped by this object.
+   * @param isForInnerTypes Whether this manifest represent an inner type or not.
    */
   constructor(public types: Type[], public isForInnerTypes: boolean = false) {}
 

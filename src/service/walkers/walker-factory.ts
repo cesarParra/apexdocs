@@ -14,5 +14,6 @@ export class WalkerFactory {
       case 'interface':
         return new InterfaceWalker(type);
     }
+    throw Error('Walker not found for type.');
   }
 }
