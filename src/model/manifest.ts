@@ -1,5 +1,4 @@
-import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
-import { Annotation } from '@cparra/apex-reflection/index';
+import { ClassMirror, EnumMirror, InterfaceMirror, Type, Annotation } from '@cparra/apex-reflection';
 
 type AccessAware = { access_modifier: string } & { annotations: Annotation[] };
 
