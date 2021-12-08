@@ -1,4 +1,4 @@
-import MethodModel from '../model/MethodModel';
+import MethodModel from '../Model/MethodModel';
 
 export default class MethodParser {
   getMethod(parentClassName: string, strLine: string, lstComments: string[], iLine: number) {

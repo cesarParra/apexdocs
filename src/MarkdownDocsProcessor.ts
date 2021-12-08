@@ -3,11 +3,12 @@ import * as path from 'path';
 
 import DocsProcessor from './DocsProcessor';
 import MarkdownHelper from './MarkdownHelper';
-import ClassModel from './model/ClassModel';
+import ClassModel from './Model/ClassModel';
 import Settings from './Settings';
 import Configuration from './Configuration';
-import MethodModel from './model/MethodModel';
+import MethodModel from './Model/MethodModel';
 import ClassFileGeneratorHelper from './ClassFileGeneratorHelper';
+import HistoryProcessor from './HistoryProcessor';
 
 export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   private classes: ClassModel[] = [];

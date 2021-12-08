@@ -1,4 +1,4 @@
-import ClassModel from './model/ClassModel';
+import ClassModel from './Model/ClassModel';
 
 export default abstract class DocsProcessor {
   // tslint:disable-next-line:no-empty

@@ -1,4 +1,4 @@
-import ClassModel from './model/ClassModel';
+import ClassModel from './Model/ClassModel';
 import Settings from './Settings';
 import Configuration from './Configuration';
 import DocsProcessor from './DocsProcessor';

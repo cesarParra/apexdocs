@@ -2,8 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import Settings from '../Settings';
-import ClassModel from '../model/ClassModel';
-import FileParser from '../parser/FileParser';
+import ClassModel from '../Model/ClassModel';
+import FileParser from '../Parser/FileParser';
 
 import DocsifyDocsProcessor from '../DocsifyDocsProcessor';
 import JekyllDocsProcessor from '../JekyllDocsProcessor';

@@ -1,4 +1,4 @@
-import ClassModel from '../model/ClassModel';
+import ClassModel from '../Model/ClassModel';
 import * as sanitize from 'sanitize-filename-ts';
 
 export default class ClassParser {

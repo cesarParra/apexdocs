@@ -3,7 +3,7 @@ import * as path from 'path';
 
 import DocsProcessor from './DocsProcessor';
 import JsHelper from './JsHelper';
-import ClassModel from './model/ClassModel';
+import ClassModel from './Model/ClassModel';
 
 export default class AsJsDocsProcessor extends DocsProcessor {
   process(classModel: ClassModel, outputDir: string) {

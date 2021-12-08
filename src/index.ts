@@ -1,1 +1,1 @@
-export * from './command/Generate';
+export * from './Command/Generate';

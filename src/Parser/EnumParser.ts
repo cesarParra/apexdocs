@@ -1,4 +1,4 @@
-import EnumModel from '../model/EnumModel';
+import EnumModel from '../Model/EnumModel';
 
 export default class EnumParser {
   getEnum(strLine: string, lstComments: string[], iLine: number) {
