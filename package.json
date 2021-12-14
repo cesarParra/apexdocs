@@ -24,7 +24,6 @@
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags",
     "generage:sample": "node lib/cli/generate.js -s examples -t docs",
-    "generate": "npm run build; node lib/cli/generate.js -s examples -t docs"
   },
   "author": "Cesar Parra",
   "license": "MIT",
