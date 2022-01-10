@@ -8,7 +8,6 @@ import Settings from './Settings';
 import Configuration from './Configuration';
 import MethodModel from './Model/MethodModel';
 import ClassFileGeneratorHelper from './ClassFileGeneratorHelper';
-import HistoryProcessor from './HistoryProcessor';
 
 export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   private classes: ClassModel[] = [];
@@ -16,10 +15,12 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   abstract getHomeFileName(): string;
 
   // tslint:disable-next-line:no-empty
-  onBeforeHomeFileCreated(generator: MarkdownHelper) {}
+  onBeforeHomeFileCreated(generator: MarkdownHelper) {
+  }
 
   // tslint:disable-next-line:no-empty
-  onBeforeClassFileCreated(generator: MarkdownHelper) {}
+  onBeforeClassFileCreated(generator: MarkdownHelper) {
+  }
 
   onBeforeProcess(classes: ClassModel[], outputDir: string) {
     this.classes = classes;
