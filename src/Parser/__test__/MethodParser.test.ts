@@ -1,4 +1,4 @@
-import MethoModel from '../../model/MethodModel';
+import MethoModel from '../../Model/MethodModel';
 import MethodParser from '../MethodParser';
 
 const nameLine = 'public static void testMethod() {';

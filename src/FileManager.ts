@@ -1,5 +1,5 @@
 import Settings from './Settings';
-import ClassModel from './model/ClassModel';
+import ClassModel from './Model/ClassModel';
 
 export default class FileManager {
   classModels: ClassModel[];

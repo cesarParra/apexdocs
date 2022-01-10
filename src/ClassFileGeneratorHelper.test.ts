@@ -1,5 +1,5 @@
 import ClassFileGeneratorHelper from './ClassFileGeneratorHelper';
-import ClassModel from './model/ClassModel';
+import ClassModel from './Model/ClassModel';
 import Settings from './Settings';
 
 test('that getSanitizedGroup returns the same string when there is nothing to sanitize', () => {

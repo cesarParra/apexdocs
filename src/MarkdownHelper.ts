@@ -1,6 +1,6 @@
 import { encode } from 'html-entities';
 
-import ClassModel from './model/ClassModel';
+import ClassModel from './Model/ClassModel';
 import ClassFileGeneratorHelper from './ClassFileGeneratorHelper';
 import Configuration from './Configuration';
 

@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 import { generate } from '../Generate';
-import FileParser from '../../parser/FileParser';
+import FileParser from '../../Parser/FileParser';
 
 jest.mock('fs');
-jest.mock('../../parser/FileParser');
+jest.mock('../../Parser/FileParser');
 
 beforeEach(() => {
   (FileParser as jest.Mock).mockClear();

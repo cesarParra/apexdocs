@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import * as yargs from 'yargs';
 
-import { generate } from '../command/Generate';
+import { generate } from '../Command/Generate';
 import FileManager from '../FileManager';
 
 const argv = yargs.options({
