@@ -69,6 +69,5 @@ function getClassesFromDirectory(sourceDirectories: (string | number)[], recursi
     });
   }
 
-
   return classes;
 }
