@@ -36,7 +36,7 @@ Constructs a SampleClass with an argument.
 
 | Param | Description |
 | ----- | ----------- |
-|`argument` |  Some argument |
+|`argument` |  Some argument. Of type String. |
 
 ---
 ## Properties

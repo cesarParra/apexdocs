@@ -10,7 +10,7 @@ import JekyllDocsProcessor from '../JekyllDocsProcessor';
 import AsJsDocsProcessor from '../AsJsDocsProcessor';
 
 export function generate(
-  sourceDirectory: string,
+  sourceDirectories: (string | number)[],
   recursive: boolean = true,
   scope: string[] = ['global', 'public', 'namespaceaccessible'],
   outputDir: string = 'docs',
@@ -38,32 +38,37 @@ export function generate(
   }
 
   // TODO: Assert data validation to avoid exposing 'fs' and 'path' errors to callers.
-  const classes: ClassModel[] = getClassesFromDirectory(sourceDirectory, recursive);
+  const classes: ClassModel[] = getClassesFromDirectory(sourceDirectories, recursive);
   // tslint:disable-next-line:no-console
   console.log(`Processed ${classes.length} files`);
   return classes;
 }
 
-function getClassesFromDirectory(sourceDirectory: string, recursive: boolean) {
+function getClassesFromDirectory(sourceDirectories: (string | number)[], recursive: boolean) {
   let classes: ClassModel[] = [];
 
-  const directoryContents = fs.readdirSync(sourceDirectory);
-  directoryContents.forEach(currentFile => {
-    const currentPath = path.join(sourceDirectory, currentFile);
-    if (recursive && fs.statSync(currentPath).isDirectory()) {
-      classes = classes.concat(getClassesFromDirectory(currentPath, recursive));
-    }
+  for (const currentDirectory of sourceDirectories) {
+    const sourceDirectory = currentDirectory as string;
+    const directoryContents = fs.readdirSync(sourceDirectory);
+    directoryContents.forEach(currentFile => {
+      const currentPath = path.join(sourceDirectory, currentFile);
+      if (recursive && fs.statSync(currentPath).isDirectory()) {
+        classes = classes.concat(getClassesFromDirectory([currentPath], recursive));
+      }
 
-    if (!currentFile.endsWith('.cls')) {
-      return;
-    }
+      if (!currentFile.endsWith('.cls')) {
+        return;
+      }
 
-    const rawFile = fs.readFileSync(currentPath);
-    const response = new FileParser().parseFileContents(rawFile.toString());
-    if (!response) {
-      return;
-    }
-    classes.push(response);
-  });
+      const rawFile = fs.readFileSync(currentPath);
+      const response = new FileParser().parseFileContents(rawFile.toString());
+      if (!response) {
+        return;
+      }
+      classes.push(response);
+    });
+  }
+
+
   return classes;
 }

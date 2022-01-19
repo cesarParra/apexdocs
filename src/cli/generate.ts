@@ -6,10 +6,10 @@ import FileManager from '../FileManager';
 
 const argv = yargs.options({
   sourceDir: {
-    type: 'string',
+    type: 'array',
     alias: 's',
     demandOption: true,
-    describe: 'The directory location which contains your apex .cls classes.',
+    describe: 'The directory or directories location(s) which contains your apex .cls classes.',
   },
   targetDir: {
     type: 'string',

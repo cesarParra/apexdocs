@@ -12,7 +12,7 @@ beforeEach(() => {
 it('returns an empty list when there are no files', () => {
   (fs.readdirSync as jest.Mock).mockReturnValue([]);
 
-  const classes = generate('src');
+  const classes = generate(['src']);
 
   expect(classes.length).toBe(0);
 });
@@ -20,7 +20,7 @@ it('returns an empty list when there are no files', () => {
 it('returns an empty list when there are no files ending in .cls', () => {
   (fs.readdirSync as jest.Mock).mockReturnValue(['file.xml', 'README.md']);
 
-  const classes = generate('src', false);
+  const classes = generate(['src'], false);
 
   expect(classes.length).toBe(0);
 });
@@ -29,7 +29,7 @@ it('returns parsed files when there are .cls files', () => {
   (fs.readdirSync as jest.Mock).mockReturnValue(['TestClass.cls', 'README.md']);
   (fs.readFileSync as jest.Mock).mockReturnValue('Raw class data');
 
-  generate('src', false);
+  generate(['src'], false);
 
   expect(FileParser).toHaveBeenCalledTimes(1);
   const mockFileParserInstance = (FileParser as jest.Mock).mock.instances[0];
