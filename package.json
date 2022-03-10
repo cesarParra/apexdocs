@@ -1,6 +1,6 @@
 {
   "name": "@cparra/apexdocs",
-  "version": "2.0.0-alpha.14",
+  "version": "2.0.0-alpha.15",
   "description": "Library with CLI capabilities to generate documentation for Salesforce Apex classes.",
   "keywords": [
     "apex",
@@ -22,7 +22,7 @@
     "prepare": "npm run build",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags",
-    "execute:example": "node lib/cli/generate.js -s examples/apex -t docs --scope public"
+    "execute:example": "node lib/cli/generate.js -s examples/force-app -t docs --scope public"
   },
   "author": "Cesar Parra",
   "license": "MIT",

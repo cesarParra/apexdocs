@@ -10,15 +10,14 @@ export class ApexFileReader {
   /**
    * Reads from .cls files and returns their raw body.
    */
-  static processFiles(fileSystem: FileSystem): string[] {
+  static processFiles(fileSystem: FileSystem, rootPath: string = this.sourceDirectory): string[] {
     let bodies: string[] = [];
 
-    const directoryContents = fileSystem.readDirectory(this.sourceDirectory);
-
+    const directoryContents = fileSystem.readDirectory(rootPath);
     directoryContents.forEach((currentFilePath) => {
-      const currentPath = fileSystem.joinPath(this.sourceDirectory, currentFilePath);
+      const currentPath = fileSystem.joinPath(rootPath, currentFilePath);
       if (this.readRecursively && fileSystem.isDirectory(currentPath)) {
-        bodies = bodies.concat(this.processFiles(fileSystem));
+        bodies = bodies.concat(this.processFiles(fileSystem, currentPath));
       }
 
       if (!this.isApexFile(currentFilePath)) {
