@@ -1,5 +1,9 @@
 {
   "home": {
     "header": "./examples/includes/header.md"
+  },
+  "content": {
+    "includeAuthor": true,
+    "includeDate": true
   }
 }

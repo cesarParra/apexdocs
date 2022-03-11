@@ -1,4 +1,5 @@
 # ApexDocs
+# ApexDocs
 
 <p align="center">
   <b>ApexDocs is a Node.js library with CLI capabilities to generate documentation for Salesforce Apex classes.</b>

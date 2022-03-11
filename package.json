@@ -23,7 +23,9 @@
     "prepare": "npm run build",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags",
-    "generage:sample": "node lib/cli/generate.js -s examples -t docs",
+    "docsify:init:docs": "docsify init docs",
+    "generage:sample": "node lib/cli/generate.js -s examples -t docs -g docsify -c examples/config/config.json",
+    "docs:serve:sample": "docsify serve docs",
     "generage:sample:multiple:directories": "node lib/cli/generate.js -s examples/dir1 examples/dir2 -t docs"
   },
   "author": "Cesar Parra",

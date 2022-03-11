@@ -123,14 +123,18 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
       generator.addBlankLine();
     }
 
-    if (Configuration.getConfig()?.content?.includeAuthor && classModel.getAuthor()) {
-      generator.addBlankLine();
-      generator.addText(`**Author:** ${classModel.getAuthor()}`);
+    if (Configuration.getConfig()?.content?.includeAuthor) {
+      for (const currentAuthor of classModel.getAuthors()) {
+        generator.addBlankLine();
+        generator.addText(`**Author:** ${currentAuthor}`);
+      }
     }
 
-    if (Configuration.getConfig()?.content?.includeDate && classModel.getDate()) {
-      generator.addBlankLine();
-      generator.addText(`**Date:** ${classModel.getDate()}`);
+    if (Configuration.getConfig()?.content?.includeDate) {
+      for (const currentDate of classModel.getDates()) {
+        generator.addBlankLine();
+        generator.addText(`**Date:** ${currentDate}`);
+      }
     }
 
     if (classModel.getSeeList().length !== 0) {
