@@ -23,7 +23,7 @@ export default class MethodParser {
 
       let idxStart = comment.toLowerCase().indexOf('@author');
       if (idxStart !== -1) {
-        mModel.setAuthor(comment.substring(idxStart + 8).trim());
+        mModel.addAuthor(comment.substring(idxStart + 8).trim());
         inDescription = false;
         inExample = false;
         continue;
@@ -31,7 +31,7 @@ export default class MethodParser {
 
       idxStart = comment.toLowerCase().indexOf('@date');
       if (idxStart !== -1) {
-        mModel.setDate(comment.substring(idxStart + 5).trim());
+        mModel.addDate(comment.substring(idxStart + 5).trim());
         inDescription = false;
         inExample = false;
         continue;

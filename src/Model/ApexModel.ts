@@ -4,8 +4,8 @@ export default class ApexModel {
   protected nameLine: string = '';
   private nameLineIndex: number | undefined;
   private description: string = '';
-  private author: string = '';
-  private date: string = '';
+  private authors: string[] = [];
+  private dates: string[] = [];
   private returns: string = '';
   private example: string = '';
   private scope: string = '';
@@ -33,20 +33,20 @@ export default class ApexModel {
     this.description = description;
   }
 
-  getAuthor() {
-    return this.author == null ? '' : this.author;
+  getAuthors() {
+    return this.authors;
   }
 
-  setAuthor(author: string) {
-    this.author = author;
+  addAuthor(author: string) {
+    this.authors.push(author);
   }
 
-  getDate() {
-    return this.date == null ? '' : this.date;
+  getDates() {
+    return this.dates;
   }
 
-  setDate(date: string) {
-    this.date = date;
+  addDate(date: string) {
+    this.dates.push(date);
   }
 
   getReturns() {

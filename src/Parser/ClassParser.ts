@@ -20,14 +20,14 @@ export default class ClassParser {
 
       let idxStart = comment.toLowerCase().indexOf('@author');
       if (idxStart !== -1) {
-        cModel.setAuthor(comment.substring(idxStart + 7).trim());
+        cModel.addAuthor(comment.substring(idxStart + 7).trim());
         inDescription = false;
         continue;
       }
 
       idxStart = comment.toLowerCase().indexOf('@date');
       if (idxStart !== -1) {
-        cModel.setDate(comment.substring(idxStart + 5).trim());
+        cModel.addDate(comment.substring(idxStart + 5).trim());
         inDescription = false;
         continue;
       }

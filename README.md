@@ -1,4 +1,5 @@
 # ApexDocs
+# ApexDocs
 
 <p align="center">
   <b>ApexDocs is a Node.js library with CLI capabilities to generate documentation for Salesforce Apex classes.</b>
@@ -189,13 +190,13 @@ multiple lines, ending with `*/`.
 
 The following tags are supported on the class level:
 
-| Tag            | Description                                                                                                                                |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `@description` | One or more lines describing the class.                                                                                                    |
-| `@see`         | The name of a related class.                                                                                                               |
-| `@group`       | The group to which the class belongs to.                                                                                                   |
-| `@author`      | The author of the class. Note that this only gets added if it is explicitly defined through the configuration class that it should.        |
-| `@date`        | The date the class was created. Note that this only gets added if it is explicitly defined through the configuration class that it should. |
+| Tag            | Description                                                                                                                                                                       |
+| -------------- |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `@description` | One or more lines describing the class.                                                                                                                                           |
+| `@see`         | The name of a related class.                                                                                                                                                      |
+| `@group`       | The group to which the class belongs to.                                                                                                                                          |
+| `@author`      | The author of the class. Note that this only gets added if it is explicitly defined through the configuration class that it should. Multiple authors can be added per class.      |
+| `@date`        | The date the class was created. Note that this only gets added if it is explicitly defined through the configuration class that it should. Multiple dates can be added per class. |
 
 **Example**
 

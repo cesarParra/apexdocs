@@ -5,7 +5,9 @@ const commentLines = [
   '/**',
   ' * @description This is my class description.',
   ' * @author John Doe',
+  ' * @author Jane Doe',
   ' * @date 1/1/2020',
+  ' * @date 2/2/2021',
   ' * @group API',
   ' * @group-content /example.html',
   ' */',
@@ -26,13 +28,17 @@ test('whether if class is interface was set correctly', () => {
 test('that author was set correctly', () => {
   const builtClassModel = new ClassParser().getClass(nameLine, commentLines, 4);
 
-  expect(builtClassModel.getAuthor()).toBe('John Doe');
+  expect(builtClassModel.getAuthors()).toHaveLength(2);
+  expect(builtClassModel.getAuthors()[0]).toBe('John Doe');
+  expect(builtClassModel.getAuthors()[1]).toBe('Jane Doe');
 });
 
 test('that date was set correctly', () => {
   const builtClassModel = new ClassParser().getClass(nameLine, commentLines, 4);
 
-  expect(builtClassModel.getDate()).toBe('1/1/2020');
+  expect(builtClassModel.getDates()).toHaveLength(2);
+  expect(builtClassModel.getDates()[0]).toBe('1/1/2020');
+  expect(builtClassModel.getDates()[1]).toBe('2/2/2021');
 });
 
 test('that group was set correctly', () => {
