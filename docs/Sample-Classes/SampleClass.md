@@ -1,6 +1,3 @@
----
-layout: default
----
 # SampleClass
 
 `NAMESPACEACCESSIBLE`
@@ -15,6 +12,9 @@ This is a class description.
 
 
 **Author** Cesar Parra
+
+
+**See** [SampleInterface](/Sample-Interfaces/SampleInterface.md)
 
 ## Constructors
 ### `SampleClass()`

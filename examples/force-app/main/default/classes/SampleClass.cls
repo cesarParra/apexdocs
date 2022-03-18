@@ -3,6 +3,7 @@
  * @group Sample Classes
  * @CustomAnnotation A Custom annotation
  * @author Cesar Parra
+ * @see SampleInterface
  */
 @NamespaceAccessible
 public with sharing class SampleClass {

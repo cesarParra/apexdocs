@@ -1,12 +1,13 @@
 import { ApexFileReader } from '../service/apex-file-reader';
 import { DefaultFileSystem } from '../service/file-system';
-import { ReflectionResult, reflect } from '@cparra/apex-reflection';
+import { ReflectionResult, reflect, Type } from '@cparra/apex-reflection';
 import { Logger } from '../util/logger';
 import { createManifest } from '../service/manifest-factory';
 import { RawBodyParser } from '../service/parser';
 import { Settings } from '../settings';
 import Transpiler from '../transpiler/transpiler';
 import { FileWriter } from '../service/file-writer';
+import { TypesRepository } from '../model/types-repository';
 
 /**
  * Application entry-point to generate documentation out of Apex source files.
@@ -19,11 +20,12 @@ export class Apexdocs {
     const fileBodies = ApexFileReader.processFiles(new DefaultFileSystem());
     const manifest = createManifest(new RawBodyParser(fileBodies), this._reflectionWithLogger);
 
-    const filteredManifest = manifest.filteredByAccessModifierAndAnnotations(Settings.getInstance().scope);
+    const filteredTypes: Type[] = manifest.filteredByAccessModifierAndAnnotations(Settings.getInstance().scope);
+    TypesRepository.getInstance().populate(filteredTypes);
 
-    Logger.log(`Parsed ${filteredManifest.length} files`);
+    Logger.log(`Parsed ${filteredTypes.length} files`);
     const processor = Settings.getInstance().typeTranspiler;
-    Transpiler.generate(filteredManifest, processor);
+    Transpiler.generate(filteredTypes, processor);
     const generatedFiles = processor.fileBuilder().files();
     FileWriter.write(generatedFiles, (fileName: string) => {
       Logger.log(`${fileName} processed.`);

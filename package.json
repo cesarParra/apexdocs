@@ -22,7 +22,9 @@
     "prepare": "npm run build",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags",
-    "execute:example": "node lib/cli/generate.js -s examples/force-app -t docs --scope public"
+    "docs:init": "docsify init docs",
+    "docs:serve": "docsify serve docs",
+    "execute:example": "node lib/cli/generate.js -s examples/force-app -t docs --scope global public -g docsify"
   },
   "author": "Cesar Parra",
   "license": "MIT",
@@ -38,6 +40,7 @@
     "@types/yargs": "^15.0.3",
     "@typescript-eslint/eslint-plugin": "^5.1.0",
     "@typescript-eslint/parser": "^5.1.0",
+    "docsify": "^4.12.2",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",

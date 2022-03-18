@@ -1,6 +1,3 @@
----
-layout: default
----
 # SampleInterface
 
 This is an interface description.
