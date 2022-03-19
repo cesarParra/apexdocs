@@ -27,12 +27,16 @@ Constructs a SampleClass without any arguments.
 |Exception|Description|
 |---|---|
 |`ExcName`|some exception|
+
+**CustomAnnotation** A Custom method annotation
+
+
+**See** [SampleInterface](/Sample-Interfaces/SampleInterface.md)
+
 #### Example
 ```apex
-<pre>
-// <strong>Example</strong>
+// Example
 SampleClass sampleInstance = new SampleClass();
-</pre>
 ```
 
 ### `SampleClass(String argument)`
@@ -82,7 +86,6 @@ Empty string
 
 #### Example
 ```apex
-<pre>
 String result = SampleClass.testMethod();
 System.debug(result);
 ```
@@ -96,6 +99,9 @@ Calls the method. This methods allows you to call it.
 ### InnerEnum
 
 `NAMESPACEACCESSIBLE`
+
+This is a namespace accessible enum
+
 
 ---
 ## Classes

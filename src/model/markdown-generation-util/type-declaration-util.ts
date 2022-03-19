@@ -1,6 +1,6 @@
 import { MarkdownFile } from '../markdown-file';
-import { Annotation, Type, DocCommentAnnotation } from '@cparra/apex-reflection';
-import ClassFileGeneratorHelper from '../../transpiler/markdown/class-file-generatorHelper';
+import { addCustomDocCommentAnnotations } from './doc-comment-annotation-util';
+import { Annotation, Type } from '@cparra/apex-reflection';
 
 export function declareType(markdownFile: MarkdownFile, typeMirror: Type, startingHeadingLevel: number): void {
   markdownFile.addTitle(typeMirror.name, startingHeadingLevel);
@@ -16,23 +16,5 @@ export function declareType(markdownFile: MarkdownFile, typeMirror: Type, starti
     markdownFile.addBlankLine();
   }
 
-  typeMirror.docComment?.annotations
-    .filter((currentAnnotation: DocCommentAnnotation) => currentAnnotation.name !== 'description')
-    .forEach((currentAnnotation: DocCommentAnnotation) => {
-      markdownFile.addBlankLine();
-      markdownFile.addText(buildDocAnnotationText(currentAnnotation));
-      markdownFile.addBlankLine();
-    });
-
-  function capitalizeFirstLetter(text: string) {
-    return text.charAt(0).toUpperCase() + text.slice(1);
-  }
-
-  function buildDocAnnotationText(annotation: DocCommentAnnotation) {
-    let annotationBodyText = annotation.body;
-    if (annotation.name.toLowerCase() === 'see') {
-      annotationBodyText = ClassFileGeneratorHelper.getFileLinkByTypeName(annotation.body);
-    }
-    return `**${capitalizeFirstLetter(annotation.name)}** ${annotationBodyText}`;
-  }
+  addCustomDocCommentAnnotations(markdownFile, typeMirror);
 }

@@ -1,6 +1,7 @@
 import { ConstructorMirror, DocComment, MethodMirror } from '@cparra/apex-reflection';
 import { MarkdownFile } from '../markdown-file';
 import { ParameterMirror } from '@cparra/apex-reflection/index';
+import { addCustomDocCommentAnnotations } from './doc-comment-annotation-util';
 
 export function declareMethod(
   title: string,
@@ -33,6 +34,8 @@ export function declareMethod(
     }
 
     addThrowsBlock(markdownFile, currentMethod, startingHeadingLevel);
+
+    addCustomDocCommentAnnotations(markdownFile, currentMethod);
 
     if (currentMethod.docComment?.exampleAnnotation) {
       addExample(markdownFile, currentMethod, startingHeadingLevel);

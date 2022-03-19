@@ -7,6 +7,9 @@
  */
 @NamespaceAccessible
 public with sharing class SampleClass {
+    /**
+     * @description This is a namespace accessible enum
+     */
     @NamespaceAccessible
     public enum InnerEnum {
         A,
@@ -17,12 +20,11 @@ public with sharing class SampleClass {
     /**
      * @description Constructs a SampleClass without any arguments.
      * @throws ExcName some exception
-     * @CustomAnnotation A Custom annotation
+     * @CustomAnnotation A Custom method annotation
+     * @see SampleInterface
      * @example
-     * <pre>
-     * // <strong>Example</strong>
+     * // Example
      * SampleClass sampleInstance = new SampleClass();
-     * </pre>
      */
     @NamespaceAccessible
     public SampleClass() {
@@ -40,7 +42,6 @@ public with sharing class SampleClass {
     /**
      * @description Executes commands based on the passed in argument.
      * @example
-     * <pre>
      * String result = SampleClass.testMethod();
      * System.debug(result);
      * @param argument Argument to debug
