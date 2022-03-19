@@ -51,7 +51,7 @@ When migrating from 1.X please be aware of these changes between the major versi
 
 * The `--configPath` CLI parameter has been temporarily deprecated. We are planning on reintroducing it but the config
   file will use a different format.
-* Internal linking between files using the `@see` annotation and {@link FileName} and <<FileName>> syntax has not been
+* Internal linking between files using the {@link FileName} and <<FileName>> syntax has not been
   implemented.
 
 #### New features
