@@ -7,6 +7,14 @@
 This is a class description. This class relates to {@link SampleInterface}              But this {@link ClassThatDoesNotExist} does not exist.              You can also link using this syntax &lt;&lt;SampleInterface&gt;&gt;
 
 
+## 
+
+## [SampleClassWithoutModifier](/Misc/SampleClassWithoutModifier.md)
+
+
+
+
+
 ## Sample Interfaces
 
 ## [SampleInterface](/Sample-Interfaces/SampleInterface.md)
