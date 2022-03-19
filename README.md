@@ -37,8 +37,6 @@ NPM module which is solely focused on Apex code reflection: https://www.npmjs.co
 This allows for an improved code quality of both code bases and an increased ease of introducing future improvements and
 fixing issues.
 
-But please be aware: migration to 2.X is not recommended at this time for production until a GA release.
-
 ### Differences between the versions
 
 When migrating from 1.X please be aware of these changes between the major versions:
@@ -47,12 +45,10 @@ When migrating from 1.X please be aware of these changes between the major versi
 
 * The `--group` CLI parameter has been deprecated. All files are grouped by default.
 
-#### Features not yet migrated to 2.X
+#### Features from 1.X not supported in 2.X
 
 * The `--configPath` CLI parameter has been temporarily deprecated. We are planning on reintroducing it but the config
   file will use a different format.
-* Internal linking between files using the {@link FileName} and <<FileName>> syntax has not been
-  implemented.
 
 #### New features
 

@@ -1,5 +1,7 @@
 /**
- * @description This is a class description.
+ * @description This is a class description. This class relates to {@link SampleInterface}
+ *              But this {@link ClassThatDoesNotExist} does not exist.
+ *              You can also link using this syntax <<SampleInterface>>
  * @group Sample Classes
  * @CustomAnnotation A Custom annotation
  * @author Cesar Parra
@@ -18,7 +20,7 @@ public with sharing class SampleClass {
     }
 
     /**
-     * @description Constructs a SampleClass without any arguments.
+     * @description Constructs a SampleClass without any arguments. This relates to {@link SampleInterface}
      * @throws ExcName some exception
      * @CustomAnnotation A Custom method annotation
      * @see SampleInterface

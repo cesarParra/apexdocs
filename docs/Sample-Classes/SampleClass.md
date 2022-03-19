@@ -2,7 +2,7 @@
 
 `NAMESPACEACCESSIBLE`
 
-This is a class description.
+This is a class description. This class relates to [SampleInterface](/Sample-Interfaces/SampleInterface.md)              But this ClassThatDoesNotExist does not exist.              You can also link using this syntax [SampleInterface](/Sample-Interfaces/SampleInterface.md)
 
 
 **Group** Sample Classes
@@ -21,7 +21,7 @@ This is a class description.
 
 `NAMESPACEACCESSIBLE`
 
-Constructs a SampleClass without any arguments.
+Constructs a SampleClass without any arguments. This relates to [SampleInterface](/Sample-Interfaces/SampleInterface.md)
 
 #### Throws
 |Exception|Description|
