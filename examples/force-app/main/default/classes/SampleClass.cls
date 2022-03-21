@@ -20,6 +20,12 @@ public with sharing class SampleClass {
     }
 
     /**
+     * @description This is a constant.
+     */
+    public static final String A_CONSTANT = 'My Constant Value';
+    public String someVariable = 'test';
+
+    /**
      * @description Constructs a SampleClass without any arguments. This relates to {@link SampleInterface}
      * @throws ExcName some exception
      * @CustomAnnotation A Custom method annotation

@@ -48,6 +48,15 @@ Constructs a SampleClass with an argument.
 |---|---|
 |`argument`|Argument definition|
 ---
+## Fields
+
+### `A_CONSTANT` → `String`
+
+This is a constant.
+
+### `someVariable` → `String`
+
+---
 ## Properties
 
 ### `AnotherProp` → `Decimal`
