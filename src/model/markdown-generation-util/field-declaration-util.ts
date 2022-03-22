@@ -2,12 +2,10 @@ import { MarkdownFile } from '../markdown-file';
 import { FieldMirror, PropertyMirror } from '@cparra/apex-reflection';
 
 export function declareField(
-  title: string,
   markdownFile: MarkdownFile,
   fields: FieldMirror[] | PropertyMirror[],
   startingHeadingLevel: number,
 ) {
-  markdownFile.addTitle(title, startingHeadingLevel + 1);
   markdownFile.addBlankLine();
   fields
     .sort((propA, propB) => {

@@ -17,13 +17,14 @@ This is a class description. This class relates to [SampleInterface](/Sample-Int
 **See** [SampleInterface](/Sample-Interfaces/SampleInterface.md)
 
 ## Constructors
-### `SampleClass()`
+### My Super Group
+##### `SampleClass()`
 
 `NAMESPACEACCESSIBLE`
 
 Constructs a SampleClass without any arguments. This relates to [SampleInterface](/Sample-Interfaces/SampleInterface.md)
 
-#### Throws
+###### Throws
 |Exception|Description|
 |---|---|
 |`ExcName`|some exception|
@@ -33,28 +34,36 @@ Constructs a SampleClass without any arguments. This relates to [SampleInterface
 
 **See** [SampleInterface](/Sample-Interfaces/SampleInterface.md)
 
-#### Example
+###### Example
 ```apex
 // Example
 SampleClass sampleInstance = new SampleClass();
 ```
 
-### `SampleClass(String argument)`
+---
+### Other
+##### `SampleClass(String argument)`
 
 Constructs a SampleClass with an argument.
 
-#### Parameters
+###### Parameters
 |Param|Description|
 |---|---|
 |`argument`|Argument definition|
 ---
 ## Fields
+### Common Constants
 
-### `A_CONSTANT` → `String`
+##### `ANOTHER_CONSTANT` → `String`
+
+##### `A_CONSTANT` → `String`
 
 This is a constant.
 
-### `someVariable` → `String`
+---
+### Other variables
+
+##### `someVariable` → `String`
 
 ---
 ## Properties
