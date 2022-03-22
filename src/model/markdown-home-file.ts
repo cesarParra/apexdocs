@@ -12,6 +12,11 @@ export class MarkdownHomeFile extends MarkdownFile {
     this.addTypeEntries(types);
   }
 
+  public addText(text: string, encodeHtml = true) {
+    text = MarkdownFile.replaceInlineLinks(text);
+    super.addText(text, encodeHtml);
+  }
+
   private addTypeEntries(types: Type[]) {
     const groupedClasses: Map<string, Type[]> = this.group(types);
     groupedClasses.forEach((value: Type[], key: string) => {
@@ -24,12 +29,9 @@ export class MarkdownHomeFile extends MarkdownFile {
 
   private addTypeEntry(typeMirror: Type) {
     this.addBlankLine();
-    this.addTitle(ClassFileGeneratorHelper.getFileLink(typeMirror), 2);
-    this.addBlankLine();
+    this.addTitle(ClassFileGeneratorHelper.getFileLink(typeMirror), 3);
     this.addBlankLine();
     this.addText(typeMirror.docComment?.description ?? '');
-    this.addBlankLine();
-    this.addBlankLine();
   }
 
   private group(classes: Type[]): Map<string, Type[]> {
@@ -43,6 +45,8 @@ export class MarkdownHomeFile extends MarkdownFile {
   }
 
   private getClassGroup(classModel: Type): string {
-    return classModel.docComment?.annotations.find((annotation) => annotation.name === 'group')?.body ?? '';
+    return (
+      classModel.docComment?.annotations.find((annotation) => annotation.name === 'group')?.body ?? 'Miscellaneous'
+    );
   }
 }
