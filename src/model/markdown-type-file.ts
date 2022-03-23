@@ -113,13 +113,13 @@ export class MarkdownTypeFile extends MarkdownFile implements WalkerListener {
   private declareFieldOrProperty(fieldsOrProperties: FieldMirror[] | PropertyMirror[]): void {
     const hasGroupings = this.hasGroupings(fieldsOrProperties);
     if (!hasGroupings) {
-      declareField(this, fieldsOrProperties, this.headingLevel);
+      declareField(this, fieldsOrProperties, this.headingLevel, false);
     } else {
       const groupedFields = this.group(fieldsOrProperties);
       for (const key in groupedFields) {
         this.startGroup(key);
         const fieldsForGroup = groupedFields[key] as FieldMirror[];
-        declareField(this, fieldsForGroup, this.headingLevel);
+        declareField(this, fieldsForGroup, this.headingLevel, true);
         this.endGroup();
       }
     }

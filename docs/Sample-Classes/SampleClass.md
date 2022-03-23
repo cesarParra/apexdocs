@@ -54,29 +54,25 @@ Constructs a SampleClass with an argument.
 ## Fields
 ### Common Constants
 
-##### `ANOTHER_CONSTANT` → `String`
-
-##### `A_CONSTANT` → `String`
-
-This is a constant.
-
+* `ANOTHER_CONSTANT` → `String` 
+* `A_CONSTANT` → `String` [`NAMESPACEACCESSIBLE` ]  - This is a constant.
 ---
 ### Other variables
 
-##### `someVariable` → `String`
-
+* `someVariable` → `String` 
 ---
 ## Properties
 
 ### `AnotherProp` → `Decimal`
 
-`AURAENABLED`
+`AURAENABLED` 
 
 This is a Decimal property.
 
 ### `MyProp` → `String`
 
-`AURAENABLED`
+`AURAENABLED` 
+`DEPRECATED` 
 
 This is a String property.
 
@@ -131,6 +127,7 @@ Inner class belonging to SampleClass.
 
 ##### `InnerProp` → `String`
 
+
 Description of the inner property.
 
 ---
@@ -148,6 +145,7 @@ Inner class belonging to SampleClass.
 #### Properties
 
 ##### `InnerProp` → `String`
+
 
 Description of the inner property.
 

@@ -23,6 +23,7 @@ public with sharing class SampleClass {
     /**
      * @description This is a constant.
      */
+    @NamespaceAccessible
     public static final String A_CONSTANT = 'My Constant Value';
     public static final String ANOTHER_CONSTANT = 'My Constant Value';
     // @end-group
@@ -81,6 +82,7 @@ public with sharing class SampleClass {
      * @description This is a String property.
      */
     @AuraEnabled
+    @Deprecated
     public String MyProp { get; set; }
 
     /**
