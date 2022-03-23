@@ -109,15 +109,15 @@ apexdocs-generate
 
 The CLI supports the following parameters:
 
-| Parameter         | Alias | Description                                                                                                      | Default                             | Required |
-| ----------------- | ----- | ---------------------------------------------------------------------------------------------------------------- | ----------------------------------- | -------- |
-| --sourceDir       | -s    | The directory location which contains your apex .cls classes.                                                    | N/A                                 | Yes      |
-| --targetDir       | -t    | The directory location where documentation will be generated to.                                                 | `docs`                              | No       |
-| --recursive       | -r    | Whether .cls classes will be searched for recursively in the directory provided.                                 | `true`                              | No       |
-| --scope           | -p    | A list of scopes to document. Values should be separated by a space, e.g --scope public private                  | `global namespaceaccessible public` | No       |
-| --targetGenerator | -g    | Define the static file generator for which the documents will be created. Currently supports jekyll and docsify. | `jekyll`                            | No       |
-| --configPath      | -c    | The path to the JSON configuration file that defines the structure of the documents to docGenerator.                 | N/A                                 | No       |
-| --group           | -o    | Define whether the generated files should be grouped by the @group tag on the top level classes.                 | `true`                              | No       |
+| Parameter         | Alias | Description                                                                                                              | Default                             | Required |
+| ----------------- | ----- |--------------------------------------------------------------------------------------------------------------------------| ----------------------------------- | -------- |
+| --sourceDir       | -s    | The directory location which contains your apex .cls classes.                                                            | N/A                                 | Yes      |
+| --targetDir       | -t    | The directory location where documentation will be generated to.                                                         | `docs`                              | No       |
+| --recursive       | -r    | Whether .cls classes will be searched for recursively in the directory provided.                                         | `true`                              | No       |
+| --scope           | -p    | A list of scopes to document. Values should be separated by a space, e.g --scope public private                          | `global namespaceaccessible public` | No       |
+| --targetGenerator | -g    | Define the static file generator for which the documents will be created. Currently supports jekyll and docsify.         | `jekyll`                            | No       |
+| --configPath      | -c    | (Only versions 1.X) The path to the JSON configuration file that defines the structure of the documents to docGenerator. | N/A                                 | No       |
+| --group           | -o    | (Only versions 1.X) Define whether the generated files should be grouped by the @group tag on the top level classes.     | `true`                              | No       |
 
 #### Configuration File
 
@@ -313,6 +313,34 @@ The following tags are supported on the method level:
  */
 public static Object call(String action) {
 ```
+
+### Grouping Declarations Within A Class
+
+A class might have members that should be grouped together. For example, you can have a class for constants with
+groups of constants that should be grouped together because they share a common behavior (e.g. different groups
+of constants representing the possible values for different picklists.)
+
+You can group things together within a class by using the following syntax:
+```apex
+// @start-group Group Name or Description
+public static final String CONSTANT_FOO = 'Foo';
+public static final String CONSTANT_BAR = 'Bar';
+// @end-group
+```
+
+Groups of members are displayed together under their own subsection after its name or description.
+
+Some notes about grouping:
+* This is only supported on classes, NOT enums and interfaces
+* Supports
+  * Properties
+  * Fields (variables and constants)
+  * Constructors
+  * Methods
+* BUT only members of the same type are grouped together. For example, 
+if you have a group that contains properties and methods the properties will be grouped together under Properties -> Group Name, and the methods will be grouped together under Methods -> Group Name
+* Does not support inner types (inner classes, interfaces, and enums)
+* It is necessary to use `// @end-group` whenever a group has been started, otherwise a parsing error will be raised for that file.
 
 ### Inline linking
 
