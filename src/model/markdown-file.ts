@@ -55,6 +55,10 @@ export class MarkdownFile extends File {
     });
   }
 
+  addListItem(text: string) {
+    this._contents += `* ${text}`;
+  }
+
   protected static replaceInlineLinks(text: string) {
     // Parsing text to extract possible linking classes.
     const possibleLinks = text.match(/<<.*?>>/g);

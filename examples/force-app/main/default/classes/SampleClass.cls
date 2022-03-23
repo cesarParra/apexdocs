@@ -19,12 +19,20 @@ public with sharing class SampleClass {
         C
     }
 
+    // @start-group Common Constants
     /**
      * @description This is a constant.
      */
+    @NamespaceAccessible
     public static final String A_CONSTANT = 'My Constant Value';
-    public String someVariable = 'test';
+    public static final String ANOTHER_CONSTANT = 'My Constant Value';
+    // @end-group
 
+    // @start-group Other variables
+    public String someVariable = 'test';
+    // @end-group
+
+    // @start-group My Super Group
     /**
      * @description Constructs a SampleClass without any arguments. This relates to {@link SampleInterface}
      * @throws ExcName some exception
@@ -38,6 +46,7 @@ public with sharing class SampleClass {
     public SampleClass() {
         System.debug('Constructor');
     }
+    // @end-group
 
     /**
      * @description Constructs a SampleClass with an argument.
@@ -73,6 +82,7 @@ public with sharing class SampleClass {
      * @description This is a String property.
      */
     @AuraEnabled
+    @Deprecated
     public String MyProp { get; set; }
 
     /**

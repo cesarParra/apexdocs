@@ -4,13 +4,11 @@ import { ParameterMirror } from '@cparra/apex-reflection/index';
 import { addCustomDocCommentAnnotations } from './doc-comment-annotation-util';
 
 export function declareMethod(
-  title: string,
   markdownFile: MarkdownFile,
   methods: ConstructorMirror[] | MethodMirror[],
   startingHeadingLevel: number,
   className = '',
 ): void {
-  markdownFile.addTitle(title, startingHeadingLevel + 1);
   methods.forEach((currentMethod) => {
     const signatureName = isMethod(currentMethod) ? (currentMethod as MethodMirror).name : className;
     markdownFile.addTitle(`\`${buildSignature(signatureName, currentMethod)}\``, startingHeadingLevel + 2);

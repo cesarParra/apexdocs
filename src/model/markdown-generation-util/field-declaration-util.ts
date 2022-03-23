@@ -2,12 +2,11 @@ import { MarkdownFile } from '../markdown-file';
 import { FieldMirror, PropertyMirror } from '@cparra/apex-reflection';
 
 export function declareField(
-  title: string,
   markdownFile: MarkdownFile,
   fields: FieldMirror[] | PropertyMirror[],
   startingHeadingLevel: number,
+  grouped = false,
 ) {
-  markdownFile.addTitle(title, startingHeadingLevel + 1);
   markdownFile.addBlankLine();
   fields
     .sort((propA, propB) => {
@@ -16,7 +15,7 @@ export function declareField(
       return 0;
     })
     .forEach((propertyModel) => {
-      addFieldSection(markdownFile, propertyModel, startingHeadingLevel);
+      addFieldSection(markdownFile, propertyModel, startingHeadingLevel, grouped);
     });
 
   markdownFile.addHorizontalRule();
@@ -24,19 +23,42 @@ export function declareField(
 
 function addFieldSection(
   markdownFile: MarkdownFile,
-  propertyModel: FieldMirror | PropertyMirror,
+  mirrorModel: FieldMirror | PropertyMirror,
   startingHeadingLevel: number,
+  grouped: boolean,
 ) {
-  markdownFile.addTitle(`\`${propertyModel.name}\` → \`${propertyModel.type}\``, startingHeadingLevel + 2);
-
-  propertyModel.annotations.forEach((annotation) => {
+  if (!grouped) {
+    markdownFile.addTitle(`\`${mirrorModel.name}\` → \`${mirrorModel.type}\``, startingHeadingLevel + 2);
     markdownFile.addBlankLine();
-    markdownFile.addText(`\`${annotation.type.toUpperCase()}\``);
-  });
 
-  if (propertyModel.docComment?.description) {
+    mirrorModel.annotations.forEach((annotation) => {
+      markdownFile.addText(`\`${annotation.type.toUpperCase()}\` `);
+    });
+
+    if (mirrorModel.docComment?.description) {
+      markdownFile.addBlankLine();
+      markdownFile.addText(mirrorModel.docComment.description);
+    }
     markdownFile.addBlankLine();
-    markdownFile.addText(propertyModel.docComment.description);
+  } else {
+    let annotations = '';
+    const hasAnnotations = !!mirrorModel.annotations.length;
+    if (hasAnnotations) {
+      annotations += ' [';
+    }
+    mirrorModel.annotations.forEach((annotation) => {
+      annotations += `\`${annotation.type.toUpperCase()}\` `;
+    });
+    if (hasAnnotations) {
+      annotations += ']';
+    }
+
+    // If grouped we want to display these as a list
+    let description = '';
+    if (mirrorModel.docComment?.description) {
+      description = ` - ${mirrorModel.docComment?.description}`;
+    }
+    markdownFile.addListItem(`\`${mirrorModel.name}\` → \`${mirrorModel.type}\`${annotations} ${description}`);
+    markdownFile.addBlankLine();
   }
-  markdownFile.addBlankLine();
 }
