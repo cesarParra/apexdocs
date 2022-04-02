@@ -53,6 +53,7 @@ export class MarkdownFile extends File {
     columns.forEach((column) => {
       this._contents += column + '|';
     });
+    this.addBlankLine();
   }
 
   addListItem(text: string) {

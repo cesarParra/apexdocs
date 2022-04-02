@@ -50,9 +50,10 @@ public with sharing class SampleClass {
 
     /**
      * @description Constructs a SampleClass with an argument.
-     * @param argument Argument definition
+     * @param argument1 Argument1 definition
+     * @param argument2 Argument2 definition
      */
-    public SampleClass(String argument) {
+    public SampleClass(String argument1, String argument2) {
         System.debug('Constructor');
     }
 
@@ -61,11 +62,12 @@ public with sharing class SampleClass {
      * @example
      * String result = SampleClass.testMethod();
      * System.debug(result);
-     * @param argument Argument to debug
+     * @param argument1 Argument1 to debug
+     * @param argument2 Argument2 to debug
      * @return Empty string
      */
     @NamespaceAccessible
-    public static String sampleMethod(String argument) {
+    public static String sampleMethod(String argument1, String argument2) {
         System.debug('Execute');
         return '';
     }

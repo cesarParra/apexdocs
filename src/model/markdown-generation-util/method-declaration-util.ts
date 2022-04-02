@@ -56,9 +56,7 @@ function buildSignature(name: string, parameterAware: ParameterAware): string {
   if (isMethod(parameterAware) && (parameterAware as MethodMirror).memberModifiers.length) {
     signature = (parameterAware as MethodMirror).memberModifiers.join(' ') + ' ' + signature;
   }
-  const signatureParameters = parameterAware.parameters.map((param) => {
-    signature += `${param.type} ${param.name}`;
-  });
+  const signatureParameters = parameterAware.parameters.map((param) => `${param.type} ${param.name}`);
   signature += signatureParameters.join(', ');
   return (signature += ')');
 }

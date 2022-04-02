@@ -29,6 +29,7 @@ Constructs a SampleClass without any arguments. This relates to [SampleInterface
 |---|---|
 |`ExcName`|some exception|
 
+
 **CustomAnnotation** A Custom method annotation
 
 
@@ -42,14 +43,16 @@ SampleClass sampleInstance = new SampleClass();
 
 ---
 ### Other
-##### `SampleClass(String argument)`
+##### `SampleClass(String argument1, String argument2)`
 
 Constructs a SampleClass with an argument.
 
 ###### Parameters
 |Param|Description|
 |---|---|
-|`argument`|Argument definition|
+|`argument1`|Argument1 definition|
+|`argument2`|Argument2 definition|
+
 ---
 ## Fields
 ### Common Constants
@@ -78,7 +81,7 @@ This is a String property.
 
 ---
 ## Methods
-### `static sampleMethod(String argument)`
+### `static sampleMethod(String argument1, String argument2)`
 
 `NAMESPACEACCESSIBLE`
 
@@ -87,7 +90,9 @@ Executes commands based on the passed in argument.
 #### Parameters
 |Param|Description|
 |---|---|
-|`argument`|Argument to debug|
+|`argument1`|Argument1 to debug|
+|`argument2`|Argument2 to debug|
+
 #### Return
 
 **Type**
