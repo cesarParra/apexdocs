@@ -26,14 +26,14 @@ export default class ClassParser {
 
       let idxStart = comment.toLowerCase().indexOf('@author');
       if (idxStart !== -1) {
-        cModel.setAuthor(comment.substring(idxStart + 7).trim());
+        cModel.addAuthor(comment.substring(idxStart + 7).trim());
         multiline = false;
         continue;
       }
 
       idxStart = comment.toLowerCase().indexOf('@date');
       if (idxStart !== -1) {
-        cModel.setDate(comment.substring(idxStart + 5).trim());
+        cModel.addDate(comment.substring(idxStart + 5).trim());
         multiline = false;
         continue;
       }
@@ -62,21 +62,21 @@ export default class ClassParser {
         multiline = false;
         continue;
       }
-      
+
       idxStart = comment.toLowerCase().indexOf('@description');
-      if (idxStart !== -1 || (i === 1 && !reAnyAnnotation.test(comment) )) {        
+      if (idxStart !== -1 || (i === 1 && !reAnyAnnotation.test(comment) )) {
         cModel.setDescription(comment.substring(idxStart + 12).trim());
-        
+
         multiline = true;
         inDescription = true;
         inHistory = false;
         continue;
       }
 
-      let anyStart = reAnyAnnotation.exec(comment) 
+      let anyStart = reAnyAnnotation.exec(comment)
 
       idxStart = (typeof anyStart?.index !== 'undefined') ? anyStart.index : -1;
-      if (idxStart !== -1 && anyStart !== null) {        
+      if (idxStart !== -1 && anyStart !== null) {
         let genericName = anyStart[1];
         let genericValue = anyStart[2];
         cModel.setGeneric(genericName, genericValue);
@@ -86,7 +86,7 @@ export default class ClassParser {
         inHistory = false;
         continue;
       }
-      
+
       // handle multiple lines for description.
       if (multiline === true) {
         let j;
