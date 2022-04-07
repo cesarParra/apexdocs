@@ -8,6 +8,7 @@ import FileParser from '../Parser/FileParser';
 import DocsifyDocsProcessor from '../DocsifyDocsProcessor';
 import JekyllDocsProcessor from '../JekyllDocsProcessor';
 import AsJsDocsProcessor from '../AsJsDocsProcessor';
+import MetadataProcessor from '../MetadataProcessor';
 
 export function generate(
   sourceDirectories: (string | number)[],
@@ -17,9 +18,11 @@ export function generate(
   targetGenerator: string = 'jekyll',
   configPath?: string,
   group?: boolean,
+  indexOnly : boolean = false
 ): ClassModel[] {
   Settings.getInstance().setScope(scope);
   Settings.getInstance().setOutputDir(outputDir);
+  Settings.getInstance().setIndexOnly(indexOnly);
 
   if (targetGenerator === 'jekyll') {
     Settings.getInstance().setDocsProcessor(new JekyllDocsProcessor());
@@ -62,12 +65,26 @@ function getClassesFromDirectory(sourceDirectories: (string | number)[], recursi
 
       const rawFile = fs.readFileSync(currentPath);
       const response = new FileParser().parseFileContents(rawFile.toString());
+      const rawFileMetadata = fs.existsSync(currentPath+'-meta.xml') ? fs.readFileSync(currentPath+'-meta.xml') : null;
+      if (!response) {
+        return;
+      }
+      
+    
+      if(rawFileMetadata != null && response != null){
+        let metadataGenericParams = MetadataProcessor.process(rawFileMetadata.toString());
+        metadataGenericParams.forEach((value, key) => {
+          response.setGeneric(key, value);
+        })
+      }
+  
       if (!response) {
         return;
       }
       classes.push(response);
     });
   }
+
 
   return classes;
 }
