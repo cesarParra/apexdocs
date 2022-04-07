@@ -17,7 +17,7 @@ export default class FileParser {
 
     let commentsStarted = false;
     let docBlockStarted = false;
-    let namespaceAccessible: boolean | undefined = undefined;
+    let namespaceAccessible: boolean | undefined;
     let nestedCurlyBraceDepth = 0;
     const lstComments = [];
     let cModel: ClassModel | null = null;

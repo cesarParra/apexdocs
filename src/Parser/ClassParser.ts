@@ -17,12 +17,11 @@ export default class ClassParser {
     let inHistory = false;
     let i = 0;
 
-    let reAnyAnnotation = new RegExp('@([A-Za-z]*)\s*(.*)')
+    const reAnyAnnotation = new RegExp('@([A-Za-z]*)s*(.*)');
 
     for (let comment of lstComments) {
       i++;
       comment = comment.trim();
-
 
       let idxStart = comment.toLowerCase().indexOf('@author');
       if (idxStart !== -1) {
@@ -64,7 +63,7 @@ export default class ClassParser {
       }
 
       idxStart = comment.toLowerCase().indexOf('@description');
-      if (idxStart !== -1 || (i === 1 && !reAnyAnnotation.test(comment) )) {
+      if (idxStart !== -1 || (i === 1 && !reAnyAnnotation.test(comment))) {
         cModel.setDescription(comment.substring(idxStart + 12).trim());
 
         multiline = true;
@@ -73,12 +72,12 @@ export default class ClassParser {
         continue;
       }
 
-      let anyStart = reAnyAnnotation.exec(comment)
+      const anyStart = reAnyAnnotation.exec(comment);
 
-      idxStart = (typeof anyStart?.index !== 'undefined') ? anyStart.index : -1;
+      idxStart = typeof anyStart?.index !== 'undefined' ? anyStart.index : -1;
       if (idxStart !== -1 && anyStart !== null) {
-        let genericName = anyStart[1];
-        let genericValue = anyStart[2];
+        const genericName = anyStart[1];
+        const genericValue = anyStart[2];
         cModel.setGeneric(genericName, genericValue);
 
         multiline = false;
@@ -95,7 +94,7 @@ export default class ClassParser {
           if (ch !== '*' && ch !== ' ') break;
         }
         if (j < comment.length && !reAnyAnnotation.test(comment)) {
-          if(inDescription){
+          if (inDescription) {
             cModel.setDescription(cModel.getDescription() + ' ' + comment.substring(j));
           }
         }

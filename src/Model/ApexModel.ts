@@ -83,12 +83,12 @@ export default class ApexModel {
     return this.isNamespaceAccessible;
   }
 
-  setGeneric(name:string, value:string){
+  setGeneric(name: string, value: string) {
     this.generics.set(name, value);
   }
 
-  getGeneric(name:string){
-    let value = this.generics.get(name);
+  getGeneric(name: string) {
+    const value = this.generics.get(name);
     return value ? value : '';
   }
 

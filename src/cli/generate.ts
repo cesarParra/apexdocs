@@ -53,9 +53,8 @@ const argv = yargs.options({
   indexOnly: {
     type: 'boolean',
     default: false,
-    describe:
-      'Defines whether only the index file should be generated.',
-  }
+    describe: 'Defines whether only the index file should be generated.',
+  },
 }).argv;
 
 const generatedClassModels = generate(

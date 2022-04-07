@@ -81,7 +81,7 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
     const generator = new MarkdownHelper(this.classes);
     this.onBeforeClassFileCreated(generator);
 
-    if( Settings.getInstance().getIndexOnly() === true ){
+    if (Settings.getInstance().getIndexOnly() === true) {
       return;
     }
 

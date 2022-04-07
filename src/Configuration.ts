@@ -37,7 +37,7 @@ interface MethodInjection {
 
 export default class Configuration {
   public static getHeader() {
-    let config = this.getConfig();
+    const config = this.getConfig();
     if (!config?.home?.header) {
       return undefined;
     }

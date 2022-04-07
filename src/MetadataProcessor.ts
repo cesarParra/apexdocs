@@ -1,16 +1,15 @@
-import {XMLParser} from 'fast-xml-parser'
+import { XMLParser } from 'fast-xml-parser';
 
-export default class MetadataProcessor{
+export default class MetadataProcessor {
+  public static process(input: string) {
+    const map = new Map<string, string>();
+    const xml = new XMLParser().parse(input);
 
-    public static process(input : string){
-        let map = new Map<string, string>();
-        let xml = new XMLParser().parse(input);
+    const apiVersion = xml.ApexClass.apiVersion;
+    map.set('apiVersion', apiVersion !== null ? apiVersion : '');
 
-        let apiVersion = xml.ApexClass.apiVersion;
-        map.set('apiVersion',apiVersion !== null ? apiVersion : '');
-
-        let status = xml.ApexClass.status;
-        map.set('status',status !== null ? status : '');
-        return map;
-    }
+    const status = xml.ApexClass.status;
+    map.set('status', status !== null ? status : '');
+    return map;
+  }
 }

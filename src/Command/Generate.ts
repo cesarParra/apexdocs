@@ -18,7 +18,7 @@ export function generate(
   targetGenerator: string = 'jekyll',
   configPath?: string,
   group?: boolean,
-  indexOnly : boolean = false
+  indexOnly: boolean = false,
 ): ClassModel[] {
   Settings.getInstance().setScope(scope);
   Settings.getInstance().setOutputDir(outputDir);
@@ -65,26 +65,26 @@ function getClassesFromDirectory(sourceDirectories: (string | number)[], recursi
 
       const rawFile = fs.readFileSync(currentPath);
       const response = new FileParser().parseFileContents(rawFile.toString());
-      const rawFileMetadata = fs.existsSync(currentPath+'-meta.xml') ? fs.readFileSync(currentPath+'-meta.xml') : null;
+      const rawFileMetadata = fs.existsSync(currentPath + '-meta.xml')
+        ? fs.readFileSync(currentPath + '-meta.xml')
+        : null;
       if (!response) {
         return;
       }
-      
-    
-      if(rawFileMetadata != null && response != null){
-        let metadataGenericParams = MetadataProcessor.process(rawFileMetadata.toString());
+
+      if (rawFileMetadata != null && response != null) {
+        const metadataGenericParams = MetadataProcessor.process(rawFileMetadata.toString());
         metadataGenericParams.forEach((value, key) => {
           response.setGeneric(key, value);
-        })
+        });
       }
-  
+
       if (!response) {
         return;
       }
       classes.push(response);
     });
   }
-
 
   return classes;
 }
