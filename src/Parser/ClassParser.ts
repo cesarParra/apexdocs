@@ -12,30 +12,36 @@ export default class ClassParser {
   private fillClassModel(cModel: ClassModel, name: string, lstComments: string[], iLine: number) {
     cModel.setNameLine(name, iLine);
     if (name.toLowerCase().includes(' interface ')) cModel.setIsInterface(true);
+    let multiline = false;
     let inDescription = false;
+    let inHistory = false;
     let i = 0;
+
+    let reAnyAnnotation = new RegExp('@([A-Za-z]*)\s*(.*)')
+
     for (let comment of lstComments) {
       i++;
       comment = comment.trim();
 
+
       let idxStart = comment.toLowerCase().indexOf('@author');
       if (idxStart !== -1) {
         cModel.setAuthor(comment.substring(idxStart + 7).trim());
-        inDescription = false;
+        multiline = false;
         continue;
       }
 
       idxStart = comment.toLowerCase().indexOf('@date');
       if (idxStart !== -1) {
         cModel.setDate(comment.substring(idxStart + 5).trim());
-        inDescription = false;
+        multiline = false;
         continue;
       }
 
       idxStart = comment.toLowerCase().indexOf('@see');
       if (idxStart !== -1) {
         cModel.addSee(comment.substring(idxStart + 4).trim());
-        inDescription = false;
+        multiline = false;
         continue;
       }
 
@@ -46,40 +52,52 @@ export default class ClassParser {
           cModel.setClassGroup(group);
         }
 
-        inDescription = false;
+        multiline = false;
         continue;
       }
 
       idxStart = comment.toLowerCase().indexOf('@group-content');
       if (idxStart !== -1) {
         cModel.setClassGroupContent(comment.substring(idxStart + 14).trim());
-        inDescription = false;
+        multiline = false;
         continue;
       }
-
+      
       idxStart = comment.toLowerCase().indexOf('@description');
-      if (idxStart !== -1 || i === 1) {
-        if (idxStart !== -1 && comment.length > idxStart + 13)
-          cModel.setDescription(comment.substring(idxStart + 12).trim());
-        else {
-          const found = comment.match('\\s');
-          if (found && found.index) {
-            cModel.setDescription(comment.substring(found.index).trim());
-          }
-        }
+      if (idxStart !== -1 || (i === 1 && !reAnyAnnotation.test(comment) )) {        
+        cModel.setDescription(comment.substring(idxStart + 12).trim());
+        
+        multiline = true;
         inDescription = true;
+        inHistory = false;
         continue;
       }
 
+      let anyStart = reAnyAnnotation.exec(comment) 
+
+      idxStart = (typeof anyStart?.index !== 'undefined') ? anyStart.index : -1;
+      if (idxStart !== -1 && anyStart !== null) {        
+        let genericName = anyStart[1];
+        let genericValue = anyStart[2];
+        cModel.setGeneric(genericName, genericValue);
+
+        multiline = false;
+        inDescription = false;
+        inHistory = false;
+        continue;
+      }
+      
       // handle multiple lines for description.
-      if (inDescription) {
+      if (multiline === true) {
         let j;
         for (j = 0; j < comment.length; j++) {
           const ch = comment.charAt(j);
           if (ch !== '*' && ch !== ' ') break;
         }
-        if (j < comment.length) {
-          cModel.setDescription(cModel.getDescription() + ' ' + comment.substring(j));
+        if (j < comment.length && !reAnyAnnotation.test(comment)) {
+          if(inDescription){
+            cModel.setDescription(cModel.getDescription() + ' ' + comment.substring(j));
+          }
         }
         continue;
       }

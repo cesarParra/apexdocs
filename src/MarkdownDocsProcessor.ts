@@ -80,6 +80,11 @@ export default abstract class MarkdownDocsProcessor extends DocsProcessor {
   process(classModel: ClassModel, outputDir: string) {
     const generator = new MarkdownHelper(this.classes);
     this.onBeforeClassFileCreated(generator);
+
+    if( Settings.getInstance().getIndexOnly() === true ){
+      return;
+    }
+
     const startingHeadingLevel = Configuration.getConfig()?.content?.startingHeadingLevel || 1;
     this.generateDocsForClass(generator, classModel, startingHeadingLevel);
 

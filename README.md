@@ -74,6 +74,8 @@ The CLI supports the following parameters:
 | --targetGenerator | -g    | Define the static file generator for which the documents will be created. Currently supports jekyll and docsify.                            | `jekyll`                            | No       |
 | --configPath      | -c    | The path to the JSON configuration file that defines the structure of the documents to generate.                                            | N/A                                 | No       |
 | --group           | -o    | Define whether the generated files should be grouped by the @group tag on the top level classes.                                            | `true`                              | No       |
+| --indexOnly       | N/A   | Defines whether only the index file should be  generated.                                                        | `false`                             | No       |
+
 
 #### Configuration File
 

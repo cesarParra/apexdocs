@@ -11,6 +11,8 @@ export default class ApexModel {
   private scope: string = '';
   private isNamespaceAccessible: boolean = false;
 
+  private generics = new Map<string, string>();
+
   getNameLine() {
     return this.nameLine;
   }
@@ -79,6 +81,15 @@ export default class ApexModel {
 
   getIsNamespaceAccessible() {
     return this.isNamespaceAccessible;
+  }
+
+  setGeneric(name:string, value:string){
+    this.generics.set(name, value);
+  }
+
+  getGeneric(name:string){
+    let value = this.generics.get(name);
+    return value ? value : '';
   }
 
   private parseScope() {

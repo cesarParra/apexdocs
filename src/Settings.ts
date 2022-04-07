@@ -8,6 +8,8 @@ export default class Settings {
   private configPath: string | null = null;
   private shouldGroup: boolean | null = true;
   private processor: DocsProcessor | null = null;
+  private indexOnly: boolean = false;
+
 
   private constructor() {}
 
@@ -58,6 +60,14 @@ export default class Settings {
   getShouldGroup() {
     return this.shouldGroup;
   }
+  
+  getIndexOnly(): boolean {
+    return this.indexOnly;
+  }
+  setIndexOnly(value: boolean) {
+    this.indexOnly = value;
+  }
+  
 
   includeNamespaceAccessible() {
     return this.getScope().includes('namespaceaccessible');

@@ -50,6 +50,12 @@ const argv = yargs.options({
       'Define whether the generated files should be grouped by the @group tag on the top level classes.' +
       'If set to true, a sub directory will be created per group inside of the specified target directory.',
   },
+  indexOnly: {
+    type: 'boolean',
+    default: false,
+    describe:
+      'Defines whether only the index file should be generated.',
+  }
 }).argv;
 
 const generatedClassModels = generate(
@@ -60,5 +66,6 @@ const generatedClassModels = generate(
   argv.targetGenerator,
   argv.configPath,
   argv.group,
+  argv.indexOnly,
 );
 new FileManager(generatedClassModels).generate();
