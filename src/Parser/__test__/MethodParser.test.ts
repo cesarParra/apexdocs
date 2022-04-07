@@ -36,13 +36,14 @@ test('that method is not constructor when class name is the not the same as the 
 test('that author is set', () => {
   const builtMethodModel = new MethodParser().getMethod('ClassName', nameLine, commentLines, 4);
 
-  expect(builtMethodModel.getAuthor()).toBe('John Doe');
+  expect(builtMethodModel.getAuthors()).toHaveLength(1);
+  expect(builtMethodModel.getAuthors()[0]).toBe('John Doe');
 });
 
 test('that date is set', () => {
   const builtMethodModel = new MethodParser().getMethod('ClassName', nameLine, commentLines, 4);
 
-  expect(builtMethodModel.getDate()).toBe('1/1/2020');
+  expect(builtMethodModel.getDates()[0]).toBe('1/1/2020');
 });
 
 test('that return is set', () => {

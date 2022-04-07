@@ -1,6 +1,3 @@
----
-layout: default
----
 # SampleClass class
 
 `NamespaceAccessible`
@@ -9,10 +6,10 @@ This is a class description.
 
 ## Related
 
-SampleInterface
+[SampleInterface](/Sample-Interfaces/SampleInterface.md)
 
 
-SampleClass2
+[SampleClass2](/Sample-Classes/SampleClass2.md)
 
 ---
 ## Constructors

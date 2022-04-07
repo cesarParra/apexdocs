@@ -1,34 +1,42 @@
-# SampleClass2 class
+# SampleClassMultipleAuthorsAndDates class
 
 `NamespaceAccessible`
 
 This is a class description.
 
+
+**Author:** John Doe
+
+**Author:** Jane Doe
+
+**Date:** 1/1/2021
+
+**Date:** 2/2/2022
 ## Related
 
 [SampleInterface](/Sample-Interfaces/SampleInterface.md)
 
 
-[SampleClass](/Sample-Classes/SampleClass.md)
+[SampleClass2](/Sample-Classes/SampleClass2.md)
 
 ---
 ## Constructors
-### `SampleClass2()`
+### `SampleClassMultipleAuthorsAndDates()`
 
 `NamespaceAccessible`
 
-Constructs a SampleClass2 without any arguments.
+Constructs a SampleClassMultipleAuthorsAndDates without any arguments.
 #### Example
 ```
 <pre>
-SampleClass2 sampleInstance = new SampleClass2();
+SampleClassMultipleAuthorsAndDates sampleInstance = new SampleClassMultipleAuthorsAndDates();
 ```
 
-### `SampleClass2(String argument)`
+### `SampleClassMultipleAuthorsAndDates(String argument)`
 
 `NamespaceAccessible`
 
-Constructs a SampleClass2 with an argument.
+Constructs a SampleClassMultipleAuthorsAndDates with an argument.
 #### Parameters
 
 | Param | Description |
@@ -67,16 +75,16 @@ Executes commands based on the passed in argument.
 #### Example
 ```
 <pre>
-String result = SampleClass2.testMethod();
+String result = SampleClassMultipleAuthorsAndDates.testMethod();
 System.debug(result);
 ```
 
 ---
 ## Inner Classes
 
-### SampleClass2.AnotherInnerClass class
+### SampleClassMultipleAuthorsAndDates.AnotherInnerClass class
 
-Inner class belonging to SampleClass2.
+Inner class belonging to SampleClassMultipleAuthorsAndDates.
 
 ---
 #### Properties
@@ -92,9 +100,9 @@ Description of the inner property.
 Executes from the inner class.
 
 ---
-### SampleClass2.InnerClass class
+### SampleClassMultipleAuthorsAndDates.InnerClass class
 
-Inner class belonging to SampleClass2.
+Inner class belonging to SampleClassMultipleAuthorsAndDates.
 
 ---
 #### Properties

@@ -1,13 +1,10 @@
----
-layout: default
----
 # SampleInterface interface
 
 This is an interface description.
 
 ## Related
 
-[SampleClass](../Sample-Classes/SampleClass.md)
+[SampleClass](/Sample-Classes/SampleClass.md)
 
 ---
 ## Methods
