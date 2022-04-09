@@ -10,6 +10,7 @@ export interface SettingsConfig {
   scope: string[];
   outputDir: string;
   targetGenerator: GeneratorChoices;
+  indexOnly: boolean;
 }
 
 export class Settings {
@@ -53,5 +54,9 @@ export class Settings {
       default:
         throw Error('Invalid target generator');
     }
+  }
+
+  get indexOnly(): boolean {
+    return this.config.indexOnly;
   }
 }

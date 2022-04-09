@@ -11,6 +11,7 @@ describe('File Reader', () => {
       group: true,
       outputDir: '',
       scope: [],
+      indexOnly: false,
     } as SettingsConfig);
   });
 
@@ -32,6 +33,9 @@ describe('File Reader', () => {
       readFile(_: string): string {
         return '';
       },
+      exists(): boolean {
+        return true;
+      },
     });
     expect(result.length).toBe(0);
   });
@@ -49,6 +53,9 @@ describe('File Reader', () => {
       },
       readFile(_: string): string {
         return '';
+      },
+      exists(): boolean {
+        return true;
       },
     });
     expect(result.length).toBe(0);
@@ -72,8 +79,11 @@ describe('File Reader', () => {
       readFile(_: string): string {
         return 'public class MyClass{}';
       },
+      exists(): boolean {
+        return true;
+      },
     });
     expect(result.length).toBe(1);
-    expect(result[0]).toBe('public class MyClass{}');
+    expect(result[0].rawTypeContent).toBe('public class MyClass{}');
   });
 });

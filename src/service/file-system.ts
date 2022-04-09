@@ -6,6 +6,7 @@ export interface FileSystem {
   isDirectory: (path: string) => boolean;
   readFile: (path: string) => string;
   joinPath: (...paths: string[]) => string;
+  exists: (path: string) => boolean;
 }
 
 export class DefaultFileSystem implements FileSystem {
@@ -24,5 +25,9 @@ export class DefaultFileSystem implements FileSystem {
 
   joinPath(...paths: string[]): string {
     return path.join(...paths);
+  }
+
+  exists(path: string): boolean {
+    return fs.existsSync(path);
   }
 }

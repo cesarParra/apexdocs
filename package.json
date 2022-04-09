@@ -1,6 +1,6 @@
 {
   "name": "@cparra/apexdocs",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "description": "Library with CLI capabilities to generate documentation for Salesforce Apex classes.",
   "keywords": [
     "apex",
@@ -24,7 +24,8 @@
     "postversion": "git push && git push --tags",
     "docs:init": "docsify init docs",
     "docs:serve": "docsify serve docs",
-    "execute:example": "node lib/cli/generate.js -s examples/force-app -t docs --scope global public private -g docsify"
+    "execute:example": "node lib/cli/generate.js -s examples/force-app -t docs --scope global public private -g docsify",
+    "execute:example:index:only": "node lib/cli/generate.js -s examples/force-app -t docs --scope global public private -g docsify --indexOnly"
   },
   "author": "Cesar Parra",
   "license": "MIT",
@@ -64,6 +65,7 @@
   },
   "dependencies": {
     "@cparra/apex-reflection": "^1.1.3",
+    "fast-xml-parser": "^4.0.1",
     "chalk": "^4.1.2",
     "html-entities": "^2.3.2",
     "yargs": "^16.0.3"

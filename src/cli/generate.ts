@@ -39,6 +39,11 @@ const argv = yargs.options({
     describe:
       'Define the static file generator for which the documents will be created. Currently supports jekyll, and docsify.',
   },
+  indexOnly: {
+    type: 'boolean',
+    default: false,
+    describe: 'Defines whether only the index file should be  generated.',
+  },
 }).argv;
 
 Settings.build({
@@ -47,6 +52,7 @@ Settings.build({
   scope: argv.scope,
   outputDir: argv.targetDir,
   targetGenerator: argv.targetGenerator as GeneratorChoices,
+  indexOnly: argv.indexOnly,
 });
 
 Apexdocs.generate();

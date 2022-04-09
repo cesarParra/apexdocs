@@ -1,5 +1,6 @@
 import { Type } from '@cparra/apex-reflection';
 import ProcessorTypeTranspiler from './processor-type-transpiler';
+import { Settings } from '../settings';
 
 export default class Transpiler {
   static generate(types: Type[], processor: ProcessorTypeTranspiler): void {
@@ -10,6 +11,11 @@ export default class Transpiler {
     });
 
     processor.onBeforeProcess?.(sortedTypes);
+
+    if (Settings.getInstance().indexOnly === true) {
+      return;
+    }
+
     sortedTypes.forEach((currentType) => {
       processor.onProcess(currentType);
     });

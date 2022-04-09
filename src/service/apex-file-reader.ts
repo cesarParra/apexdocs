@@ -1,5 +1,6 @@
 import { Settings } from '../settings';
 import { FileSystem } from './file-system';
+import ApexBundle from '../model/apex-bundle';
 
 const APEX_FILE_EXTENSION = '.cls';
 
@@ -10,8 +11,8 @@ export class ApexFileReader {
   /**
    * Reads from .cls files and returns their raw body.
    */
-  static processFiles(fileSystem: FileSystem, rootPath: string = this.sourceDirectory): string[] {
-    let bodies: string[] = [];
+  static processFiles(fileSystem: FileSystem, rootPath: string = this.sourceDirectory): ApexBundle[] {
+    let bodies: ApexBundle[] = [];
 
     const directoryContents = fileSystem.readDirectory(rootPath);
     directoryContents.forEach((currentFilePath) => {
@@ -24,8 +25,10 @@ export class ApexFileReader {
         return;
       }
 
-      const rawFile = fileSystem.readFile(currentPath);
-      bodies.push(rawFile);
+      const rawApexFile = fileSystem.readFile(currentPath);
+      const metadataPath = fileSystem.joinPath(rootPath, `${currentFilePath}-meta.xml`);
+      const rawMetadataFile = fileSystem.exists(metadataPath) ? fileSystem.readFile(metadataPath) : null;
+      bodies.push(new ApexBundle(rawApexFile, rawMetadataFile));
     });
     return bodies;
   }

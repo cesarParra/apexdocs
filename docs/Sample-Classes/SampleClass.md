@@ -2,6 +2,10 @@
 
 `NAMESPACEACCESSIBLE`
 
+`APIVERSION: 54`
+
+`STATUS: ACTIVE`
+
 This is a class description. This class relates to [SampleInterface](/Sample-Interfaces/SampleInterface.md)              But this ClassThatDoesNotExist does not exist.              You can also link using this syntax [SampleInterface](/Sample-Interfaces/SampleInterface.md)
 
 
