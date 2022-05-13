@@ -172,7 +172,7 @@ files.
 
 `generate(sourceDirectory[,recursive][,scope][,outputDir])`
 
-- `sourceDirectory` \<string>
+- `sourceDirectory` \<string>[]
 - `recursive` \<boolean>
 - `scope` \<string[]>
 - `outpurDir` \<string>
@@ -180,7 +180,7 @@ files.
 ```javascript
 var { generate } = require('@cparra/apexdocs');
 
-let documentedClasses = generate('src', true, ['global'], 'docs');
+let documentedClasses = generate(['src'], true, ['global'], 'docs');
 ```
 
 ## Documentation Format
