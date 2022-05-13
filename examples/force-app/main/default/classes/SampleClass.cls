@@ -72,6 +72,15 @@ public with sharing class SampleClass {
         return '';
     }
 
+    /**
+     * @description Something here
+     * @arg1
+     */
+    public static String anotherSampleMethod(String arg1) {
+        System.debug('something');
+        return '';
+    }
+
 
     /**
      * @description Calls the method.

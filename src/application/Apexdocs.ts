@@ -1,6 +1,6 @@
 import { ApexFileReader } from '../service/apex-file-reader';
 import { DefaultFileSystem } from '../service/file-system';
-import { ReflectionResult, reflect, Type } from '@cparra/apex-reflection';
+import { ReflectionResult, reflect, Type, ClassMirror } from '@cparra/apex-reflection';
 import { Logger } from '../util/logger';
 import { createManifest } from '../service/manifest-factory';
 import { RawBodyParser } from '../service/parser';
@@ -8,6 +8,7 @@ import { Settings } from '../settings';
 import Transpiler from '../transpiler/transpiler';
 import { FileWriter } from '../service/file-writer';
 import { TypesRepository } from '../model/types-repository';
+import ErrorLogger from '../util/error-logger';
 
 /**
  * Application entry-point to generate documentation out of Apex source files.
@@ -30,6 +31,9 @@ export class Apexdocs {
     FileWriter.write(generatedFiles, (fileName: string) => {
       Logger.log(`${fileName} processed.`);
     });
+
+    // Error logging
+    ErrorLogger.logErrors(filteredTypes);
   }
 
   static _reflectionWithLogger = (declarationBody: string): ReflectionResult => {

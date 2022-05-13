@@ -64,7 +64,7 @@
     ]
   },
   "dependencies": {
-    "@cparra/apex-reflection": "^1.2.0",
+    "@cparra/apex-reflection": "^1.4.0",
     "fast-xml-parser": "^4.0.1",
     "chalk": "^4.1.2",
     "html-entities": "^2.3.2",

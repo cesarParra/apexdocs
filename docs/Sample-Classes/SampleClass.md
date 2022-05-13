@@ -113,6 +113,11 @@ String result = SampleClass.testMethod();
 System.debug(result);
 ```
 
+### `static anotherSampleMethod(String arg1)`
+#### Parameters
+|Param|Description|
+|---|---|
+
 ### `static call()`
 
 Calls the method. This methods allows you to call it.
