@@ -207,23 +207,8 @@ the `Properties` title will be `<h2>`, each property name will be an `<h3>`, etc
 
 ### Importing to your project
 
-If you are just interested in the documentation parsing capabilities, you can import ApexDocs into your own project.
-
-Use the `docGenerator` function to create a list of `ClassModel` that includes all the parsed information from your .cls
-files.
-
-`docGenerator(sourceDirectory[,recursive][,scope][,outputDir])`
-
-- `sourceDirectory` \<string>
-- `recursive` \<boolean>
-- `scope` \<string[]>
-- `outpurDir` \<string>
-
-```javascript
-var { docGenerator } = require('@cparra/apexdocs');
-
-let documentedClasses = docGenerator('src', true, ['global'], 'docs');
-```
+If you are just interested in the Apex parsing capabilities, you can use the standalone [Apex Reflection Library](https://www.npmjs.com/package/@cparra/apex-reflection)
+which is what gets used by this library behind the scenes to generate the documentation files.
 
 ## Documentation Format
 
@@ -235,7 +220,7 @@ multiple lines, ending with `*/`.
 The following tags are supported on the class level:
 
 | Tag            | Description                                                                                                                                |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+|----------------|--------------------------------------------------------------------------------------------------------------------------------------------|
 | `@description` | One or more lines describing the class.                                                                                                    |
 | `@see`         | The name of a related class.                                                                                                               |
 | `@group`       | The group to which the class belongs to.                                                                                                   |
@@ -257,7 +242,7 @@ public with sharing class TestClass {
 The following tags are supported on the enum level:
 
 | Tag            | Description                            |
-| -------------- | -------------------------------------- |
+|----------------|----------------------------------------|
 | `@description` | One or more lines describing the enum. |
 
 **Example**
@@ -276,7 +261,7 @@ public Enum ExampleEnum {
 The following tags are supported on the property level:
 
 | Tag            | Description                                |
-| -------------- | ------------------------------------------ |
+|----------------|--------------------------------------------|
 | `@description` | One or more lines describing the property. |
 
 **Example**
@@ -295,7 +280,7 @@ Methods and constructors support the same tags.
 The following tags are supported on the method level:
 
 | Tag                       | Description                                       |
-| ------------------------- | ------------------------------------------------- |
+|---------------------------|---------------------------------------------------|
 | `@description`            | One or more lines describing the method.          |
 | `@param` _paramName_      | Description of a single parameter.                |
 | `@return`                 | Description of the return value of the method.    |

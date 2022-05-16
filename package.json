@@ -1,6 +1,6 @@
 {
   "name": "@cparra/apexdocs",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "Library with CLI capabilities to generate documentation for Salesforce Apex classes.",
   "keywords": [
     "apex",
@@ -64,7 +64,7 @@
     ]
   },
   "dependencies": {
-    "@cparra/apex-reflection": "^1.4.0",
+    "@cparra/apex-reflection": "^1.5.0",
     "fast-xml-parser": "^4.0.1",
     "chalk": "^4.1.2",
     "html-entities": "^2.3.2",

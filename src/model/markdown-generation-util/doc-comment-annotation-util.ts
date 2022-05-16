@@ -15,8 +15,14 @@ export function addCustomDocCommentAnnotations(markdownFile: MarkdownFile, docCo
       markdownFile.addBlankLine();
     });
 
-  function capitalizeFirstLetter(text: string) {
-    return text.charAt(0).toUpperCase() + text.slice(1);
+  function splitAndCapitalize(text: string) {
+    const words = text.split(/[-_]+/);
+    const capitalizedWords = [];
+    for (const word of words) {
+      console.log(`current word ${word}`);
+      capitalizedWords.push(word.charAt(0).toUpperCase() + word.slice(1));
+    }
+    return capitalizedWords.join(' ');
   }
 
   function buildDocAnnotationText(annotation: DocCommentAnnotation) {
@@ -24,6 +30,6 @@ export function addCustomDocCommentAnnotations(markdownFile: MarkdownFile, docCo
     if (annotation.name.toLowerCase() === 'see') {
       annotationBodyText = ClassFileGeneratorHelper.getFileLinkByTypeName(annotation.body);
     }
-    return `**${capitalizeFirstLetter(annotation.name)}** ${annotationBodyText}`;
+    return `**${splitAndCapitalize(annotation.name)}** ${annotationBodyText}`;
   }
 }

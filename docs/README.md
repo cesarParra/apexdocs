@@ -1,4 +1,9 @@
 # Classes
+## Utils
+
+### [GroupedClass](/Utils/GroupedClass.md)
+
+Uses a block style apex doc
 ## Sample Classes
 
 ### [SampleClass](/Sample-Classes/SampleClass.md)
