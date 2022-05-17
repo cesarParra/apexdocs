@@ -19,8 +19,3 @@ This is a class description. This class relates to [SampleInterface](/Sample-Int
 ### [SampleInterface](/Sample-Interfaces/SampleInterface.md)
 
 This is an interface description.
-## Stripe Integration
-
-### [SampleTestClass](/Stripe-Integration/SampleTestClass.md)
-
-
