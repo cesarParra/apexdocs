@@ -114,9 +114,15 @@ System.debug(result);
 ```
 
 ### `static anotherSampleMethod(String arg1)`
+
+Something here
+
 #### Parameters
 |Param|Description|
 |---|---|
+
+
+**Arg1** The arg1 description
 
 ### `static call()`
 

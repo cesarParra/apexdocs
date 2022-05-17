@@ -74,7 +74,7 @@ public with sharing class SampleClass {
 
     /**
      * @description Something here
-     * @arg1
+     * @arg1 The arg1 description
      */
     public static String anotherSampleMethod(String arg1) {
         System.debug('something');
