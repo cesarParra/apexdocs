@@ -19,7 +19,6 @@ export function addCustomDocCommentAnnotations(markdownFile: MarkdownFile, docCo
     const words = text.split(/[-_]+/);
     const capitalizedWords = [];
     for (const word of words) {
-      console.log(`current word ${word}`);
       capitalizedWords.push(word.charAt(0).toUpperCase() + word.slice(1));
     }
     return capitalizedWords.join(' ');
