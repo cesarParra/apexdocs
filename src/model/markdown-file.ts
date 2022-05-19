@@ -18,6 +18,12 @@ export class MarkdownFile extends File {
     this.addBlankLine();
   }
 
+  public addText(text: string, encodeHtml = true) {
+    text = MarkdownFile.replaceInlineLinks(text);
+    text = MarkdownFile.replaceInlineEmails(text);
+    super.addText(text, encodeHtml);
+  }
+
   startCodeBlock() {
     this._contents += '```';
     const sourceLanguage = 'apex';
@@ -83,6 +89,26 @@ export class MarkdownFile extends File {
 
     for (const currentMatch of matches) {
       text = text.replace(currentMatch[0], ClassFileGeneratorHelper.getFileLinkByTypeName(currentMatch[1]));
+    }
+    return text;
+  }
+
+  protected static replaceInlineEmails(text: string) {
+    // Parsing links using {@link ClassName} format
+    const linkFormatRegEx = '{@email (.*?)}';
+    const expression = new RegExp(linkFormatRegEx, 'gi');
+    let match;
+    const matches = [];
+
+    do {
+      match = expression.exec(text);
+      if (match) {
+        matches.push(match);
+      }
+    } while (match);
+
+    for (const currentMatch of matches) {
+      text = text.replace(currentMatch[0], `[${currentMatch[1]}](mailto:${currentMatch[1]})`);
     }
     return text;
   }

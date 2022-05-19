@@ -32,11 +32,6 @@ export class MarkdownTypeFile extends MarkdownFile implements WalkerListener {
     walker.walk(this);
   }
 
-  public addText(text: string, encodeHtml = true) {
-    text = MarkdownFile.replaceInlineLinks(text);
-    super.addText(text, encodeHtml);
-  }
-
   public onTypeDeclaration(typeMirror: Type): void {
     this.addTitle(typeMirror.name, this.headingLevel);
     declareType(this, typeMirror);

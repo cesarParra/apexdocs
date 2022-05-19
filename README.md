@@ -219,6 +219,8 @@ multiple lines, ending with `*/`.
 
 The following tags are supported on the class level:
 
+**Note** Any custom generated tag is also supported. Custom tags can be added with at symbol (`@`) followed by the name of the tag. For example `@custom-tag`
+
 | Tag            | Description                                                                                                                                |
 |----------------|--------------------------------------------------------------------------------------------------------------------------------------------|
 | `@description` | One or more lines describing the class.                                                                                                    |
@@ -279,13 +281,14 @@ Methods and constructors support the same tags.
 
 The following tags are supported on the method level:
 
-| Tag                       | Description                                       |
-|---------------------------|---------------------------------------------------|
-| `@description`            | One or more lines describing the method.          |
-| `@param` _paramName_      | Description of a single parameter.                |
-| `@return`                 | Description of the return value of the method.    |
-| `@example`                | Example of how the code can be used or called.    |
-| `@throws` _ExceptionName_ | Description of an exception thrown by the method. |
+| Tag                          | Description                                       |
+|------------------------------|---------------------------------------------------|
+| `@description`               | One or more lines describing the method.          |
+| `@param` _paramName_         | Description of a single parameter.                |
+| `@return`                    | Description of the return value of the method.    |
+| `@example`                   | Example of how the code can be used or called.    |
+| `@throws` _ExceptionName_    | Description of an exception thrown by the method. |
+| `@exception` _ExceptionName_ | Same as `@throws`. V2 only                        |
 
 **Example**
 
@@ -297,7 +300,7 @@ The following tags are supported on the method level:
  * @example
  * Object result = SampleClass.call('exampleAction');
  */
-public static Object call(String action) {
+public static Object call(String action) {}
 ```
 
 ### Grouping Declarations Within A Class
@@ -347,6 +350,28 @@ Apexdocs recognizes 2 different syntax when linking files:
  * @return The result of the operation.
  */
 public static Object class(ExampleClass param1) {
+```
+
+---
+
+Email addresses can also be inlined linked by using the `{@email EMAIL_ADDRESS}` syntax.
+
+### HTML support
+
+For the most part all HTML is sanitized. But there are some tags are allowed to have for the possibility of better styling long text.
+  - Allowed tags are: `br`, `p`, `ul`, and `li`
+
+Example
+```apex
+/**
+ * @description <p>This is a paragraph</p>
+ * <p>And this is another paragraph</p>
+ * <ul>
+ *     <li>This is a list item</li>
+ *     <li>This is another list item</li>
+ * </ul>
+ */
+class MyClass {}
 ```
 
 ## Typescript

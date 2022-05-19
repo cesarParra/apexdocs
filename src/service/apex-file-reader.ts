@@ -12,13 +12,13 @@ export class ApexFileReader {
    * Reads from .cls files and returns their raw body.
    */
   static processFiles(fileSystem: FileSystem, rootPath: string = this.sourceDirectory): ApexBundle[] {
-    let bodies: ApexBundle[] = [];
+    let bundles: ApexBundle[] = [];
 
     const directoryContents = fileSystem.readDirectory(rootPath);
     directoryContents.forEach((currentFilePath) => {
       const currentPath = fileSystem.joinPath(rootPath, currentFilePath);
       if (this.readRecursively && fileSystem.isDirectory(currentPath)) {
-        bodies = bodies.concat(this.processFiles(fileSystem, currentPath));
+        bundles = bundles.concat(this.processFiles(fileSystem, currentPath));
       }
 
       if (!this.isApexFile(currentFilePath)) {
@@ -28,9 +28,9 @@ export class ApexFileReader {
       const rawApexFile = fileSystem.readFile(currentPath);
       const metadataPath = fileSystem.joinPath(rootPath, `${currentFilePath}-meta.xml`);
       const rawMetadataFile = fileSystem.exists(metadataPath) ? fileSystem.readFile(metadataPath) : null;
-      bodies.push(new ApexBundle(rawApexFile, rawMetadataFile));
+      bundles.push(new ApexBundle(currentFilePath, rawApexFile, rawMetadataFile));
     });
-    return bodies;
+    return bundles;
   }
 
   private static isApexFile(currentFile: string): boolean {

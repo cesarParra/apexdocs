@@ -1,4 +1,5 @@
 import { ClassMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
+import { Logger } from './logger';
 
 export default class ErrorLogger {
   public static logErrors(types: Type[]): void {
@@ -20,10 +21,10 @@ export default class ErrorLogger {
   private static logTypeErrors(currentType: Type, parentType?: Type) {
     if (currentType.docComment?.error) {
       const typeName = parentType ? `${parentType!.name}.${currentType.name}` : currentType.name;
-      console.log(`${typeName} - Doc comment parsing error. Level: Type`);
-      console.log(`Comment:\n ${currentType.docComment.rawDeclaration}`);
-      console.log(currentType.docComment.error);
-      console.log('=================================');
+      Logger.error(`${typeName} - Doc comment parsing error. Level: Type`);
+      Logger.error(`Comment:\n ${currentType.docComment.rawDeclaration}`);
+      Logger.error(currentType.docComment.error);
+      Logger.error('=================================');
     }
   }
 
@@ -31,37 +32,37 @@ export default class ErrorLogger {
     const typeName = parentType ? `${parentType!.name}.${classMirror.name}` : classMirror.name;
     classMirror.constructors.forEach((currentConstructor) => {
       if (currentConstructor.docComment?.error) {
-        console.log(`${typeName} - Doc comment parsing error. Level: Constructor`);
-        console.log(`Comment:\n ${currentConstructor.docComment.rawDeclaration}`);
-        console.log(currentConstructor.docComment.error);
-        console.log('=================================');
+        Logger.error(`${typeName} - Doc comment parsing error. Level: Constructor`);
+        Logger.error(`Comment:\n ${currentConstructor.docComment.rawDeclaration}`);
+        Logger.error(currentConstructor.docComment.error);
+        Logger.error('=================================');
       }
     });
 
     classMirror.fields.forEach((currentField) => {
       if (currentField.docComment?.error) {
-        console.log(`${typeName} - Doc comment parsing error. Level: Field`);
-        console.log(`Comment:\n ${currentField.docComment.rawDeclaration}`);
-        console.log(currentField.docComment.error);
-        console.log('=================================');
+        Logger.error(`${typeName} - Doc comment parsing error. Level: Field`);
+        Logger.error(`Comment:\n ${currentField.docComment.rawDeclaration}`);
+        Logger.error(currentField.docComment.error);
+        Logger.error('=================================');
       }
     });
 
     classMirror.properties.forEach((currentProperty) => {
       if (currentProperty.docComment?.error) {
-        console.log(`${typeName} - Doc comment parsing error. Level: Property`);
-        console.log(`Comment:\n ${currentProperty.docComment.rawDeclaration}`);
-        console.log(currentProperty.docComment.error);
-        console.log('=================================');
+        Logger.error(`${typeName} - Doc comment parsing error. Level: Property`);
+        Logger.error(`Comment:\n ${currentProperty.docComment.rawDeclaration}`);
+        Logger.error(currentProperty.docComment.error);
+        Logger.error('=================================');
       }
     });
 
     classMirror.methods.forEach((currentMethod) => {
       if (currentMethod.docComment?.error) {
-        console.log(`${typeName} - Doc comment parsing error. Level: Method`);
-        console.log(`Comment:\n ${currentMethod.docComment.rawDeclaration}`);
-        console.log(currentMethod.docComment.error);
-        console.log('=================================');
+        Logger.error(`${typeName} - Doc comment parsing error. Level: Method`);
+        Logger.error(`Comment:\n ${currentMethod.docComment.rawDeclaration}`);
+        Logger.error(currentMethod.docComment.error);
+        Logger.error('=================================');
       }
     });
 
@@ -81,10 +82,10 @@ export default class ErrorLogger {
   private static logErrorsForInterface(interfaceMirror: InterfaceMirror): void {
     interfaceMirror.methods.forEach((currentMethod) => {
       if (currentMethod.docComment?.error) {
-        console.log(`${interfaceMirror.name} - Doc comment parsing error. Level: Method`);
-        console.log(`Comment: ${currentMethod.docComment.rawDeclaration}`);
-        console.log(currentMethod.docComment.error);
-        console.log('=================================');
+        Logger.error(`${interfaceMirror.name} - Doc comment parsing error. Level: Method`);
+        Logger.error(`Comment: ${currentMethod.docComment.rawDeclaration}`);
+        Logger.error(currentMethod.docComment.error);
+        Logger.error('=================================');
       }
     });
   }

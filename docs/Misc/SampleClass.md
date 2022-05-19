@@ -6,19 +6,7 @@
 
 `STATUS: ACTIVE`
 
-This is a class description. This class relates to [SampleInterface](/Sample-Interfaces/SampleInterface.md)              But this [ClassThatDoesNotExist](ClassThatDoesNotExist) does not exist.              You can also link using this syntax [SampleInterface](/Sample-Interfaces/SampleInterface.md)
-
-
-**Group** Sample Classes
-
-
-**CustomAnnotation** A Custom annotation
-
-
-**Author** Cesar Parra
-
-
-**See** [SampleInterface](/Sample-Interfaces/SampleInterface.md)
+Something
 
 ## Constructors
 ### My Super Group

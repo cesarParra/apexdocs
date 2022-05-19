@@ -12,11 +12,6 @@ export class MarkdownHomeFile extends MarkdownFile {
     this.addTypeEntries(types);
   }
 
-  public addText(text: string, encodeHtml = true) {
-    text = MarkdownFile.replaceInlineLinks(text);
-    super.addText(text, encodeHtml);
-  }
-
   private addTypeEntries(types: Type[]) {
     const groupedClasses: Map<string, Type[]> = this.group(types);
     groupedClasses.forEach((value: Type[], key: string) => {
