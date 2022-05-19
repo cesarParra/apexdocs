@@ -1,6 +1,12 @@
 /**
-     * @description Something
-     */
+ * @description This is a class description. This class relates to {@link SampleInterface}
+ *              But this {@link ClassThatDoesNotExist} does not exist.
+ *              You can also link using this syntax <<SampleInterface>>
+ * @group Sample Classes
+ * @CustomAnnotation A Custom annotation
+ * @author Cesar Parra
+ * @see SampleInterface
+ */
 @NamespaceAccessible
 public with sharing class SampleClass {
     /**
