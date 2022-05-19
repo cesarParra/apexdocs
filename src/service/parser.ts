@@ -3,16 +3,16 @@ import ApexBundle from '../model/apex-bundle';
 import MetadataProcessor from './metadata-processor';
 
 export interface TypeParser {
-  parse(reflect: (typeBody: string) => ReflectionResult): Type[];
+  parse(reflect: (apexBundle: ApexBundle) => ReflectionResult): Type[];
 }
 
 export class RawBodyParser implements TypeParser {
   constructor(public typeBundles: ApexBundle[]) {}
 
-  parse(reflect: (typeBody: string) => ReflectionResult): Type[] {
+  parse(reflect: (apexBundle: ApexBundle) => ReflectionResult): Type[] {
     return this.typeBundles
       .map((currentBundle) => {
-        const result = reflect(currentBundle.rawTypeContent);
+        const result = reflect(currentBundle);
         if (!!result.typeMirror && !!currentBundle.rawMetadataContent) {
           // If successful and there is a metadata file
           const metadataParams = MetadataProcessor.process(currentBundle.rawMetadataContent);

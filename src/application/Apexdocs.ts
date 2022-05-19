@@ -9,6 +9,7 @@ import Transpiler from '../transpiler/transpiler';
 import { FileWriter } from '../service/file-writer';
 import { TypesRepository } from '../model/types-repository';
 import ErrorLogger from '../util/error-logger';
+import ApexBundle from '../model/apex-bundle';
 
 /**
  * Application entry-point to generate documentation out of Apex source files.
@@ -36,10 +37,10 @@ export class Apexdocs {
     ErrorLogger.logErrors(filteredTypes);
   }
 
-  static _reflectionWithLogger = (declarationBody: string): ReflectionResult => {
-    const result = reflect(declarationBody);
+  static _reflectionWithLogger = (apexBundle: ApexBundle): ReflectionResult => {
+    const result = reflect(apexBundle.rawTypeContent);
     if (result.error) {
-      Logger.log(`Parsing error ${result.error?.message}`);
+      Logger.log(`${apexBundle.filePath} - Parsing error ${result.error?.message}`);
     }
     return result;
   };

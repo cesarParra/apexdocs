@@ -13,8 +13,8 @@ export default class ClassFileGeneratorHelper {
   public static getFileLinkByTypeName(typeName: string) {
     const type = TypesRepository.getInstance().getByName(typeName);
     if (!type) {
-      // If the type is not found we simply return the file name we received
-      return typeName;
+      // If the type is not found we return a Markdown hyperlink with whatever we received.
+      return `[${typeName}](${typeName})`;
     }
 
     return this.getFileLink(type);

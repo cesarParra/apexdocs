@@ -1,4 +1,8 @@
-import { encode } from 'html-entities';
+import xss = require('xss');
+
+const xssFilter = new xss.FilterXSS({
+  whiteList: { br: [], p: [], ul: [], li: [] },
+});
 
 export abstract class File {
   _contents = '';
@@ -12,7 +16,7 @@ export abstract class File {
   }
 
   addText(text: string, encodeHtml = true) {
-    const textToAdd = encodeHtml ? encode(text) : text;
+    const textToAdd = encodeHtml ? xssFilter.process(text) : text;
     this._contents += textToAdd;
     this.addBlankLine();
   }
