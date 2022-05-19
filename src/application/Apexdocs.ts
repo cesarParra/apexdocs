@@ -19,18 +19,20 @@ export class Apexdocs {
    * Generates documentation out of Apex source files.
    */
   static generate(): void {
+    Logger.log('Initializing...');
     const fileBodies = ApexFileReader.processFiles(new DefaultFileSystem());
     const manifest = createManifest(new RawBodyParser(fileBodies), this._reflectionWithLogger);
 
     const filteredTypes: Type[] = manifest.filteredByAccessModifierAndAnnotations(Settings.getInstance().scope);
     TypesRepository.getInstance().populate(filteredTypes);
+    Logger.clear();
 
-    Logger.log(`Parsed ${filteredTypes.length} files`);
+    Logger.logSingle(`Parsed ${filteredTypes.length} files`, false, 'green', false);
     const processor = Settings.getInstance().typeTranspiler;
     Transpiler.generate(filteredTypes, processor);
     const generatedFiles = processor.fileBuilder().files();
     FileWriter.write(generatedFiles, (fileName: string) => {
-      Logger.log(`${fileName} processed.`);
+      Logger.logSingle(`${fileName} processed.`, false, 'green', false);
     });
 
     // Error logging
@@ -40,7 +42,7 @@ export class Apexdocs {
   static _reflectionWithLogger = (apexBundle: ApexBundle): ReflectionResult => {
     const result = reflect(apexBundle.rawTypeContent);
     if (result.error) {
-      Logger.log(`${apexBundle.filePath} - Parsing error ${result.error?.message}`);
+      Logger.error(`${apexBundle.filePath} - Parsing error ${result.error?.message}`);
     }
     return result;
   };

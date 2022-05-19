@@ -1,33 +1,6 @@
 /**
-* @name StripeRESTService
-* @author Sample Name here {@email sample.namehere@mycompany.com}
-* @Date 3/2/2022
-* @group Stripe Integration
-* @see StripeRESTServiceTest
-* @description Apex class that creates and exposes a REST endpoint by the name of 'Stripe'. [SampleClass](http://www.test.com) (case sensitive!)
- * <p>List<strong> list of letter a</p>
-* <p>EX https://sfsandbox--customdomain.my.salesforce.com/services/apexrest/Stripe/ in the sandbox. It is intended to be accessed via a connected app using JWT flow but it is not required.</p>
-* Current valid endpoints are
- * <ul>
-* <li>PUT /Stripe/Customer/ - Creates/Updates Accounts and Contacts from Stripe Customer information (StripeCustomer.cls)</li>
-* <li>PUT /Stripe/Subscription/ - Creates/Updates Order, OrderItem, and 360_Subscription__c records from Stripe Subscription information (StripeSubscription.cls)</li>
-* <li>PUT /Stripe/Price/ - Creates/Updates Product2 and PricebookEntry information from Stripe Price information. (StripePrice.cls)</li>
-* <li>PUT /Stripe/Agreement/ - Creates/Updates User_Agreement__c records from a custom class (StripeAgreement.cls). Note, this is not an actual Stripe object, its just named as such to keep with conventions for this API.</li>
- * </ul>
-* @see https://stripe.com/docs/api/customers/object
-* @see https://stripe.com/docs/api/subscriptions/object
-* @see https://stripe.com/docs/api/price/object
-* @extra
-* This is a List<String>
- *     This is a list as well List< String >
-* Each payload JSON is additionally expected to provide an param called mstar_id in the top level of the payload to match the data with its salesforce record. Other additional
-* parameters not included by Stripe by default may be required. See each class for details.
-* Expected usage: Stripe will call this API via it's various webhooks. The expected flow is to first create a customer by calling the /Customer endpoint with a JSON payload that
-* will be able to serialize into a (list of) StripeCustomer object(s). Products and Prices can be created before or after a customer as they are not directly related. Similarily
-* they are created by calling the /Price endpoint with a JSON payload that can serialize into a (list of) StripePrice object(s). Once the customer and price/product information
-* exists subscriptions can be created/updated by calling the /Subscription endpoint again with a JSON payload that can be serialized into a (list of) StripeSubscription object(s).
-* All endpoints support 'upsert' meaning they will create or update data as needed depending if a record is found that matches it's unique identifier which varies for each object type.
-**/
+     * @description Something
+     */
 @NamespaceAccessible
 public with sharing class SampleClass {
     /**

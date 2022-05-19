@@ -6,5 +6,5 @@ Uses a block style apex doc
 **Group** Utils
 
 
-**Test Class** [SampleClass](/Stripe-Integration/SampleClass.md)
+**Test Class** [SampleClass](/Misc/SampleClass.md)
 
