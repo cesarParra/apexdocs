@@ -1,5 +1,6 @@
 import { Type } from '@cparra/apex-reflection';
 import { TypesRepository } from '../../model/types-repository';
+import { Settings } from '../../settings';
 
 export default class ClassFileGeneratorHelper {
   public static getSanitizedGroup(classModel: Type) {
@@ -22,6 +23,6 @@ export default class ClassFileGeneratorHelper {
 
   private static getClassGroup(classModel: Type): string {
     const groupAnnotation = classModel.docComment?.annotations.find((annotation) => annotation.name === 'group');
-    return groupAnnotation?.body ?? 'Misc';
+    return groupAnnotation?.body ?? Settings.getInstance().getDefaultGroupName();
   }
 }

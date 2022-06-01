@@ -11,6 +11,7 @@ export interface SettingsConfig {
   outputDir: string;
   targetGenerator: GeneratorChoices;
   indexOnly: boolean;
+  defaultGroupName: string;
 }
 
 export class Settings {
@@ -58,5 +59,9 @@ export class Settings {
 
   get indexOnly(): boolean {
     return this.config.indexOnly;
+  }
+
+  public getDefaultGroupName(): string {
+    return this.config.defaultGroupName;
   }
 }

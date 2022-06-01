@@ -44,6 +44,11 @@ const argv = yargs.options({
     default: false,
     describe: 'Defines whether only the index file should be  generated.',
   },
+  defaultGroupName: {
+    type: 'string',
+    default: 'Miscellaneous',
+    describe: 'Defines the @group name to be used when a file does not specify it.',
+  },
 }).argv;
 
 Settings.build({
@@ -53,6 +58,7 @@ Settings.build({
   outputDir: argv.targetDir,
   targetGenerator: argv.targetGenerator as GeneratorChoices,
   indexOnly: argv.indexOnly,
+  defaultGroupName: argv.defaultGroupName,
 });
 
 Apexdocs.generate();

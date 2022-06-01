@@ -68,6 +68,11 @@ public class MyClass {
 }
 ```
 
+* Apex docs blocks can now all be in a single line
+* Support for grouping blocks of related code within a class
+* Support for HTML tags
+* And more!
+
 ### Demo
 
 ApexDocs currently supports generating markdown files for Jekyll and Docsify sites.
@@ -81,13 +86,13 @@ ApexDocs currently supports generating markdown files for Jekyll and Docsify sit
 
 Demo
 
-- [Docsify](https://cesarparra.github.io/apexdocs-docsify-example/)
+- [Docsify](https://cesarparra.github.io/apexdocs/)
 
 ### [Jekyll](https://jekyllrb.com/)
 
 Demo
 
-- [Jekyll](https://cesarparra.github.io/apexdocs/)
+- [Jekyll](https://cesarparra.github.io/apexdocs-docsify-example/)
 
 ## Installation
 
@@ -109,117 +114,33 @@ apexdocs-generate
 
 The CLI supports the following parameters:
 
-| Parameter         | Alias | Description                                                                                                              | Default                             | Required |
-|-------------------|-------|--------------------------------------------------------------------------------------------------------------------------|-------------------------------------|----------|
-| --sourceDir       | -s    | The directory location which contains your apex .cls classes.                                                            | N/A                                 | Yes      |
-| --targetDir       | -t    | The directory location where documentation will be generated to.                                                         | `docs`                              | No       |
-| --recursive       | -r    | Whether .cls classes will be searched for recursively in the directory provided.                                         | `true`                              | No       |
-| --scope           | -p    | A list of scopes to document. Values should be separated by a space, e.g --scope public private                          | `global namespaceaccessible public` | No       |
-| --targetGenerator | -g    | Define the static file generator for which the documents will be created. Currently supports jekyll and docsify.         | `jekyll`                            | No       |
-| --indexOnly       | N/A   | Defines whether only the index file should be  generated.                                                                | `false`                             | No       |
-| --configPath      | -c    | (Only versions 1.X) The path to the JSON configuration file that defines the structure of the documents to docGenerator. | N/A                                 | No       |
-| --group           | -o    | (Only versions 1.X) Define whether the generated files should be grouped by the @group tag on the top level classes.     | `true`                              | No       |
+| Parameter          | Alias | Description                                                                                                              | Default                             | Required |
+|--------------------|-------|--------------------------------------------------------------------------------------------------------------------------|-------------------------------------|----------|
+| --sourceDir        | -s    | The directory location which contains your apex .cls classes.                                                            | N/A                                 | Yes      |
+| --targetDir        | -t    | The directory location where documentation will be generated to.                                                         | `docs`                              | No       |
+| --recursive        | -r    | Whether .cls classes will be searched for recursively in the directory provided.                                         | `true`                              | No       |
+| --scope            | -p    | A list of scopes to document. Values should be separated by a space, e.g --scope public private                          | `global namespaceaccessible public` | No       |
+| --targetGenerator  | -g    | Define the static file generator for which the documents will be created. Currently supports jekyll and docsify.         | `jekyll`                            | No       |
+| --indexOnly        | N/A   | Defines whether only the index file should be  generated.                                                                | `false`                             | No       |
+| --defaultGroupName | N/A   | Defines the `@group` name to be used when a file does not specify it.                                                    | `Miscellaneous`                     | No       |
 
-#### Configuration File
-
-You can optionally specify the path to a configuration JSON file through the `--configPath` parameter. This let's you
-have some additional control over the content outputs.
-
-The configuration file allows you to specify the following:
-
-_Note_: Everything in the configuration file is optional. When something is not specified, the default will be used.
-
-`root` (String)
-
-Default: None
-
-Allows you to specify the root directory for where the files are being generated. This can be helpful when embedding the
-generated docs into an existing site so that the links are generated correctly.
-
-`defaultGroupName`
-
-Default: Miscellaneous
-
-Defines the `@group` name to be used when a file does not specify it.
-
-`sourceLanguage`
-
-Default: None
-
-Defines the name of the language that will be used when generating `@example` blocks. Use this when you are interested
-in using syntax highlighting for your project.
-
-Even though the source code material for which documentation is generated is always `Apex`, generally you will be able
-to use a syntax highlighter that recognizes `java` source code, so set this value to `java` in those cases.
-
-`home` (Object)
-
-Gives you control over the home page.
-
-`home.header` (String)
-
-Default: None
-
-Allows you to embed custom content into your home page by using the `header` property to point to the file which
-contents will be added to the top of the generated home page.
-
-Specify the path with the content that you want to embed.
-
-`content` (Object)
-
-Gives you control over the content pages.
-
-`content.includeAuthor` (Boolean)
-
-Default: false
-
-Whether the `@author` tag should be used to add the file's author to the page.
-
-`content.includeDate` (Boolean)
-
-Default: false
-
-Whether the `@date` tag should be used to add the file's date to the page.
-
-`content.startingHeadingLevel` (Number)
-
-Default: 1
-
-The starting H tag level for the document. Each title will use this as the starting point to docGenerator the
-appropriate `<h#>` tag. For example, if set to 1, the class' file name at the top of the file will use an `<h1>` tag,
-the `Properties` title will be `<h2>`, each property name will be an `<h3>`, etc.
-
-```
-{
-  "root": "root-directory",
-  "defaultGrouName": "api",
-  "sourceLanguage": "java",
-  "home": {
-    "header": "./examples/includes/header.md"
-  },
-  "content": {
-    "startingHeadingLevel": 1,
-    "includeAuthor": true,
-    "includeDate": true
-  }
-}
-```
 
 ### Importing to your project
 
-If you are just interested in the Apex parsing capabilities, you can use the standalone [Apex Reflection Library](https://www.npmjs.com/package/@cparra/apex-reflection)
+If you are just interested in the Apex parsing capabilities, you can use the
+standalone [Apex Reflection Library](https://www.npmjs.com/package/@cparra/apex-reflection)
 which is what gets used by this library behind the scenes to generate the documentation files.
 
 ## Documentation Format
 
-ApexDocs picks up blocks of comments throughout your `.cls` files. The block must begin with `/**` and span through
-multiple lines, ending with `*/`.
+ApexDocs picks up blocks of comments throughout your `.cls` files. The block must begin with `/**` and end with `*/`.
 
 ### Documenting Classes
 
 The following tags are supported on the class level:
 
-**Note** Any custom generated tag is also supported. Custom tags can be added with at symbol (`@`) followed by the name of the tag. For example `@custom-tag`
+**Note** Any custom generated tag is also supported. Custom tags can be added with at symbol (`@`) followed by the name
+of the tag. For example `@custom-tag`
 
 | Tag            | Description                                                                                                                                |
 |----------------|--------------------------------------------------------------------------------------------------------------------------------------------|
@@ -300,7 +221,8 @@ The following tags are supported on the method level:
  * @example
  * Object result = SampleClass.call('exampleAction');
  */
-public static Object call(String action) {}
+public static Object call(String action) {
+}
 ```
 
 ### Grouping Declarations Within A Class
@@ -310,6 +232,7 @@ groups of constants that should be grouped together because they share a common 
 of constants representing the possible values for different picklists.)
 
 You can group things together within a class by using the following syntax:
+
 ```apex
 // @start-group Group Name or Description
 public static final String CONSTANT_FOO = 'Foo';
@@ -320,16 +243,19 @@ public static final String CONSTANT_BAR = 'Bar';
 Groups of members are displayed together under their own subsection after its name or description.
 
 Some notes about grouping:
+
 * This is only supported on classes, NOT enums and interfaces
 * Supports
-  * Properties
-  * Fields (variables and constants)
-  * Constructors
-  * Methods
-* BUT only members of the same type are grouped together. For example, 
-if you have a group that contains properties and methods the properties will be grouped together under Properties -> Group Name, and the methods will be grouped together under Methods -> Group Name
+    * Properties
+    * Fields (variables and constants)
+    * Constructors
+    * Methods
+* BUT only members of the same type are grouped together. For example,
+  if you have a group that contains properties and methods the properties will be grouped together under Properties ->
+  Group Name, and the methods will be grouped together under Methods -> Group Name
 * Does not support inner types (inner classes, interfaces, and enums)
-* It is necessary to use `// @end-group` whenever a group has been started, otherwise a parsing error will be raised for that file.
+* It is necessary to use `// @end-group` whenever a group has been started, otherwise a parsing error will be raised for
+  that file.
 
 ### Inline linking
 
@@ -349,7 +275,7 @@ Apexdocs recognizes 2 different syntax when linking files:
  * @param param1 An <<ExampleClass>> instance. Can also do {@link ExampleClass}
  * @return The result of the operation.
  */
-public static Object class(ExampleClass param1) {
+public static Object class (ExampleClass param1) {
 ```
 
 ---
@@ -358,10 +284,13 @@ Email addresses can also be inlined linked by using the `{@email EMAIL_ADDRESS}`
 
 ### HTML support
 
-For the most part all HTML is sanitized. But there are some tags are allowed to have for the possibility of better styling long text.
-  - Allowed tags are: `br`, `p`, `ul`, and `li`
+For the most part all HTML is sanitized. But there are some tags are allowed to have for the possibility of better
+styling long text.
+
+- Allowed tags are: `br`, `p`, `ul`, and `li`
 
 Example
+
 ```apex
 /**
  * @description <p>This is a paragraph</p>
@@ -371,9 +300,15 @@ Example
  *     <li>This is another list item</li>
  * </ul>
  */
-class MyClass {}
+class MyClass {
+}
 ```
 
 ## Typescript
 
 ApexDocs provides all necessary type definitions.
+
+---
+
+## 1.X
+Looking for documentation for version 1.X? Please refer to its [branch](https://github.com/cesarParra/apexdocs/tree/1.x)
