@@ -114,15 +114,15 @@ apexdocs-generate
 
 The CLI supports the following parameters:
 
-| Parameter          | Alias | Description                                                                                                              | Default                             | Required |
-|--------------------|-------|--------------------------------------------------------------------------------------------------------------------------|-------------------------------------|----------|
-| --sourceDir        | -s    | The directory location which contains your apex .cls classes.                                                            | N/A                                 | Yes      |
-| --targetDir        | -t    | The directory location where documentation will be generated to.                                                         | `docs`                              | No       |
-| --recursive        | -r    | Whether .cls classes will be searched for recursively in the directory provided.                                         | `true`                              | No       |
-| --scope            | -p    | A list of scopes to document. Values should be separated by a space, e.g --scope public private                          | `global namespaceaccessible public` | No       |
-| --targetGenerator  | -g    | Define the static file generator for which the documents will be created. Currently supports jekyll and docsify.         | `jekyll`                            | No       |
-| --indexOnly        | N/A   | Defines whether only the index file should be  generated.                                                                | `false`                             | No       |
-| --defaultGroupName | N/A   | Defines the `@group` name to be used when a file does not specify it.                                                    | `Miscellaneous`                     | No       |
+| Parameter          | Alias | Description                                                                                                      | Default         | Required |
+|--------------------|-------|------------------------------------------------------------------------------------------------------------------|-----------------|----------|
+| --sourceDir        | -s    | The directory location which contains your apex .cls classes.                                                    | N/A             | Yes      |
+| --targetDir        | -t    | The directory location where documentation will be generated to.                                                 | `docs`          | No       |
+| --recursive        | -r    | Whether .cls classes will be searched for recursively in the directory provided.                                 | `true`          | No       |
+| --scope            | -p    | A list of scopes to document. Values should be separated by a space, e.g --scope public private                  | `global`        | No       |
+| --targetGenerator  | -g    | Define the static file generator for which the documents will be created. Currently supports jekyll and docsify. | `jekyll`        | No       |
+| --indexOnly        | N/A   | Defines whether only the index file should be  generated.                                                        | `false`         | No       |
+| --defaultGroupName | N/A   | Defines the `@group` name to be used when a file does not specify it.                                            | `Miscellaneous` | No       |
 
 
 ### Importing to your project
