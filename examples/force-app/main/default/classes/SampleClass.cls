@@ -2,7 +2,7 @@
  * @description This is a class description. This class relates to {@link SampleInterface}
  *              But this {@link ClassThatDoesNotExist} does not exist.
  *              You can also link using this syntax <<SampleInterface>>
- * @group Sample Classes
+ * @group Main
  * @CustomAnnotation A Custom annotation
  * @author Cesar Parra
  * @see SampleInterface

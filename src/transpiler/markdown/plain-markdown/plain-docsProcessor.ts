@@ -1,12 +1,12 @@
 import { MarkdownTranspilerBase } from '../markdown-transpiler-base';
 import { LinkingStrategy } from '../../processor-type-transpiler';
 
-export default class DocsifyDocsProcessor extends MarkdownTranspilerBase {
+export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
   homeFileName(): string {
-    return 'README';
+    return 'index';
   }
 
   getLinkingStrategy(): LinkingStrategy {
-    return 'root-relative';
+    return 'path-relative';
   }
 }

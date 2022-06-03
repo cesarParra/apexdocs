@@ -58,7 +58,7 @@ function buildSignature(name: string, parameterAware: ParameterAware): string {
   }
   const signatureParameters = parameterAware.parameters.map((param) => `${param.type} ${param.name}`);
   signature += signatureParameters.join(', ');
-  return (signature += ')');
+  return `${signature})`;
 }
 
 function addParameters(
@@ -66,6 +66,11 @@ function addParameters(
   methodModel: MethodMirror | ConstructorMirror,
   startingHeadingLevel: number,
 ) {
+  if (!methodModel.docComment?.paramAnnotations.length) {
+    // If there are no parameters defined in the docs then we don't want to display this section
+    return;
+  }
+
   markdownFile.addTitle('Parameters', startingHeadingLevel + 3);
   markdownFile.initializeTable('Param', 'Description');
 

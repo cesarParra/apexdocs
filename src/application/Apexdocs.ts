@@ -27,7 +27,15 @@ export class Apexdocs {
     TypesRepository.getInstance().populate(filteredTypes);
     Logger.clear();
 
-    Logger.logSingle(`Parsed ${filteredTypes.length} files`, false, 'green', false);
+    Logger.logSingle(
+      `Filtered ${manifest.types.length - filteredTypes.length} file(s) based on scope: ${
+        Settings.getInstance().scope
+      }`,
+      false,
+      'green',
+      false,
+    );
+    Logger.logSingle(`Creating documentation for ${filteredTypes.length} file(s)`, false, 'green', false);
     const processor = Settings.getInstance().typeTranspiler;
     Transpiler.generate(filteredTypes, processor);
     const generatedFiles = processor.fileBuilder().files();

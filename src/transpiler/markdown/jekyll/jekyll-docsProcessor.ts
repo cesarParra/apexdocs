@@ -2,6 +2,7 @@ import { MarkdownTranspilerBase } from '../markdown-transpiler-base';
 import { Type } from '@cparra/apex-reflection';
 import { MarkdownHomeFile } from '../../../model/markdown-home-file';
 import { MarkdownTypeFile } from '../../../model/markdown-type-file';
+import { LinkingStrategy } from '../../processor-type-transpiler';
 
 export class JekyllDocsProcessor extends MarkdownTranspilerBase {
   homeFileName(): string {
@@ -18,5 +19,9 @@ export class JekyllDocsProcessor extends MarkdownTranspilerBase {
 
   get frontMatterHeader(): string {
     return '---\nlayout: default\n---';
+  }
+
+  getLinkingStrategy(): LinkingStrategy {
+    return 'path-relative';
   }
 }

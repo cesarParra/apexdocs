@@ -75,7 +75,7 @@ public class MyClass {
 
 ### Demo
 
-ApexDocs currently supports generating markdown files for Jekyll and Docsify sites.
+ApexDocs currently supports generating markdown files for Jekyll and Docsify sites, as well as generating plain markdown files.
 
 ### In the wild
 
@@ -121,7 +121,7 @@ The CLI supports the following parameters:
 | --recursive        | -r    | Whether .cls classes will be searched for recursively in the directory provided.                                 | `true`          | No       |
 | --scope            | -p    | A list of scopes to document. Values should be separated by a space, e.g --scope public private                  | `global`        | No       |
 | --targetGenerator  | -g    | Define the static file generator for which the documents will be created. Currently supports jekyll and docsify. | `jekyll`        | No       |
-| --indexOnly        | N/A   | Defines whether only the index file should be  generated.                                                        | `false`         | No       |
+| --indexOnly        | N/A   | Defines whether only the index file should be generated.                                                         | `false`         | No       |
 | --defaultGroupName | N/A   | Defines the `@group` name to be used when a file does not specify it.                                            | `Miscellaneous` | No       |
 
 

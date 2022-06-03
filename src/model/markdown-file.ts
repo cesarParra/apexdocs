@@ -42,6 +42,7 @@ export class MarkdownFile extends File {
   }
 
   initializeTable(...headers: string[]) {
+    this.addBlankLine();
     this._contents += '|';
     headers.forEach((header) => {
       this._contents += header + '|';

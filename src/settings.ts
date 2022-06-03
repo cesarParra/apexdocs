@@ -1,8 +1,9 @@
 import ProcessorTypeTranspiler from './transpiler/processor-type-transpiler';
 import { JekyllDocsProcessor } from './transpiler/markdown/jekyll/jekyll-docsProcessor';
 import DocsifyDocsProcessor from './transpiler/markdown/docsify/docsify-docs-processor';
+import { PlainMarkdownDocsProcessor } from './transpiler/markdown/plain-markdown/plain-docsProcessor';
 
-export type GeneratorChoices = 'jekyll' | 'docsify';
+export type GeneratorChoices = 'jekyll' | 'docsify' | 'plain-markdown';
 
 export interface SettingsConfig {
   sourceDirectory: string;
@@ -46,12 +47,21 @@ export class Settings {
     return this.config.outputDir;
   }
 
+  private static typeTranspilerCache?: ProcessorTypeTranspiler;
   get typeTranspiler(): ProcessorTypeTranspiler {
+    if (Settings.typeTranspilerCache) {
+      return Settings.typeTranspilerCache;
+    }
     switch (this.config.targetGenerator) {
       case 'jekyll':
-        return new JekyllDocsProcessor();
+        Settings.typeTranspilerCache = new JekyllDocsProcessor();
+        return Settings.typeTranspilerCache;
       case 'docsify':
-        return new DocsifyDocsProcessor();
+        Settings.typeTranspilerCache = new DocsifyDocsProcessor();
+        return Settings.typeTranspilerCache;
+      case 'plain-markdown':
+        Settings.typeTranspilerCache = new PlainMarkdownDocsProcessor();
+        return Settings.typeTranspilerCache;
       default:
         throw Error('Invalid target generator');
     }

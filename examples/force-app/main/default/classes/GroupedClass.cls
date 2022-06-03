@@ -1,6 +1,6 @@
 /**********************************************************
 Uses a block style apex doc
-@group           Utils
+@group           Main
 @test-class      {@link SampleClass}
 ***********************************************************/
 public class GroupedClass {

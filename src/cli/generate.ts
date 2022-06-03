@@ -35,14 +35,14 @@ const argv = yargs.options({
     type: 'string',
     alias: 'g',
     default: 'jekyll',
-    choices: ['jekyll', 'docsify'],
+    choices: ['jekyll', 'docsify', 'plain-markdown'],
     describe:
-      'Define the static file generator for which the documents will be created. Currently supports jekyll, and docsify.',
+      'Define the static file generator for which the documents will be created. Currently supports jekyll, docsify, and plain markdown.',
   },
   indexOnly: {
     type: 'boolean',
     default: false,
-    describe: 'Defines whether only the index file should be  generated.',
+    describe: 'Defines whether only the index file should be generated.',
   },
   defaultGroupName: {
     type: 'string',

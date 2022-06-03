@@ -1,6 +1,7 @@
 import { Type } from '@cparra/apex-reflection';
 import ProcessorTypeTranspiler from './processor-type-transpiler';
 import { Settings } from '../settings';
+import State from '../service/state';
 
 export default class Transpiler {
   static generate(types: Type[], processor: ProcessorTypeTranspiler): void {
@@ -17,6 +18,7 @@ export default class Transpiler {
     }
 
     sortedTypes.forEach((currentType) => {
+      State.getInstance().setTypeBeingProcessed(currentType);
       processor.onProcess(currentType);
     });
     processor.onAfterProcess?.(sortedTypes);

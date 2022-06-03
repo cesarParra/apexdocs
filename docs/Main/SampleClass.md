@@ -9,7 +9,7 @@
 This is a class description. This class relates to [SampleInterface](/Sample-Interfaces/SampleInterface.md)              But this [ClassThatDoesNotExist](ClassThatDoesNotExist) does not exist.              You can also link using this syntax [SampleInterface](/Sample-Interfaces/SampleInterface.md)
 
 
-**Group** Sample Classes
+**Group** Main
 
 
 **CustomAnnotation** A Custom annotation
@@ -29,6 +29,7 @@ This is a class description. This class relates to [SampleInterface](/Sample-Int
 Constructs a SampleClass without any arguments. This relates to [SampleInterface](/Sample-Interfaces/SampleInterface.md)
 
 ###### Throws
+
 |Exception|Description|
 |---|---|
 |`ExcName`|some exception|
@@ -52,6 +53,7 @@ SampleClass sampleInstance = new SampleClass();
 Constructs a SampleClass with an argument.
 
 ###### Parameters
+
 |Param|Description|
 |---|---|
 |`argument1`|Argument1 definition|
@@ -92,6 +94,7 @@ This is a String property.
 Executes commands based on the passed in argument.
 
 #### Parameters
+
 |Param|Description|
 |---|---|
 |`argument1`|Argument1 to debug|
@@ -118,6 +121,7 @@ System.debug(result);
 Something here
 
 #### Parameters
+
 |Param|Description|
 |---|---|
 
