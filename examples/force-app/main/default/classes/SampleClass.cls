@@ -28,6 +28,15 @@ public with sharing class SampleClass {
     public static final String ANOTHER_CONSTANT = 'My Constant Value';
     // @end-group
 
+    // @start-group 'General' Constants
+    /**
+     * @description This is a constant.
+     */
+    @NamespaceAccessible
+    public static final String GENERAL_A_CONSTANT = 'My Constant Value';
+    public static final String GENERAL_ANOTHER_CONSTANT = 'My Constant Value';
+    // @end-group
+
     // @start-group Other variables
     public String someVariable = 'test';
     // @end-group

@@ -1,6 +1,6 @@
 import { ApexFileReader } from '../service/apex-file-reader';
 import { DefaultFileSystem } from '../service/file-system';
-import { ReflectionResult, reflect, Type, ClassMirror } from '@cparra/apex-reflection';
+import { ReflectionResult, reflect, Type } from '@cparra/apex-reflection';
 import { Logger } from '../util/logger';
 import { createManifest } from '../service/manifest-factory';
 import { RawBodyParser } from '../service/parser';

@@ -66,6 +66,11 @@ Constructs a SampleClass with an argument.
 * `ANOTHER_CONSTANT` → `String` 
 * `A_CONSTANT` → `String` [`NAMESPACEACCESSIBLE` ]  - This is a constant.
 ---
+### 'General' Constants
+
+* `GENERAL_ANOTHER_CONSTANT` → `String` 
+* `GENERAL_A_CONSTANT` → `String` [`NAMESPACEACCESSIBLE` ]  - This is a constant.
+---
 ### Other variables
 
 * `someVariable` → `String` 
@@ -119,11 +124,6 @@ System.debug(result);
 ### `static anotherSampleMethod(String arg1)`
 
 Something here
-
-#### Parameters
-
-|Param|Description|
-|---|---|
 
 
 **Arg1** The arg1 description
