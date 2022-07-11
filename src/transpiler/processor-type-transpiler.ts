@@ -1,8 +1,6 @@
 import { Type } from '@cparra/apex-reflection';
 import { FileContainer } from './file-container';
 
-export type LinkingStrategy = 'root-relative' | 'path-relative';
-
 export default abstract class ProcessorTypeTranspiler {
   onBeforeProcess: ((types: Type[]) => void) | undefined;
 
@@ -11,6 +9,4 @@ export default abstract class ProcessorTypeTranspiler {
   onAfterProcess: ((types: Type[]) => void) | undefined;
 
   abstract fileBuilder(): FileContainer;
-
-  abstract getLinkingStrategy(): LinkingStrategy;
 }

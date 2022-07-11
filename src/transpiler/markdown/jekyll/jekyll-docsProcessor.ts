@@ -1,8 +1,7 @@
-import { MarkdownTranspilerBase } from '../markdown-transpiler-base';
+import { LinkingStrategy, MarkdownTranspilerBase } from '../markdown-transpiler-base';
 import { Type } from '@cparra/apex-reflection';
 import { MarkdownHomeFile } from '../../../model/markdown-home-file';
 import { MarkdownTypeFile } from '../../../model/markdown-type-file';
-import { LinkingStrategy } from '../../processor-type-transpiler';
 
 export class JekyllDocsProcessor extends MarkdownTranspilerBase {
   homeFileName(): string {

@@ -1,5 +1,4 @@
-import { MarkdownTranspilerBase } from '../markdown-transpiler-base';
-import { LinkingStrategy } from '../../processor-type-transpiler';
+import { LinkingStrategy, MarkdownTranspilerBase } from '../markdown-transpiler-base';
 
 export default class DocsifyDocsProcessor extends MarkdownTranspilerBase {
   homeFileName(): string {

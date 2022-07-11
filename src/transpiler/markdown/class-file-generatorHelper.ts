@@ -2,6 +2,7 @@ import { Type } from '@cparra/apex-reflection';
 import { TypesRepository } from '../../model/types-repository';
 import { Settings } from '../../settings';
 import State from '../../service/state';
+import { MarkdownTranspilerBase } from './markdown-transpiler-base';
 
 export default class ClassFileGeneratorHelper {
   public static getSanitizedGroup(classModel: Type) {
@@ -25,7 +26,7 @@ export default class ClassFileGeneratorHelper {
 
   private static getDirectoryRoot(classModel: Type) {
     // root-relative links start from the root by using a leading '/'
-    if (Settings.getInstance().typeTranspiler.getLinkingStrategy() === 'root-relative') {
+    if ((Settings.getInstance().typeTranspiler as MarkdownTranspilerBase).getLinkingStrategy() === 'root-relative') {
       return `/${this.getSanitizedGroup(classModel)}/`;
     }
 

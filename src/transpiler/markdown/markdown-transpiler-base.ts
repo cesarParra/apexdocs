@@ -4,6 +4,8 @@ import { FileContainer } from '../file-container';
 import { MarkdownHomeFile } from '../../model/markdown-home-file';
 import { MarkdownTypeFile } from '../../model/markdown-type-file';
 
+export type LinkingStrategy = 'root-relative' | 'path-relative';
+
 export abstract class MarkdownTranspilerBase extends ProcessorTypeTranspiler {
   protected readonly _fileContainer: FileContainer;
 
@@ -25,4 +27,6 @@ export abstract class MarkdownTranspilerBase extends ProcessorTypeTranspiler {
   onProcess(type: Type): void {
     this._fileContainer.pushFile(new MarkdownTypeFile(type));
   }
+
+  abstract getLinkingStrategy(): LinkingStrategy;
 }

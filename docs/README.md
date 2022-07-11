@@ -10,7 +10,7 @@ Uses a block style apex doc
 This is a class description. This class relates to [SampleInterface](/Sample-Interfaces/SampleInterface.md)              But this [ClassThatDoesNotExist](ClassThatDoesNotExist) does not exist.              You can also link using this syntax [SampleInterface](/Sample-Interfaces/SampleInterface.md)
 ## Miscellaneous
 
-### [SampleClassWithoutModifier](/API/SampleClassWithoutModifier.md)
+### [SampleClassWithoutModifier](/Miscellaneous/SampleClassWithoutModifier.md)
 
 
 ## Sample Interfaces

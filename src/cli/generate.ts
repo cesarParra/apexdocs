@@ -35,9 +35,9 @@ const argv = yargs.options({
     type: 'string',
     alias: 'g',
     default: 'jekyll',
-    choices: ['jekyll', 'docsify', 'plain-markdown'],
+    choices: ['jekyll', 'docsify', 'plain-markdown', 'ts-def'],
     describe:
-      'Define the static file generator for which the documents will be created. Currently supports jekyll, docsify, and plain markdown.',
+      'Define the static file generator for which the documents will be created. Currently supports jekyll, docsify, plain markdown, and Typescript type definitions.',
   },
   indexOnly: {
     type: 'boolean',
