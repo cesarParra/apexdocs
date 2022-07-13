@@ -11,7 +11,6 @@ export function declareType(markdownFile: MarkdownFile, typeMirror: Type): void 
   if (typeMirror.docComment?.descriptionLines) {
     markdownFile.addBlankLine();
     for (const currentLine of typeMirror.docComment.descriptionLines) {
-      // TODO: Where else are we using description directly and not the lines
       markdownFile.addText(currentLine);
     }
     markdownFile.addBlankLine();
