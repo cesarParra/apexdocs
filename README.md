@@ -75,7 +75,8 @@ public class MyClass {
 
 ### Demo
 
-ApexDocs currently supports generating markdown files for Jekyll and Docsify sites, as well as generating plain markdown files.
+ApexDocs currently supports generating markdown files for Jekyll and Docsify sites, as well as generating plain markdown
+files.
 
 ### In the wild
 
@@ -114,16 +115,16 @@ apexdocs-generate
 
 The CLI supports the following parameters:
 
-| Parameter          | Alias | Description                                                                                                                              | Default         | Required |
-|--------------------|-------|------------------------------------------------------------------------------------------------------------------------------------------|-----------------|----------|
-| --sourceDir        | -s    | The directory location which contains your apex .cls classes.                                                                            | N/A             | Yes      |
-| --targetDir        | -t    | The directory location where documentation will be generated to.                                                                         | `docs`          | No       |
-| --recursive        | -r    | Whether .cls classes will be searched for recursively in the directory provided.                                                         | `true`          | No       |
-| --scope            | -p    | A list of scopes to document. Values should be separated by a space, e.g --scope public private                                          | `global`        | No       |
-| --targetGenerator  | -g    | Define the static file generator for which the documents will be created. Currently supports: `jekyll`, `docsify`, and `plain-markdown`. | `jekyll`        | No       |
-| --indexOnly        | N/A   | Defines whether only the index file should be generated.                                                                                 | `false`         | No       |
-| --defaultGroupName | N/A   | Defines the `@group` name to be used when a file does not specify it.                                                                    | `Miscellaneous` | No       |
-
+| Parameter          | Alias | Description                                                                                                                                                                                                                                                                                                                                                                 | Default         | Required |
+|--------------------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------|----------|
+| --sourceDir        | -s    | The directory location which contains your apex .cls classes.                                                                                                                                                                                                                                                                                                               | N/A             | Yes      |
+| --targetDir        | -t    | The directory location where documentation will be generated to.                                                                                                                                                                                                                                                                                                            | `docs`          | No       |
+| --recursive        | -r    | Whether .cls classes will be searched for recursively in the directory provided.                                                                                                                                                                                                                                                                                            | `true`          | No       |
+| --scope            | -p    | A list of scopes to document. Values should be separated by a space, e.g --scope public private                                                                                                                                                                                                                                                                             | `global`        | No       |
+| --targetGenerator  | -g    | Define the static file generator for which the documents will be created. Currently supports: `jekyll`, `docsify`, and `plain-markdown`.                                                                                                                                                                                                                                    | `jekyll`        | No       |
+| --indexOnly        | N/A   | Defines whether only the index file should be generated.                                                                                                                                                                                                                                                                                                                    | `false`         | No       |
+| --defaultGroupName | N/A   | Defines the `@group` name to be used when a file does not specify it.                                                                                                                                                                                                                                                                                                       | `Miscellaneous` | No       |
+| --sanitizeHtml     | N/A   | When on, any special character within your ApexDocs is converted into its HTML code representation. This is specially useful when generic objects are described within the docs, e.g. "List< Foo>", "Map<Foo, Bar>" because otherwise the content within < and > would be treated as HTML tags and not shown in the output. Content in @example blocks are never sanitized. | true            | No       |
 
 ### Importing to your project
 
@@ -284,10 +285,11 @@ Email addresses can also be inlined linked by using the `{@email EMAIL_ADDRESS}`
 
 ### HTML support
 
-For the most part all HTML is sanitized. But there are some tags are allowed to have for the possibility of better
+For the most part all HTML is sanitized when the `--sanitizeHtml` flag is passed a true value (which is the default). 
+But there are some tags are allowed to have for the possibility of better
 styling long text.
 
-- Allowed tags are: `br`, `p`, `ul`, and `li`
+- Allowed tags are: `br`, `p`, `ul`, `li`, and `code`
 
 Example
 
@@ -304,6 +306,22 @@ class MyClass {
 }
 ```
 
+⚠️When the `--sanitizeHtml` flag is ON, any special character between code blocks (i.e. \```, \`, or `<code>`) will also be escaped.
+So if you have references to Apex generic collections (Set, List, or Maps) they will not look right, as the < and > symbols will be escaped.
+To prevent this you can turn the flag off, but be aware of the special considerations when doing this described below.
+
+---
+
+For full control over the output you can also turn off the `--sanitizeHtml` flag, which will allow you
+to have any desired HTML within your docs.
+
+⚠️When the `--sanitizeHtml` flag is OFF, references to Apex generic collections (Set, List or Maps) can be problematic
+as they will be treated as an HTML tag and not displayed. For example if you have something like `@description Returns a List<String>`
+the `<String>` portion will be treated as HTML and thus not appear on the page.
+
+To fix this issue, when not sanitizing HTML, you should wrap any code that contain special characters that can be treated as HTML within '`'
+or within `<code>` tags.
+
 ## Typescript
 
 ApexDocs provides all necessary type definitions.
@@ -311,4 +329,5 @@ ApexDocs provides all necessary type definitions.
 ---
 
 ## 1.X
+
 Looking for documentation for version 1.X? Please refer to its [branch](https://github.com/cesarParra/apexdocs/tree/1.x)

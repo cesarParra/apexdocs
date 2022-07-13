@@ -21,18 +21,19 @@ export class MarkdownFile extends File {
   public addText(text: string, encodeHtml = true) {
     text = MarkdownFile.replaceInlineLinks(text);
     text = MarkdownFile.replaceInlineEmails(text);
+
     super.addText(text, encodeHtml);
   }
 
   startCodeBlock() {
-    this._contents += '```';
+    this.addText('```');
     const sourceLanguage = 'apex';
     this._contents += sourceLanguage;
     this.addBlankLine();
   }
 
   endCodeBlock() {
-    this._contents += '```';
+    this.addText('```');
     this.addBlankLine();
   }
 

@@ -8,9 +8,12 @@ export function declareType(markdownFile: MarkdownFile, typeMirror: Type): void 
     markdownFile.addText(`\`${currentAnnotation.type.toUpperCase()}\``);
   });
 
-  if (typeMirror.docComment?.description) {
+  if (typeMirror.docComment?.descriptionLines) {
     markdownFile.addBlankLine();
-    markdownFile.addText(typeMirror.docComment.description);
+    for (const currentLine of typeMirror.docComment.descriptionLines) {
+      // TODO: Where else are we using description directly and not the lines
+      markdownFile.addText(currentLine);
+    }
     markdownFile.addBlankLine();
   }
 

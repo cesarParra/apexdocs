@@ -6,7 +6,9 @@
 
 `STATUS: ACTIVE`
 
-This is a class description. This class relates to [SampleInterface](/Sample-Interfaces/SampleInterface.md)              But this [ClassThatDoesNotExist](ClassThatDoesNotExist) does not exist.              You can also link using this syntax [SampleInterface](/Sample-Interfaces/SampleInterface.md)
+This is a class description. This class relates to [SampleInterface](/Sample-Interfaces/SampleInterface.md)
+             But this [ClassThatDoesNotExist](ClassThatDoesNotExist) does not exist.
+             You can also link using this syntax [SampleInterface](/Sample-Interfaces/SampleInterface.md)
 
 
 **Group** Main
@@ -41,10 +43,12 @@ Constructs a SampleClass without any arguments. This relates to [SampleInterface
 **See** [SampleInterface](/Sample-Interfaces/SampleInterface.md)
 
 ###### Example
-```apex
+```
+apex
 // Example
 SampleClass sampleInstance = new SampleClass();
 ```
+
 
 ---
 ### Other
@@ -116,10 +120,12 @@ String
 Empty string
 
 #### Example
-```apex
+```
+apex
 String result = SampleClass.testMethod();
 System.debug(result);
 ```
+
 
 ### `static anotherSampleMethod(String arg1)`
 
