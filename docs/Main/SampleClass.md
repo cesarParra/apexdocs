@@ -43,8 +43,7 @@ Constructs a SampleClass without any arguments. This relates to [SampleInterface
 **See** [SampleInterface](/Sample-Interfaces/SampleInterface.md)
 
 ###### Example
-```
-apex
+```apex
 // Example
 SampleClass sampleInstance = new SampleClass();
 ```
@@ -120,8 +119,7 @@ String
 Empty string
 
 #### Example
-```
-apex
+```apex
 String result = SampleClass.testMethod();
 System.debug(result);
 ```

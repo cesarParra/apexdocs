@@ -23,10 +23,7 @@ export class MarkdownFile extends File {
   }
 
   startCodeBlock() {
-    this.addText('```');
-    const sourceLanguage = 'apex';
-    this._contents += sourceLanguage;
-    this.addBlankLine();
+    this.addText('```apex');
   }
 
   endCodeBlock() {

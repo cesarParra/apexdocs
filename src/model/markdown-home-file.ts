@@ -2,6 +2,7 @@ import { Type } from '@cparra/apex-reflection';
 import ClassFileGeneratorHelper from '../transpiler/markdown/class-file-generatorHelper';
 import { MarkdownFile } from './markdown-file';
 import { truncate } from '../util/truncate';
+import { Settings } from '../settings';
 
 export class MarkdownHomeFile extends MarkdownFile {
   constructor(public fileName: string, public types: Type[], headerContent?: string) {
@@ -34,6 +35,7 @@ export class MarkdownHomeFile extends MarkdownFile {
         '',
       );
       this.addText(truncate(description, 300));
+      this.addBlankLine();
     }
   }
 
@@ -49,7 +51,8 @@ export class MarkdownHomeFile extends MarkdownFile {
 
   private getClassGroup(classModel: Type): string {
     return (
-      classModel.docComment?.annotations.find((annotation) => annotation.name === 'group')?.body ?? 'Miscellaneous'
+      classModel.docComment?.annotations.find((annotation) => annotation.name === 'group')?.body ??
+      Settings.getInstance().getDefaultGroupName()
     );
   }
 }
