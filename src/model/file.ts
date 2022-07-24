@@ -1,7 +1,8 @@
 import xss = require('xss');
+import { Settings } from '../settings';
 
 const xssFilter = new xss.FilterXSS({
-  whiteList: { br: [], p: [], ul: [], li: [] },
+  whiteList: { br: [], p: [], ul: [], li: [], code: [], pre: [] },
 });
 
 export abstract class File {
@@ -16,7 +17,8 @@ export abstract class File {
   }
 
   addText(text: string, encodeHtml = true) {
-    const textToAdd = encodeHtml ? xssFilter.process(text) : text;
+    const shouldEncode = encodeHtml && Settings.getInstance().sanitizeHtml;
+    const textToAdd = shouldEncode ? xssFilter.process(text) : text;
     this._contents += textToAdd;
     this.addBlankLine();
   }

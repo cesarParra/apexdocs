@@ -19,20 +19,15 @@ export class MarkdownFile extends File {
   }
 
   public addText(text: string, encodeHtml = true) {
-    text = MarkdownFile.replaceInlineLinks(text);
-    text = MarkdownFile.replaceInlineEmails(text);
-    super.addText(text, encodeHtml);
+    super.addText(this._replaceInlineReferences(text), encodeHtml);
   }
 
   startCodeBlock() {
-    this._contents += '```';
-    const sourceLanguage = 'apex';
-    this._contents += sourceLanguage;
-    this.addBlankLine();
+    this.addText('```apex');
   }
 
   endCodeBlock() {
-    this._contents += '```';
+    this.addText('```');
     this.addBlankLine();
   }
 
@@ -58,7 +53,7 @@ export class MarkdownFile extends File {
   addTableRow(...columns: string[]) {
     this._contents += '|';
     columns.forEach((column) => {
-      this._contents += column + '|';
+      this._contents += this._replaceInlineReferences(column) + '|';
     });
     this.addBlankLine();
   }
@@ -111,6 +106,12 @@ export class MarkdownFile extends File {
     for (const currentMatch of matches) {
       text = text.replace(currentMatch[0], `[${currentMatch[1]}](mailto:${currentMatch[1]})`);
     }
+    return text;
+  }
+
+  private _replaceInlineReferences(text: string): string {
+    text = MarkdownFile.replaceInlineLinks(text);
+    text = MarkdownFile.replaceInlineEmails(text);
     return text;
   }
 }

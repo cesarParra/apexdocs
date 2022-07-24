@@ -49,6 +49,15 @@ const argv = yargs.options({
     default: 'Miscellaneous',
     describe: 'Defines the @group name to be used when a file does not specify it.',
   },
+  sanitizeHtml: {
+    type: 'boolean',
+    default: true,
+    describe:
+      'When on, any special character within your ApexDocs is converted into its HTML code representation. ' +
+      'This is specially useful when generic objects are described within the docs, e.g. "List< Foo>", "Map<Foo, Bar>" ' +
+      'because otherwise the content within < and > would be treated as HTML tags and not shown in the output. ' +
+      'Content in @example blocks are never sanitized.',
+  },
 }).argv;
 
 Settings.build({
@@ -59,6 +68,7 @@ Settings.build({
   targetGenerator: argv.targetGenerator as GeneratorChoices,
   indexOnly: argv.indexOnly,
   defaultGroupName: argv.defaultGroupName,
+  sanitizeHtml: argv.sanitizeHtml,
 });
 
 Apexdocs.generate();

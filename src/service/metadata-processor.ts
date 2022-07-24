@@ -7,7 +7,10 @@ export default class MetadataProcessor {
 
     map.set('apiVersion', xml.ApexClass.apiVersion ?? '');
 
-    map.set('status', xml.ApexClass.status ?? '');
+    if (xml.ApexClass.status) {
+      map.set('status', xml.ApexClass.status);
+    }
+
     return map;
   }
 }

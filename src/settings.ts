@@ -13,6 +13,7 @@ export interface SettingsConfig {
   targetGenerator: GeneratorChoices;
   indexOnly: boolean;
   defaultGroupName: string;
+  sanitizeHtml: boolean;
 }
 
 export class Settings {
@@ -48,6 +49,7 @@ export class Settings {
   }
 
   private static typeTranspilerCache?: ProcessorTypeTranspiler;
+
   get typeTranspiler(): ProcessorTypeTranspiler {
     if (Settings.typeTranspilerCache) {
       return Settings.typeTranspilerCache;
@@ -69,6 +71,14 @@ export class Settings {
 
   get indexOnly(): boolean {
     return this.config.indexOnly;
+  }
+
+  get sanitizeHtml(): boolean {
+    return this.config.sanitizeHtml;
+  }
+
+  get numberOfVisibleDescriptionLinesOnHomePage() {
+    return 5;
   }
 
   public getDefaultGroupName(): string {
