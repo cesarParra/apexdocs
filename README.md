@@ -319,7 +319,7 @@ to have any desired HTML within your docs.
 as they will be treated as an HTML tag and not displayed. For example if you have something like `@description Returns a List<String>`
 the `<String>` portion will be treated as HTML and thus not appear on the page.
 
-To fix this issue, when not sanitizing HTML, you should wrap any code that contain special characters that can be treated as HTML within '`'
+To fix this issue, when not sanitizing HTML, you should wrap any code that contain special characters that can be treated as HTML within '\`'
 or within `<code>` tags.
 
 ## Typescript
