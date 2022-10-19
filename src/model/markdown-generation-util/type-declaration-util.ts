@@ -21,7 +21,7 @@ export function declareType(markdownFile: MarkdownFile, typeMirror: Type): void 
     const typeAsClass = typeMirror as ClassMirror;
     if (typeAsClass.extended_class) {
       markdownFile.addBlankLine();
-      markdownFile.addText('Inheritance');
+      markdownFile.addText('**Inheritance**');
       markdownFile.addBlankLine();
       addParent(markdownFile, typeAsClass);
       markdownFile.addText(typeMirror.name);

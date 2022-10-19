@@ -5,3 +5,9 @@
 
 
 ---
+## Properties
+
+### `AProp` → `String`
+
+
+---

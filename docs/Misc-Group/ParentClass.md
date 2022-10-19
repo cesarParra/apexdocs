@@ -1,21 +1,35 @@
 # ParentClass
 
-Inheritance
+**Inheritance**
 
 [GrandparentClass](/Misc-Group/GrandparentClass.md)
  &gt; 
 ParentClass
 
 ## Fields
-### Common Constants
 
-* `privateString` → `String` (*Inherited*)  
-* `protectedString` → `String` (*Inherited*)   - This is a protected string, use carefully.
-* `publicString` → `String` (*Inherited*)  
+### `privateString` → `String`
+
+
+### `protectedGrandParentField` → `String`
+
+*Inherited*
+
+### `protectedString` → `String`
+
+
+This is a protected string, use carefully.
+
+### `publicString` → `String`
+
+
 ---
-### Other
+## Properties
 
-* `protectedGrandParentField` → `String` (*Inherited*)  
+### `AProp` → `String`
+
+*Inherited*
+
 ---
 ## Methods
 ### `overridableMethod()`

@@ -1,4 +1,4 @@
-import { Type, ReflectionResult, ClassMirror } from '@cparra/apex-reflection';
+import { Type, ReflectionResult, ClassMirror, FieldMirror, PropertyMirror } from '@cparra/apex-reflection';
 import ApexBundle from '../model/apex-bundle';
 import MetadataProcessor from './metadata-processor';
 import { Logger } from '../util/logger';
@@ -51,14 +51,14 @@ export class RawBodyParser implements TypeParser {
         continue;
       }
 
-      typeAsClass = this.addFieldsToClass(typeAsClass, types);
+      typeAsClass = this.addMembersFromPArent(typeAsClass, types);
       typesWithFields.push(typeAsClass);
     }
 
     return typesWithFields;
   }
 
-  addFieldsToClass(currentClass: ClassMirror, allTypes: Type[]): ClassMirror {
+  addMembersFromPArent(currentClass: ClassMirror, allTypes: Type[]): ClassMirror {
     if (!currentClass.extended_class) {
       return currentClass;
     }
@@ -69,25 +69,42 @@ export class RawBodyParser implements TypeParser {
 
     let parentAsClass = parent as ClassMirror;
     if (parentAsClass.extended_class) {
-      parentAsClass = this.addFieldsToClass(parentAsClass, allTypes);
+      parentAsClass = this.addMembersFromPArent(parentAsClass, allTypes);
     }
 
+    currentClass.fields = [...currentClass.fields, ...this.getInheritedFields(parentAsClass, currentClass)];
+    currentClass.properties = [...currentClass.properties, ...this.getInheritedProperties(parentAsClass, currentClass)];
+    return currentClass;
+  }
+
+  private getInheritedFields(parentAsClass: ClassMirror, currentClass: ClassMirror) {
     const parentFields = parentAsClass.fields
       // Filter out private fields
       .filter((currentField) => currentField.access_modifier.toLowerCase() !== 'private')
       // Filter out fields that also exist on the child
-      .filter((currentField) => !this.fieldExists(currentClass, currentField.name))
+      .filter((currentField) => !this.memberExists(currentClass.fields, currentField.name))
       .map((currentField) => ({
         ...currentField,
         inherited: true,
       }));
-
-    currentClass.fields = [...currentClass.fields, ...parentFields];
-    return currentClass;
+    return parentFields;
   }
 
-  fieldExists(original: ClassMirror, fieldName: string): boolean {
-    const fieldNames = original.fields.map((currentField) => currentField.name);
+  private getInheritedProperties(parentAsClass: ClassMirror, currentClass: ClassMirror) {
+    const parentProperties = parentAsClass.properties
+      // Filter out private properties
+      .filter((currentProperty) => currentProperty.access_modifier.toLowerCase() !== 'private')
+      // Filter out properties that also exist on the child
+      .filter((currentProperty) => !this.memberExists(currentClass.properties, currentProperty.name))
+      .map((currentProperty) => ({
+        ...currentProperty,
+        inherited: true,
+      }));
+    return parentProperties;
+  }
+
+  memberExists(members: FieldMirror[] | PropertyMirror[], fieldName: string): boolean {
+    const fieldNames = members.map((currentMember) => currentMember.name);
     return fieldNames.includes(fieldName);
   }
 }
