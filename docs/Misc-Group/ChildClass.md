@@ -8,6 +8,11 @@
  &gt; 
 ChildClass
 
+
+**Implemented types**
+
+[SampleInterface](/Sample-Interfaces/SampleInterface.md)
+
 ## Fields
 
 ### `protectedGrandParentField` → `String`
@@ -47,6 +52,24 @@ String
 **Description**
 
 A String.
+
+### `execute()`
+
+Executes the command.
+
+### `getValue()`
+
+Returns a value based on the executed command.
+
+#### Return
+
+**Type**
+
+String
+
+**Description**
+
+The value
 
 ### `overridableMethod()`
 

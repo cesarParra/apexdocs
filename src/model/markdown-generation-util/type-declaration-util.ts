@@ -27,6 +27,20 @@ export function declareType(markdownFile: MarkdownFile, typeMirror: Type): void 
       markdownFile.addText(typeMirror.name);
       markdownFile.addBlankLine();
     }
+
+    if (typeAsClass.implemented_interfaces.length) {
+      markdownFile.addBlankLine();
+      markdownFile.addText('**Implemented types**');
+      markdownFile.addBlankLine();
+      for (let i = 0; i < typeAsClass.implemented_interfaces.length; i++) {
+        const currentName = typeAsClass.implemented_interfaces[i];
+        markdownFile.addLink(currentName);
+        if (i < typeAsClass.implemented_interfaces.length - 1) {
+          markdownFile.addText(', ');
+        }
+      }
+      markdownFile.addBlankLine();
+    }
   }
 
   addCustomDocCommentAnnotations(markdownFile, typeMirror);
