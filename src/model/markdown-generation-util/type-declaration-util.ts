@@ -1,6 +1,6 @@
 import { MarkdownFile } from '../markdown-file';
 import { addCustomDocCommentAnnotations } from './doc-comment-annotation-util';
-import { Annotation, ClassMirror, Type } from '@cparra/apex-reflection';
+import { Annotation, ClassMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
 import { TypesRepository } from '../types-repository';
 
 export function declareType(markdownFile: MarkdownFile, typeMirror: Type): void {
@@ -18,32 +18,56 @@ export function declareType(markdownFile: MarkdownFile, typeMirror: Type): void 
   }
 
   if (typeMirror.type_name === 'class') {
-    const typeAsClass = typeMirror as ClassMirror;
-    if (typeAsClass.extended_class) {
-      markdownFile.addBlankLine();
-      markdownFile.addText('**Inheritance**');
-      markdownFile.addBlankLine();
-      addParent(markdownFile, typeAsClass);
-      markdownFile.addText(typeMirror.name);
-      markdownFile.addBlankLine();
-    }
+    addInheritanceSectionForClass(typeMirror, markdownFile);
+  }
 
-    if (typeAsClass.implemented_interfaces.length) {
-      markdownFile.addBlankLine();
-      markdownFile.addText('**Implemented types**');
-      markdownFile.addBlankLine();
-      for (let i = 0; i < typeAsClass.implemented_interfaces.length; i++) {
-        const currentName = typeAsClass.implemented_interfaces[i];
-        markdownFile.addLink(currentName);
-        if (i < typeAsClass.implemented_interfaces.length - 1) {
-          markdownFile.addText(', ');
-        }
-      }
-      markdownFile.addBlankLine();
-    }
+  if (typeMirror.type_name === 'interface') {
+    addInheritanceSectionForInterface(typeMirror, markdownFile);
   }
 
   addCustomDocCommentAnnotations(markdownFile, typeMirror);
+}
+
+function addInheritanceSectionForClass(typeMirror: Type, markdownFile: MarkdownFile) {
+  const typeAsClass = typeMirror as ClassMirror;
+  if (typeAsClass.extended_class) {
+    markdownFile.addBlankLine();
+    markdownFile.addText('**Inheritance**');
+    markdownFile.addBlankLine();
+    addParent(markdownFile, typeAsClass);
+    markdownFile.addText(typeMirror.name);
+    markdownFile.addBlankLine();
+  }
+
+  if (typeAsClass.implemented_interfaces.length) {
+    markdownFile.addBlankLine();
+    markdownFile.addText('**Implemented types**');
+    markdownFile.addBlankLine();
+    for (let i = 0; i < typeAsClass.implemented_interfaces.length; i++) {
+      const currentName = typeAsClass.implemented_interfaces[i];
+      markdownFile.addLink(currentName);
+      if (i < typeAsClass.implemented_interfaces.length - 1) {
+        markdownFile.addText(', ');
+      }
+    }
+    markdownFile.addBlankLine();
+  }
+}
+
+function addInheritanceSectionForInterface(typeMirror: Type, markdownFile: MarkdownFile) {
+  const typeAsInterface = typeMirror as InterfaceMirror;
+  if (typeAsInterface.extended_interfaces.length) {
+    markdownFile.addBlankLine();
+    markdownFile.addText('**Extended types**');
+    markdownFile.addBlankLine();
+    for (let i = 0; i < typeAsInterface.extended_interfaces.length; i++) {
+      const currentName = typeAsInterface.extended_interfaces[i];
+      markdownFile.addLink(currentName);
+      if (i < typeAsInterface.extended_interfaces.length - 1) {
+        markdownFile.addText(', ');
+      }
+    }
+  }
 }
 
 function addParent(markdownFile: MarkdownFile, classMirror: ClassMirror) {

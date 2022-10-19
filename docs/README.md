@@ -1,10 +1,16 @@
 # Classes
 ## Misc Group
 
+### [AnotherInterface](/Misc-Group/AnotherInterface.md)
+
+
 ### [ChildClass](/Misc-Group/ChildClass.md)
 
 
 ### [GrandparentClass](/Misc-Group/GrandparentClass.md)
+
+
+### [InterfaceWithInheritance](/Misc-Group/InterfaceWithInheritance.md)
 
 
 ### [ParentClass](/Misc-Group/ParentClass.md)
