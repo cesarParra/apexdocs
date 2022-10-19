@@ -2,10 +2,8 @@ import {
   ClassMirror,
   ConstructorMirror,
   EnumMirror,
-  FieldMirror,
   InterfaceMirror,
   MethodMirror,
-  PropertyMirror,
   Type,
 } from '@cparra/apex-reflection';
 import { WalkerFactory } from '../service/walkers/walker-factory';
@@ -13,6 +11,7 @@ import { WalkerListener } from '../service/walkers/walker';
 import { MarkdownFile } from './markdown-file';
 import { declareType, declareMethod, declareField } from './markdown-generation-util';
 import ClassFileGeneratorHelper from '../transpiler/markdown/class-file-generatorHelper';
+import { FieldMirrorWithInheritance, MethodMirrorWithInheritance, PropertyMirrorWithInheritance } from './inheritance';
 
 interface GroupAware {
   group?: string;
@@ -42,12 +41,12 @@ export class MarkdownTypeFile extends MarkdownFile implements WalkerListener {
     this.declareMethodWithGroupings(constructors, className);
   }
 
-  public onFieldsDeclaration(fields: FieldMirror[]): void {
+  public onFieldsDeclaration(fields: FieldMirrorWithInheritance[]): void {
     this.addTitle('Fields', this.headingLevel + 1);
     this.declareFieldOrProperty(fields);
   }
 
-  public onPropertiesDeclaration(properties: PropertyMirror[]): void {
+  public onPropertiesDeclaration(properties: PropertyMirrorWithInheritance[]): void {
     this.addTitle('Properties', this.headingLevel + 1);
     this.declareFieldOrProperty(properties);
   }
@@ -90,7 +89,10 @@ export class MarkdownTypeFile extends MarkdownFile implements WalkerListener {
     return !!groupAware.find((current) => !!current.group);
   }
 
-  private declareMethodWithGroupings(methods: ConstructorMirror[] | MethodMirror[], className = ''): void {
+  private declareMethodWithGroupings(
+    methods: ConstructorMirror[] | MethodMirrorWithInheritance[],
+    className = '',
+  ): void {
     const hasGroupings = this.hasGroupings(methods);
     if (!hasGroupings) {
       declareMethod(this, methods, this.headingLevel, className);
@@ -105,7 +107,9 @@ export class MarkdownTypeFile extends MarkdownFile implements WalkerListener {
     }
   }
 
-  private declareFieldOrProperty(fieldsOrProperties: FieldMirror[] | PropertyMirror[]): void {
+  private declareFieldOrProperty(
+    fieldsOrProperties: FieldMirrorWithInheritance[] | PropertyMirrorWithInheritance[],
+  ): void {
     const hasGroupings = this.hasGroupings(fieldsOrProperties);
     if (!hasGroupings) {
       declareField(this, fieldsOrProperties, this.headingLevel, false);
@@ -113,7 +117,7 @@ export class MarkdownTypeFile extends MarkdownFile implements WalkerListener {
       const groupedFields = this.group(fieldsOrProperties);
       for (const key in groupedFields) {
         this.startGroup(key);
-        const fieldsForGroup = groupedFields[key] as FieldMirror[];
+        const fieldsForGroup = groupedFields[key] as FieldMirrorWithInheritance[];
         declareField(this, fieldsForGroup, this.headingLevel, true);
         this.endGroup();
       }

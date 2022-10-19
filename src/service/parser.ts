@@ -1,4 +1,11 @@
-import { Type, ReflectionResult, ClassMirror, FieldMirror, PropertyMirror } from '@cparra/apex-reflection';
+import {
+  Type,
+  ReflectionResult,
+  ClassMirror,
+  FieldMirror,
+  PropertyMirror,
+  MethodMirror,
+} from '@cparra/apex-reflection';
 import ApexBundle from '../model/apex-bundle';
 import MetadataProcessor from './metadata-processor';
 import { Logger } from '../util/logger';
@@ -6,6 +13,8 @@ import { Logger } from '../util/logger';
 export interface TypeParser {
   parse(reflect: (apexBundle: ApexBundle) => ReflectionResult): Type[];
 }
+
+type NameAware = { name: string };
 
 export class RawBodyParser implements TypeParser {
   constructor(public typeBundles: ApexBundle[]) {}
@@ -74,6 +83,7 @@ export class RawBodyParser implements TypeParser {
 
     currentClass.fields = [...currentClass.fields, ...this.getInheritedFields(parentAsClass, currentClass)];
     currentClass.properties = [...currentClass.properties, ...this.getInheritedProperties(parentAsClass, currentClass)];
+    currentClass.methods = [...currentClass.methods, ...this.getInheritedMethods(parentAsClass, currentClass)];
     return currentClass;
   }
 
@@ -103,7 +113,20 @@ export class RawBodyParser implements TypeParser {
     return parentProperties;
   }
 
-  memberExists(members: FieldMirror[] | PropertyMirror[], fieldName: string): boolean {
+  private getInheritedMethods(parentAsClass: ClassMirror, currentClass: ClassMirror) {
+    const parentMethods = parentAsClass.methods
+      // Filter out private methods
+      .filter((currentMethod) => currentMethod.access_modifier.toLowerCase() !== 'private')
+      // Filter out methods that also exist on the child
+      .filter((currentMethod) => !this.memberExists(currentClass.methods, currentMethod.name))
+      .map((currentMethod) => ({
+        ...currentMethod,
+        inherited: true,
+      }));
+    return parentMethods;
+  }
+
+  memberExists(members: NameAware[], fieldName: string): boolean {
     const fieldNames = members.map((currentMember) => currentMember.name);
     return fieldNames.includes(fieldName);
   }

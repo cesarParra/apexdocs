@@ -33,4 +33,5 @@ This is a protected string, use carefully.
 ---
 ## Methods
 ### `overridableMethod()`
+### `overridableMethodOverridden()`
 ---

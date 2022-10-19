@@ -9,4 +9,8 @@ public virtual class ParentClass extends GrandparentClass{
     public virtual String overridableMethod() {
         return '';
     }
+
+    public virtual String overridableMethodOverridden() {
+        return '';
+    }
 }

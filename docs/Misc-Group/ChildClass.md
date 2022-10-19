@@ -34,4 +34,22 @@ This is a protected string, use carefully.
 ---
 ## Methods
 ### `doSomething()`
+### `override overridableMethodOverridden()`
+
+This method was overridden.
+
+#### Return
+
+**Type**
+
+String
+
+**Description**
+
+A String.
+
+### `overridableMethod()`
+
+*Inherited*
+
 ---

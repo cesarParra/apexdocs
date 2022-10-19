@@ -1,10 +1,5 @@
 import { MarkdownFile } from '../markdown-file';
-import { FieldMirror, PropertyMirror } from '@cparra/apex-reflection';
-
-type InheritanceSupport = { inherited: boolean };
-type FieldMirrorWithInheritance = FieldMirror & InheritanceSupport;
-type PropertyMirrorWithInheritance = PropertyMirror & InheritanceSupport;
-type FieldOrProperty = FieldMirrorWithInheritance | PropertyMirrorWithInheritance;
+import { FieldMirrorWithInheritance, FieldOrProperty, PropertyMirrorWithInheritance } from '../inheritance';
 
 export function declareField(
   markdownFile: MarkdownFile,
