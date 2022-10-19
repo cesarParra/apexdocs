@@ -5,6 +5,7 @@ import {
   FieldMirror,
   PropertyMirror,
   MethodMirror,
+  InterfaceMirror,
 } from '@cparra/apex-reflection';
 import ApexBundle from '../model/apex-bundle';
 import MetadataProcessor from './metadata-processor';
@@ -49,25 +50,39 @@ export class RawBodyParser implements TypeParser {
   addFieldsFromParent(types: Type[]): Type[] {
     const typesWithFields: Type[] = [];
     for (const currentType of types) {
-      if (currentType.type_name !== 'class') {
+      if (currentType.type_name !== 'class' && currentType.type_name !== 'interface') {
         typesWithFields.push(currentType);
         continue;
       }
 
-      let typeAsClass = currentType as ClassMirror;
-      if (!typeAsClass.extended_class) {
+      if (currentType.type_name === 'class') {
+        let typeAsClass = currentType as ClassMirror;
+        if (!typeAsClass.extended_class) {
+          typesWithFields.push(currentType);
+          continue;
+        }
+
+        typeAsClass = this.addMembersFromParent(typeAsClass, types);
+        typesWithFields.push(typeAsClass);
+        continue;
+      }
+
+      // If reaching here then we are dealing with an interface
+      let typeAsInterface = currentType as InterfaceMirror;
+      if (!typeAsInterface.extended_interfaces.length) {
         typesWithFields.push(currentType);
         continue;
       }
 
-      typeAsClass = this.addMembersFromPArent(typeAsClass, types);
-      typesWithFields.push(typeAsClass);
+      typeAsInterface = this.addMethodsFromParent(typeAsInterface, types);
+      typesWithFields.push(typeAsInterface);
+      continue;
     }
 
     return typesWithFields;
   }
 
-  addMembersFromPArent(currentClass: ClassMirror, allTypes: Type[]): ClassMirror {
+  addMembersFromParent(currentClass: ClassMirror, allTypes: Type[]): ClassMirror {
     if (!currentClass.extended_class) {
       return currentClass;
     }
@@ -78,13 +93,41 @@ export class RawBodyParser implements TypeParser {
 
     let parentAsClass = parent as ClassMirror;
     if (parentAsClass.extended_class) {
-      parentAsClass = this.addMembersFromPArent(parentAsClass, allTypes);
+      parentAsClass = this.addMembersFromParent(parentAsClass, allTypes);
     }
 
     currentClass.fields = [...currentClass.fields, ...this.getInheritedFields(parentAsClass, currentClass)];
     currentClass.properties = [...currentClass.properties, ...this.getInheritedProperties(parentAsClass, currentClass)];
     currentClass.methods = [...currentClass.methods, ...this.getInheritedMethods(parentAsClass, currentClass)];
     return currentClass;
+  }
+
+  addMethodsFromParent(currentInterface: InterfaceMirror, allTypes: Type[]): InterfaceMirror {
+    if (!currentInterface.extended_interfaces.length) {
+      return currentInterface;
+    }
+
+    const parents = [];
+    for (const currentInterfaceName of currentInterface.extended_interfaces) {
+      const parent = allTypes.find((currentType: Type) => currentType.name === currentInterfaceName);
+      if (parent) {
+        parents.push(parent);
+      }
+    }
+
+    for (const parent of parents) {
+      let parentAsInterface = parent as InterfaceMirror;
+      if (parentAsInterface.extended_interfaces.length) {
+        parentAsInterface = this.addMethodsFromParent(parentAsInterface, allTypes);
+      }
+
+      currentInterface.methods = [
+        ...currentInterface.methods,
+        ...this.getInheritedMethods(parentAsInterface, currentInterface),
+      ];
+    }
+
+    return currentInterface;
   }
 
   private getInheritedFields(parentAsClass: ClassMirror, currentClass: ClassMirror) {
@@ -113,7 +156,10 @@ export class RawBodyParser implements TypeParser {
     return parentProperties;
   }
 
-  private getInheritedMethods(parentAsClass: ClassMirror, currentClass: ClassMirror) {
+  private getInheritedMethods(
+    parentAsClass: ClassMirror | InterfaceMirror,
+    currentClass: ClassMirror | InterfaceMirror,
+  ) {
     const parentMethods = parentAsClass.methods
       // Filter out private methods
       .filter((currentMethod) => currentMethod.access_modifier.toLowerCase() !== 'private')
