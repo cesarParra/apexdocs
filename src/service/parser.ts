@@ -1,4 +1,12 @@
-import { Type, ReflectionResult } from '@cparra/apex-reflection';
+import {
+  Type,
+  ReflectionResult,
+  ClassMirror,
+  FieldMirror,
+  PropertyMirror,
+  MethodMirror,
+  InterfaceMirror,
+} from '@cparra/apex-reflection';
 import ApexBundle from '../model/apex-bundle';
 import MetadataProcessor from './metadata-processor';
 import { Logger } from '../util/logger';
@@ -7,11 +15,13 @@ export interface TypeParser {
   parse(reflect: (apexBundle: ApexBundle) => ReflectionResult): Type[];
 }
 
+type NameAware = { name: string };
+
 export class RawBodyParser implements TypeParser {
   constructor(public typeBundles: ApexBundle[]) {}
 
   parse(reflect: (apexBundle: ApexBundle) => ReflectionResult): Type[] {
-    return this.typeBundles
+    const types = this.typeBundles
       .map((currentBundle) => {
         Logger.log(`Parsing file: ${currentBundle.filePath}`);
         const result = reflect(currentBundle);
@@ -33,5 +43,137 @@ export class RawBodyParser implements TypeParser {
         return reflectionResult.typeMirror;
       })
       .map((reflectionResult) => reflectionResult.typeMirror!);
+
+    return this.addFieldsFromParent(types);
+  }
+
+  addFieldsFromParent(types: Type[]): Type[] {
+    const typesWithFields: Type[] = [];
+    for (const currentType of types) {
+      if (currentType.type_name !== 'class' && currentType.type_name !== 'interface') {
+        typesWithFields.push(currentType);
+        continue;
+      }
+
+      if (currentType.type_name === 'class') {
+        let typeAsClass = currentType as ClassMirror;
+        if (!typeAsClass.extended_class) {
+          typesWithFields.push(currentType);
+          continue;
+        }
+
+        typeAsClass = this.addMembersFromParent(typeAsClass, types);
+        typesWithFields.push(typeAsClass);
+        continue;
+      }
+
+      // If reaching here then we are dealing with an interface
+      let typeAsInterface = currentType as InterfaceMirror;
+      if (!typeAsInterface.extended_interfaces.length) {
+        typesWithFields.push(currentType);
+        continue;
+      }
+
+      typeAsInterface = this.addMethodsFromParent(typeAsInterface, types);
+      typesWithFields.push(typeAsInterface);
+      continue;
+    }
+
+    return typesWithFields;
+  }
+
+  addMembersFromParent(currentClass: ClassMirror, allTypes: Type[]): ClassMirror {
+    if (!currentClass.extended_class) {
+      return currentClass;
+    }
+    const parent = allTypes.find((currentType: Type) => currentType.name === currentClass.extended_class);
+    if (!parent || parent.type_name !== 'class') {
+      return currentClass;
+    }
+
+    let parentAsClass = parent as ClassMirror;
+    if (parentAsClass.extended_class) {
+      parentAsClass = this.addMembersFromParent(parentAsClass, allTypes);
+    }
+
+    currentClass.fields = [...currentClass.fields, ...this.getInheritedFields(parentAsClass, currentClass)];
+    currentClass.properties = [...currentClass.properties, ...this.getInheritedProperties(parentAsClass, currentClass)];
+    currentClass.methods = [...currentClass.methods, ...this.getInheritedMethods(parentAsClass, currentClass)];
+    return currentClass;
+  }
+
+  addMethodsFromParent(currentInterface: InterfaceMirror, allTypes: Type[]): InterfaceMirror {
+    if (!currentInterface.extended_interfaces.length) {
+      return currentInterface;
+    }
+
+    const parents = [];
+    for (const currentInterfaceName of currentInterface.extended_interfaces) {
+      const parent = allTypes.find((currentType: Type) => currentType.name === currentInterfaceName);
+      if (parent) {
+        parents.push(parent);
+      }
+    }
+
+    for (const parent of parents) {
+      let parentAsInterface = parent as InterfaceMirror;
+      if (parentAsInterface.extended_interfaces.length) {
+        parentAsInterface = this.addMethodsFromParent(parentAsInterface, allTypes);
+      }
+
+      currentInterface.methods = [
+        ...currentInterface.methods,
+        ...this.getInheritedMethods(parentAsInterface, currentInterface),
+      ];
+    }
+
+    return currentInterface;
+  }
+
+  private getInheritedFields(parentAsClass: ClassMirror, currentClass: ClassMirror) {
+    const parentFields = parentAsClass.fields
+      // Filter out private fields
+      .filter((currentField) => currentField.access_modifier.toLowerCase() !== 'private')
+      // Filter out fields that also exist on the child
+      .filter((currentField) => !this.memberExists(currentClass.fields, currentField.name))
+      .map((currentField) => ({
+        ...currentField,
+        inherited: true,
+      }));
+    return parentFields;
+  }
+
+  private getInheritedProperties(parentAsClass: ClassMirror, currentClass: ClassMirror) {
+    const parentProperties = parentAsClass.properties
+      // Filter out private properties
+      .filter((currentProperty) => currentProperty.access_modifier.toLowerCase() !== 'private')
+      // Filter out properties that also exist on the child
+      .filter((currentProperty) => !this.memberExists(currentClass.properties, currentProperty.name))
+      .map((currentProperty) => ({
+        ...currentProperty,
+        inherited: true,
+      }));
+    return parentProperties;
+  }
+
+  private getInheritedMethods(
+    parentAsClass: ClassMirror | InterfaceMirror,
+    currentClass: ClassMirror | InterfaceMirror,
+  ) {
+    const parentMethods = parentAsClass.methods
+      // Filter out private methods
+      .filter((currentMethod) => currentMethod.access_modifier.toLowerCase() !== 'private')
+      // Filter out methods that also exist on the child
+      .filter((currentMethod) => !this.memberExists(currentClass.methods, currentMethod.name))
+      .map((currentMethod) => ({
+        ...currentMethod,
+        inherited: true,
+      }));
+    return parentMethods;
+  }
+
+  memberExists(members: NameAware[], fieldName: string): boolean {
+    const fieldNames = members.map((currentMember) => currentMember.name);
+    return fieldNames.includes(fieldName);
   }
 }

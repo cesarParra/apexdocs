@@ -1,17 +1,29 @@
-import { ConstructorMirror, DocComment, MethodMirror } from '@cparra/apex-reflection';
+import { ConstructorMirror, DocComment } from '@cparra/apex-reflection';
 import { MarkdownFile } from '../markdown-file';
 import { ParameterMirror } from '@cparra/apex-reflection/index';
 import { addCustomDocCommentAnnotations } from './doc-comment-annotation-util';
+import { MethodMirrorWithInheritance } from '../inheritance';
 
 export function declareMethod(
   markdownFile: MarkdownFile,
-  methods: ConstructorMirror[] | MethodMirror[],
+  methods: ConstructorMirror[] | MethodMirrorWithInheritance[],
   startingHeadingLevel: number,
   className = '',
 ): void {
   methods.forEach((currentMethod) => {
-    const signatureName = isMethod(currentMethod) ? (currentMethod as MethodMirror).name : className;
+    const signatureName = isMethod(currentMethod) ? (currentMethod as MethodMirrorWithInheritance).name : className;
     markdownFile.addTitle(`\`${buildSignature(signatureName, currentMethod)}\``, startingHeadingLevel + 2);
+
+    // Inheritance tag
+    if (isMethod(currentMethod)) {
+      const asMethodMirror = currentMethod as MethodMirrorWithInheritance;
+      if (asMethodMirror.inherited) {
+        markdownFile.addBlankLine();
+        markdownFile.addText('*Inherited*');
+        markdownFile.addBlankLine();
+      }
+    }
+
     currentMethod.annotations.forEach((annotation) => {
       markdownFile.addBlankLine();
       markdownFile.addText(`\`${annotation.type.toUpperCase()}\``);
@@ -28,7 +40,7 @@ export function declareMethod(
     }
 
     if (isMethod(currentMethod)) {
-      addReturns(markdownFile, currentMethod as MethodMirror, startingHeadingLevel);
+      addReturns(markdownFile, currentMethod as MethodMirrorWithInheritance, startingHeadingLevel);
     }
 
     addThrowsBlock(markdownFile, currentMethod, startingHeadingLevel);
@@ -53,8 +65,8 @@ type DocCommentAware = {
 
 function buildSignature(name: string, parameterAware: ParameterAware): string {
   let signature = `${name}(`;
-  if (isMethod(parameterAware) && (parameterAware as MethodMirror).memberModifiers.length) {
-    signature = (parameterAware as MethodMirror).memberModifiers.join(' ') + ' ' + signature;
+  if (isMethod(parameterAware) && (parameterAware as MethodMirrorWithInheritance).memberModifiers.length) {
+    signature = (parameterAware as MethodMirrorWithInheritance).memberModifiers.join(' ') + ' ' + signature;
   }
   const signatureParameters = parameterAware.parameters.map((param) => `${param.type} ${param.name}`);
   signature += signatureParameters.join(', ');
@@ -63,7 +75,7 @@ function buildSignature(name: string, parameterAware: ParameterAware): string {
 
 function addParameters(
   markdownFile: MarkdownFile,
-  methodModel: MethodMirror | ConstructorMirror,
+  methodModel: MethodMirrorWithInheritance | ConstructorMirror,
   startingHeadingLevel: number,
 ) {
   if (!methodModel.docComment?.paramAnnotations.length) {
@@ -83,7 +95,11 @@ function addParameters(
   markdownFile.addBlankLine();
 }
 
-function addReturns(markdownFile: MarkdownFile, methodModel: MethodMirror, startingHeadingLevel: number) {
+function addReturns(
+  markdownFile: MarkdownFile,
+  methodModel: MethodMirrorWithInheritance,
+  startingHeadingLevel: number,
+) {
   if (!methodModel.docComment?.returnAnnotation) {
     return;
   }
@@ -127,6 +143,8 @@ function addExample(markdownFile: MarkdownFile, docCommentAware: DocCommentAware
   markdownFile.addBlankLine();
 }
 
-function isMethod(method: MethodMirror | ConstructorMirror | ParameterAware): method is ConstructorMirror {
-  return (method as MethodMirror).type !== undefined;
+function isMethod(
+  method: MethodMirrorWithInheritance | ConstructorMirror | ParameterAware,
+): method is ConstructorMirror {
+  return (method as MethodMirrorWithInheritance).type !== undefined;
 }

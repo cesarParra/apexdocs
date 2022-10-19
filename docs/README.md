@@ -1,4 +1,23 @@
 # Classes
+## Misc Group
+
+### [AnotherInterface](/Misc-Group/AnotherInterface.md)
+
+
+### [ChildClass](/Misc-Group/ChildClass.md)
+
+
+### [GrandparentClass](/Misc-Group/GrandparentClass.md)
+
+
+### [InterfaceWithInheritance](/Misc-Group/InterfaceWithInheritance.md)
+
+
+### [ParentClass](/Misc-Group/ParentClass.md)
+
+
+### [SampleClassWithoutModifier](/Misc-Group/SampleClassWithoutModifier.md)
+
 ## Main
 
 ### [GroupedClass](/Main/GroupedClass.md)
@@ -13,10 +32,6 @@ This is a class description. This class relates to [SampleInterface](/Sample-Int
              But this [ClassThatDoesNotExist](ClassThatDoesNotExist) does not exist.
              You can also link using this syntax [SampleInterface](/Sample-Interfaces/SampleInterface.md)
 
-
-## Misc Group
-
-### [SampleClassWithoutModifier](/Misc-Group/SampleClassWithoutModifier.md)
 
 ## Sample Interfaces
 

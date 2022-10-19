@@ -66,17 +66,17 @@ Constructs a SampleClass with an argument.
 ## Fields
 ### Common Constants
 
-* `ANOTHER_CONSTANT` → `String` 
-* `A_CONSTANT` → `String` [`NAMESPACEACCESSIBLE` ]  - This is a constant.
+* `ANOTHER_CONSTANT` → `String` (*Inherited*)  
+* `A_CONSTANT` → `String` (*Inherited*)  [`NAMESPACEACCESSIBLE` ]  - This is a constant.
 ---
 ### 'General' Constants
 
-* `GENERAL_ANOTHER_CONSTANT` → `String` 
-* `GENERAL_A_CONSTANT` → `String` [`NAMESPACEACCESSIBLE` ]  - This is a constant.
+* `GENERAL_ANOTHER_CONSTANT` → `String` (*Inherited*)  
+* `GENERAL_A_CONSTANT` → `String` (*Inherited*)  [`NAMESPACEACCESSIBLE` ]  - This is a constant.
 ---
 ### Other variables
 
-* `someVariable` → `String` 
+* `someVariable` → `String` (*Inherited*)  
 ---
 ## Properties
 
