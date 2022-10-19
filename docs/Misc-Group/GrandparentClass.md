@@ -1,0 +1,7 @@
+# GrandparentClass
+## Fields
+
+### `protectedGrandParentField` → `String`
+
+
+---

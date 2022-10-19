@@ -1,9 +1,14 @@
 import { MarkdownFile } from '../markdown-file';
 import { FieldMirror, PropertyMirror } from '@cparra/apex-reflection';
 
+type InheritanceSupport = { inherited: boolean };
+type FieldMirrorWithInheritance = FieldMirror & InheritanceSupport;
+type PropertyMirrorWithInheritance = PropertyMirror & InheritanceSupport;
+type FieldOrProperty = FieldMirrorWithInheritance | PropertyMirrorWithInheritance;
+
 export function declareField(
   markdownFile: MarkdownFile,
-  fields: FieldMirror[] | PropertyMirror[],
+  fields: FieldMirrorWithInheritance[] | PropertyMirrorWithInheritance[],
   startingHeadingLevel: number,
   grouped = false,
 ) {
@@ -23,13 +28,16 @@ export function declareField(
 
 function addFieldSection(
   markdownFile: MarkdownFile,
-  mirrorModel: FieldMirror | PropertyMirror,
+  mirrorModel: FieldOrProperty,
   startingHeadingLevel: number,
   grouped: boolean,
 ) {
   if (!grouped) {
     markdownFile.addTitle(`\`${mirrorModel.name}\` → \`${mirrorModel.type}\``, startingHeadingLevel + 2);
     markdownFile.addBlankLine();
+    if (mirrorModel.inherited) {
+      markdownFile.addText('*Inherited*');
+    }
 
     mirrorModel.annotations.forEach((annotation) => {
       markdownFile.addText(`\`${annotation.type.toUpperCase()}\` `);
@@ -58,7 +66,9 @@ function addFieldSection(
     if (mirrorModel.docComment?.description) {
       description = ` - ${mirrorModel.docComment?.description}`;
     }
-    markdownFile.addListItem(`\`${mirrorModel.name}\` → \`${mirrorModel.type}\`${annotations} ${description}`);
+    markdownFile.addListItem(
+      `\`${mirrorModel.name}\` → \`${mirrorModel.type}\` (*Inherited*) ${annotations} ${description}`,
+    );
     markdownFile.addBlankLine();
   }
 }

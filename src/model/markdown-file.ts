@@ -22,6 +22,10 @@ export class MarkdownFile extends File {
     super.addText(this._replaceInlineReferences(text), encodeHtml);
   }
 
+  public addLink(text: string, encodeHtml = true) {
+    this.addText(`\{@link ${text}\}`, encodeHtml);
+  }
+
   startCodeBlock() {
     this.addText('```apex');
   }
