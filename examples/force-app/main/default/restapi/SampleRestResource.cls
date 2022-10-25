@@ -12,6 +12,14 @@ global with sharing class SampleRestResource {
         delete account;
     }
 
+    /**
+     * @description This is a sample HTTP Get method
+     * @return An Account SObject.
+     * @http-response 200
+     * {
+     *
+     * }
+     */
     @HttpGet
     global static Account doGet() {
         RestRequest req = RestContext.request;

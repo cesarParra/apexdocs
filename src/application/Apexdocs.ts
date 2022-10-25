@@ -7,9 +7,9 @@ import { RawBodyParser } from '../service/parser';
 import { Settings } from '../settings';
 import Transpiler from '../transpiler/transpiler';
 import { FileWriter } from '../service/file-writer';
-import { TypesRepository } from '../model/types-repository';
 import ErrorLogger from '../util/error-logger';
 import ApexBundle from '../model/apex-bundle';
+import Manifest from '../model/manifest';
 
 /**
  * Application entry-point to generate documentation out of Apex source files.
@@ -22,7 +22,19 @@ export class Apexdocs {
     Logger.log('Initializing...');
     const fileBodies = ApexFileReader.processFiles(new DefaultFileSystem());
     const manifest = createManifest(new RawBodyParser(fileBodies), this._reflectionWithLogger);
+    const filteredTypes = this.filterByScopes(manifest);
+    const processor = Settings.getInstance().typeTranspiler;
+    Transpiler.generate(filteredTypes, processor);
+    const generatedFiles = processor.fileBuilder().files();
+    FileWriter.write(generatedFiles, (fileName: string) => {
+      Logger.logSingle(`${fileName} processed.`, false, 'green', false);
+    });
 
+    // Error logging
+    ErrorLogger.logErrors(filteredTypes);
+  }
+
+  private static filterByScopes(manifest: Manifest) {
     let filteredTypes: Type[];
     let filteredLogMessage;
     if (Settings.getInstance().config.targetGenerator !== 'openapi') {
@@ -49,15 +61,7 @@ export class Apexdocs {
 
     Logger.logSingle(filteredLogMessage, false, 'green', false);
     Logger.logSingle(`Creating documentation for ${filteredTypes.length} file(s)`, false, 'green', false);
-    const processor = Settings.getInstance().typeTranspiler;
-    Transpiler.generate(filteredTypes, processor);
-    const generatedFiles = processor.fileBuilder().files();
-    FileWriter.write(generatedFiles, (fileName: string) => {
-      Logger.logSingle(`${fileName} processed.`, false, 'green', false);
-    });
-
-    // Error logging
-    ErrorLogger.logErrors(filteredTypes);
+    return filteredTypes;
   }
 
   static _reflectionWithLogger = (apexBundle: ApexBundle): ReflectionResult => {

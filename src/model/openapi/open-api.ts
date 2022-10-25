@@ -35,4 +35,34 @@ export type PathsObject = {
 
 export type PathItemObject = {
   description?: string;
+  get?: OperationObject;
+};
+
+type OperationObject = {
+  description?: string;
+  // TODO: Parameters
+  responses?: ResponsesObject;
+};
+
+type ResponsesObject = {
+  [index: string]: ResponseObject;
+};
+
+type ResponseObject = {
+  description: string;
+  content?: ContentObject;
+};
+
+type ContentObject = {
+  [index: string]: HeaderObject;
+};
+
+// From here, these are expected to be received as is from the ApexDocs
+type HeaderObject = {
+  description: string;
+  schema: SchemaObject;
+};
+
+type SchemaObject = {
+  type: string;
 };

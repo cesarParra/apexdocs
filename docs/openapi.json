@@ -1,1 +1,20 @@
-{"openapi":"3.1.0","info":{"title":"Some Title","version":"1.0"},"servers":[{"url":"/services/apexrest/"}],"paths":{"/Account/*":{"description":"Account related operations."}}}
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Some Title",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "/services/apexrest/"
+    }
+  ],
+  "paths": {
+    "/Account/*": {
+      "description": "Account related operations.",
+      "get": {
+        "description": "This is a sample HTTP Get method"
+      }
+    }
+  }
+}
