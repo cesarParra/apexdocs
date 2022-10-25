@@ -24,7 +24,7 @@
     "postversion": "git push && git push --tags",
     "docs:init": "docsify init docs",
     "docs:serve": "docsify serve docs",
-    "execute:example": "node lib/cli/generate.js -s examples/force-app -t docs --scope global public private protected -g docsify --defaultGroupName \"Misc Group\"",
+    "execute:example": "node lib/cli/generate.js -s examples/force-app -t docs --scope global public private protected -g openapi --defaultGroupName \"Misc Group\"",
     "execute:example:index:only": "node lib/cli/generate.js -s examples/force-app -t docs --scope global public private -g docsify --indexOnly"
   },
   "author": "Cesar Parra",
@@ -39,8 +39,8 @@
     "@types/node": "^13.7.4",
     "@types/shelljs": "^0.8.6",
     "@types/yargs": "^15.0.3",
-    "@typescript-eslint/eslint-plugin": "^5.1.0",
-    "@typescript-eslint/parser": "^5.1.0",
+    "@typescript-eslint/eslint-plugin": "^5.41.0",
+    "@typescript-eslint/parser": "^5.41.0",
     "docsify": "^4.12.2",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
@@ -51,7 +51,7 @@
     "prettier": "^2.4.1",
     "rimraf": "^3.0.2",
     "ts-jest": "^27.1.3",
-    "typescript": "^3.8.2"
+    "typescript": "^4.8.4"
   },
   "husky": {
     "hooks": {
@@ -64,7 +64,7 @@
     ]
   },
   "dependencies": {
-    "@cparra/apex-reflection": "1.7.0",
+    "@cparra/apex-reflection": "1.10.1",
     "chalk": "^4.1.2",
     "fast-xml-parser": "^4.0.1",
     "log-update": "4.0.0",

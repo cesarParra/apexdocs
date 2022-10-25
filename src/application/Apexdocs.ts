@@ -23,18 +23,31 @@ export class Apexdocs {
     const fileBodies = ApexFileReader.processFiles(new DefaultFileSystem());
     const manifest = createManifest(new RawBodyParser(fileBodies), this._reflectionWithLogger);
 
-    const filteredTypes: Type[] = manifest.filteredByAccessModifierAndAnnotations(Settings.getInstance().scope);
-    TypesRepository.getInstance().populate(filteredTypes);
+    let filteredTypes: Type[];
+    let filteredLogMessage;
+    if (Settings.getInstance().config.targetGenerator !== 'openapi') {
+      filteredTypes = manifest.filteredByAccessModifierAndAnnotations(Settings.getInstance().scope);
+      filteredLogMessage = `Filtered ${manifest.types.length - filteredTypes.length} file(s) based on scope: ${
+        Settings.getInstance().scope
+      }`;
+    } else {
+      // If we are dealing with an OpenApi generator, we ignore the passed in access modifiers, and instead
+      // we only keep classes annotated as @RestResource
+      filteredTypes = manifest.filteredByAccessModifierAndAnnotations([
+        'restresource',
+        'httpdelete',
+        'httpget',
+        'httppatch',
+        'httppost',
+        'httpput',
+      ]);
+      filteredLogMessage = `Filtered ${
+        manifest.types.length - filteredTypes.length
+      } file(s), only keeping classes annotated as @RestResource.`;
+    }
     Logger.clear();
 
-    Logger.logSingle(
-      `Filtered ${manifest.types.length - filteredTypes.length} file(s) based on scope: ${
-        Settings.getInstance().scope
-      }`,
-      false,
-      'green',
-      false,
-    );
+    Logger.logSingle(filteredLogMessage, false, 'green', false);
     Logger.logSingle(`Creating documentation for ${filteredTypes.length} file(s)`, false, 'green', false);
     const processor = Settings.getInstance().typeTranspiler;
     Transpiler.generate(filteredTypes, processor);

@@ -2,8 +2,9 @@ import ProcessorTypeTranspiler from './transpiler/processor-type-transpiler';
 import { JekyllDocsProcessor } from './transpiler/markdown/jekyll/jekyll-docsProcessor';
 import DocsifyDocsProcessor from './transpiler/markdown/docsify/docsify-docs-processor';
 import { PlainMarkdownDocsProcessor } from './transpiler/markdown/plain-markdown/plain-docsProcessor';
+import { OpenApiDocsProcessor } from './transpiler/openapi/open-api-docs-processor';
 
-export type GeneratorChoices = 'jekyll' | 'docsify' | 'plain-markdown';
+export type GeneratorChoices = 'jekyll' | 'docsify' | 'plain-markdown' | 'openapi';
 
 export interface SettingsConfig {
   sourceDirectory: string;
@@ -63,6 +64,9 @@ export class Settings {
         return Settings.typeTranspilerCache;
       case 'plain-markdown':
         Settings.typeTranspilerCache = new PlainMarkdownDocsProcessor();
+        return Settings.typeTranspilerCache;
+      case 'openapi':
+        Settings.typeTranspilerCache = new OpenApiDocsProcessor();
         return Settings.typeTranspilerCache;
       default:
         throw Error('Invalid target generator');
