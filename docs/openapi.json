@@ -13,7 +13,46 @@
     "/Account/*": {
       "description": "Account related operations.",
       "get": {
-        "description": "This is a sample HTTP Get method"
+        "description": "This is a sample HTTP Get method",
+        "responses": {
+          "200": {
+            "description": "Status code 200",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "The super Id."
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string",
+                      "format": "byte"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Status code 304",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   }

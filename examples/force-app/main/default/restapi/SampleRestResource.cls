@@ -7,7 +7,7 @@ global with sharing class SampleRestResource {
     global static void doDelete() {
         RestRequest req = RestContext.request;
         RestResponse res = RestContext.response;
-        String accountId = req.requestURI.substring(req.requestURI.lastIndexOf('/')+1);
+        String accountId = req.requestURI.substring(req.requestURI.lastIndexOf('/') + 1);
         Account account = [SELECT Id FROM Account WHERE Id = :accountId];
         delete account;
     }
@@ -15,16 +15,29 @@ global with sharing class SampleRestResource {
     /**
      * @description This is a sample HTTP Get method
      * @return An Account SObject.
-     * @http-response 200
-     * {
-     *
-     * }
+     * @http-response
+     * statusCode: 200
+     * type: object
+     * properties:
+     *   id:
+     *     type: string
+     *     description: The super Id.
+     *   name:
+     *     type: string
+     *   phone:
+     *     type: string
+     *     format: byte
+     * @http-response
+     * statusCode: 304
+     * properties:
+     *   error:
+     *     type: string
      */
     @HttpGet
     global static Account doGet() {
         RestRequest req = RestContext.request;
         RestResponse res = RestContext.response;
-        String accountId = req.requestURI.substring(req.requestURI.lastIndexOf('/')+1);
+        String accountId = req.requestURI.substring(req.requestURI.lastIndexOf('/') + 1);
         Account result = [SELECT Id, Name, Phone, Website FROM Account WHERE Id = :accountId];
         return result;
     }

@@ -1,3 +1,5 @@
+import { array } from 'yargs';
+
 export class OpenApi {
   openapi = '3.1.0';
   info: InfoObject;
@@ -54,15 +56,26 @@ type ResponseObject = {
 };
 
 type ContentObject = {
-  [index: string]: HeaderObject;
-};
-
-// From here, these are expected to be received as is from the ApexDocs
-type HeaderObject = {
-  description: string;
-  schema: SchemaObject;
+  [index: string]: SchemaObject;
 };
 
 type SchemaObject = {
-  type: string;
+  schema: SchemaObjectObject | SchemaObjectArray;
+};
+
+type SchemaObjectObject = {
+  type: 'object';
+  properties: PropertiesObject;
+};
+
+type PropertiesObject = {
+  [index: string]: {
+    type: string;
+    description?: string;
+    format?: string;
+  };
+};
+
+type SchemaObjectArray = {
+  type: 'array';
 };
