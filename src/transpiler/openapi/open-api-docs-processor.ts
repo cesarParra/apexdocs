@@ -10,6 +10,8 @@ type ApexDocHttpResponse = {
   statusCode: number;
 } & (SchemaObjectObject | SchemaObjectArray);
 
+type AddToOpenApi = (inYaml: string, urlValue: string) => void;
+
 export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
   protected readonly _fileContainer: FileContainer;
   openApiModel: OpenApi;
@@ -71,20 +73,29 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
       this.openApiModel.paths[urlValue].get!.description = httpGetMethod.docComment.description;
     }
 
-    this.parseHttpParametersAnnotations(httpGetMethod, urlValue);
-    this.parseHttpResponseAnnotations(httpGetMethod, urlValue);
+    this.parseHttpAnnotation(httpGetMethod, urlValue, 'http-parameter', (inYaml, urlValue) =>
+      this.addParametersToOpenApi(inYaml, urlValue),
+    );
+    this.parseHttpAnnotation(httpGetMethod, urlValue, 'http-response', (inYaml, urlValue) =>
+      this.addHttpResponsesToOpenApi(inYaml, urlValue),
+    );
   }
 
-  private parseHttpParametersAnnotations(httpGetMethod: MethodMirror, urlValue: string) {
-    const httpParameterAnnotations = httpGetMethod.docComment?.annotations.filter(
-      (annotation) => annotation.name === 'http-parameter',
+  private parseHttpAnnotation(
+    httpGetMethod: MethodMirror,
+    urlValue: string,
+    annotationName: string,
+    addToOpenApi: AddToOpenApi,
+  ) {
+    const annotations = httpGetMethod.docComment?.annotations.filter(
+      (annotation) => annotation.name === annotationName,
     );
 
-    if (!httpParameterAnnotations?.length) {
+    if (!annotations?.length) {
       return;
     }
 
-    for (const annotation of httpParameterAnnotations) {
+    for (const annotation of annotations) {
       // We expect the ApexDoc data representing this to be in YAML format.
       const inYaml = annotation?.bodyLines.reduce((prev, current, _) => prev + '\n' + current);
 
@@ -92,56 +103,43 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
         return;
       }
 
-      // Convert the YAML into a JSON object.
-      const inJson = yaml.load(inYaml) as ParameterObject;
-      // If we reach this point that means we have enough data to keep adding to the OpenApi object.
-      if (this.openApiModel.paths[urlValue].get!.parameters === undefined) {
-        this.openApiModel.paths[urlValue].get!.parameters = [];
-      }
-
-      this.openApiModel.paths[urlValue].get!.parameters!.push({
-        ...inJson,
-      });
+      addToOpenApi(inYaml, urlValue);
     }
   }
 
-  private parseHttpResponseAnnotations(httpGetMethod: MethodMirror, urlValue: string) {
-    const httpResponseAnnotations = httpGetMethod.docComment?.annotations.filter(
-      (annotation) => annotation.name === 'http-response',
-    );
-
-    if (!httpResponseAnnotations?.length) {
-      return;
+  private addParametersToOpenApi(inYaml: string, urlValue: string) {
+    // Convert the YAML into a JSON object.
+    const inJson = yaml.load(inYaml) as ParameterObject;
+    // If we reach this point that means we have enough data to keep adding to the OpenApi object.
+    if (this.openApiModel.paths[urlValue].get!.parameters === undefined) {
+      this.openApiModel.paths[urlValue].get!.parameters = [];
     }
 
-    for (const annotation of httpResponseAnnotations) {
-      // We expect the ApexDoc data representing this to be in YAML format.
-      const inYaml = annotation?.bodyLines.reduce((prev, current, _) => prev + '\n' + current);
+    this.openApiModel.paths[urlValue].get!.parameters!.push({
+      ...inJson,
+    });
+  }
 
-      if (!inYaml) {
-        return;
-      }
+  private addHttpResponsesToOpenApi(inYaml: string, urlValue: string) {
+    // Convert the YAML into a JSON object.
+    const inJson = yaml.load(inYaml) as ApexDocHttpResponse;
+    // If we reach this point that means we have enough data to keep adding to the OpenApi object.
+    if (this.openApiModel.paths[urlValue].get!.responses === undefined) {
+      this.openApiModel.paths[urlValue].get!.responses = {};
+    }
 
-      // Convert the YAML into a JSON object.
-      const inJson = yaml.load(inYaml) as ApexDocHttpResponse;
-      // If we reach this point that means we have enough data to keep adding to the OpenApi object.
-      if (this.openApiModel.paths[urlValue].get!.responses === undefined) {
-        this.openApiModel.paths[urlValue].get!.responses = {};
-      }
-
-      // Copy all properties, but delete the status code as it does not belong to
-      // what goes in the schema
-      const schema: any = { ...inJson };
-      delete schema.statusCode;
-      this.openApiModel.paths[urlValue].get!.responses![inJson.statusCode] = {
-        description: `Status code ${inJson.statusCode}`,
-        content: {
-          'application/xml': {
-            schema: schema,
-          },
+    // Copy all properties, but delete the status code as it does not belong to
+    // what goes in the schema
+    const schema: any = { ...inJson };
+    delete schema.statusCode;
+    this.openApiModel.paths[urlValue].get!.responses![inJson.statusCode] = {
+      description: `Status code ${inJson.statusCode}`,
+      content: {
+        'application/xml': {
+          schema: schema,
         },
-      };
-    }
+      },
+    };
   }
 
   private hasAnnotation = (method: MethodMirror, annotationName: string) =>
