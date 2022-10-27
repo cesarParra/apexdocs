@@ -15,6 +15,24 @@ global with sharing class SampleRestResource {
     /**
      * @description This is a sample HTTP Get method
      * @return An Account SObject.
+     * @http-parameter
+     * name: limit
+     * in: query
+     * required: true
+     * description: Limits the number of items on a page
+     * schema:
+     *   type: integer
+     * @http-parameter
+     * name: complex
+     * in: cookie
+     * description: A more complex schema
+     * schema:
+     *   type: array
+     *   items:
+     *     type: object
+     *     properties:
+     *       name:
+     *         type: string
      * @http-response
      * statusCode: 200
      * type: object
@@ -29,9 +47,18 @@ global with sharing class SampleRestResource {
      *     format: byte
      * @http-response
      * statusCode: 304
+     * type: object
      * properties:
      *   error:
      *     type: string
+     * @http-response
+     * statusCode: 400
+     * type: array
+     * items:
+     *   type: object
+     *   properties:
+     *     name:
+     *       type: string
      */
     @HttpGet
     global static Account doGet() {

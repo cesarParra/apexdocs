@@ -1,24 +1,14 @@
 import ProcessorTypeTranspiler, { LinkingStrategy } from '../processor-type-transpiler';
 import { FileContainer } from '../file-container';
 import { ClassMirror, MethodMirror, Type } from '@cparra/apex-reflection';
-import { OpenApi } from '../../model/openapi/open-api';
+import { OpenApi, ParameterObject, SchemaObjectArray, SchemaObjectObject } from '../../model/openapi/open-api';
 import { OpenapiTypeFile } from '../../model/openapi/openapi-type-file';
 import { Logger } from '../../util/logger';
 import * as yaml from 'js-yaml';
 
 type ApexDocHttpResponse = {
   statusCode: number;
-  type: 'object' | 'array';
-  properties: ApexDocHttpResponseProperty;
-};
-
-type ApexDocHttpResponseProperty = {
-  [index: string]: {
-    type: string;
-    description?: string;
-    format?: string;
-  };
-};
+} & (SchemaObjectObject | SchemaObjectArray);
 
 export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
   protected readonly _fileContainer: FileContainer;
@@ -61,6 +51,7 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
 
     // GET
     this.parseGetMethod(typeAsClass, urlValue);
+
     // PATCH - httppatch
     // POST - httppost
     // PUT - httpput
@@ -71,47 +62,85 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
 
   private parseGetMethod(typeAsClass: ClassMirror, urlValue: string) {
     const httpGetMethod = typeAsClass.methods.find((method) => this.hasAnnotation(method, 'httpget'));
-    if (httpGetMethod) {
-      this.openApiModel.paths[urlValue].get = {};
-      if (httpGetMethod.docComment?.description) {
-        this.openApiModel.paths[urlValue].get!.description = httpGetMethod.docComment.description;
-      }
+    if (!httpGetMethod) {
+      return;
+    }
 
-      const annotations = httpGetMethod.docComment?.annotations.filter(
-        (annotation) => annotation.name === 'http-response',
-      );
+    this.openApiModel.paths[urlValue].get = {};
+    if (httpGetMethod.docComment?.description) {
+      this.openApiModel.paths[urlValue].get!.description = httpGetMethod.docComment.description;
+    }
 
-      if (!annotations?.length) {
+    this.parseHttpParametersAnnotations(httpGetMethod, urlValue);
+    this.parseHttpResponseAnnotations(httpGetMethod, urlValue);
+  }
+
+  private parseHttpParametersAnnotations(httpGetMethod: MethodMirror, urlValue: string) {
+    const httpParameterAnnotations = httpGetMethod.docComment?.annotations.filter(
+      (annotation) => annotation.name === 'http-parameter',
+    );
+
+    if (!httpParameterAnnotations?.length) {
+      return;
+    }
+
+    for (const annotation of httpParameterAnnotations) {
+      // We expect the ApexDoc data representing this to be in YAML format.
+      const inYaml = annotation?.bodyLines.reduce((prev, current, _) => prev + '\n' + current);
+
+      if (!inYaml) {
         return;
       }
 
-      for (const annotation of annotations) {
-        // We expect the ApexDoc data representing this to be in YAML format.
-        const inYaml = annotation?.bodyLines.reduce((prev, current, _) => prev + '\n' + current);
-
-        if (!inYaml) {
-          return;
-        }
-
-        // Convert the YAML into a JSON object.
-        const inJson = yaml.load(inYaml) as ApexDocHttpResponse;
-        // If we reach this point that means we have enough data to keep adding to the OpenApi object.
-        if (this.openApiModel.paths[urlValue].get!.responses === undefined) {
-          this.openApiModel.paths[urlValue].get!.responses = {};
-        }
-
-        this.openApiModel.paths[urlValue].get!.responses![inJson.statusCode] = {
-          description: `Status code ${inJson.statusCode}`,
-          content: {
-            'application/xml': {
-              schema: {
-                type: inJson.type,
-                properties: inJson.properties,
-              },
-            },
-          },
-        };
+      // Convert the YAML into a JSON object.
+      const inJson = yaml.load(inYaml) as ParameterObject;
+      // If we reach this point that means we have enough data to keep adding to the OpenApi object.
+      if (this.openApiModel.paths[urlValue].get!.parameters === undefined) {
+        this.openApiModel.paths[urlValue].get!.parameters = [];
       }
+
+      this.openApiModel.paths[urlValue].get!.parameters!.push({
+        ...inJson,
+      });
+    }
+  }
+
+  private parseHttpResponseAnnotations(httpGetMethod: MethodMirror, urlValue: string) {
+    const httpResponseAnnotations = httpGetMethod.docComment?.annotations.filter(
+      (annotation) => annotation.name === 'http-response',
+    );
+
+    if (!httpResponseAnnotations?.length) {
+      return;
+    }
+
+    for (const annotation of httpResponseAnnotations) {
+      // We expect the ApexDoc data representing this to be in YAML format.
+      const inYaml = annotation?.bodyLines.reduce((prev, current, _) => prev + '\n' + current);
+
+      if (!inYaml) {
+        return;
+      }
+
+      // Convert the YAML into a JSON object.
+      const inJson = yaml.load(inYaml) as ApexDocHttpResponse;
+      // If we reach this point that means we have enough data to keep adding to the OpenApi object.
+      if (this.openApiModel.paths[urlValue].get!.responses === undefined) {
+        this.openApiModel.paths[urlValue].get!.responses = {};
+      }
+
+      // Copy all properties, but delete the status code as it does not belong to
+      // what goes in the schema
+      const schema: any = { ...inJson };
+      delete schema.statusCode;
+      this.openApiModel.paths[urlValue].get!.responses![inJson.statusCode] = {
+        description: `Status code ${inJson.statusCode}`,
+        content: {
+          'application/xml': {
+            schema: schema,
+          },
+        },
+      };
     }
   }
 

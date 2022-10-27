@@ -42,10 +42,12 @@ export type PathItemObject = {
 
 type OperationObject = {
   description?: string;
-  // TODO: Parameters
+  // TODO: Request body
+  parameters?: ParameterObject[];
   responses?: ResponsesObject;
 };
 
+// Responses
 type ResponsesObject = {
   [index: string]: ResponseObject;
 };
@@ -59,16 +61,27 @@ type ContentObject = {
   [index: string]: SchemaObject;
 };
 
+// Parameters
+export type ParameterObject = {
+  name: string;
+  in: 'query' | 'header' | 'path' | 'cookie';
+  description?: string;
+  required?: boolean;
+  schema?: SchemaObject;
+};
+
+// Common
+
 type SchemaObject = {
   schema: SchemaObjectObject | SchemaObjectArray;
 };
 
-type SchemaObjectObject = {
+export type SchemaObjectObject = {
   type: 'object';
   properties: PropertiesObject;
 };
 
-type PropertiesObject = {
+export type PropertiesObject = {
   [index: string]: {
     type: string;
     description?: string;
@@ -76,6 +89,7 @@ type PropertiesObject = {
   };
 };
 
-type SchemaObjectArray = {
+export type SchemaObjectArray = {
   type: 'array';
+  items: SchemaObject;
 };

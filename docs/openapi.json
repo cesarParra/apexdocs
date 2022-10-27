@@ -14,6 +14,33 @@
       "description": "Account related operations.",
       "get": {
         "description": "This is a sample HTTP Get method",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": true,
+            "description": "Limits the number of items on a page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "complex",
+            "in": "cookie",
+            "description": "A more complex schema",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Status code 200",
@@ -43,9 +70,28 @@
             "content": {
               "application/xml": {
                 "schema": {
+                  "type": "object",
                   "properties": {
                     "error": {
                       "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Status code 400",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      }
                     }
                   }
                 }
