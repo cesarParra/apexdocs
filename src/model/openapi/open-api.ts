@@ -37,8 +37,7 @@ export type PathsObject = {
 
 export type PathItemObject = {
   description?: string;
-  get?: OperationObject;
-};
+} & { [index: string]: OperationObject };
 
 type OperationObject = {
   description?: string;
@@ -69,14 +68,14 @@ type RequestBodyContent = {
 
 type MediaTypeObject = {
   schema?: SchemaObject;
-  example?: any;
-  examples?: { [index: string]: ExampleObject };
+  example?: any; // TODO: Parse this on the output
+  examples?: { [index: string]: ExampleObject }; // TODO: Parse this on the output
 };
 
 type ExampleObject = {
   summary?: string;
   description?: string;
-  value?: string;
+  value?: any;
 };
 
 // Responses

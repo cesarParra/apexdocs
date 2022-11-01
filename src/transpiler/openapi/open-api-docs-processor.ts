@@ -52,32 +52,36 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
     const typeAsClass = type as ClassMirror;
 
     // GET
-    this.parseGetMethod(typeAsClass, urlValue);
+    this.parseMethod(typeAsClass, urlValue, 'get');
 
     // PATCH - httppatch
+    this.parseMethod(typeAsClass, urlValue, 'patch');
+
     // POST - httppost
+    this.parseMethod(typeAsClass, urlValue, 'post');
+
     // PUT - httpput
     // DELETE - httpdelete
 
     this._fileContainer.pushFile(new OpenapiTypeFile(this.openApiModel));
   }
 
-  private parseGetMethod(typeAsClass: ClassMirror, urlValue: string) {
-    const httpGetMethod = typeAsClass.methods.find((method) => this.hasAnnotation(method, 'httpget'));
-    if (!httpGetMethod) {
+  private parseMethod(typeAsClass: ClassMirror, urlValue: string, httpMethodKey: string) {
+    const httpMethod = typeAsClass.methods.find((method) => this.hasAnnotation(method, `http${httpMethodKey}`));
+    if (!httpMethod) {
       return;
     }
 
-    this.openApiModel.paths[urlValue].get = {};
-    if (httpGetMethod.docComment?.description) {
-      this.openApiModel.paths[urlValue].get!.description = httpGetMethod.docComment.description;
+    this.openApiModel.paths[urlValue][httpMethodKey] = {};
+    if (httpMethod.docComment?.description) {
+      this.openApiModel.paths[urlValue][httpMethodKey]!.description = httpMethod.docComment.description;
     }
 
-    this.parseHttpAnnotation(httpGetMethod, urlValue, 'http-parameter', (inYaml, urlValue) =>
-      this.addParametersToOpenApi(inYaml, urlValue),
+    this.parseHttpAnnotation(httpMethod, urlValue, 'http-parameter', (inYaml, urlValue) =>
+      this.addParametersToOpenApi(inYaml, urlValue, httpMethodKey),
     );
-    this.parseHttpAnnotation(httpGetMethod, urlValue, 'http-response', (inYaml, urlValue) =>
-      this.addHttpResponsesToOpenApi(inYaml, urlValue),
+    this.parseHttpAnnotation(httpMethod, urlValue, 'http-response', (inYaml, urlValue) =>
+      this.addHttpResponsesToOpenApi(inYaml, urlValue, httpMethodKey),
     );
   }
 
@@ -107,32 +111,32 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
     }
   }
 
-  private addParametersToOpenApi(inYaml: string, urlValue: string) {
+  private addParametersToOpenApi(inYaml: string, urlValue: string, httpMethodKey: string) {
     // Convert the YAML into a JSON object.
     const inJson = yaml.load(inYaml) as ParameterObject;
     // If we reach this point that means we have enough data to keep adding to the OpenApi object.
-    if (this.openApiModel.paths[urlValue].get!.parameters === undefined) {
-      this.openApiModel.paths[urlValue].get!.parameters = [];
+    if (this.openApiModel.paths[urlValue][httpMethodKey]!.parameters === undefined) {
+      this.openApiModel.paths[urlValue][httpMethodKey]!.parameters = [];
     }
 
-    this.openApiModel.paths[urlValue].get!.parameters!.push({
+    this.openApiModel.paths[urlValue][httpMethodKey]!.parameters!.push({
       ...inJson,
     });
   }
 
-  private addHttpResponsesToOpenApi(inYaml: string, urlValue: string) {
+  private addHttpResponsesToOpenApi(inYaml: string, urlValue: string, httpMethodKey: string) {
     // Convert the YAML into a JSON object.
     const inJson = yaml.load(inYaml) as ApexDocHttpResponse;
     // If we reach this point that means we have enough data to keep adding to the OpenApi object.
-    if (this.openApiModel.paths[urlValue].get!.responses === undefined) {
-      this.openApiModel.paths[urlValue].get!.responses = {};
+    if (this.openApiModel.paths[urlValue][httpMethodKey]!.responses === undefined) {
+      this.openApiModel.paths[urlValue][httpMethodKey]!.responses = {};
     }
 
     // Copy all properties, but delete the status code as it does not belong to
     // what goes in the schema
     const schema: any = { ...inJson };
     delete schema.statusCode;
-    this.openApiModel.paths[urlValue].get!.responses![inJson.statusCode] = {
+    this.openApiModel.paths[urlValue][httpMethodKey]!.responses![inJson.statusCode] = {
       description: `Status code ${inJson.statusCode}`,
       content: {
         'application/json': {
