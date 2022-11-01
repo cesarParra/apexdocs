@@ -12,6 +12,8 @@ type ApexDocHttpResponse = {
 
 type AddToOpenApi = (inYaml: string, urlValue: string) => void;
 
+type HttpOperations = 'get' | 'put' | 'post' | 'delete' | 'patch';
+
 export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
   protected readonly _fileContainer: FileContainer;
   openApiModel: OpenApi;
@@ -54,19 +56,22 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
     // GET
     this.parseMethod(typeAsClass, urlValue, 'get');
 
-    // PATCH - httppatch
+    // PATCH
     this.parseMethod(typeAsClass, urlValue, 'patch');
 
-    // POST - httppost
+    // POST
     this.parseMethod(typeAsClass, urlValue, 'post');
 
-    // PUT - httpput
-    // DELETE - httpdelete
+    // PUT
+    this.parseMethod(typeAsClass, urlValue, 'put');
+
+    // DELETE
+    this.parseMethod(typeAsClass, urlValue, 'delete');
 
     this._fileContainer.pushFile(new OpenapiTypeFile(this.openApiModel));
   }
 
-  private parseMethod(typeAsClass: ClassMirror, urlValue: string, httpMethodKey: string) {
+  private parseMethod(typeAsClass: ClassMirror, urlValue: string, httpMethodKey: HttpOperations) {
     const httpMethod = typeAsClass.methods.find((method) => this.hasAnnotation(method, `http${httpMethodKey}`));
     if (!httpMethod) {
       return;
@@ -111,7 +116,7 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
     }
   }
 
-  private addParametersToOpenApi(inYaml: string, urlValue: string, httpMethodKey: string) {
+  private addParametersToOpenApi(inYaml: string, urlValue: string, httpMethodKey: HttpOperations) {
     // Convert the YAML into a JSON object.
     const inJson = yaml.load(inYaml) as ParameterObject;
     // If we reach this point that means we have enough data to keep adding to the OpenApi object.
@@ -124,7 +129,7 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
     });
   }
 
-  private addHttpResponsesToOpenApi(inYaml: string, urlValue: string, httpMethodKey: string) {
+  private addHttpResponsesToOpenApi(inYaml: string, urlValue: string, httpMethodKey: HttpOperations) {
     // Convert the YAML into a JSON object.
     const inJson = yaml.load(inYaml) as ApexDocHttpResponse;
     // If we reach this point that means we have enough data to keep adding to the OpenApi object.

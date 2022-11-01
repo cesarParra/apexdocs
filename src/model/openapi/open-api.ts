@@ -37,7 +37,12 @@ export type PathsObject = {
 
 export type PathItemObject = {
   description?: string;
-} & { [index: string]: OperationObject };
+  get?: OperationObject;
+  put?: OperationObject;
+  post?: OperationObject;
+  delete?: OperationObject;
+  patch?: OperationObject;
+};
 
 type OperationObject = {
   description?: string;
