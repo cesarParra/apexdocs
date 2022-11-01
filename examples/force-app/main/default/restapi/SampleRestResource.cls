@@ -33,6 +33,16 @@ global with sharing class SampleRestResource {
      *     properties:
      *       name:
      *         type: string
+     * @http-request-body
+     * description: This is an example of a request body
+     * required: true
+     * schema:
+     *   type: array
+     *   items:
+     *     type: object
+     *     properties:
+     *       name:
+     *         type: string
      * @http-response
      * statusCode: 200
      * type: object
@@ -45,6 +55,9 @@ global with sharing class SampleRestResource {
      *   phone:
      *     type: string
      *     format: byte
+     * @http-response
+     * statusCode: 500
+     * type: string
      * @http-response
      * statusCode: 304
      * type: object

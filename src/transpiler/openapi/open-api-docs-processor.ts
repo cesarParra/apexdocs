@@ -135,7 +135,7 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
     this.openApiModel.paths[urlValue].get!.responses![inJson.statusCode] = {
       description: `Status code ${inJson.statusCode}`,
       content: {
-        'application/xml': {
+        'application/json': {
           schema: schema,
         },
       },

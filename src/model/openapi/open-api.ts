@@ -42,9 +42,41 @@ export type PathItemObject = {
 
 type OperationObject = {
   description?: string;
-  // TODO: Request body
+  requestBody?: RequestBody[];
   parameters?: ParameterObject[];
   responses?: ResponsesObject;
+};
+
+// Parameters
+export type ParameterObject = {
+  name: string;
+  in: 'query' | 'header' | 'path' | 'cookie';
+  description?: string;
+  required?: boolean;
+  schema?: SchemaObject;
+};
+
+// Request Body
+type RequestBody = {
+  description?: string;
+  content: RequestBodyContent;
+  required?: boolean;
+};
+
+type RequestBodyContent = {
+  [index: string]: MediaTypeObject;
+};
+
+type MediaTypeObject = {
+  schema?: SchemaObject;
+  example?: any;
+  examples?: { [index: string]: ExampleObject };
+};
+
+type ExampleObject = {
+  summary?: string;
+  description?: string;
+  value?: string;
 };
 
 // Responses
@@ -61,15 +93,6 @@ type ContentObject = {
   [index: string]: SchemaObject;
 };
 
-// Parameters
-export type ParameterObject = {
-  name: string;
-  in: 'query' | 'header' | 'path' | 'cookie';
-  description?: string;
-  required?: boolean;
-  schema?: SchemaObject;
-};
-
 // Common
 
 type SchemaObject = {
@@ -77,8 +100,8 @@ type SchemaObject = {
 };
 
 export type SchemaObjectObject = {
-  type: 'object';
-  properties: PropertiesObject;
+  type: string; // This can be "object" (which would require properties), or a primitive
+  properties?: PropertiesObject;
 };
 
 export type PropertiesObject = {
