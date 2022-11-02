@@ -59,6 +59,11 @@ const argv = yargs.options({
       'because otherwise the content within < and > would be treated as HTML tags and not shown in the output. ' +
       'Content in @example blocks are never sanitized.',
   },
+  openApiTitle: {
+    type: 'string',
+    default: 'Apex REST Api',
+    describe: 'If using "openapi" as the target generator, this allows you to specify the OpenApi title value.',
+  },
 }).argv;
 
 Settings.build({
@@ -70,6 +75,7 @@ Settings.build({
   indexOnly: argv.indexOnly,
   defaultGroupName: argv.defaultGroupName,
   sanitizeHtml: argv.sanitizeHtml,
+  openApiTitle: argv.openApiTitle,
 });
 
 Apexdocs.generate();

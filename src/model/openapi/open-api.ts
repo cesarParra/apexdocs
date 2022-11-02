@@ -1,4 +1,5 @@
 import { array } from 'yargs';
+import { Settings } from '../../settings';
 
 export class OpenApi {
   openapi = '3.1.0';
@@ -8,7 +9,7 @@ export class OpenApi {
 
   constructor() {
     this.info = {
-      title: 'Some Title',
+      title: Settings.getInstance().getOpenApiTitle(),
       version: '1.0',
     };
 

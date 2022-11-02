@@ -15,6 +15,7 @@ export interface SettingsConfig {
   indexOnly: boolean;
   defaultGroupName: string;
   sanitizeHtml: boolean;
+  openApiTitle: string;
 }
 
 export class Settings {
@@ -81,11 +82,11 @@ export class Settings {
     return this.config.sanitizeHtml;
   }
 
-  get numberOfVisibleDescriptionLinesOnHomePage() {
-    return 5;
-  }
-
   public getDefaultGroupName(): string {
     return this.config.defaultGroupName;
+  }
+
+  public getOpenApiTitle(): string {
+    return this.config.openApiTitle;
   }
 }
