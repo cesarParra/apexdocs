@@ -10,6 +10,7 @@ import { FileWriter } from '../service/file-writer';
 import ErrorLogger from '../util/error-logger';
 import ApexBundle from '../model/apex-bundle';
 import Manifest from '../model/manifest';
+import { TypesRepository } from '../model/types-repository';
 
 /**
  * Application entry-point to generate documentation out of Apex source files.
@@ -22,7 +23,9 @@ export class Apexdocs {
     Logger.log('Initializing...');
     const fileBodies = ApexFileReader.processFiles(new DefaultFileSystem());
     const manifest = createManifest(new RawBodyParser(fileBodies), this._reflectionWithLogger);
+    TypesRepository.getInstance().populateAll(manifest.types);
     const filteredTypes = this.filterByScopes(manifest);
+    TypesRepository.getInstance().populateScoped(filteredTypes);
     const processor = Settings.getInstance().typeTranspiler;
     Transpiler.generate(filteredTypes, processor);
     const generatedFiles = processor.fileBuilder().files();

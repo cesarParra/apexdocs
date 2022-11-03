@@ -101,7 +101,7 @@ type ContentObject = {
 
 // Common
 
-type SchemaObject = (SchemaObjectObject | ReferenceObject) | SchemaObjectArray;
+type SchemaObject = ({ schema: SchemaObjectObject } | ReferenceObject) | SchemaObjectArray;
 
 export type SchemaObjectObject = {
   type: string; // This can be "object" (which would require properties), or a primitive
@@ -129,6 +129,6 @@ export type ReferenceObject = {
 
 export type ComponentsObject = {
   schemas: {
-    [index: string]: SchemaObject;
+    [index: string]: SchemaObjectObject;
   };
 };

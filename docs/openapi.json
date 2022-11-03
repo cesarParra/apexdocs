@@ -46,18 +46,20 @@
             "description": "Status code 200",
             "content": {
               "application/json": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "The super Id."
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "phone": {
-                    "type": "string",
-                    "format": "byte"
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "The super Id."
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string",
+                      "format": "byte"
+                    }
                   }
                 }
               }
@@ -67,10 +69,12 @@
             "description": "Status code 304",
             "content": {
               "application/json": {
-                "type": "object",
-                "properties": {
-                  "error": {
-                    "type": "string"
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -80,12 +84,14 @@
             "description": "Status code 400",
             "content": {
               "application/json": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "type": "string"
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      }
                     }
                   }
                 }
@@ -96,7 +102,9 @@
             "description": "Status code 500",
             "content": {
               "application/json": {
-                "type": "string"
+                "schema": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -136,18 +144,20 @@
             "description": "Status code 200",
             "content": {
               "application/json": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "The super Id."
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "phone": {
-                    "type": "string",
-                    "format": "byte"
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "The super Id."
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string",
+                      "format": "byte"
+                    }
                   }
                 }
               }
@@ -157,10 +167,12 @@
             "description": "Status code 304",
             "content": {
               "application/json": {
-                "type": "object",
-                "properties": {
-                  "error": {
-                    "type": "string"
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -170,12 +182,14 @@
             "description": "Status code 400",
             "content": {
               "application/json": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "type": "string"
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      }
                     }
                   }
                 }
@@ -186,7 +200,9 @@
             "description": "Status code 500",
             "content": {
               "application/json": {
-                "type": "string"
+                "schema": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -197,11 +213,11 @@
         "parameters": [
           {
             "name": "limit",
-            "in": "cookie",
+            "in": "header",
             "required": true,
             "description": "My sample description.",
             "schema": {
-              "$ref": "WEPA, THIS IS A REFERENCE"
+              "$ref": "#/components/schemas/SampleClass"
             }
           }
         ]
@@ -211,7 +227,18 @@
   "components": {
     "schemas": {
       "SampleClass": {
-        "type": "WEPA"
+        "type": "object",
+        "properties": {
+          "MyProp": {
+            "type": "String"
+          },
+          "AnotherProp": {
+            "type": "Decimal"
+          },
+          "someVariable": {
+            "type": "String"
+          }
+        }
       }
     }
   }

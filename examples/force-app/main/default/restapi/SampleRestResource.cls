@@ -7,7 +7,7 @@ global with sharing class SampleRestResource {
      * @description Sample HTTP Delete method with references to other types.
      * @http-parameter
      * name: limit
-     * in: cookie
+     * in: header
      * required: true
      * description: My sample description.
      * schema: SampleClass

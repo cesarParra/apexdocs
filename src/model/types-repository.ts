@@ -2,7 +2,8 @@ import { Type } from '@cparra/apex-reflection';
 
 export class TypesRepository {
   private static instance: TypesRepository;
-  private types: Type[] = [];
+  private scopedTypes: Type[] = [];
+  private allTypes: Type[] = [];
 
   public static getInstance(): TypesRepository {
     if (!TypesRepository.instance) {
@@ -11,11 +12,19 @@ export class TypesRepository {
     return TypesRepository.instance;
   }
 
-  public populate(types: Type[]) {
-    this.types = types;
+  public populateAll(types: Type[]) {
+    this.allTypes = types;
   }
 
-  public getByName(typeName: string): Type | undefined {
-    return this.types.find((currentType: Type) => currentType.name === typeName);
+  public getFromAllByName(typeName: string): Type | undefined {
+    return this.allTypes.find((currentType: Type) => currentType.name === typeName);
+  }
+
+  public populateScoped(types: Type[]) {
+    this.scopedTypes = types;
+  }
+
+  public getFromScopedByName(typeName: string): Type | undefined {
+    return this.scopedTypes.find((currentType: Type) => currentType.name === typeName);
   }
 }
