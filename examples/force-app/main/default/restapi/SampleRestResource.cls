@@ -3,6 +3,15 @@
  */
 @RestResource(urlMapping='/Account/*')
 global with sharing class SampleRestResource {
+    /**
+     * @description Sample HTTP Delete method with references to other types.
+     * @http-parameter
+     * name: limit
+     * in: cookie
+     * required: true
+     * description: My sample description.
+     * schema: SampleClass
+     */
     @HttpDelete
     global static void doDelete() {
         RestRequest req = RestContext.request;

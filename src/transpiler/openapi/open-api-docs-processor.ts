@@ -119,8 +119,31 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
   private addParametersToOpenApi(inYaml: string, urlValue: string, httpMethodKey: HttpOperations) {
     // Convert the YAML into a JSON object.
     const inJson = yaml.load(inYaml) as ParameterObject;
-    // If we reach this point that means we have enough data to keep adding to the OpenApi object.
+
+    console.log(JSON.stringify(inJson));
+
+    if (inJson.schema && this.isString(inJson.schema)) {
+      // We are dealing with a reference to a different class.
+      const referencedClassName = inJson.schema as string;
+      inJson.schema = {
+        $ref: 'WEPA, THIS IS A REFERENCE',
+      };
+
+      // Add to "component" section if it hasn't been already
+      if (this.openApiModel.components === undefined) {
+        this.openApiModel.components = {
+          schemas: {},
+        };
+      }
+      // TODO: Check if it really doesn't exist yet
+      this.openApiModel.components.schemas![referencedClassName] = {
+        type: 'object',
+        // TODO: Parse the class parameters here (non-recursively since Apex doesn't support that)
+      };
+    }
+
     if (this.openApiModel.paths[urlValue][httpMethodKey]!.parameters === undefined) {
+      // If we reach this point that means we have enough data to keep adding to the OpenApi object.
       this.openApiModel.paths[urlValue][httpMethodKey]!.parameters = [];
     }
 
@@ -144,13 +167,15 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
     this.openApiModel.paths[urlValue][httpMethodKey]!.responses![inJson.statusCode] = {
       description: `Status code ${inJson.statusCode}`,
       content: {
-        'application/json': {
-          schema: schema,
-        },
+        'application/json': schema,
       },
     };
   }
 
   private hasAnnotation = (method: MethodMirror, annotationName: string) =>
     method.annotations.some((annotation) => annotation.name.toLowerCase() === annotationName);
+
+  private isString = (targetObject: any): boolean => {
+    return typeof targetObject === 'string' || targetObject instanceof String;
+  };
 }

@@ -6,6 +6,7 @@ export class OpenApi {
   info: InfoObject;
   paths: PathsObject;
   servers: ServerObject[];
+  components?: ComponentsObject;
 
   constructor() {
     this.info = {
@@ -58,7 +59,7 @@ export type ParameterObject = {
   in: 'query' | 'header' | 'path' | 'cookie';
   description?: string;
   required?: boolean;
-  schema?: SchemaObject;
+  schema?: SchemaObject | string;
 };
 
 // Request Body
@@ -95,14 +96,12 @@ type ResponseObject = {
 };
 
 type ContentObject = {
-  [index: string]: SchemaObject;
+  [index: string]: SchemaObject; // key is usually 'application/json'
 };
 
 // Common
 
-type SchemaObject = {
-  schema: SchemaObjectObject | SchemaObjectArray;
-};
+type SchemaObject = (SchemaObjectObject | ReferenceObject) | SchemaObjectArray;
 
 export type SchemaObjectObject = {
   type: string; // This can be "object" (which would require properties), or a primitive
@@ -120,4 +119,16 @@ export type PropertiesObject = {
 export type SchemaObjectArray = {
   type: 'array';
   items: SchemaObject;
+};
+
+// Reference and components
+
+export type ReferenceObject = {
+  $ref: string;
+};
+
+export type ComponentsObject = {
+  schemas: {
+    [index: string]: SchemaObject;
+  };
 };

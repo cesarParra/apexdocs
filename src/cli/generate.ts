@@ -29,7 +29,8 @@ const argv = yargs.options({
     default: ['global'],
     describe:
       'A list of scopes to document. Values should be separated by a space, e.g --scope global public namespaceaccessible. ' +
-      'Annotations are supported and should be passed lowercased and without the @ symbol, e.g. namespaceaccessible auraenabled',
+      'Annotations are supported and should be passed lowercased and without the @ symbol, e.g. namespaceaccessible auraenabled. ' +
+      'Note that this setting is ignored if generating an OpenApi REST specification since that looks for classes annotated with @RestResource.',
   },
   targetGenerator: {
     type: 'string',
