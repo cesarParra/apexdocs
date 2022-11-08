@@ -5,6 +5,8 @@ import {
   OpenApi,
   ParameterObject,
   PropertiesObject,
+  RequestBody,
+  SchemaObject,
   SchemaObjectArray,
   SchemaObjectObject,
 } from '../../model/openapi/open-api';
@@ -16,6 +18,12 @@ import { TypesRepository } from '../../model/types-repository';
 type ApexDocHttpResponse = {
   statusCode: number;
 } & (SchemaObjectObject | SchemaObjectArray);
+
+type ApexDocHttpRequestBody = {
+  description?: string;
+  schema: SchemaObject;
+  required?: boolean;
+};
 
 type AddToOpenApi = (inYaml: string, urlValue: string) => void;
 
@@ -89,6 +97,10 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
       this.openApiModel.paths[urlValue][httpMethodKey]!.description = httpMethod.docComment.description;
     }
 
+    this.parseHttpAnnotation(httpMethod, urlValue, 'http-request-body', (inYaml, urlValue) =>
+      this.addRequestBodyToOpenApi(inYaml, urlValue, httpMethodKey),
+    );
+
     this.parseHttpAnnotation(httpMethod, urlValue, 'http-parameter', (inYaml, urlValue) =>
       this.addParametersToOpenApi(inYaml, urlValue, httpMethodKey),
     );
@@ -121,6 +133,20 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
 
       addToOpenApi(inYaml, urlValue);
     }
+  }
+
+  private addRequestBodyToOpenApi(inYaml: string, urlValue: string, httpMethodKey: HttpOperations) {
+    // Convert the YAML into a JSON object.
+    const inJson = yaml.load(inYaml) as ApexDocHttpRequestBody;
+
+    // We will only be supporting one type for now: "application/json".
+    const requestBody: RequestBody = {
+      description: inJson.description,
+      content: { 'application/json': { schema: inJson.schema } },
+      required: inJson.required,
+    };
+
+    this.openApiModel.paths[urlValue][httpMethodKey]!.requestBody = requestBody;
   }
 
   private addParametersToOpenApi(inYaml: string, urlValue: string, httpMethodKey: HttpOperations) {

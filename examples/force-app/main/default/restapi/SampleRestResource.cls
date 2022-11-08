@@ -10,7 +10,8 @@ global with sharing class SampleRestResource {
      * in: header
      * required: true
      * description: My sample description.
-     * schema: SampleClass
+     * schema:
+     *   type: string
      */
     @HttpDelete
     global static void doDelete() {
@@ -126,7 +127,7 @@ global with sharing class SampleRestResource {
      *     format: byte
      * @http-response
      * statusCode: 500
-     * type: string
+     * type: SampleClass
      * @http-response
      * statusCode: 304
      * type: object

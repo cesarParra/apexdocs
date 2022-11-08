@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "My REST Api ",
+    "title": "My REST Api 2",
     "version": "1.0"
   },
   "servers": [
@@ -112,6 +112,25 @@
       },
       "post": {
         "description": "This is a sample HTTP Post method",
+        "requestBody": {
+          "description": "This is an example of a request body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
         "parameters": [
           {
             "name": "limit",
@@ -201,7 +220,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string"
+                  "type": "SampleClass"
                 }
               }
             }
@@ -217,28 +236,10 @@
             "required": true,
             "description": "My sample description.",
             "schema": {
-              "$ref": "#/components/schemas/SampleClass"
+              "type": "string"
             }
           }
         ]
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "SampleClass": {
-        "type": "object",
-        "properties": {
-          "MyProp": {
-            "type": "String"
-          },
-          "AnotherProp": {
-            "type": "Decimal"
-          },
-          "someVariable": {
-            "type": "String"
-          }
-        }
       }
     }
   }

@@ -48,7 +48,7 @@ export type PathItemObject = {
 
 type OperationObject = {
   description?: string;
-  requestBody?: RequestBody[];
+  requestBody?: RequestBody;
   parameters?: ParameterObject[];
   responses?: ResponsesObject;
 };
@@ -63,14 +63,14 @@ export type ParameterObject = {
 };
 
 // Request Body
-type RequestBody = {
+export type RequestBody = {
   description?: string;
   content: RequestBodyContent;
   required?: boolean;
 };
 
 type RequestBodyContent = {
-  [index: string]: MediaTypeObject;
+  [index: string]: MediaTypeObject; // Only key supported is "application/json" for now.
 };
 
 type MediaTypeObject = {
@@ -101,7 +101,7 @@ type ContentObject = {
 
 // Common
 
-type SchemaObject = ({ schema: SchemaObjectObject } | ReferenceObject) | SchemaObjectArray;
+export type SchemaObject = ({ schema: SchemaObjectObject } | ReferenceObject) | SchemaObjectArray;
 
 export type SchemaObjectObject = {
   type: string; // This can be "object" (which would require properties), or a primitive
