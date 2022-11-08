@@ -5,6 +5,10 @@
 global with sharing class SampleRestResource {
     /**
      * @description Sample HTTP Delete method with references to other types.
+     * @http-request-body
+     * description: This is an example of a request body
+     * required: true
+     * schema: SampleClass
      * @http-parameter
      * name: limit
      * in: header
@@ -127,7 +131,7 @@ global with sharing class SampleRestResource {
      *     format: byte
      * @http-response
      * statusCode: 500
-     * type: SampleClass
+     * type: string
      * @http-response
      * statusCode: 304
      * type: object

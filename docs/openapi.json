@@ -220,7 +220,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "SampleClass"
+                  "type": "string"
                 }
               }
             }
@@ -229,6 +229,17 @@
       },
       "delete": {
         "description": "Sample HTTP Delete method with references to other types.",
+        "requestBody": {
+          "description": "This is an example of a request body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SampleClass"
+              }
+            }
+          },
+          "required": true
+        },
         "parameters": [
           {
             "name": "limit",
@@ -240,6 +251,24 @@
             }
           }
         ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SampleClass": {
+        "type": "object",
+        "properties": {
+          "MyProp": {
+            "type": "string"
+          },
+          "AnotherProp": {
+            "type": "number"
+          },
+          "someVariable": {
+            "type": "string"
+          }
+        }
       }
     }
   }

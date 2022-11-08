@@ -139,6 +139,10 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
     // Convert the YAML into a JSON object.
     const inJson = yaml.load(inYaml) as ApexDocHttpRequestBody;
 
+    if (inJson.schema && this.isString(inJson.schema)) {
+      this.handleSchemaReference(inJson);
+    }
+
     // We will only be supporting one type for now: "application/json".
     const requestBody: RequestBody = {
       description: inJson.description,
@@ -154,50 +158,7 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
     const inJson = yaml.load(inYaml) as ParameterObject;
 
     if (inJson.schema && this.isString(inJson.schema)) {
-      // We are dealing with a reference to a different class.
-      const referencedClassName = inJson.schema as string;
-      inJson.schema = {
-        $ref: `#/components/schemas/${referencedClassName}`,
-      };
-
-      // Add to "component" section if it hasn't been already
-      if (this.openApiModel.components === undefined) {
-        this.openApiModel.components = {
-          schemas: {},
-        };
-      }
-
-      // TODO: We also need to support inner classes
-      const referencedType = TypesRepository.getInstance().getFromAllByName(referencedClassName);
-      if (!referencedType) {
-        // TODO: Maybe throw an error?
-        // TODO: Also check if the referenced type is not a class (it should always be).
-      }
-
-      // Generate properties object from type
-      const properties: PropertiesObject = {};
-
-      // Filtering based on Salesforce's documentation: https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_rest_methods.htm#ApexRESTUserDefinedTypes
-      // Note that we assume that the class only contains object types allowed by Apex Rest:
-      // "Note that the public, private, or global class member variables must be types allowed by Apex REST"
-      const propertiesAndFields = [
-        ...(referencedType as ClassMirror).properties,
-        ...(referencedType as ClassMirror).fields,
-      ]
-        .filter((current) => current.access_modifier.toLowerCase() !== 'protected')
-        .filter((current) => !current.memberModifiers.includes('static')); // TODO: Also filter out transient, but we need to add support in apex-reflection library
-
-      propertiesAndFields.forEach((current) => {
-        properties[current.name] = {
-          type: current.type,
-        };
-      });
-
-      // TODO: Check if it really doesn't exist yet
-      this.openApiModel.components.schemas![referencedClassName] = {
-        type: 'object',
-        properties: properties,
-      };
+      this.handleSchemaReference(inJson);
     }
 
     if (this.openApiModel.paths[urlValue][httpMethodKey]!.parameters === undefined) {
@@ -208,6 +169,76 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
     this.openApiModel.paths[urlValue][httpMethodKey]!.parameters!.push({
       ...inJson,
     });
+  }
+
+  private handleSchemaReference(inJson: ParameterObject | ApexDocHttpRequestBody) {
+    // We are dealing with a reference to a different class.
+    const referencedClassName = inJson.schema as string;
+    inJson.schema = {
+      $ref: `#/components/schemas/${referencedClassName}`,
+    };
+
+    // Add to "component" section if it hasn't been already
+    if (this.openApiModel.components === undefined) {
+      this.openApiModel.components = {
+        schemas: {},
+      };
+    }
+
+    // TODO: We also need to support inner classes
+    const referencedType = TypesRepository.getInstance().getFromAllByName(referencedClassName);
+    if (!referencedType) {
+      // TODO: Maybe throw an error?
+      // TODO: Also check if the referenced type is not a class (it should always be).
+    }
+
+    // Generate properties object from type
+    const properties: PropertiesObject = {};
+
+    // Filtering based on Salesforce's documentation: https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_rest_methods.htm#ApexRESTUserDefinedTypes
+    // Note that we assume that the class only contains object types allowed by Apex Rest:
+    // "Note that the public, private, or global class member variables must be types allowed by Apex REST"
+    const propertiesAndFields = [
+      ...(referencedType as ClassMirror).properties,
+      ...(referencedType as ClassMirror).fields,
+    ]
+      .filter((current) => current.access_modifier.toLowerCase() !== 'protected')
+      .filter((current) => !current.memberModifiers.includes('static')); // TODO: Also filter out transient, but we need to add support in apex-reflection library
+
+    propertiesAndFields.forEach((current) => {
+      properties[current.name] = {
+        type: this.getReferenceType(current.type),
+      };
+    });
+
+    // TODO: Check if it really doesn't exist yet
+    this.openApiModel.components.schemas![referencedClassName] = {
+      type: 'object',
+      properties: properties,
+    };
+  }
+
+  private getReferenceType(typeInMirror: string): string {
+    // Returns a valid type supported by OpenApi from a received Apex type.
+    typeInMirror = typeInMirror.toLowerCase();
+    switch (typeInMirror) {
+      case 'boolean':
+        return 'boolean';
+      case 'decimal':
+        return 'number';
+      case 'double':
+        return 'number';
+      case 'id':
+        return 'string';
+      case 'integer':
+        return 'integer';
+      case 'long':
+        return 'number';
+      case 'string':
+        return 'string';
+      default:
+        return 'object';
+    }
   }
 
   private addHttpResponsesToOpenApi(inYaml: string, urlValue: string, httpMethodKey: HttpOperations) {
