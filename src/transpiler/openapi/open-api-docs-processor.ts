@@ -1,23 +1,33 @@
 import ProcessorTypeTranspiler, { LinkingStrategy } from '../processor-type-transpiler';
 import { FileContainer } from '../file-container';
 import { ClassMirror, MethodMirror, Type } from '@cparra/apex-reflection';
+import { OpenapiTypeFile } from '../../model/openapi/openapi-type-file';
+import { Logger } from '../../util/logger';
+import * as yaml from 'js-yaml';
+import { TypesRepository } from '../../model/types-repository';
 import {
-  OpenApi,
   ParameterObject,
   PropertiesObject,
   RequestBody,
   SchemaObject,
   SchemaObjectArray,
   SchemaObjectObject,
-} from '../../model/openapi/open-api';
-import { OpenapiTypeFile } from '../../model/openapi/openapi-type-file';
-import { Logger } from '../../util/logger';
-import * as yaml from 'js-yaml';
-import { TypesRepository } from '../../model/types-repository';
+} from '../../model/openapi/open-api-types';
+import { OpenApi } from '../../model/openapi/open-api';
+import { Settings } from '../../settings';
 
-type ApexDocHttpResponse = {
+// TODO: Create types that represent how the ApexDocs actually show all of this stuff
+// TODO: Do not depend on OpenApi types directly, but instead ApexDocs types should be convertible to OpenApi ones
+type ApexDocHttpResponse = ApexDocHttpResponseWithoutReference | ApexDocHttpResponseWithReference;
+
+type ApexDocHttpResponseWithoutReference = {
   statusCode: number;
 } & (SchemaObjectObject | SchemaObjectArray);
+
+type ApexDocHttpResponseWithReference = {
+  statusCode: number;
+  schema: string;
+};
 
 type ApexDocHttpRequestBody = {
   description?: string;
@@ -29,6 +39,7 @@ type AddToOpenApi = (inYaml: string, urlValue: string) => void;
 
 type HttpOperations = 'get' | 'put' | 'post' | 'delete' | 'patch';
 
+// TODO: A bunch of this logic should be moved out of here
 export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
   protected readonly _fileContainer: FileContainer;
   openApiModel: OpenApi;
@@ -36,7 +47,7 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
   constructor() {
     super();
     this._fileContainer = new FileContainer();
-    this.openApiModel = new OpenApi();
+    this.openApiModel = new OpenApi(Settings.getInstance().getOpenApiTitle(), '1.0');
   }
 
   fileBuilder(): FileContainer {
@@ -139,7 +150,7 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
     // Convert the YAML into a JSON object.
     const inJson = yaml.load(inYaml) as ApexDocHttpRequestBody;
 
-    if (inJson.schema && this.isString(inJson.schema)) {
+    if (inJson.schema && this.isReferenceString(inJson.schema)) {
       this.handleSchemaReference(inJson);
     }
 
@@ -157,7 +168,7 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
     // Convert the YAML into a JSON object.
     const inJson = yaml.load(inYaml) as ParameterObject;
 
-    if (inJson.schema && this.isString(inJson.schema)) {
+    if (inJson.schema && this.isReferenceString(inJson.schema)) {
       this.handleSchemaReference(inJson);
     }
 
@@ -171,7 +182,41 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
     });
   }
 
-  private handleSchemaReference(inJson: ParameterObject | ApexDocHttpRequestBody) {
+  private addHttpResponsesToOpenApi(inYaml: string, urlValue: string, httpMethodKey: HttpOperations) {
+    // Convert the YAML into a JSON object.
+    const inJson = yaml.load(inYaml) as ApexDocHttpResponse;
+    // If we reach this point that means we have enough data to keep adding to the OpenApi object.
+    if (this.openApiModel.paths[urlValue][httpMethodKey]!.responses === undefined) {
+      this.openApiModel.paths[urlValue][httpMethodKey]!.responses = {};
+    }
+
+    // Copy all properties, but delete the status code as it does not belong to
+    // what goes in the schema
+    const schema: any = { ...inJson };
+    delete schema.statusCode;
+
+    const hasReference = !!schema.schema;
+    if (hasReference) {
+      // If it contains a schema property, we are dealing with a reference
+      this.handleSchemaReference(schema);
+    }
+
+    let schemaToOutput;
+    if (hasReference) {
+      schemaToOutput = schema.schema;
+    } else {
+      schemaToOutput = schema;
+    }
+
+    this.openApiModel.paths[urlValue][httpMethodKey]!.responses![inJson.statusCode] = {
+      description: `Status code ${inJson.statusCode}`,
+      content: {
+        'application/json': { schema: schemaToOutput },
+      },
+    };
+  }
+
+  private handleSchemaReference(inJson: ParameterObject | ApexDocHttpRequestBody | ApexDocHttpResponseWithReference) {
     // We are dealing with a reference to a different class.
     const referencedClassName = inJson.schema as string;
     inJson.schema = {
@@ -219,6 +264,7 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
   }
 
   private getReferenceType(typeInMirror: string): string {
+    // TODO: Better support for list and maps, instead of it just returning object
     // Returns a valid type supported by OpenApi from a received Apex type.
     typeInMirror = typeInMirror.toLowerCase();
     switch (typeInMirror) {
@@ -241,30 +287,10 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
     }
   }
 
-  private addHttpResponsesToOpenApi(inYaml: string, urlValue: string, httpMethodKey: HttpOperations) {
-    // Convert the YAML into a JSON object.
-    const inJson = yaml.load(inYaml) as ApexDocHttpResponse;
-    // If we reach this point that means we have enough data to keep adding to the OpenApi object.
-    if (this.openApiModel.paths[urlValue][httpMethodKey]!.responses === undefined) {
-      this.openApiModel.paths[urlValue][httpMethodKey]!.responses = {};
-    }
-
-    // Copy all properties, but delete the status code as it does not belong to
-    // what goes in the schema
-    const schema: any = { ...inJson };
-    delete schema.statusCode;
-    this.openApiModel.paths[urlValue][httpMethodKey]!.responses![inJson.statusCode] = {
-      description: `Status code ${inJson.statusCode}`,
-      content: {
-        'application/json': { schema: schema },
-      },
-    };
-  }
-
   private hasAnnotation = (method: MethodMirror, annotationName: string) =>
     method.annotations.some((annotation) => annotation.name.toLowerCase() === annotationName);
 
-  private isString = (targetObject: any): boolean => {
+  private isReferenceString = (targetObject: any): boolean => {
     return typeof targetObject === 'string' || targetObject instanceof String;
   };
 }

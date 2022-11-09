@@ -1,134 +1,34 @@
-import { array } from 'yargs';
-import { Settings } from '../../settings';
+import { ComponentsObject, InfoObject, PathsObject, ServerObject } from './open-api-types';
 
+const OPEN_API_VERSION = '3.1.0';
+// TODO: Allow for users to (optionally) pass a namespace that would be appended here, since that is supported
+// by Salesforce in cases where the endpoint is in a managed package
+const SERVER_URL = '/services/apexrest/';
+
+/**
+ * Represents the OpenApi 3.1.0 spec
+ * https://spec.openapis.org/oas/v3.1.0
+ */
+// TODO: Unit tests
 export class OpenApi {
-  openapi = '3.1.0';
+  openapi = OPEN_API_VERSION;
   info: InfoObject;
   paths: PathsObject;
   servers: ServerObject[];
   components?: ComponentsObject;
 
-  constructor() {
+  constructor(title: string, version: string) {
     this.info = {
-      title: Settings.getInstance().getOpenApiTitle(),
-      version: '1.0',
+      title: title,
+      version: version,
     };
 
     this.servers = [
       {
-        url: '/services/apexrest/',
+        url: SERVER_URL,
       },
     ];
 
     this.paths = {};
   }
 }
-
-type InfoObject = {
-  title: string;
-  version: string;
-};
-
-type ServerObject = {
-  url: string;
-};
-
-export type PathsObject = {
-  [index: string]: PathItemObject;
-};
-
-export type PathItemObject = {
-  description?: string;
-  get?: OperationObject;
-  put?: OperationObject;
-  post?: OperationObject;
-  delete?: OperationObject;
-  patch?: OperationObject;
-};
-
-type OperationObject = {
-  description?: string;
-  requestBody?: RequestBody;
-  parameters?: ParameterObject[];
-  responses?: ResponsesObject;
-};
-
-// Parameters
-export type ParameterObject = {
-  name: string;
-  in: 'query' | 'header' | 'path' | 'cookie';
-  description?: string;
-  required?: boolean;
-  schema?: SchemaObject | string;
-};
-
-// Request Body
-export type RequestBody = {
-  description?: string;
-  content: RequestBodyContent;
-  required?: boolean;
-};
-
-type RequestBodyContent = {
-  [index: string]: MediaTypeObject; // Only key supported is "application/json" for now.
-};
-
-type MediaTypeObject = {
-  schema?: SchemaObject;
-  example?: any; // TODO: Parse this on the output
-  examples?: { [index: string]: ExampleObject }; // TODO: Parse this on the output
-};
-
-type ExampleObject = {
-  summary?: string;
-  description?: string;
-  value?: any;
-};
-
-// Responses
-type ResponsesObject = {
-  [index: string]: ResponseObject;
-};
-
-type ResponseObject = {
-  description: string;
-  content?: ContentObject;
-};
-
-type ContentObject = {
-  [index: string]: SchemaObject; // key is usually 'application/json'
-};
-
-// Common
-
-export type SchemaObject = ({ schema: SchemaObjectObject } | ReferenceObject) | SchemaObjectArray;
-
-export type SchemaObjectObject = {
-  type: string; // This can be "object" (which would require properties), or a primitive
-  properties?: PropertiesObject;
-};
-
-export type PropertiesObject = {
-  [index: string]: {
-    type: string;
-    description?: string;
-    format?: string;
-  };
-};
-
-export type SchemaObjectArray = {
-  type: 'array';
-  items: SchemaObject;
-};
-
-// Reference and components
-
-export type ReferenceObject = {
-  $ref: string;
-};
-
-export type ComponentsObject = {
-  schemas: {
-    [index: string]: SchemaObjectObject;
-  };
-};

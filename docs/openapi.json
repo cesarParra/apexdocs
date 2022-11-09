@@ -247,10 +247,42 @@
             "required": true,
             "description": "My sample description.",
             "schema": {
-              "type": "string"
+              "$ref": "#/components/schemas/SampleClass"
             }
           }
-        ]
+        ],
+        "responses": {
+          "200": {
+            "description": "Status code 200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SampleClass"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Status code 304",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SampleClass"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Status code 500",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SampleClass"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
