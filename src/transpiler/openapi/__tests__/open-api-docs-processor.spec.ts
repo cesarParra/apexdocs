@@ -1,4 +1,4 @@
-import { Annotation, ClassMirror } from '@cparra/apex-reflection';
+import { Annotation, ClassMirror, DocComment } from '@cparra/apex-reflection';
 import { AnnotationElementValue } from '@cparra/apex-reflection/index';
 import { OpenApiDocsProcessor } from '../open-api-docs-processor';
 import { Settings, SettingsConfig } from '../../../settings';
@@ -15,6 +15,31 @@ class SettingsBuilder {
       defaultGroupName: 'Misc',
       sanitizeHtml: true,
       openApiTitle: 'Apex API',
+    };
+  }
+}
+
+class DocCommentBuilder {
+  private description?: string;
+
+  withDescription(description: string): DocCommentBuilder {
+    this.description = description;
+    return this;
+  }
+
+  build(): DocComment {
+    return {
+      paramAnnotations: [],
+      returnAnnotation: {
+        bodyLines: [],
+      },
+      exampleAnnotation: {
+        bodyLines: [],
+      },
+      throwsAnnotations: [],
+      annotations: [],
+      descriptionLines: [],
+      description: this.description ?? 'Sample Description',
     };
   }
 }
@@ -39,9 +64,15 @@ class AnnotationBuilder {
 
 class ClassMirrorBuilder {
   annotations: Annotation[] = [];
+  docComment?: DocComment;
 
   addAnnotation(annotation: Annotation): ClassMirrorBuilder {
     this.annotations.push(annotation);
+    return this;
+  }
+
+  withDocComment(docComment: DocComment): ClassMirrorBuilder {
+    this.docComment = docComment;
     return this;
   }
 
@@ -59,6 +90,7 @@ class ClassMirrorBuilder {
       interfaces: [],
       classes: [],
       access_modifier: 'public',
+      docComment: this.docComment,
     };
   }
 }
@@ -80,4 +112,20 @@ it('should add a path based on the @UrlResource annotation on the class', functi
   processor.onProcess(classMirror);
 
   expect(processor.openApiModel.paths).toHaveProperty('/Account/*');
+});
+
+it('should contain a path with a description when the class has an ApexDoc comment', function () {
+  const annotationElementValue = {
+    key: 'urlMapping',
+    value: "'/Account/*'",
+  };
+  const classMirror = new ClassMirrorBuilder()
+    .addAnnotation(new AnnotationBuilder().addElementValue(annotationElementValue).build())
+    .withDocComment(new DocCommentBuilder().withDescription('My Description').build())
+    .build();
+
+  const processor = new OpenApiDocsProcessor();
+  processor.onProcess(classMirror);
+
+  expect(processor.openApiModel.paths['/Account/*'].description).toBe('My Description');
 });
