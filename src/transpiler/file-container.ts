@@ -1,13 +1,13 @@
-import { File } from '../model/file';
+import { OutputFile } from '../model/outputFile';
 
 export class FileContainer {
-  _files: File[] = [];
+  _files: OutputFile[] = [];
 
-  files(): File[] {
+  files(): OutputFile[] {
     return this._files;
   }
 
-  pushFile(file: File): void {
+  pushFile(file: OutputFile): void {
     this._files.push(file);
   }
 }

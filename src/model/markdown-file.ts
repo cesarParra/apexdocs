@@ -1,7 +1,7 @@
-import { File } from './file';
+import { OutputFile } from './outputFile';
 import ClassFileGeneratorHelper from '../transpiler/markdown/class-file-generatorHelper';
 
-export class MarkdownFile extends File {
+export class MarkdownFile extends OutputFile {
   fileExtension(): string {
     return '.md';
   }

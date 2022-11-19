@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import * as yargs from 'yargs';
 
-import { GeneratorChoices, Settings } from '../settings';
+import { Settings } from '../settings';
 import { Apexdocs } from '../application/Apexdocs';
+import { GeneratorChoices } from '../transpiler/generator-choices';
 
 const argv = yargs.options({
   sourceDir: {

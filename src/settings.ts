@@ -1,10 +1,4 @@
-import ProcessorTypeTranspiler from './transpiler/processor-type-transpiler';
-import { JekyllDocsProcessor } from './transpiler/markdown/jekyll/jekyll-docsProcessor';
-import DocsifyDocsProcessor from './transpiler/markdown/docsify/docsify-docs-processor';
-import { PlainMarkdownDocsProcessor } from './transpiler/markdown/plain-markdown/plain-docsProcessor';
-import { OpenApiDocsProcessor } from './transpiler/openapi/open-api-docs-processor';
-
-export type GeneratorChoices = 'jekyll' | 'docsify' | 'plain-markdown' | 'openapi';
+import { GeneratorChoices } from './transpiler/generator-choices';
 
 export interface SettingsConfig {
   sourceDirectory: string;
@@ -50,28 +44,8 @@ export class Settings {
     return this.config.outputDir;
   }
 
-  private static typeTranspilerCache?: ProcessorTypeTranspiler;
-
-  get typeTranspiler(): ProcessorTypeTranspiler {
-    if (Settings.typeTranspilerCache) {
-      return Settings.typeTranspilerCache;
-    }
-    switch (this.config.targetGenerator) {
-      case 'jekyll':
-        Settings.typeTranspilerCache = new JekyllDocsProcessor();
-        return Settings.typeTranspilerCache;
-      case 'docsify':
-        Settings.typeTranspilerCache = new DocsifyDocsProcessor();
-        return Settings.typeTranspilerCache;
-      case 'plain-markdown':
-        Settings.typeTranspilerCache = new PlainMarkdownDocsProcessor();
-        return Settings.typeTranspilerCache;
-      case 'openapi':
-        Settings.typeTranspilerCache = new OpenApiDocsProcessor();
-        return Settings.typeTranspilerCache;
-      default:
-        throw Error('Invalid target generator');
-    }
+  get targetGenerator(): GeneratorChoices {
+    return this.config.targetGenerator;
   }
 
   get indexOnly(): boolean {

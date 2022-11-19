@@ -12,5 +12,7 @@ export default abstract class ProcessorTypeTranspiler {
 
   abstract fileBuilder(): FileContainer;
 
-  abstract getLinkingStrategy(): LinkingStrategy;
+  getLinkingStrategy(): LinkingStrategy {
+    return 'root-relative';
+  }
 }

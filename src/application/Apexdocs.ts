@@ -11,6 +11,7 @@ import ErrorLogger from '../util/error-logger';
 import ApexBundle from '../model/apex-bundle';
 import Manifest from '../model/manifest';
 import { TypesRepository } from '../model/types-repository';
+import { TypeTranspilerFactory } from '../transpiler/factory';
 
 /**
  * Application entry-point to generate documentation out of Apex source files.
@@ -26,7 +27,7 @@ export class Apexdocs {
     TypesRepository.getInstance().populateAll(manifest.types);
     const filteredTypes = this.filterByScopes(manifest);
     TypesRepository.getInstance().populateScoped(filteredTypes);
-    const processor = Settings.getInstance().typeTranspiler;
+    const processor = TypeTranspilerFactory.get(Settings.getInstance().targetGenerator);
     Transpiler.generate(filteredTypes, processor);
     const generatedFiles = processor.fileBuilder().files();
     FileWriter.write(generatedFiles, (fileName: string) => {

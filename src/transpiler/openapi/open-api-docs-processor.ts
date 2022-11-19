@@ -47,15 +47,11 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
   constructor() {
     super();
     this._fileContainer = new FileContainer();
-    this.openApiModel = new OpenApi(Settings.getInstance().getOpenApiTitle(), '1.0');
+    this.openApiModel = new OpenApi(Settings.getInstance().getOpenApiTitle(), '1.0.0');
   }
 
   fileBuilder(): FileContainer {
     return this._fileContainer;
-  }
-
-  getLinkingStrategy(): LinkingStrategy {
-    return 'root-relative';
   }
 
   onProcess(type: Type): void {
