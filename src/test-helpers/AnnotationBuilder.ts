@@ -5,7 +5,13 @@ import { Annotation, AnnotationElementValue } from '@cparra/apex-reflection';
  * For testing purposes only.
  */
 export class AnnotationBuilder {
-  elementValues: AnnotationElementValue[] = [];
+  private name = 'restresource';
+  private elementValues: AnnotationElementValue[] = [];
+
+  withName(name: string): AnnotationBuilder {
+    this.name = name;
+    return this;
+  }
 
   addElementValue(elementValue: AnnotationElementValue): AnnotationBuilder {
     this.elementValues.push(elementValue);
@@ -15,8 +21,8 @@ export class AnnotationBuilder {
   build(): Annotation {
     return {
       rawDeclaration: '',
-      name: 'restresource',
-      type: 'restResource',
+      name: this.name,
+      type: this.name,
       elementValues: this.elementValues,
     };
   }

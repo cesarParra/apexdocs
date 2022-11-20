@@ -14,7 +14,11 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
   constructor() {
     super();
     this._fileContainer = new FileContainer();
-    this.openApiModel = new OpenApi(Settings.getInstance().getOpenApiTitle(), '1.0.0');
+    const title = Settings.getInstance().getOpenApiTitle();
+    if (!title) {
+      throw Error('No OpenApi title was provided.');
+    }
+    this.openApiModel = new OpenApi(title, '1.0.0');
   }
 
   fileBuilder(): FileContainer {

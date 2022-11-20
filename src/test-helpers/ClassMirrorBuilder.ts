@@ -1,12 +1,13 @@
-import { Annotation, ClassMirror, DocComment } from '@cparra/apex-reflection';
+import { Annotation, ClassMirror, DocComment, MethodMirror } from '@cparra/apex-reflection';
 
 /**
  * Builder class to create ClassMirror objects.
  * For testing purposes only.
  */
 export class ClassMirrorBuilder {
-  annotations: Annotation[] = [];
-  docComment?: DocComment;
+  private annotations: Annotation[] = [];
+  private docComment?: DocComment;
+  private methods: MethodMirror[] = [];
 
   addAnnotation(annotation: Annotation): ClassMirrorBuilder {
     this.annotations.push(annotation);
@@ -18,12 +19,17 @@ export class ClassMirrorBuilder {
     return this;
   }
 
+  addMethod(method: MethodMirror): ClassMirrorBuilder {
+    this.methods.push(method);
+    return this;
+  }
+
   build(): ClassMirror {
     return {
       annotations: this.annotations,
       name: 'SampleClass',
       type_name: 'class',
-      methods: [],
+      methods: this.methods,
       implemented_interfaces: [],
       properties: [],
       fields: [],

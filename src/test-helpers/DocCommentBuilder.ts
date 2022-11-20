@@ -1,4 +1,4 @@
-import { DocComment } from '@cparra/apex-reflection';
+import { DocComment, DocCommentAnnotation } from '@cparra/apex-reflection';
 
 /**
  * Builder class to create DocComment objects.
@@ -6,6 +6,12 @@ import { DocComment } from '@cparra/apex-reflection';
  */
 export class DocCommentBuilder {
   private description?: string;
+  private annotations: DocCommentAnnotation[] = [];
+
+  addAnnotation(annotation: DocCommentAnnotation): DocCommentBuilder {
+    this.annotations.push(annotation);
+    return this;
+  }
 
   withDescription(description: string): DocCommentBuilder {
     this.description = description;
@@ -22,7 +28,7 @@ export class DocCommentBuilder {
         bodyLines: [],
       },
       throwsAnnotations: [],
-      annotations: [],
+      annotations: this.annotations,
       descriptionLines: [],
       description: this.description ?? 'Sample Description',
     };

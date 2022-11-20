@@ -9,7 +9,7 @@ export interface SettingsConfig {
   indexOnly: boolean;
   defaultGroupName: string;
   sanitizeHtml: boolean;
-  openApiTitle: string;
+  openApiTitle?: string;
 }
 
 export class Settings {
@@ -60,7 +60,7 @@ export class Settings {
     return this.config.defaultGroupName;
   }
 
-  public getOpenApiTitle(): string {
+  public getOpenApiTitle(): string | undefined {
     return this.config.openApiTitle;
   }
 }

@@ -10,6 +10,9 @@ import {
   SchemaObjectObject,
 } from '../../../model/openapi/open-api-types';
 import { TypesRepository } from '../../../model/types-repository';
+import { ClassMirrorWrapper } from '../../../model/apex-type-wrappers/ClassMirrorWrapper';
+import { ApexDocHttpRequestBody, RequestBodyBuilder } from './request-body-builder';
+import { Reference } from './ReferenceBuilder';
 
 // TODO: Create types that represent how the ApexDocs actually show all of this stuff
 // TODO: Do not depend on OpenApi types directly, but instead ApexDocs types should be convertible to OpenApi ones
@@ -24,12 +27,6 @@ type ApexDocHttpResponseWithReference = {
   schema: string;
 };
 
-type ApexDocHttpRequestBody = {
-  description?: string;
-  schema: SchemaObject;
-  required?: boolean;
-};
-
 type AddToOpenApi = (inYaml: string, urlValue: string) => void;
 
 type HttpOperations = 'get' | 'put' | 'post' | 'delete' | 'patch';
@@ -41,12 +38,16 @@ export class MethodParser {
   constructor(public openApiModel: OpenApi) {}
 
   public parseMethod(classMirror: ClassMirror, httpUrlEndpoint: string, httpMethodKey: HttpOperations) {
+    const classMirrorWrapper = new ClassMirrorWrapper(classMirror);
     // Apex supports HttpGet, HttpPut, HttpPost, HttpDelete, and HttpPatch, so we search for a method
     // that has one of those annotations.
-    const httpMethod = classMirror.methods.find((method) => this.hasAnnotation(method, `http${httpMethodKey}`));
-    if (!httpMethod) {
+    const httpMethods = classMirrorWrapper.getMethodsByAnnotation(`http${httpMethodKey}`);
+    if (!httpMethods.length) {
       return;
     }
+
+    // We can assume there is at most one method per annotation, as this is an Apex rule.
+    const httpMethod = httpMethods[0];
 
     this.openApiModel.paths[httpUrlEndpoint][httpMethodKey] = {};
     if (httpMethod.docComment?.description) {
@@ -93,19 +94,13 @@ export class MethodParser {
   private addRequestBodyToOpenApi(inYaml: string, urlValue: string, httpMethodKey: HttpOperations) {
     // Convert the YAML into a JSON object.
     const inJson = yaml.load(inYaml) as ApexDocHttpRequestBody;
+    const requestBodyResponse = new RequestBodyBuilder().build(inJson);
 
-    if (inJson.schema && this.isReferenceString(inJson.schema)) {
-      this.handleSchemaReference(inJson);
+    this.openApiModel.paths[urlValue][httpMethodKey]!.requestBody = requestBodyResponse.requestBody;
+    if (requestBodyResponse.reference) {
+      // If a reference is returned, we want to make sure to add it to the OpenApi object as well
+      this.addReference(requestBodyResponse.reference);
     }
-
-    // We will only be supporting one type for now: "application/json".
-    const requestBody: RequestBody = {
-      description: inJson.description,
-      content: { 'application/json': { schema: inJson.schema } },
-      required: inJson.required,
-    };
-
-    this.openApiModel.paths[urlValue][httpMethodKey]!.requestBody = requestBody;
   }
 
   private addParametersToOpenApi(inYaml: string, urlValue: string, httpMethodKey: HttpOperations) {
@@ -231,10 +226,24 @@ export class MethodParser {
     }
   }
 
-  private hasAnnotation = (method: MethodMirror, annotationName: string) =>
-    method.annotations.some((annotation) => annotation.name.toLowerCase() === annotationName);
-
   private isReferenceString = (targetObject: any): boolean => {
     return typeof targetObject === 'string' || targetObject instanceof String;
   };
+
+  private addReference(reference: Reference): void {
+    // Add to "component" section if it hasn't been already
+    if (this.openApiModel.components === undefined) {
+      this.openApiModel.components = {
+        schemas: {},
+      };
+    }
+
+    // Check if the referenced object is already part of the OpenApi object
+    if (this.openApiModel.components.schemas![reference.referencedClass]) {
+      return;
+    }
+
+    // If it isn't, then add it
+    this.openApiModel.components.schemas![reference.referencedClass] = reference.schema;
+  }
 }
