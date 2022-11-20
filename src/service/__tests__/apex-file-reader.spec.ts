@@ -6,12 +6,12 @@ describe('File Reader', () => {
     Settings.build({
       sourceDirectory: '',
       recursive: true,
-      configPath: '',
-      targetGenerator: 'jekyll',
-      group: true,
-      outputDir: '',
       scope: [],
+      outputDir: '',
+      targetGenerator: 'jekyll',
       indexOnly: false,
+      defaultGroupName: 'Misc',
+      sanitizeHtml: true,
     } as SettingsConfig);
   });
 
