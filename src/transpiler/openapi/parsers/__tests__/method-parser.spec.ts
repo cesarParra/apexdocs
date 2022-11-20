@@ -2,7 +2,7 @@ import { ClassMirrorBuilder } from '../../../../test-helpers/ClassMirrorBuilder'
 import { MethodMirrorBuilder } from '../../../../test-helpers/MethodMirrorBuilder';
 import { AnnotationBuilder } from '../../../../test-helpers/AnnotationBuilder';
 import { OpenApi } from '../../../../model/openapi/open-api';
-import { MethodParser } from '../method-parser';
+import { MethodParser } from '../MethodParser';
 import { DocCommentBuilder } from '../../../../test-helpers/DocCommentBuilder';
 
 it('should add an endpoint when there is an HTTP method', function () {

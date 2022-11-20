@@ -5,7 +5,7 @@ import { OpenapiTypeFile } from '../../model/openapi/openapi-type-file';
 import { Logger } from '../../util/logger';
 import { OpenApi } from '../../model/openapi/open-api';
 import { Settings } from '../../settings';
-import { MethodParser } from './parsers/method-parser';
+import { MethodParser } from './parsers/MethodParser';
 
 export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
   protected readonly _fileContainer: FileContainer;

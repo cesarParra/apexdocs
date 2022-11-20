@@ -33,7 +33,7 @@ export type ParameterObject = {
   in: 'query' | 'header' | 'path' | 'cookie';
   description?: string;
   required?: boolean;
-  schema?: SchemaObject | string;
+  schema?: SchemaObject;
 };
 
 // Request Body

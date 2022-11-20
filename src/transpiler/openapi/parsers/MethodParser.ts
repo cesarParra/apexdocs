@@ -11,11 +11,10 @@ import {
 } from '../../../model/openapi/open-api-types';
 import { TypesRepository } from '../../../model/types-repository';
 import { ClassMirrorWrapper } from '../../../model/apex-type-wrappers/ClassMirrorWrapper';
-import { ApexDocHttpRequestBody, RequestBodyBuilder } from './request-body-builder';
+import { ApexDocHttpRequestBody, RequestBodyBuilder } from './RequestBodyBuilder';
 import { Reference } from './ReferenceBuilder';
+import { ApexDocParameterObject, ParameterObjectBuilder } from './ParameterObjectBuilder';
 
-// TODO: Create types that represent how the ApexDocs actually show all of this stuff
-// TODO: Do not depend on OpenApi types directly, but instead ApexDocs types should be convertible to OpenApi ones
 type ApexDocHttpResponse = ApexDocHttpResponseWithoutReference | ApexDocHttpResponseWithReference;
 
 type ApexDocHttpResponseWithoutReference = {
@@ -105,23 +104,22 @@ export class MethodParser {
 
   private addParametersToOpenApi(inYaml: string, urlValue: string, httpMethodKey: HttpOperations) {
     // Convert the YAML into a JSON object.
-    const inJson = yaml.load(inYaml) as ParameterObject;
-
-    if (inJson.schema && this.isReferenceString(inJson.schema)) {
-      this.handleSchemaReference(inJson);
-    }
+    const inJson = yaml.load(inYaml) as ApexDocParameterObject;
+    const parameterObjectResponse = new ParameterObjectBuilder().build(inJson);
 
     if (this.openApiModel.paths[urlValue][httpMethodKey]!.parameters === undefined) {
-      // If we reach this point that means we have enough data to keep adding to the OpenApi object.
+      // If no parameters have been defined yet, initialize the list.
       this.openApiModel.paths[urlValue][httpMethodKey]!.parameters = [];
     }
-
-    this.openApiModel.paths[urlValue][httpMethodKey]!.parameters!.push({
-      ...inJson,
-    });
+    this.openApiModel.paths[urlValue][httpMethodKey]!.parameters!.push(parameterObjectResponse.parameterObject);
+    if (parameterObjectResponse.reference) {
+      // If a reference is returned, we want to make sure to add it to the OpenApi object as well
+      this.addReference(parameterObjectResponse.reference);
+    }
   }
 
   private addHttpResponsesToOpenApi(inYaml: string, urlValue: string, httpMethodKey: HttpOperations) {
+    // TODO: Move to its own class like we did with ParameterObject and RequestBody
     // Convert the YAML into a JSON object.
     const inJson = yaml.load(inYaml) as ApexDocHttpResponse;
     // If we reach this point that means we have enough data to keep adding to the OpenApi object.

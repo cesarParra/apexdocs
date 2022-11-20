@@ -1,4 +1,4 @@
-import { ApexDocHttpRequestBody, RequestBodyBuilder } from '../request-body-builder';
+import { ApexDocHttpRequestBody, RequestBodyBuilder } from '../RequestBodyBuilder';
 
 import { Reference, ReferenceBuilder } from '../ReferenceBuilder';
 import { ReferenceObject } from '../../../../model/openapi/open-api-types';
