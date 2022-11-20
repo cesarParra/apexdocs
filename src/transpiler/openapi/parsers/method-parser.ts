@@ -34,28 +34,32 @@ type AddToOpenApi = (inYaml: string, urlValue: string) => void;
 
 type HttpOperations = 'get' | 'put' | 'post' | 'delete' | 'patch';
 
+/**
+ * Parses ApexDocs with HTTP REST annotations and turns them into an OpenApi specification.
+ */
 export class MethodParser {
   constructor(public openApiModel: OpenApi) {}
 
-  public parseMethod(typeAsClass: ClassMirror, urlValue: string, httpMethodKey: HttpOperations) {
-    const httpMethod = typeAsClass.methods.find((method) => this.hasAnnotation(method, `http${httpMethodKey}`));
+  public parseMethod(classMirror: ClassMirror, httpUrlEndpoint: string, httpMethodKey: HttpOperations) {
+    // Apex supports HttpGet, HttpPut, HttpPost, HttpDelete, and HttpPatch, so we search for a method
+    // that has one of those annotations.
+    const httpMethod = classMirror.methods.find((method) => this.hasAnnotation(method, `http${httpMethodKey}`));
     if (!httpMethod) {
       return;
     }
 
-    this.openApiModel.paths[urlValue][httpMethodKey] = {};
+    this.openApiModel.paths[httpUrlEndpoint][httpMethodKey] = {};
     if (httpMethod.docComment?.description) {
-      this.openApiModel.paths[urlValue][httpMethodKey]!.description = httpMethod.docComment.description;
+      this.openApiModel.paths[httpUrlEndpoint][httpMethodKey]!.description = httpMethod.docComment.description;
     }
 
-    this.parseHttpAnnotation(httpMethod, urlValue, 'http-request-body', (inYaml, urlValue) =>
+    this.parseHttpAnnotation(httpMethod, httpUrlEndpoint, 'http-request-body', (inYaml, urlValue) =>
       this.addRequestBodyToOpenApi(inYaml, urlValue, httpMethodKey),
     );
-
-    this.parseHttpAnnotation(httpMethod, urlValue, 'http-parameter', (inYaml, urlValue) =>
+    this.parseHttpAnnotation(httpMethod, httpUrlEndpoint, 'http-parameter', (inYaml, urlValue) =>
       this.addParametersToOpenApi(inYaml, urlValue, httpMethodKey),
     );
-    this.parseHttpAnnotation(httpMethod, urlValue, 'http-response', (inYaml, urlValue) =>
+    this.parseHttpAnnotation(httpMethod, httpUrlEndpoint, 'http-response', (inYaml, urlValue) =>
       this.addHttpResponsesToOpenApi(inYaml, urlValue, httpMethodKey),
     );
   }
