@@ -229,6 +229,17 @@
       },
       "delete": {
         "description": "Sample HTTP Delete method with references to other types.",
+        "requestBody": {
+          "description": "This is an example of a request body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SampleClass"
+              }
+            }
+          },
+          "required": true
+        },
         "parameters": [
           {
             "name": "limit",
@@ -239,7 +250,39 @@
               "$ref": "#/components/schemas/SampleClass"
             }
           }
-        ]
+        ],
+        "responses": {
+          "200": {
+            "description": "Status code 200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SampleClass"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Status code 304",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SampleClass"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Status code 500",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SampleClass"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

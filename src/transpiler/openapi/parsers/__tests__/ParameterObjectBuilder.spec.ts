@@ -1,6 +1,7 @@
-import { ApexDocParameterObject, ParameterObjectBuilder } from '../ParameterObjectBuilder';
+import { ParameterObjectBuilder } from '../ParameterObjectBuilder';
 import { Reference } from '../ReferenceBuilder';
 import { ReferenceObject } from '../../../../model/openapi/open-api-types';
+import { ApexDocParameterObject } from '../../../../model/openapi/apex-doc-types';
 
 jest.mock('../ReferenceBuilder', () => {
   return {
@@ -30,9 +31,7 @@ it('should build a ParameterObject based on the received schema', function () {
     description: 'Sample description',
     required: true,
     schema: {
-      schema: {
-        type: 'string',
-      },
+      type: 'string',
     },
   };
 

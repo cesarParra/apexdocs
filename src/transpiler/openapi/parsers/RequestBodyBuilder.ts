@@ -1,10 +1,6 @@
-import {
-  RequestBody,
-  SchemaObject,
-  SchemaObjectArray,
-  SchemaObjectObject,
-} from '../../../model/openapi/open-api-types';
+import { RequestBody, SchemaObject } from '../../../model/openapi/open-api-types';
 import { Reference, ReferenceBuilder } from './ReferenceBuilder';
+import { ApexDocHttpRequestBody, ApexDocSchemaObject } from '../../../model/openapi/apex-doc-types';
 
 /**
  * Parses and builds OpenApi Request Body objects.
@@ -41,16 +37,6 @@ export class RequestBodyBuilder {
     return typeof targetObject === 'string' || targetObject instanceof String;
   };
 }
-
-/**
- * Expected type coming from Apex.
- */
-export type ApexDocHttpRequestBody = {
-  description?: string;
-  schema: ApexDocSchemaObject;
-  required?: boolean;
-};
-type ApexDocSchemaObject = ({ schema: SchemaObjectObject } | string) | SchemaObjectArray;
 
 export type RequestBodyResponse = {
   requestBody: RequestBody;

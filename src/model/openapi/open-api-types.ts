@@ -1,16 +1,20 @@
+// verified
 export type InfoObject = {
   title: string;
   version: string;
 };
 
+// verified
 export type ServerObject = {
   url: string;
 };
 
+// verified
 export type PathsObject = {
   [index: string]: PathItemObject;
 };
 
+// verified
 export type PathItemObject = {
   description?: string;
   get?: OperationObject;
@@ -20,6 +24,7 @@ export type PathItemObject = {
   patch?: OperationObject;
 };
 
+// verified
 export type OperationObject = {
   description?: string;
   requestBody?: RequestBody;
@@ -61,7 +66,7 @@ export type ExampleObject = {
 
 // Responses
 export type ResponsesObject = {
-  [index: string]: ResponseObject;
+  [index: string]: ResponseObject; // The key will be the status code number
 };
 
 export type ResponseObject = {
@@ -70,11 +75,11 @@ export type ResponseObject = {
 };
 
 export type ContentObject = {
-  [index: string]: SchemaObject; // key is usually 'application/json'
+  [index: string]: { schema: SchemaObject }; // key is usually 'application/json'
 };
 
 // Common
-export type SchemaObject = ({ schema: SchemaObjectObject } | ReferenceObject) | SchemaObjectArray;
+export type SchemaObject = SchemaObjectObject | SchemaObjectArray | ReferenceObject;
 
 export type SchemaObjectObject = {
   type: string; // This can be "object" (which would require properties), or a primitive

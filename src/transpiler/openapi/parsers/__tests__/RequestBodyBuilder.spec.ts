@@ -1,7 +1,7 @@
-import { ApexDocHttpRequestBody, RequestBodyBuilder } from '../RequestBodyBuilder';
-
-import { Reference, ReferenceBuilder } from '../ReferenceBuilder';
+import { RequestBodyBuilder } from '../RequestBodyBuilder';
+import { Reference } from '../ReferenceBuilder';
 import { ReferenceObject } from '../../../../model/openapi/open-api-types';
+import { ApexDocHttpRequestBody } from '../../../../model/openapi/apex-doc-types';
 
 jest.mock('../ReferenceBuilder', () => {
   return {
@@ -29,13 +29,11 @@ it('should build a RequestBody based on the received schema', function () {
     description: 'Sample Request Body Description',
     required: true,
     schema: {
-      schema: {
-        type: 'object',
-        properties: {
-          Prop1: {
-            type: 'string',
-            description: 'A Property',
-          },
+      type: 'object',
+      properties: {
+        Prop1: {
+          type: 'string',
+          description: 'A Property',
         },
       },
     },

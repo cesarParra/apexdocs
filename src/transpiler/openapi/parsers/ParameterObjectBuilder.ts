@@ -1,5 +1,6 @@
 import { ParameterObject, SchemaObject } from '../../../model/openapi/open-api-types';
 import { Reference, ReferenceBuilder } from './ReferenceBuilder';
+import { ApexDocParameterObject } from '../../../model/openapi/apex-doc-types';
 
 export class ParameterObjectBuilder {
   build(parameter: ApexDocParameterObject): ParameterObjectBuilderResponse {
@@ -29,14 +30,6 @@ export class ParameterObjectBuilder {
     return typeof targetObject === 'string' || targetObject instanceof String;
   };
 }
-
-export type ApexDocParameterObject = {
-  name: string;
-  in: 'query' | 'header' | 'path' | 'cookie';
-  description?: string;
-  required?: boolean;
-  schema?: SchemaObject | string;
-};
 
 export type ParameterObjectBuilderResponse = {
   parameterObject: ParameterObject;

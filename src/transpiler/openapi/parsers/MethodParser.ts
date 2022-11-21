@@ -1,30 +1,16 @@
 import { ClassMirror, MethodMirror } from '@cparra/apex-reflection';
 import { OpenApi } from '../../../model/openapi/open-api';
 import * as yaml from 'js-yaml';
-import {
-  ParameterObject,
-  PropertiesObject,
-  RequestBody,
-  SchemaObject,
-  SchemaObjectArray,
-  SchemaObjectObject,
-} from '../../../model/openapi/open-api-types';
-import { TypesRepository } from '../../../model/types-repository';
 import { ClassMirrorWrapper } from '../../../model/apex-type-wrappers/ClassMirrorWrapper';
-import { ApexDocHttpRequestBody, RequestBodyBuilder } from './RequestBodyBuilder';
 import { Reference } from './ReferenceBuilder';
-import { ApexDocParameterObject, ParameterObjectBuilder } from './ParameterObjectBuilder';
-
-type ApexDocHttpResponse = ApexDocHttpResponseWithoutReference | ApexDocHttpResponseWithReference;
-
-type ApexDocHttpResponseWithoutReference = {
-  statusCode: number;
-} & (SchemaObjectObject | SchemaObjectArray);
-
-type ApexDocHttpResponseWithReference = {
-  statusCode: number;
-  schema: string;
-};
+import { ParameterObjectBuilder } from './ParameterObjectBuilder';
+import { ResponsesBuilder } from './ResponsesBuilder';
+import {
+  ApexDocHttpRequestBody,
+  ApexDocHttpResponse,
+  ApexDocParameterObject,
+} from '../../../model/openapi/apex-doc-types';
+import { RequestBodyBuilder } from './RequestBodyBuilder';
 
 type AddToOpenApi = (inYaml: string, urlValue: string) => void;
 
@@ -119,114 +105,21 @@ export class MethodParser {
   }
 
   private addHttpResponsesToOpenApi(inYaml: string, urlValue: string, httpMethodKey: HttpOperations) {
-    // TODO: Move to its own class like we did with ParameterObject and RequestBody
     // Convert the YAML into a JSON object.
     const inJson = yaml.load(inYaml) as ApexDocHttpResponse;
-    // If we reach this point that means we have enough data to keep adding to the OpenApi object.
+    const responseObjectResponse = new ResponsesBuilder().build(inJson);
+
     if (this.openApiModel.paths[urlValue][httpMethodKey]!.responses === undefined) {
       this.openApiModel.paths[urlValue][httpMethodKey]!.responses = {};
     }
 
-    // Copy all properties, but delete the status code as it does not belong to
-    // what goes in the schema
-    const schema: any = { ...inJson };
-    delete schema.statusCode;
-
-    const hasReference = !!schema.schema;
-    if (hasReference) {
-      // If it contains a schema property, we are dealing with a reference
-      this.handleSchemaReference(schema);
-    }
-
-    let schemaToOutput;
-    if (hasReference) {
-      schemaToOutput = schema.schema;
-    } else {
-      schemaToOutput = schema;
-    }
-
-    this.openApiModel.paths[urlValue][httpMethodKey]!.responses![inJson.statusCode] = {
-      description: `Status code ${inJson.statusCode}`,
-      content: {
-        'application/json': { schema: schemaToOutput },
-      },
-    };
-  }
-
-  private handleSchemaReference(inJson: ParameterObject | ApexDocHttpRequestBody | ApexDocHttpResponseWithReference) {
-    // We are dealing with a reference to a different class.
-    const referencedClassName = inJson.schema as string;
-    inJson.schema = {
-      $ref: `#/components/schemas/${referencedClassName}`,
-    };
-
-    // Add to "component" section if it hasn't been already
-    if (this.openApiModel.components === undefined) {
-      this.openApiModel.components = {
-        schemas: {},
-      };
-    }
-
-    // TODO: We also need to support inner classes
-    const referencedType = TypesRepository.getInstance().getFromAllByName(referencedClassName);
-    if (!referencedType) {
-      // TODO: Maybe throw an error?
-      // TODO: Also check if the referenced type is not a class (it should always be).
-    }
-
-    // Generate properties object from type
-    const properties: PropertiesObject = {};
-
-    // Filtering based on Salesforce's documentation: https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_rest_methods.htm#ApexRESTUserDefinedTypes
-    // Note that we assume that the class only contains object types allowed by Apex Rest:
-    // "Note that the public, private, or global class member variables must be types allowed by Apex REST"
-    const propertiesAndFields = [
-      ...(referencedType as ClassMirror).properties,
-      ...(referencedType as ClassMirror).fields,
-    ]
-      .filter((current) => current.access_modifier.toLowerCase() !== 'protected')
-      .filter((current) => !current.memberModifiers.includes('static')); // TODO: Also filter out transient, but we need to add support in apex-reflection library
-
-    propertiesAndFields.forEach((current) => {
-      properties[current.name] = {
-        type: this.getReferenceType(current.type),
-      };
-    });
-
-    // TODO: Check if it really doesn't exist yet
-    this.openApiModel.components.schemas![referencedClassName] = {
-      type: 'object',
-      properties: properties,
-    };
-  }
-
-  private getReferenceType(typeInMirror: string): string {
-    // TODO: Better support for list and maps, instead of it just returning object
-    // Returns a valid type supported by OpenApi from a received Apex type.
-    typeInMirror = typeInMirror.toLowerCase();
-    switch (typeInMirror) {
-      case 'boolean':
-        return 'boolean';
-      case 'decimal':
-        return 'number';
-      case 'double':
-        return 'number';
-      case 'id':
-        return 'string';
-      case 'integer':
-        return 'integer';
-      case 'long':
-        return 'number';
-      case 'string':
-        return 'string';
-      default:
-        return 'object';
+    this.openApiModel.paths[urlValue][httpMethodKey]!.responses![inJson.statusCode] = responseObjectResponse.response;
+    // TODO: There's some duplication with the next 3 lines, because we do the same in all 3 places
+    if (responseObjectResponse.reference) {
+      // If a reference is returned, we want to make sure to add it to the OpenApi object as well
+      this.addReference(responseObjectResponse.reference);
     }
   }
-
-  private isReferenceString = (targetObject: any): boolean => {
-    return typeof targetObject === 'string' || targetObject instanceof String;
-  };
 
   private addReference(reference: Reference): void {
     // Add to "component" section if it hasn't been already

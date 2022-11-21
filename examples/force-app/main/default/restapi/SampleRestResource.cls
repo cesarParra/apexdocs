@@ -57,33 +57,37 @@ global with sharing class SampleRestResource {
      *         type: string
      * @http-response
      * statusCode: 200
-     * type: object
-     * properties:
-     *   id:
-     *     type: string
-     *     description: The super Id.
-     *   name:
-     *     type: string
-     *   phone:
-     *     type: string
-     *     format: byte
-     * @http-response
-     * statusCode: 500
-     * type: string
-     * @http-response
-     * statusCode: 304
-     * type: object
-     * properties:
-     *   error:
-     *     type: string
-     * @http-response
-     * statusCode: 400
-     * type: array
-     * items:
+     * schema:
      *   type: object
      *   properties:
+     *     id:
+     *       type: string
+     *       description: The super Id.
      *     name:
      *       type: string
+     *     phone:
+     *       type: string
+     *       format: byte
+     * @http-response
+     * statusCode: 500
+     * schema:
+     *   type: string
+     * @http-response
+     * statusCode: 304
+     * schema:
+     *   type: object
+     *   properties:
+     *     error:
+     *       type: string
+     * @http-response
+     * statusCode: 400
+     * schema:
+     *   type: array
+     *   items:
+     *     type: object
+     *     properties:
+     *       name:
+     *         type: string
      */
     @HttpGet
     global static Account doGet() {
@@ -127,33 +131,37 @@ global with sharing class SampleRestResource {
      *         type: string
      * @http-response
      * statusCode: 200
-     * type: object
-     * properties:
-     *   id:
-     *     type: string
-     *     description: The super Id.
-     *   name:
-     *     type: string
-     *   phone:
-     *     type: string
-     *     format: byte
-     * @http-response
-     * statusCode: 500
-     * type: string
-     * @http-response
-     * statusCode: 304
-     * type: object
-     * properties:
-     *   error:
-     *     type: string
-     * @http-response
-     * statusCode: 400
-     * type: array
-     * items:
+     * schema:
      *   type: object
      *   properties:
+     *     id:
+     *       type: string
+     *       description: The super Id.
      *     name:
      *       type: string
+     *     phone:
+     *       type: string
+     *       format: byte
+     * @http-response
+     * statusCode: 500
+     * schema:
+     *   type: string
+     * @http-response
+     * statusCode: 304
+     * schema:
+     *   type: object
+     *   properties:
+     *     error:
+     *       type: string
+     * @http-response
+     * statusCode: 400
+     * schema:
+     *   type: array
+     *   items:
+     *     type: object
+     *     properties:
+     *       name:
+     *         type: string
      */
     @HttpPost
     global static String doPost(String name,
