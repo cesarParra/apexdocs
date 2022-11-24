@@ -8,8 +8,7 @@ export class ReferenceBuilder {
     // TODO: We also need to support inner classes
     const referencedType = TypesRepository.getInstance().getFromAllByName(referencedTypeName);
     if (!referencedType) {
-      // TODO: Maybe throw an error?
-      // TODO: Also check if the referenced type is not a class (it should always be).
+      throw new Error(`The referenced class "${referencedTypeName}" was not found.`);
     }
 
     // Generate properties object from type
@@ -22,8 +21,8 @@ export class ReferenceBuilder {
       ...(referencedType as ClassMirror).properties,
       ...(referencedType as ClassMirror).fields,
     ]
-      .filter((current) => current.access_modifier.toLowerCase() !== 'protected')
-      .filter((current) => !current.memberModifiers.includes('static')); // TODO: Also filter out transient, but we need to add support in apex-reflection library
+      .filter((current) => !current.memberModifiers.includes('static'))
+      .filter((current) => !current.memberModifiers.includes('transient'));
 
     propertiesAndFields.forEach((current) => {
       properties[current.name] = {

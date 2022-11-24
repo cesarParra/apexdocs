@@ -7,7 +7,6 @@ jest.mock('../ReferenceBuilder', () => {
   return {
     ReferenceBuilder: jest.fn().mockImplementation(() => {
       return {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         build: (): Reference => {
           return {
             referencedClass: 'MySampleClass',

@@ -42,6 +42,30 @@
           }
         ],
         "responses": {
+          "100": {
+            "description": "Status code 100",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "anotherObject": {
+                      "description": "An object inside of an object",
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        },
+                        "somethingElse": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
           "200": {
             "description": "Status code 200",
             "content": {
@@ -267,7 +291,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SampleClass"
+                  "$ref": "#/components/schemas/ChildClass"
                 }
               }
             }
@@ -298,6 +322,26 @@
             "type": "number"
           },
           "someVariable": {
+            "type": "string"
+          }
+        }
+      },
+      "ChildClass": {
+        "type": "object",
+        "properties": {
+          "AProp": {
+            "type": "string"
+          },
+          "privateStringFromChild": {
+            "type": "string"
+          },
+          "protectedStringFromParent": {
+            "type": "string"
+          },
+          "publicStringFromParent": {
+            "type": "string"
+          },
+          "protectedGrandParentField": {
             "type": "string"
           }
         }

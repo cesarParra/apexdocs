@@ -88,7 +88,7 @@ export type SchemaObjectObject = {
 
 export type PropertiesObject = {
   [index: string]: {
-    type: string;
+    type: string | SchemaObject;
     description?: string;
     format?: string;
   };

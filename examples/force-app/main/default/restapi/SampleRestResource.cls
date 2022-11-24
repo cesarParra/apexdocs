@@ -23,7 +23,7 @@ global with sharing class SampleRestResource {
      * schema: SampleClass
      * @http-response
      * statusCode: 304
-     * schema: SampleClass
+     * schema: ChildClass
      */
     @HttpDelete
     global static void doDelete() {
@@ -88,6 +88,19 @@ global with sharing class SampleRestResource {
      *     properties:
      *       name:
      *         type: string
+     * @http-response
+     * statusCode: 100
+     * schema:
+     *   type: object
+     *   properties:
+     *     anotherObject:
+     *       description: An object inside of an object
+     *       type: object
+     *       properties:
+     *         message:
+     *           type: string
+     *         somethingElse:
+     *           type: number
      */
     @HttpGet
     global static Account doGet() {
