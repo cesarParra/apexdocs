@@ -1,5 +1,5 @@
 /**
- * @description Account related operations (sample change)
+ * @description Account related operations
  */
 @RestResource(urlMapping='/Account/*')
 global with sharing class SampleRestResource {
