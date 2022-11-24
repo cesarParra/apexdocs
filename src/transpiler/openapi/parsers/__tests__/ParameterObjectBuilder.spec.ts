@@ -37,11 +37,11 @@ it('should build a ParameterObject based on the received schema', function () {
   const response = new ParameterObjectBuilder().build(apexDocParameter);
 
   expect(response.reference).toBeUndefined();
-  expect(response.parameterObject.name).toBe('limit');
-  expect(response.parameterObject.in).toBe('query');
-  expect(response.parameterObject.description).toBe('Sample description');
-  expect(response.parameterObject.required).toBe(true);
-  expect(response.parameterObject.schema).toBe(apexDocParameter.schema);
+  expect(response.body.name).toBe('limit');
+  expect(response.body.in).toBe('query');
+  expect(response.body.description).toBe('Sample description');
+  expect(response.body.required).toBe(true);
+  expect(response.body.schema).toBe(apexDocParameter.schema);
 });
 
 it('should build a ParameterObject with a reference when referencing a different class', function () {
@@ -56,9 +56,9 @@ it('should build a ParameterObject with a reference when referencing a different
   const response = new ParameterObjectBuilder().build(apexDocParameter);
 
   expect(response.reference).not.toBeUndefined();
-  expect(response.parameterObject.name).toBe('limit');
-  expect(response.parameterObject.in).toBe('query');
-  expect(response.parameterObject.description).toBe('Sample description');
-  expect(response.parameterObject.required).toBe(true);
-  expect((response.parameterObject.schema as ReferenceObject).$ref).toBe('/mySampleClass');
+  expect(response.body.name).toBe('limit');
+  expect(response.body.in).toBe('query');
+  expect(response.body.description).toBe('Sample description');
+  expect(response.body.required).toBe(true);
+  expect((response.body.schema as ReferenceObject).$ref).toBe('/mySampleClass');
 });

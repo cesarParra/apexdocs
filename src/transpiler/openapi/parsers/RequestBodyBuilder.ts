@@ -1,44 +1,19 @@
-import { RequestBody, SchemaObject } from '../../../model/openapi/open-api-types';
-import { Reference, ReferenceBuilder } from './ReferenceBuilder';
-import { ApexDocHttpRequestBody, ApexDocSchemaObject } from '../../../model/openapi/apex-doc-types';
+import { RequestBody } from '../../../model/openapi/open-api-types';
+import { Reference } from './ReferenceBuilder';
+import { ApexDocHttpRequestBody } from '../../../model/openapi/apex-doc-types';
+import { Builder } from './Builder';
 
 /**
  * Parses and builds OpenApi Request Body objects.
  */
-export class RequestBodyBuilder {
-  build(apexRequestBody: ApexDocHttpRequestBody): RequestBodyResponse {
-    let reference: Reference | undefined;
-    if (apexRequestBody.schema && this.isReferenceString(apexRequestBody.schema)) {
-      reference = new ReferenceBuilder().build(apexRequestBody.schema as string);
-    }
-
-    // We will only be supporting one type for now: "application/json".
+export class RequestBodyBuilder extends Builder<RequestBody, ApexDocHttpRequestBody> {
+  buildBody(apexRequestBody: ApexDocHttpRequestBody, reference?: Reference): RequestBody {
     return {
-      requestBody: {
-        description: apexRequestBody.description,
-        content: {
-          'application/json': { schema: this.getOpenApiSchemaFromApexDocSchema(apexRequestBody.schema, reference) },
-        },
-        required: apexRequestBody.required,
+      description: apexRequestBody.description,
+      content: {
+        'application/json': { schema: this.getOpenApiSchemaFromApexDocSchema(apexRequestBody, reference) },
       },
-      reference: reference,
+      required: apexRequestBody.required,
     };
   }
-
-  private getOpenApiSchemaFromApexDocSchema(apexSchema: ApexDocSchemaObject, reference?: Reference): SchemaObject {
-    if (reference) {
-      // We are dealing with a reference
-      return reference!.referenceObject;
-    }
-    return apexSchema as SchemaObject;
-  }
-
-  private isReferenceString = (targetObject: any): boolean => {
-    return typeof targetObject === 'string' || targetObject instanceof String;
-  };
 }
-
-export type RequestBodyResponse = {
-  requestBody: RequestBody;
-  reference?: Reference;
-};

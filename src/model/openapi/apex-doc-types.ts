@@ -19,7 +19,7 @@ export type ApexDocParameterObject = {
   in: 'query' | 'header' | 'path' | 'cookie';
   description?: string;
   required?: boolean;
-  schema?: ApexDocSchemaObject;
+  schema: ApexDocSchemaObject;
 };
 
 export type ApexDocSchemaObject = SchemaObjectObject | SchemaObjectArray | string;

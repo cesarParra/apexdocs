@@ -42,10 +42,10 @@ it('should build a RequestBody based on the received schema', function () {
   const response = new RequestBodyBuilder().build(apexRequestBody);
 
   expect(response.reference).toBeUndefined();
-  expect(response.requestBody.description).toBe('Sample Request Body Description');
-  expect(response.requestBody.required).toBe(true);
-  expect(response.requestBody.content).toHaveProperty('application/json');
-  expect(response.requestBody.content['application/json'].schema).toBe(apexRequestBody.schema);
+  expect(response.body.description).toBe('Sample Request Body Description');
+  expect(response.body.required).toBe(true);
+  expect(response.body.content).toHaveProperty('application/json');
+  expect(response.body.content['application/json'].schema).toBe(apexRequestBody.schema);
 });
 
 it('should build a RequestBody with a reference when receiving a reference class name', function () {
@@ -56,5 +56,5 @@ it('should build a RequestBody with a reference when receiving a reference class
   const response = new RequestBodyBuilder().build(apexRequestBody);
 
   expect(response.reference).not.toBeUndefined();
-  expect((response.requestBody.content['application/json']?.schema as ReferenceObject).$ref).toBe('/mySampleClass');
+  expect((response.body.content['application/json']?.schema as ReferenceObject).$ref).toBe('/mySampleClass');
 });

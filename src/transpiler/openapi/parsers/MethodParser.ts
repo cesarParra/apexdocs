@@ -81,7 +81,7 @@ export class MethodParser {
     const inJson = yaml.load(inYaml) as ApexDocHttpRequestBody;
     const requestBodyResponse = new RequestBodyBuilder().build(inJson);
 
-    this.openApiModel.paths[urlValue][httpMethodKey]!.requestBody = requestBodyResponse.requestBody;
+    this.openApiModel.paths[urlValue][httpMethodKey]!.requestBody = requestBodyResponse.body;
     if (requestBodyResponse.reference) {
       // If a reference is returned, we want to make sure to add it to the OpenApi object as well
       this.addReference(requestBodyResponse.reference);
@@ -97,7 +97,7 @@ export class MethodParser {
       // If no parameters have been defined yet, initialize the list.
       this.openApiModel.paths[urlValue][httpMethodKey]!.parameters = [];
     }
-    this.openApiModel.paths[urlValue][httpMethodKey]!.parameters!.push(parameterObjectResponse.parameterObject);
+    this.openApiModel.paths[urlValue][httpMethodKey]!.parameters!.push(parameterObjectResponse.body);
     if (parameterObjectResponse.reference) {
       // If a reference is returned, we want to make sure to add it to the OpenApi object as well
       this.addReference(parameterObjectResponse.reference);
@@ -113,7 +113,7 @@ export class MethodParser {
       this.openApiModel.paths[urlValue][httpMethodKey]!.responses = {};
     }
 
-    this.openApiModel.paths[urlValue][httpMethodKey]!.responses![inJson.statusCode] = responseObjectResponse.response;
+    this.openApiModel.paths[urlValue][httpMethodKey]!.responses![inJson.statusCode] = responseObjectResponse.body;
     // TODO: There's some duplication with the next 3 lines, because we do the same in all 3 places
     if (responseObjectResponse.reference) {
       // If a reference is returned, we want to make sure to add it to the OpenApi object as well

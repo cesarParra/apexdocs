@@ -34,9 +34,9 @@ it('should build a ResponseObject based on the received schema', function () {
   const response = new ResponsesBuilder().build(apexDocResponse);
 
   expect(response.reference).toBeUndefined();
-  expect(response.response.description).toContain('200');
-  expect(response.response.content).toHaveProperty('application/json');
-  expect(response.response.content!['application/json'].schema).toBe(apexDocResponse.schema);
+  expect(response.body.description).toContain('200');
+  expect(response.body.content).toHaveProperty('application/json');
+  expect(response.body.content!['application/json'].schema).toBe(apexDocResponse.schema);
 });
 
 it('should build a ResponseObject with a reference', function () {
