@@ -6,6 +6,7 @@ export class FieldMirrorBuilder {
   private accessModifier = 'public';
   private name = 'fieldName';
   private memberModifiers: MemberModifier[] = [];
+  private type = 'String';
 
   withAccessModifier(accessModifier: string): FieldMirrorBuilder {
     this.accessModifier = accessModifier;
@@ -14,6 +15,11 @@ export class FieldMirrorBuilder {
 
   withName(name: string): FieldMirrorBuilder {
     this.name = name;
+    return this;
+  }
+
+  withType(type: string): FieldMirrorBuilder {
+    this.type = type;
     return this;
   }
 
@@ -28,7 +34,7 @@ export class FieldMirrorBuilder {
       annotations: [],
       name: this.name,
       memberModifiers: this.memberModifiers,
-      type: 'void',
+      type: this.type,
     };
   }
 }

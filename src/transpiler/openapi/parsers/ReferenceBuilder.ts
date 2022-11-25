@@ -25,9 +25,7 @@ export class ReferenceBuilder {
       .filter((current) => !current.memberModifiers.includes('transient'));
 
     propertiesAndFields.forEach((current) => {
-      properties[current.name] = {
-        type: this.getReferenceType(current.type),
-      };
+      properties[current.name] = this.getReferenceType(current.type);
     });
 
     return {
@@ -42,27 +40,33 @@ export class ReferenceBuilder {
     };
   }
 
-  private getReferenceType(typeInMirror: string): string {
+  private getReferenceType(typeInMirror: string): { type: string; format?: string } {
     // TODO: Better support for list and maps, instead of it just returning object
     // Returns a valid type supported by OpenApi from a received Apex type.
     typeInMirror = typeInMirror.toLowerCase();
     switch (typeInMirror) {
       case 'boolean':
-        return 'boolean';
+        return { type: 'boolean' };
+      case 'date':
+        return { type: 'string', format: 'date' };
+      case 'datetime':
+        return { type: 'string', format: 'date-time' };
       case 'decimal':
-        return 'number';
+        return { type: 'number' };
       case 'double':
-        return 'number';
+        return { type: 'number' };
       case 'id':
-        return 'string';
+        return { type: 'string' };
       case 'integer':
-        return 'integer';
+        return { type: 'integer' };
       case 'long':
-        return 'number';
+        return { type: 'integer', format: 'int64' };
       case 'string':
-        return 'string';
+        return { type: 'string' };
+      case 'time':
+        return { type: 'string', format: 'time' };
       default:
-        return 'object';
+        return { type: 'object' };
     }
   }
 }
