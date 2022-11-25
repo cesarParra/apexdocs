@@ -1,4 +1,4 @@
-import { Annotation, ClassMirror, DocComment, MethodMirror } from '@cparra/apex-reflection';
+import { Annotation, ClassMirror, DocComment, FieldMirror, MethodMirror } from '@cparra/apex-reflection';
 
 /**
  * Builder class to create ClassMirror objects.
@@ -8,6 +8,7 @@ export class ClassMirrorBuilder {
   private annotations: Annotation[] = [];
   private docComment?: DocComment;
   private methods: MethodMirror[] = [];
+  private fields: FieldMirror[] = [];
 
   addAnnotation(annotation: Annotation): ClassMirrorBuilder {
     this.annotations.push(annotation);
@@ -24,6 +25,11 @@ export class ClassMirrorBuilder {
     return this;
   }
 
+  addFiled(field: FieldMirror): ClassMirrorBuilder {
+    this.fields.push(field);
+    return this;
+  }
+
   build(): ClassMirror {
     return {
       annotations: this.annotations,
@@ -32,7 +38,7 @@ export class ClassMirrorBuilder {
       methods: this.methods,
       implemented_interfaces: [],
       properties: [],
-      fields: [],
+      fields: this.fields,
       constructors: [],
       enums: [],
       interfaces: [],
