@@ -84,14 +84,11 @@ export type SchemaObject = SchemaObjectObject | SchemaObjectArray | ReferenceObj
 export type SchemaObjectObject = {
   type: string; // This can be "object" (which would require properties), or a primitive
   properties?: PropertiesObject;
+  format?: string;
 };
 
 export type PropertiesObject = {
-  [index: string]: {
-    type: string | SchemaObject;
-    description?: string;
-    format?: string;
-  };
+  [index: string]: SchemaObject;
 };
 
 export type SchemaObjectArray = {
@@ -107,6 +104,6 @@ export type ReferenceObject = {
 
 export type ComponentsObject = {
   schemas: {
-    [index: string]: SchemaObjectObject;
+    [index: string]: SchemaObject;
   };
 };

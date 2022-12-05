@@ -11,7 +11,7 @@
   ],
   "paths": {
     "/Account/*": {
-      "description": "Account related operations.",
+      "description": "Account related operations",
       "get": {
         "description": "This is a sample HTTP Get method",
         "parameters": [
@@ -320,6 +320,9 @@
           },
           "AnotherProp": {
             "type": "number"
+          },
+          "listOfStrings": {
+            "type": "object"
           },
           "someVariable": {
             "type": "string"

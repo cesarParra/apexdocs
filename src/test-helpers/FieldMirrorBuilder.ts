@@ -1,4 +1,5 @@
 import { FieldMirror } from '@cparra/apex-reflection';
+import { ReferencedType } from '@cparra/apex-reflection/index';
 
 type MemberModifier = 'static' | 'webservice' | 'final' | 'override' | 'testmethod' | 'transient';
 
@@ -6,7 +7,10 @@ export class FieldMirrorBuilder {
   private accessModifier = 'public';
   private name = 'fieldName';
   private memberModifiers: MemberModifier[] = [];
-  private type = 'String';
+  private type: ReferencedType = {
+    type: 'String',
+    rawDeclaration: 'String',
+  };
 
   withAccessModifier(accessModifier: string): FieldMirrorBuilder {
     this.accessModifier = accessModifier;
@@ -19,6 +23,14 @@ export class FieldMirrorBuilder {
   }
 
   withType(type: string): FieldMirrorBuilder {
+    this.type = {
+      rawDeclaration: type,
+      type: type,
+    };
+    return this;
+  }
+
+  withReferencedType(type: ReferencedType): FieldMirrorBuilder {
     this.type = type;
     return this;
   }
@@ -34,7 +46,8 @@ export class FieldMirrorBuilder {
       annotations: [],
       name: this.name,
       memberModifiers: this.memberModifiers,
-      type: this.type,
+      typeReference: this.type,
+      type: this.type.type,
     };
   }
 }

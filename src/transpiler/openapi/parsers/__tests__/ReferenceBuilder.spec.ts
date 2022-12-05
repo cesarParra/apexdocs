@@ -2,6 +2,7 @@ import { TypesRepository } from '../../../../model/types-repository';
 import { ReferenceBuilder } from '../ReferenceBuilder';
 import { ClassMirrorBuilder } from '../../../../test-helpers/ClassMirrorBuilder';
 import { FieldMirrorBuilder } from '../../../../test-helpers/FieldMirrorBuilder';
+import { SchemaObjectArray, SchemaObjectObject } from '../../../../model/openapi/open-api-types';
 
 describe('ReferenceBuilder', () => {
   describe('Validation', () => {
@@ -30,8 +31,8 @@ describe('ReferenceBuilder', () => {
 
       expect(result.referencedClass).toBe('className');
       expect(result.referenceObject.$ref).toBe('#/components/schemas/className');
-      expect(result.schema.type).toBe('object');
-      expect(result.schema.properties).toMatchObject({});
+      expect((result.schema as SchemaObjectObject).type).toBe('object');
+      expect((result.schema as SchemaObjectObject).properties).toMatchObject({});
     });
 
     it('should filter out transient members', function () {
@@ -47,8 +48,8 @@ describe('ReferenceBuilder', () => {
 
       expect(result.referencedClass).toBe('className');
       expect(result.referenceObject.$ref).toBe('#/components/schemas/className');
-      expect(result.schema.type).toBe('object');
-      expect(result.schema.properties).toMatchObject({});
+      expect((result.schema as SchemaObjectObject).type).toBe('object');
+      expect((result.schema as SchemaObjectObject).properties).toMatchObject({});
     });
 
     it('should include private members', function () {
@@ -64,8 +65,8 @@ describe('ReferenceBuilder', () => {
 
       expect(result.referencedClass).toBe('className');
       expect(result.referenceObject.$ref).toBe('#/components/schemas/className');
-      expect(result.schema.type).toBe('object');
-      expect(result.schema.properties).toHaveProperty('fieldName');
+      expect((result.schema as SchemaObjectObject).type).toBe('object');
+      expect((result.schema as SchemaObjectObject).properties).toHaveProperty('fieldName');
     });
 
     it('should include protected members', function () {
@@ -81,8 +82,8 @@ describe('ReferenceBuilder', () => {
 
       expect(result.referencedClass).toBe('className');
       expect(result.referenceObject.$ref).toBe('#/components/schemas/className');
-      expect(result.schema.type).toBe('object');
-      expect(result.schema.properties).toHaveProperty('fieldName');
+      expect((result.schema as SchemaObjectObject).type).toBe('object');
+      expect((result.schema as SchemaObjectObject).properties).toHaveProperty('fieldName');
     });
 
     it('should include public members', function () {
@@ -98,8 +99,8 @@ describe('ReferenceBuilder', () => {
 
       expect(result.referencedClass).toBe('className');
       expect(result.referenceObject.$ref).toBe('#/components/schemas/className');
-      expect(result.schema.type).toBe('object');
-      expect(result.schema.properties).toHaveProperty('fieldName');
+      expect((result.schema as SchemaObjectObject).type).toBe('object');
+      expect((result.schema as SchemaObjectObject).properties).toHaveProperty('fieldName');
     });
 
     it('should include global members', function () {
@@ -115,8 +116,8 @@ describe('ReferenceBuilder', () => {
 
       expect(result.referencedClass).toBe('className');
       expect(result.referenceObject.$ref).toBe('#/components/schemas/className');
-      expect(result.schema.type).toBe('object');
-      expect(result.schema.properties).toHaveProperty('fieldName');
+      expect((result.schema as SchemaObjectObject).type).toBe('object');
+      expect((result.schema as SchemaObjectObject).properties).toHaveProperty('fieldName');
     });
   });
 
@@ -132,8 +133,10 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      expect(result.schema.properties).toHaveProperty('fieldName');
-      expect(result.schema.properties!['fieldName'].type).toBe('boolean');
+      const schema = result.schema as SchemaObjectObject;
+      expect(schema.properties).toHaveProperty('fieldName');
+      const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
+      expect(fieldSchema.type).toBe('boolean');
     });
 
     it('should correctly identify and parse Date fields', function () {
@@ -147,9 +150,11 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      expect(result.schema.properties).toHaveProperty('fieldName');
-      expect(result.schema.properties!['fieldName'].type).toBe('string');
-      expect(result.schema.properties!['fieldName'].format).toBe('date');
+      const schema = result.schema as SchemaObjectObject;
+      expect(schema.properties).toHaveProperty('fieldName');
+      const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
+      expect(fieldSchema.type).toBe('string');
+      expect(fieldSchema.format).toBe('date');
     });
 
     it('should correctly identify and parse Datetime fields', function () {
@@ -163,9 +168,11 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      expect(result.schema.properties).toHaveProperty('fieldName');
-      expect(result.schema.properties!['fieldName'].type).toBe('string');
-      expect(result.schema.properties!['fieldName'].format).toBe('date-time');
+      const schema = result.schema as SchemaObjectObject;
+      expect(schema.properties).toHaveProperty('fieldName');
+      const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
+      expect(fieldSchema.type).toBe('string');
+      expect(fieldSchema.format).toBe('date-time');
     });
 
     it('should correctly identify and parse Decimal fields', function () {
@@ -179,8 +186,10 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      expect(result.schema.properties).toHaveProperty('fieldName');
-      expect(result.schema.properties!['fieldName'].type).toBe('number');
+      const schema = result.schema as SchemaObjectObject;
+      expect(schema.properties).toHaveProperty('fieldName');
+      const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
+      expect(fieldSchema.type).toBe('number');
     });
 
     it('should correctly identify and parse Double fields', function () {
@@ -194,8 +203,10 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      expect(result.schema.properties).toHaveProperty('fieldName');
-      expect(result.schema.properties!['fieldName'].type).toBe('number');
+      const schema = result.schema as SchemaObjectObject;
+      expect(schema.properties).toHaveProperty('fieldName');
+      const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
+      expect(fieldSchema.type).toBe('number');
     });
 
     it('should correctly identify and parse ID fields', function () {
@@ -209,8 +220,10 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      expect(result.schema.properties).toHaveProperty('fieldName');
-      expect(result.schema.properties!['fieldName'].type).toBe('string');
+      const schema = result.schema as SchemaObjectObject;
+      expect(schema.properties).toHaveProperty('fieldName');
+      const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
+      expect(fieldSchema.type).toBe('string');
     });
 
     it('should correctly identify and parse Integer fields', function () {
@@ -224,8 +237,10 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      expect(result.schema.properties).toHaveProperty('fieldName');
-      expect(result.schema.properties!['fieldName'].type).toBe('integer');
+      const schema = result.schema as SchemaObjectObject;
+      expect(schema.properties).toHaveProperty('fieldName');
+      const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
+      expect(fieldSchema.type).toBe('integer');
     });
 
     it('should correctly identify and parse Long fields', function () {
@@ -239,9 +254,11 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      expect(result.schema.properties).toHaveProperty('fieldName');
-      expect(result.schema.properties!['fieldName'].type).toBe('integer');
-      expect(result.schema.properties!['fieldName'].format).toBe('int64');
+      const schema = result.schema as SchemaObjectObject;
+      expect(schema.properties).toHaveProperty('fieldName');
+      const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
+      expect(fieldSchema.type).toBe('integer');
+      expect(fieldSchema.format).toBe('int64');
     });
 
     it('should correctly identify and parse String fields', function () {
@@ -255,8 +272,10 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      expect(result.schema.properties).toHaveProperty('fieldName');
-      expect(result.schema.properties!['fieldName'].type).toBe('string');
+      const schema = result.schema as SchemaObjectObject;
+      expect((result.schema as SchemaObjectObject).properties).toHaveProperty('fieldName');
+      const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
+      expect(fieldSchema.type).toBe('string');
     });
 
     it('should correctly identify and parse Time fields', function () {
@@ -270,9 +289,46 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      expect(result.schema.properties).toHaveProperty('fieldName');
-      expect(result.schema.properties!['fieldName'].type).toBe('string');
-      expect(result.schema.properties!['fieldName'].format).toBe('time');
+      const schema = result.schema as SchemaObjectObject;
+      expect(schema.properties).toHaveProperty('fieldName');
+      const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
+      expect(fieldSchema.type).toBe('string');
+      expect(fieldSchema.format).toBe('time');
+    });
+  });
+
+  describe('Collection of primitives are supported', () => {
+    it('should correctly identify and parse a collection of boolean fields', function () {
+      const classMirror = new ClassMirrorBuilder()
+        .addFiled(
+          new FieldMirrorBuilder()
+            .withName('fieldName')
+            .withReferencedType({
+              type: 'List',
+              rawDeclaration: 'List<Boolean>',
+              ofType: {
+                type: 'Boolean',
+                rawDeclaration: 'Boolean',
+              },
+            })
+            .build(),
+        )
+        .build();
+
+      TypesRepository.getInstance = jest.fn().mockReturnValue({
+        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+      });
+
+      const result = new ReferenceBuilder().build('className');
+
+      const schema = result.schema as SchemaObjectObject;
+      expect(schema.properties).toHaveProperty('fieldName');
+
+      const fieldSchema = schema.properties!['fieldName'] as SchemaObjectArray;
+      expect(fieldSchema.type).toBe('array');
+
+      const collectionOf = fieldSchema.items as SchemaObjectObject;
+      expect(collectionOf.type).toBe('boolean');
     });
   });
 });

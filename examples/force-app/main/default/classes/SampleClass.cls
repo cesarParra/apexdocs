@@ -20,6 +20,9 @@ public with sharing class SampleClass {
     }
 
     // @start-group Common Constants
+
+    public List<String> listOfStrings;
+
     /**
      * @description This is a constant.
      */

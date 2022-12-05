@@ -27,6 +27,10 @@ export class MethodMirrorBuilder {
       name: this.name,
       memberModifiers: [],
       type: 'void',
+      typeReference: {
+        type: 'void',
+        rawDeclaration: 'void',
+      },
       parameters: [],
       docComment: this.docComment,
     };

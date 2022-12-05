@@ -1,6 +1,7 @@
-import { PropertiesObject, ReferenceObject, SchemaObjectObject } from '../../../model/openapi/open-api-types';
+import { PropertiesObject, ReferenceObject, SchemaObject } from '../../../model/openapi/open-api-types';
 import { TypesRepository } from '../../../model/types-repository';
 import { ClassMirror } from '@cparra/apex-reflection';
+import { ListObjectType, ReferencedType } from '@cparra/apex-reflection/index';
 
 // TODO: Unit tests
 export class ReferenceBuilder {
@@ -25,7 +26,7 @@ export class ReferenceBuilder {
       .filter((current) => !current.memberModifiers.includes('transient'));
 
     propertiesAndFields.forEach((current) => {
-      properties[current.name] = this.getReferenceType(current.type);
+      properties[current.name] = this.getReferenceType(current.typeReference);
     });
 
     return {
@@ -40,11 +41,12 @@ export class ReferenceBuilder {
     };
   }
 
-  private getReferenceType(typeInMirror: string): { type: string; format?: string } {
-    // TODO: Better support for list and maps, instead of it just returning object
+  private getReferenceType(typeInMirror: ReferencedType): SchemaObject {
+    // TODO: Return descriptions based on the apexdoc for the prop
+
     // Returns a valid type supported by OpenApi from a received Apex type.
-    typeInMirror = typeInMirror.toLowerCase();
-    switch (typeInMirror) {
+    const typeName = typeInMirror.type.toLowerCase();
+    switch (typeName) {
       case 'boolean':
         return { type: 'boolean' };
       case 'date':
@@ -65,7 +67,10 @@ export class ReferenceBuilder {
         return { type: 'string' };
       case 'time':
         return { type: 'string', format: 'time' };
+      case 'list':
+        return { type: 'array', items: this.getReferenceType((typeInMirror as ListObjectType).ofType) };
       default:
+        console.log('GOT HERE');
         return { type: 'object' };
     }
   }
@@ -80,5 +85,5 @@ export type Reference = {
   /** OpenApi style reference object */
   referenceObject: ReferenceObject;
   /** Parsed representation of the referenced object as an OpenApi Schema object */
-  schema: SchemaObjectObject;
+  schema: SchemaObject;
 };
