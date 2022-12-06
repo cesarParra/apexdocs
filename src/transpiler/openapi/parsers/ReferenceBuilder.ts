@@ -6,7 +6,7 @@ import {
   SchemaObjectObject,
 } from '../../../model/openapi/open-api-types';
 import { TypesRepository } from '../../../model/types-repository';
-import { ClassMirror, Type } from '@cparra/apex-reflection';
+import { ClassMirror, FieldMirror, PropertyMirror, Type } from '@cparra/apex-reflection';
 import { ListObjectType, ReferencedType } from '@cparra/apex-reflection/index';
 
 export class ReferenceBuilder {
@@ -23,7 +23,7 @@ export class ReferenceBuilder {
     // https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_rest_methods.htm#ApexRESTUserDefinedTypes
     // We assume that the class only contains object types allowed by Apex Rest:
     // "Note that the public, private, or global class member variables must be types allowed by Apex REST"
-    const propertiesAndFields = [
+    const propertiesAndFields: (FieldMirror | PropertyMirror)[] = [
       ...(referencedType as ClassMirror).properties,
       ...(referencedType as ClassMirror).fields,
     ]
@@ -35,6 +35,7 @@ export class ReferenceBuilder {
     propertiesAndFields.forEach((current) => {
       const pair = this.getReferenceType(current.typeReference);
       properties[current.name] = pair.schema;
+      properties[current.name].description = current.docComment?.description;
       pair.referenceComponents.forEach((current) => referencedComponents.push(current));
     });
 

@@ -326,10 +326,12 @@
         "type": "object",
         "properties": {
           "MyProp": {
-            "type": "string"
+            "type": "string",
+            "description": "This is a String property."
           },
           "AnotherProp": {
-            "type": "number"
+            "type": "number",
+            "description": "This is a Decimal property."
           },
           "listOfStrings": {
             "type": "array",
@@ -352,7 +354,8 @@
             "type": "string"
           },
           "protectedStringFromParent": {
-            "type": "string"
+            "type": "string",
+            "description": "This is a protected string, use carefully."
           },
           "publicStringFromParent": {
             "type": "string"
@@ -366,7 +369,8 @@
         "type": "object",
         "properties": {
           "reference2Member": {
-            "$ref": "#/components/schemas/Reference2"
+            "$ref": "#/components/schemas/Reference2",
+            "description": "This is a reference 2 member. Lorem."
           },
           "reference3Member": {
             "$ref": "#/components/schemas/Reference3"
@@ -418,7 +422,8 @@
         "type": "object",
         "properties": {
           "grandChildString": {
-            "type": "string"
+            "type": "string",
+            "description": "This is the grandchild description."
           }
         }
       }

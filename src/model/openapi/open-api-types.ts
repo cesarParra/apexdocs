@@ -85,6 +85,7 @@ export type SchemaObjectObject = {
   type: string; // This can be "object" (which would require properties), or a primitive
   properties?: PropertiesObject;
   format?: string;
+  description?: string;
 };
 
 export type PropertiesObject = {
@@ -94,12 +95,14 @@ export type PropertiesObject = {
 export type SchemaObjectArray = {
   type: 'array';
   items: SchemaObject;
+  description?: string;
 };
 
 // Reference and components
 
 export type ReferenceObject = {
   $ref: string;
+  description?: string;
 };
 
 export type ComponentsObject = {
