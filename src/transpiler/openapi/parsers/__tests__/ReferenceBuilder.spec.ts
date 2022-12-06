@@ -298,7 +298,7 @@ describe('ReferenceBuilder', () => {
   });
 
   describe('Collection of primitives are supported', () => {
-    it('should correctly identify and parse a collection of boolean fields', function () {
+    it('should correctly identify and parse a list of primitive fields', function () {
       const classMirror = new ClassMirrorBuilder()
         .addFiled(
           new FieldMirrorBuilder()
@@ -329,6 +329,73 @@ describe('ReferenceBuilder', () => {
 
       const collectionOf = fieldSchema.items as SchemaObjectObject;
       expect(collectionOf.type).toBe('boolean');
+    });
+
+    it('should correctly identify and parse a set of primitive fields', function () {
+      const classMirror = new ClassMirrorBuilder()
+        .addFiled(
+          new FieldMirrorBuilder()
+            .withName('fieldName')
+            .withReferencedType({
+              type: 'Set',
+              rawDeclaration: 'List<String>',
+              ofType: {
+                type: 'String',
+                rawDeclaration: 'String',
+              },
+            })
+            .build(),
+        )
+        .build();
+
+      TypesRepository.getInstance = jest.fn().mockReturnValue({
+        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+      });
+
+      const result = new ReferenceBuilder().build('className');
+
+      const schema = result.schema as SchemaObjectObject;
+      expect(schema.properties).toHaveProperty('fieldName');
+
+      const fieldSchema = schema.properties!['fieldName'] as SchemaObjectArray;
+      expect(fieldSchema.type).toBe('array');
+
+      const collectionOf = fieldSchema.items as SchemaObjectObject;
+      expect(collectionOf.type).toBe('string');
+    });
+
+    it('should correctly identify and parse a map of primitive fields', function () {
+      const classMirror = new ClassMirrorBuilder()
+        .addFiled(
+          new FieldMirrorBuilder()
+            .withName('fieldName')
+            .withReferencedType({
+              type: 'Map',
+              rawDeclaration: 'Map<String, Boolean>',
+              keyType: {
+                type: 'String',
+                rawDeclaration: 'String',
+              },
+              valueType: {
+                type: 'Boolean',
+                rawDeclaration: 'Boolean',
+              },
+            })
+            .build(),
+        )
+        .build();
+
+      TypesRepository.getInstance = jest.fn().mockReturnValue({
+        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+      });
+
+      const result = new ReferenceBuilder().build('className');
+
+      const schema = result.schema as SchemaObjectObject;
+      expect(schema.properties).toHaveProperty('fieldName');
+
+      const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
+      expect(fieldSchema.type).toBe('object');
     });
   });
 });

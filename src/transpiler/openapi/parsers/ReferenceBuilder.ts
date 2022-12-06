@@ -3,7 +3,6 @@ import { TypesRepository } from '../../../model/types-repository';
 import { ClassMirror } from '@cparra/apex-reflection';
 import { ListObjectType, ReferencedType } from '@cparra/apex-reflection/index';
 
-// TODO: Unit tests
 export class ReferenceBuilder {
   build(referencedTypeName: string): Reference {
     // TODO: We also need to support inner classes
@@ -69,8 +68,11 @@ export class ReferenceBuilder {
         return { type: 'string', format: 'time' };
       case 'list':
         return { type: 'array', items: this.getReferenceType((typeInMirror as ListObjectType).ofType) };
+      case 'set':
+        return { type: 'array', items: this.getReferenceType((typeInMirror as ListObjectType).ofType) };
       default:
-        console.log('GOT HERE');
+        // For Maps, we treat them as objects but do not try to define their shape, because their keys can vary
+        // at runtime.
         return { type: 'object' };
     }
   }

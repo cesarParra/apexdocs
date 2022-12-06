@@ -322,7 +322,10 @@
             "type": "number"
           },
           "listOfStrings": {
-            "type": "object"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "someVariable": {
             "type": "string"
