@@ -491,8 +491,40 @@ describe('ReferenceBuilder', () => {
       expect(result.referenceComponents.some((ref) => ref.referencedClass === 'anotherchild')).toBe(true);
     });
 
-    // TODO: Classes with several references (several members that point to other classes)
+    it('should parse references to collections of other references', function () {
+      const mainClassMirror = new ClassMirrorBuilder()
+        .withName('parent')
+        .addFiled(
+          new FieldMirrorBuilder()
+            .withName('collectionOfChildren')
+            .withReferencedType({
+              type: 'Set',
+              rawDeclaration: 'List<ChildClass>',
+              ofType: {
+                type: 'ChildClass',
+                rawDeclaration: 'List<ChildClass>',
+              },
+            })
+            .build(),
+        )
+        .build();
+
+      const childClass = new ClassMirrorBuilder()
+        .withName('childclass')
+        .addFiled(new FieldMirrorBuilder().withName('stringMember').withType('String').build())
+        .build();
+
+      TypesRepository.getInstance = jest.fn().mockReturnValue({
+        getFromAllByName: jest.fn().mockReturnValueOnce(mainClassMirror).mockReturnValueOnce(childClass),
+      });
+
+      const result = new ReferenceBuilder().build('className');
+
+      expect(result.referenceComponents).toHaveLength(2);
+      expect(result.referenceComponents.some((ref) => ref.referencedClass === 'parent')).toBe(true);
+      expect(result.referenceComponents.some((ref) => ref.referencedClass === 'childclass')).toBe(true);
+    });
+
     // TODO: Multiple levels of references
-    // TODO: Classes with references to collection of other classes
   });
 });

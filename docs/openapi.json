@@ -367,6 +367,15 @@
         "properties": {
           "reference2Member": {
             "$ref": "#/components/schemas/Reference2"
+          },
+          "reference3Member": {
+            "$ref": "#/components/schemas/Reference3"
+          },
+          "reference4Collection": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Reference4"
+            }
           }
         }
       },
@@ -374,6 +383,22 @@
         "type": "object",
         "properties": {
           "stringMember": {
+            "type": "string"
+          }
+        }
+      },
+      "Reference3": {
+        "type": "object",
+        "properties": {
+          "someBoolean": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Reference4": {
+        "type": "object",
+        "properties": {
+          "someString": {
             "type": "string"
           }
         }
