@@ -525,6 +525,52 @@ describe('ReferenceBuilder', () => {
       expect(result.referenceComponents.some((ref) => ref.referencedClass === 'childclass')).toBe(true);
     });
 
-    // TODO: Multiple levels of references
+    it('should parse multiple levels of references', function () {
+      const mainClassMirror = new ClassMirrorBuilder()
+        .withName('parent')
+        .addFiled(
+          new FieldMirrorBuilder()
+            .withName('childClassMember')
+            .withReferencedType({
+              type: 'ChildClass',
+              rawDeclaration: 'ChildClass',
+            })
+            .build(),
+        )
+        .build();
+
+      const childClass = new ClassMirrorBuilder()
+        .withName('child')
+        .addFiled(
+          new FieldMirrorBuilder()
+            .withName('grandChildClassMember')
+            .withReferencedType({
+              type: 'GrandChildClass',
+              rawDeclaration: 'GrandChildClass',
+            })
+            .build(),
+        )
+        .build();
+
+      const grandChildClass = new ClassMirrorBuilder()
+        .withName('grandchild')
+        .addFiled(new FieldMirrorBuilder().withName('stringMember').withType('String').build())
+        .build();
+
+      TypesRepository.getInstance = jest.fn().mockReturnValue({
+        getFromAllByName: jest
+          .fn()
+          .mockReturnValueOnce(mainClassMirror)
+          .mockReturnValueOnce(childClass)
+          .mockReturnValueOnce(grandChildClass),
+      });
+
+      const result = new ReferenceBuilder().build('className');
+
+      expect(result.referenceComponents).toHaveLength(3);
+      expect(result.referenceComponents.some((ref) => ref.referencedClass === 'parent')).toBe(true);
+      expect(result.referenceComponents.some((ref) => ref.referencedClass === 'child')).toBe(true);
+      expect(result.referenceComponents.some((ref) => ref.referencedClass === 'grandchild')).toBe(true);
+    });
   });
 });

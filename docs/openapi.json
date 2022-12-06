@@ -376,6 +376,9 @@
             "items": {
               "$ref": "#/components/schemas/Reference4"
             }
+          },
+          "reference5Member": {
+            "$ref": "#/components/schemas/Reference5"
           }
         }
       },
@@ -399,6 +402,22 @@
         "type": "object",
         "properties": {
           "someString": {
+            "type": "string"
+          }
+        }
+      },
+      "Reference5": {
+        "type": "object",
+        "properties": {
+          "reference6Member": {
+            "$ref": "#/components/schemas/Reference6"
+          }
+        }
+      },
+      "Reference6": {
+        "type": "object",
+        "properties": {
+          "grandChildString": {
             "type": "string"
           }
         }
