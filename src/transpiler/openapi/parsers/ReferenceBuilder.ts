@@ -35,9 +35,7 @@ export class ReferenceBuilder {
     propertiesAndFields.forEach((current) => {
       const pair = this.getReferenceType(current.typeReference);
       properties[current.name] = pair.schema;
-      if (pair.referenceComponent) {
-        referencedComponents.push(pair.referenceComponent);
-      }
+      pair.referenceComponents.forEach((current) => referencedComponents.push(current));
     });
 
     // Make sure to add the "main" reference
@@ -65,25 +63,25 @@ export class ReferenceBuilder {
     const typeName = typeInMirror.type.toLowerCase();
     switch (typeName) {
       case 'boolean':
-        return { schema: { type: 'boolean' } };
+        return { schema: { type: 'boolean' }, referenceComponents: [] };
       case 'date':
-        return { schema: { type: 'string', format: 'date' } };
+        return { schema: { type: 'string', format: 'date' }, referenceComponents: [] };
       case 'datetime':
-        return { schema: { type: 'string', format: 'date-time' } };
+        return { schema: { type: 'string', format: 'date-time' }, referenceComponents: [] };
       case 'decimal':
-        return { schema: { type: 'number' } };
+        return { schema: { type: 'number' }, referenceComponents: [] };
       case 'double':
-        return { schema: { type: 'number' } };
+        return { schema: { type: 'number' }, referenceComponents: [] };
       case 'id':
-        return { schema: { type: 'string' } };
+        return { schema: { type: 'string' }, referenceComponents: [] };
       case 'integer':
-        return { schema: { type: 'integer' } };
+        return { schema: { type: 'integer' }, referenceComponents: [] };
       case 'long':
-        return { schema: { type: 'integer', format: 'int64' } };
+        return { schema: { type: 'integer', format: 'int64' }, referenceComponents: [] };
       case 'string':
-        return { schema: { type: 'string' } };
+        return { schema: { type: 'string' }, referenceComponents: [] };
       case 'time':
-        return { schema: { type: 'string', format: 'time' } };
+        return { schema: { type: 'string', format: 'time' }, referenceComponents: [] };
       case 'list':
         return this.buildCollectionPair(typeInMirror);
       case 'set':
@@ -91,17 +89,17 @@ export class ReferenceBuilder {
       case 'map':
         // For Maps, we treat them as objects but do not try to define their shape, because their keys can vary
         // at runtime.
-        return { schema: { type: 'object' } };
+        return { schema: { type: 'object' }, referenceComponents: [] };
       default:
         // If we got here we are dealing with a non-primitive (most likely a custom class or an SObject).
         const referencedType = TypesRepository.getInstance().getFromAllByName(typeName);
         if (!referencedType) {
-          return { schema: { type: 'object' } };
+          return { schema: { type: 'object' }, referenceComponents: [] };
         }
         const reference = this.buildReferenceFromType(referencedType);
         return {
           schema: reference.entrypointReferenceObject,
-          referenceComponent: reference.referenceComponents[0],
+          referenceComponents: [...reference.referenceComponents],
         };
     }
   }
@@ -110,14 +108,14 @@ export class ReferenceBuilder {
     const innerReference = this.getReferenceType((typeInMirror as ListObjectType).ofType);
     return {
       schema: { type: 'array', items: innerReference.schema },
-      referenceComponent: innerReference.referenceComponent,
+      referenceComponents: [...innerReference.referenceComponents],
     };
   }
 }
 
 type SchemaObjectReferencePair = {
   schema: SchemaObject;
-  referenceComponent?: ReferenceComponent;
+  referenceComponents: ReferenceComponent[];
 };
 
 /**

@@ -412,7 +412,7 @@ describe('ReferenceBuilder', () => {
   });
 
   describe('References to other references', () => {
-    it('should parse references to other references', function () {
+    it('should parse references to another reference', function () {
       const mainClassMirror = new ClassMirrorBuilder()
         .withName('parent')
         .addFiled(
@@ -442,7 +442,57 @@ describe('ReferenceBuilder', () => {
       expect(result.referenceComponents.some((ref) => ref.referencedClass === 'child')).toBe(true);
     });
 
+    it('should parse references to multiple other references', function () {
+      const mainClassMirror = new ClassMirrorBuilder()
+        .withName('parent')
+        .addFiled(
+          new FieldMirrorBuilder()
+            .withName('childClassMember')
+            .withReferencedType({
+              type: 'ChildClass',
+              rawDeclaration: 'ChildClass',
+            })
+            .build(),
+        )
+        .addFiled(
+          new FieldMirrorBuilder()
+            .withName('anotherChildClassMember')
+            .withReferencedType({
+              type: 'AnotherChildClass',
+              rawDeclaration: 'AnotherChildClass',
+            })
+            .build(),
+        )
+        .build();
+
+      const oneChild = new ClassMirrorBuilder()
+        .withName('onechild')
+        .addFiled(new FieldMirrorBuilder().withName('stringMember').withType('String').build())
+        .build();
+
+      const anotherChild = new ClassMirrorBuilder()
+        .withName('anotherchild')
+        .addFiled(new FieldMirrorBuilder().withName('stringMember').withType('String').build())
+        .build();
+
+      TypesRepository.getInstance = jest.fn().mockReturnValue({
+        getFromAllByName: jest
+          .fn()
+          .mockReturnValueOnce(mainClassMirror)
+          .mockReturnValueOnce(oneChild)
+          .mockReturnValueOnce(anotherChild),
+      });
+
+      const result = new ReferenceBuilder().build('className');
+
+      expect(result.referenceComponents).toHaveLength(3);
+      expect(result.referenceComponents.some((ref) => ref.referencedClass === 'parent')).toBe(true);
+      expect(result.referenceComponents.some((ref) => ref.referencedClass === 'onechild')).toBe(true);
+      expect(result.referenceComponents.some((ref) => ref.referencedClass === 'anotherchild')).toBe(true);
+    });
+
     // TODO: Classes with several references (several members that point to other classes)
+    // TODO: Multiple levels of references
     // TODO: Classes with references to collection of other classes
   });
 });
