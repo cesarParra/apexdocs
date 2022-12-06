@@ -129,12 +129,14 @@ export class MethodParser {
       };
     }
 
-    // Check if the referenced object is already part of the OpenApi object
-    if (this.openApiModel.components.schemas![reference.referencedClass]) {
+    if (!reference.referenceComponents.length) {
       return;
     }
 
-    // If it isn't, then add it
-    this.openApiModel.components.schemas![reference.referencedClass] = reference.schema;
+    // Add all received references to the OpenApi components section.
+    reference.referenceComponents.forEach((current) => {
+      // Check if the referenced object is already part of the OpenApi object
+      this.openApiModel.components!.schemas![current.referencedClass] = current.schema;
+    });
   }
 }

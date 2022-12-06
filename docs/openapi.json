@@ -296,6 +296,16 @@
               }
             }
           },
+          "305": {
+            "description": "Status code 305",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reference1"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Status code 500",
             "content": {
@@ -348,6 +358,22 @@
             "type": "string"
           },
           "protectedGrandParentField": {
+            "type": "string"
+          }
+        }
+      },
+      "Reference1": {
+        "type": "object",
+        "properties": {
+          "reference2Member": {
+            "$ref": "#/components/schemas/Reference2"
+          }
+        }
+      },
+      "Reference2": {
+        "type": "object",
+        "properties": {
+          "stringMember": {
             "type": "string"
           }
         }

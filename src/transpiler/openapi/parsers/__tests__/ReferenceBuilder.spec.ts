@@ -20,6 +20,7 @@ describe('ReferenceBuilder', () => {
   describe('Filters out members', () => {
     it('should filter out static members', function () {
       const classMirror = new ClassMirrorBuilder()
+        .withName('className')
         .addFiled(new FieldMirrorBuilder().addMemberModifier('static').build())
         .build();
 
@@ -29,14 +30,16 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      expect(result.referencedClass).toBe('className');
-      expect(result.referenceObject.$ref).toBe('#/components/schemas/className');
-      expect((result.schema as SchemaObjectObject).type).toBe('object');
-      expect((result.schema as SchemaObjectObject).properties).toMatchObject({});
+      expect(result.referenceComponents).toHaveLength(1);
+      expect(result.referenceComponents[0].referencedClass).toBe('className');
+      expect(result.entrypointReferenceObject.$ref).toBe('#/components/schemas/className');
+      expect((result.referenceComponents[0].schema as SchemaObjectObject).type).toBe('object');
+      expect((result.referenceComponents[0].schema as SchemaObjectObject).properties).toMatchObject({});
     });
 
     it('should filter out transient members', function () {
       const classMirror = new ClassMirrorBuilder()
+        .withName('className')
         .addFiled(new FieldMirrorBuilder().addMemberModifier('transient').build())
         .build();
 
@@ -46,14 +49,16 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      expect(result.referencedClass).toBe('className');
-      expect(result.referenceObject.$ref).toBe('#/components/schemas/className');
-      expect((result.schema as SchemaObjectObject).type).toBe('object');
-      expect((result.schema as SchemaObjectObject).properties).toMatchObject({});
+      expect(result.referenceComponents).toHaveLength(1);
+      expect(result.referenceComponents[0].referencedClass).toBe('className');
+      expect(result.entrypointReferenceObject.$ref).toBe('#/components/schemas/className');
+      expect((result.referenceComponents[0].schema as SchemaObjectObject).type).toBe('object');
+      expect((result.referenceComponents[0].schema as SchemaObjectObject).properties).toMatchObject({});
     });
 
     it('should include private members', function () {
       const classMirror = new ClassMirrorBuilder()
+        .withName('className')
         .addFiled(new FieldMirrorBuilder().withName('fieldName').withAccessModifier('private').build())
         .build();
 
@@ -63,14 +68,16 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      expect(result.referencedClass).toBe('className');
-      expect(result.referenceObject.$ref).toBe('#/components/schemas/className');
-      expect((result.schema as SchemaObjectObject).type).toBe('object');
-      expect((result.schema as SchemaObjectObject).properties).toHaveProperty('fieldName');
+      expect(result.referenceComponents).toHaveLength(1);
+      expect(result.referenceComponents[0].referencedClass).toBe('className');
+      expect(result.entrypointReferenceObject.$ref).toBe('#/components/schemas/className');
+      expect((result.referenceComponents[0].schema as SchemaObjectObject).type).toBe('object');
+      expect((result.referenceComponents[0].schema as SchemaObjectObject).properties).toHaveProperty('fieldName');
     });
 
     it('should include protected members', function () {
       const classMirror = new ClassMirrorBuilder()
+        .withName('className')
         .addFiled(new FieldMirrorBuilder().withName('fieldName').withAccessModifier('protected').build())
         .build();
 
@@ -80,14 +87,16 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      expect(result.referencedClass).toBe('className');
-      expect(result.referenceObject.$ref).toBe('#/components/schemas/className');
-      expect((result.schema as SchemaObjectObject).type).toBe('object');
-      expect((result.schema as SchemaObjectObject).properties).toHaveProperty('fieldName');
+      expect(result.referenceComponents).toHaveLength(1);
+      expect(result.referenceComponents[0].referencedClass).toBe('className');
+      expect(result.entrypointReferenceObject.$ref).toBe('#/components/schemas/className');
+      expect((result.referenceComponents[0].schema as SchemaObjectObject).type).toBe('object');
+      expect((result.referenceComponents[0].schema as SchemaObjectObject).properties).toHaveProperty('fieldName');
     });
 
     it('should include public members', function () {
       const classMirror = new ClassMirrorBuilder()
+        .withName('className')
         .addFiled(new FieldMirrorBuilder().withName('fieldName').withAccessModifier('public').build())
         .build();
 
@@ -97,14 +106,16 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      expect(result.referencedClass).toBe('className');
-      expect(result.referenceObject.$ref).toBe('#/components/schemas/className');
-      expect((result.schema as SchemaObjectObject).type).toBe('object');
-      expect((result.schema as SchemaObjectObject).properties).toHaveProperty('fieldName');
+      expect(result.referenceComponents).toHaveLength(1);
+      expect(result.referenceComponents[0].referencedClass).toBe('className');
+      expect(result.entrypointReferenceObject.$ref).toBe('#/components/schemas/className');
+      expect((result.referenceComponents[0].schema as SchemaObjectObject).type).toBe('object');
+      expect((result.referenceComponents[0].schema as SchemaObjectObject).properties).toHaveProperty('fieldName');
     });
 
     it('should include global members', function () {
       const classMirror = new ClassMirrorBuilder()
+        .withName('className')
         .addFiled(new FieldMirrorBuilder().withName('fieldName').withAccessModifier('global').build())
         .build();
 
@@ -114,10 +125,11 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      expect(result.referencedClass).toBe('className');
-      expect(result.referenceObject.$ref).toBe('#/components/schemas/className');
-      expect((result.schema as SchemaObjectObject).type).toBe('object');
-      expect((result.schema as SchemaObjectObject).properties).toHaveProperty('fieldName');
+      expect(result.referenceComponents).toHaveLength(1);
+      expect(result.referenceComponents[0].referencedClass).toBe('className');
+      expect(result.entrypointReferenceObject.$ref).toBe('#/components/schemas/className');
+      expect((result.referenceComponents[0].schema as SchemaObjectObject).type).toBe('object');
+      expect((result.referenceComponents[0].schema as SchemaObjectObject).properties).toHaveProperty('fieldName');
     });
   });
 
@@ -133,7 +145,7 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      const schema = result.schema as SchemaObjectObject;
+      const schema = result.referenceComponents[0].schema as SchemaObjectObject;
       expect(schema.properties).toHaveProperty('fieldName');
       const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
       expect(fieldSchema.type).toBe('boolean');
@@ -150,7 +162,7 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      const schema = result.schema as SchemaObjectObject;
+      const schema = result.referenceComponents[0].schema as SchemaObjectObject;
       expect(schema.properties).toHaveProperty('fieldName');
       const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
       expect(fieldSchema.type).toBe('string');
@@ -168,7 +180,7 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      const schema = result.schema as SchemaObjectObject;
+      const schema = result.referenceComponents[0].schema as SchemaObjectObject;
       expect(schema.properties).toHaveProperty('fieldName');
       const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
       expect(fieldSchema.type).toBe('string');
@@ -186,7 +198,7 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      const schema = result.schema as SchemaObjectObject;
+      const schema = result.referenceComponents[0].schema as SchemaObjectObject;
       expect(schema.properties).toHaveProperty('fieldName');
       const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
       expect(fieldSchema.type).toBe('number');
@@ -203,7 +215,7 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      const schema = result.schema as SchemaObjectObject;
+      const schema = result.referenceComponents[0].schema as SchemaObjectObject;
       expect(schema.properties).toHaveProperty('fieldName');
       const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
       expect(fieldSchema.type).toBe('number');
@@ -220,7 +232,7 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      const schema = result.schema as SchemaObjectObject;
+      const schema = result.referenceComponents[0].schema as SchemaObjectObject;
       expect(schema.properties).toHaveProperty('fieldName');
       const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
       expect(fieldSchema.type).toBe('string');
@@ -237,7 +249,7 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      const schema = result.schema as SchemaObjectObject;
+      const schema = result.referenceComponents[0].schema as SchemaObjectObject;
       expect(schema.properties).toHaveProperty('fieldName');
       const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
       expect(fieldSchema.type).toBe('integer');
@@ -254,7 +266,7 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      const schema = result.schema as SchemaObjectObject;
+      const schema = result.referenceComponents[0].schema as SchemaObjectObject;
       expect(schema.properties).toHaveProperty('fieldName');
       const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
       expect(fieldSchema.type).toBe('integer');
@@ -272,8 +284,8 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      const schema = result.schema as SchemaObjectObject;
-      expect((result.schema as SchemaObjectObject).properties).toHaveProperty('fieldName');
+      const schema = result.referenceComponents[0].schema as SchemaObjectObject;
+      expect(schema.properties).toHaveProperty('fieldName');
       const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
       expect(fieldSchema.type).toBe('string');
     });
@@ -289,7 +301,7 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      const schema = result.schema as SchemaObjectObject;
+      const schema = result.referenceComponents[0].schema as SchemaObjectObject;
       expect(schema.properties).toHaveProperty('fieldName');
       const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
       expect(fieldSchema.type).toBe('string');
@@ -321,7 +333,7 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      const schema = result.schema as SchemaObjectObject;
+      const schema = result.referenceComponents[0].schema as SchemaObjectObject;
       expect(schema.properties).toHaveProperty('fieldName');
 
       const fieldSchema = schema.properties!['fieldName'] as SchemaObjectArray;
@@ -354,7 +366,7 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      const schema = result.schema as SchemaObjectObject;
+      const schema = result.referenceComponents[0].schema as SchemaObjectObject;
       expect(schema.properties).toHaveProperty('fieldName');
 
       const fieldSchema = schema.properties!['fieldName'] as SchemaObjectArray;
@@ -391,11 +403,46 @@ describe('ReferenceBuilder', () => {
 
       const result = new ReferenceBuilder().build('className');
 
-      const schema = result.schema as SchemaObjectObject;
+      const schema = result.referenceComponents[0].schema as SchemaObjectObject;
       expect(schema.properties).toHaveProperty('fieldName');
 
       const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
       expect(fieldSchema.type).toBe('object');
     });
+  });
+
+  describe('References to other references', () => {
+    it('should parse references to other references', function () {
+      const mainClassMirror = new ClassMirrorBuilder()
+        .withName('parent')
+        .addFiled(
+          new FieldMirrorBuilder()
+            .withName('childClassMember')
+            .withReferencedType({
+              type: 'ChildClass',
+              rawDeclaration: 'ChildClass',
+            })
+            .build(),
+        )
+        .build();
+
+      const childClass = new ClassMirrorBuilder()
+        .withName('child')
+        .addFiled(new FieldMirrorBuilder().withName('stringMember').withType('String').build())
+        .build();
+
+      TypesRepository.getInstance = jest.fn().mockReturnValue({
+        getFromAllByName: jest.fn().mockReturnValueOnce(mainClassMirror).mockReturnValueOnce(childClass),
+      });
+
+      const result = new ReferenceBuilder().build('className');
+
+      expect(result.referenceComponents).toHaveLength(2);
+      expect(result.referenceComponents.some((ref) => ref.referencedClass === 'parent')).toBe(true);
+      expect(result.referenceComponents.some((ref) => ref.referencedClass === 'child')).toBe(true);
+    });
+
+    // TODO: Classes with several references (several members that point to other classes)
+    // TODO: Classes with references to collection of other classes
   });
 });

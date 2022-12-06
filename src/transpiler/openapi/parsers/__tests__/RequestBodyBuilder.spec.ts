@@ -11,7 +11,7 @@ jest.mock('../ReferenceBuilder', () => {
         build: (): Reference => {
           return {
             referencedClass: 'MySampleClass',
-            referenceObject: {
+            entrypointReferenceObject: {
               $ref: '/mySampleClass',
             },
             schema: {

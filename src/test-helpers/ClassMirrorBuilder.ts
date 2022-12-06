@@ -5,10 +5,16 @@ import { Annotation, ClassMirror, DocComment, FieldMirror, MethodMirror } from '
  * For testing purposes only.
  */
 export class ClassMirrorBuilder {
+  private name = 'SampleClass';
   private annotations: Annotation[] = [];
   private docComment?: DocComment;
   private methods: MethodMirror[] = [];
   private fields: FieldMirror[] = [];
+
+  withName(name: string): ClassMirrorBuilder {
+    this.name = name;
+    return this;
+  }
 
   addAnnotation(annotation: Annotation): ClassMirrorBuilder {
     this.annotations.push(annotation);
@@ -33,7 +39,7 @@ export class ClassMirrorBuilder {
   build(): ClassMirror {
     return {
       annotations: this.annotations,
-      name: 'SampleClass',
+      name: this.name,
       type_name: 'class',
       methods: this.methods,
       implemented_interfaces: [],

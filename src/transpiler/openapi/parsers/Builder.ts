@@ -24,7 +24,7 @@ export abstract class Builder<T, K> {
   protected getOpenApiSchemaFromApexDocSchema(schemaAware: ApexDocSchemaAware, reference?: Reference): SchemaObject {
     if (this.isReferenceString(schemaAware.schema)) {
       // We are dealing with a reference
-      return reference!.referenceObject;
+      return reference!.entrypointReferenceObject;
     }
     return schemaAware.schema;
   }

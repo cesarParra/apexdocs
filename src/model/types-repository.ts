@@ -17,7 +17,7 @@ export class TypesRepository {
   }
 
   public getFromAllByName(typeName: string): Type | undefined {
-    return this.allTypes.find((currentType: Type) => currentType.name === typeName);
+    return this.allTypes.find((currentType: Type) => currentType.name.toLowerCase() === typeName.toLowerCase());
   }
 
   public populateScoped(types: Type[]) {
