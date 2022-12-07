@@ -306,6 +306,16 @@
               }
             }
           },
+          "306": {
+            "description": "Status code 306",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reference1_array"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Status code 500",
             "content": {
@@ -425,6 +435,12 @@
             "type": "string",
             "description": "This is the grandchild description."
           }
+        }
+      },
+      "Reference1_array": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Reference1"
         }
       }
     }

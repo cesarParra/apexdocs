@@ -11,14 +11,40 @@ import { ListObjectType, ReferencedType } from '@cparra/apex-reflection/index';
 
 export class ReferenceBuilder {
   build(referencedTypeName: string): Reference {
-    const referencedType = TypesRepository.getInstance().getFromAllByName(referencedTypeName);
+    const [parsedReferencedType, isCollection] = this.handlePossibleCollectionReference(referencedTypeName);
+
+    const referencedType = TypesRepository.getInstance().getFromAllByName(parsedReferencedType);
     if (!referencedType) {
-      throw new Error(`The referenced class "${referencedTypeName}" was not found.`);
+      throw new Error(`The referenced type "${parsedReferencedType}" was not found.`);
     }
-    return this.buildReferenceFromType(referencedType);
+    if (referencedType.type_name !== 'class') {
+      throw new Error(`Expected the referenced type to be a class, but found a ${referencedType.type_name}.`);
+    }
+    return this.buildReferenceFromType(referencedType, isCollection);
   }
 
-  private buildReferenceFromType(referencedType: Type): Reference {
+  /**
+   * Returns a tuple where the first value is the name of the reference without any collection related values
+   * and the second is a boolean representing if we are dealing with a collection or not.
+   * @param referencedTypeName The received raw type name.
+   * @private
+   */
+  private handlePossibleCollectionReference(referencedTypeName: string): [string, boolean] {
+    referencedTypeName = referencedTypeName.toLowerCase();
+    if (referencedTypeName.startsWith('list<') && referencedTypeName.endsWith('>')) {
+      referencedTypeName = referencedTypeName.replace('list<', '');
+      referencedTypeName = referencedTypeName.replace('>', '');
+      return [referencedTypeName, true];
+    }
+    if (referencedTypeName.startsWith('set<') && referencedTypeName.endsWith('>')) {
+      referencedTypeName = referencedTypeName.replace('set<', '');
+      referencedTypeName = referencedTypeName.replace('>', '');
+      return [referencedTypeName, true];
+    }
+    return [referencedTypeName, false];
+  }
+
+  private buildReferenceFromType(referencedType: Type, isCollection = false): Reference {
     // Filtering based on Salesforce's documentation:
     // https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_rest_methods.htm#ApexRESTUserDefinedTypes
     // We assume that the class only contains object types allowed by Apex Rest:
@@ -39,24 +65,53 @@ export class ReferenceBuilder {
       pair.referenceComponents.forEach((current) => referencedComponents.push(current));
     });
 
-    // Make sure to add the "main" reference
-    referencedComponents = [
+    const mainReferenceComponents = this.buildMainReferenceComponent(referencedType.name, properties, isCollection);
+
+    // Make sure to add the "main" reference first
+    referencedComponents = [...mainReferenceComponents, ...referencedComponents];
+
+    const referenceName = isCollection ? this.getArrayReferenceName(referencedType.name) : referencedType.name;
+    return {
+      entrypointReferenceObject: {
+        $ref: `#/components/schemas/${referenceName}`,
+      },
+      referenceComponents: referencedComponents,
+    };
+  }
+
+  private getArrayReferenceName(referencedTypeName: string): string {
+    return `${referencedTypeName}_array`;
+  }
+
+  private buildMainReferenceComponent(
+    referencedTypeName: string,
+    properties: PropertiesObject,
+    isCollection: boolean,
+  ): ReferenceComponent[] {
+    const mainReference: ReferenceComponent = {
+      referencedClass: referencedTypeName,
+      schema: {
+        type: 'object',
+        properties: properties,
+      },
+    };
+    const referencedComponents = [mainReference];
+    if (!isCollection) {
+      return referencedComponents;
+    }
+
+    return [
       {
-        referencedClass: referencedType.name,
+        referencedClass: this.getArrayReferenceName(referencedTypeName),
         schema: {
-          type: 'object',
-          properties: properties,
+          type: 'array',
+          items: {
+            $ref: `#/components/schemas/${referencedTypeName}`,
+          },
         },
       },
       ...referencedComponents,
     ];
-
-    return {
-      entrypointReferenceObject: {
-        $ref: `#/components/schemas/${referencedType.name}`,
-      },
-      referenceComponents: referencedComponents,
-    };
   }
 
   private getReferenceType(typeInMirror: ReferencedType): SchemaObjectReferencePair {

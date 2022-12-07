@@ -573,4 +573,44 @@ describe('ReferenceBuilder', () => {
       expect(result.referenceComponents.some((ref) => ref.referencedClass === 'grandchild')).toBe(true);
     });
   });
+
+  describe('References to collections', () => {
+    it('should resolve references to lists', function () {
+      const classMirror = new ClassMirrorBuilder()
+        .withName('classname')
+        .addFiled(new FieldMirrorBuilder().withName('fieldName').withAccessModifier('public').build())
+        .build();
+
+      TypesRepository.getInstance = jest.fn().mockReturnValue({
+        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+      });
+
+      const result = new ReferenceBuilder().build('List<classname>');
+
+      expect(result.referenceComponents).toHaveLength(2);
+      expect(result.referenceComponents[0].referencedClass).toBe('classname_array');
+      expect(result.entrypointReferenceObject.$ref).toBe('#/components/schemas/classname_array');
+      expect((result.referenceComponents[0].schema as SchemaObjectArray).type).toBe('array');
+      expect((result.referenceComponents[1].schema as SchemaObjectObject).properties).toHaveProperty('fieldName');
+    });
+
+    it('should resolve references to sets', function () {
+      const classMirror = new ClassMirrorBuilder()
+        .withName('classname')
+        .addFiled(new FieldMirrorBuilder().withName('fieldName').withAccessModifier('public').build())
+        .build();
+
+      TypesRepository.getInstance = jest.fn().mockReturnValue({
+        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+      });
+
+      const result = new ReferenceBuilder().build('Set<classname>');
+
+      expect(result.referenceComponents).toHaveLength(2);
+      expect(result.referenceComponents[0].referencedClass).toBe('classname_array');
+      expect(result.entrypointReferenceObject.$ref).toBe('#/components/schemas/classname_array');
+      expect((result.referenceComponents[0].schema as SchemaObjectArray).type).toBe('array');
+      expect((result.referenceComponents[1].schema as SchemaObjectObject).properties).toHaveProperty('fieldName');
+    });
+  });
 });

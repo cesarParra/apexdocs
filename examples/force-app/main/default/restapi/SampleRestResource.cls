@@ -27,6 +27,9 @@ global with sharing class SampleRestResource {
      * @http-response
      * statusCode: 305
      * schema: Reference1
+     * @http-response
+     * statusCode: 306
+     * schema: List<Reference1>
      */
     @HttpDelete
     global static void doDelete() {
