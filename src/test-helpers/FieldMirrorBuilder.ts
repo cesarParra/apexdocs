@@ -47,7 +47,6 @@ export class FieldMirrorBuilder {
       name: this.name,
       memberModifiers: this.memberModifiers,
       typeReference: this.type,
-      type: this.type.type,
     };
   }
 }

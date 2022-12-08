@@ -10,12 +10,16 @@ jest.mock('../ReferenceBuilder', () => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         build: (): Reference => {
           return {
-            referencedClass: 'MySampleClass',
+            referenceComponents: [
+              {
+                referencedClass: 'MySampleClass',
+                schema: {
+                  type: 'string',
+                },
+              },
+            ],
             entrypointReferenceObject: {
               $ref: '/mySampleClass',
-            },
-            schema: {
-              type: 'string',
             },
           };
         },

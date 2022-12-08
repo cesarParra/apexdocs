@@ -26,7 +26,6 @@ export class MethodMirrorBuilder {
       annotations: this.annotations,
       name: this.name,
       memberModifiers: [],
-      type: 'void',
       typeReference: {
         type: 'void',
         rawDeclaration: 'void',

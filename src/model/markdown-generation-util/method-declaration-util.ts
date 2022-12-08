@@ -68,7 +68,9 @@ function buildSignature(name: string, parameterAware: ParameterAware): string {
   if (isMethod(parameterAware) && (parameterAware as MethodMirrorWithInheritance).memberModifiers.length) {
     signature = (parameterAware as MethodMirrorWithInheritance).memberModifiers.join(' ') + ' ' + signature;
   }
-  const signatureParameters = parameterAware.parameters.map((param) => `${param.type} ${param.name}`);
+  const signatureParameters = parameterAware.parameters.map(
+    (param) => `${param.typeReference.rawDeclaration} ${param.name}`,
+  );
   signature += signatureParameters.join(', ');
   return `${signature})`;
 }
@@ -108,7 +110,7 @@ function addReturns(
   markdownFile.addBlankLine();
   markdownFile.addText('**Type**');
   markdownFile.addBlankLine();
-  markdownFile.addText(methodModel.type);
+  markdownFile.addText(methodModel.typeReference.rawDeclaration);
   markdownFile.addBlankLine();
   markdownFile.addText('**Description**');
   markdownFile.addBlankLine();
@@ -146,5 +148,5 @@ function addExample(markdownFile: MarkdownFile, docCommentAware: DocCommentAware
 function isMethod(
   method: MethodMirrorWithInheritance | ConstructorMirror | ParameterAware,
 ): method is ConstructorMirror {
-  return (method as MethodMirrorWithInheritance).type !== undefined;
+  return (method as MethodMirrorWithInheritance).typeReference.rawDeclaration !== undefined;
 }
