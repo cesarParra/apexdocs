@@ -8,7 +8,7 @@ describe('ReferenceBuilder', () => {
   describe('Validation', () => {
     it('should throw an error if the reference does not exist', function () {
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(null),
+        getFromAllByName: jest.fn().mockReturnValue(undefined),
       });
 
       expect(() => {
@@ -25,7 +25,7 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -44,7 +44,7 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -63,7 +63,7 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -82,7 +82,7 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -101,7 +101,7 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -120,7 +120,7 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -140,7 +140,7 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -157,7 +157,7 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -175,7 +175,7 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -193,7 +193,7 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -210,7 +210,7 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -227,7 +227,7 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -244,7 +244,7 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -261,7 +261,7 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -279,7 +279,7 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -296,7 +296,7 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -328,7 +328,7 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -361,7 +361,7 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -398,7 +398,7 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -432,7 +432,10 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValueOnce(mainClassMirror).mockReturnValueOnce(childClass),
+        getFromAllByName: jest
+          .fn()
+          .mockReturnValueOnce({ type: mainClassMirror, isChild: false })
+          .mockReturnValueOnce({ type: childClass, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -478,9 +481,9 @@ describe('ReferenceBuilder', () => {
       TypesRepository.getInstance = jest.fn().mockReturnValue({
         getFromAllByName: jest
           .fn()
-          .mockReturnValueOnce(mainClassMirror)
-          .mockReturnValueOnce(oneChild)
-          .mockReturnValueOnce(anotherChild),
+          .mockReturnValueOnce({ type: mainClassMirror, isChild: false })
+          .mockReturnValueOnce({ type: oneChild, isChild: false })
+          .mockReturnValueOnce({ type: anotherChild, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -515,7 +518,10 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValueOnce(mainClassMirror).mockReturnValueOnce(childClass),
+        getFromAllByName: jest
+          .fn()
+          .mockReturnValueOnce({ type: mainClassMirror, isChild: false })
+          .mockReturnValueOnce({ type: childClass, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -560,9 +566,9 @@ describe('ReferenceBuilder', () => {
       TypesRepository.getInstance = jest.fn().mockReturnValue({
         getFromAllByName: jest
           .fn()
-          .mockReturnValueOnce(mainClassMirror)
-          .mockReturnValueOnce(childClass)
-          .mockReturnValueOnce(grandChildClass),
+          .mockReturnValueOnce({ type: mainClassMirror, isChild: false })
+          .mockReturnValueOnce({ type: childClass, isChild: false })
+          .mockReturnValueOnce({ type: grandChildClass, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('className');
@@ -582,7 +588,7 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('List<classname>');
@@ -601,7 +607,7 @@ describe('ReferenceBuilder', () => {
         .build();
 
       TypesRepository.getInstance = jest.fn().mockReturnValue({
-        getFromAllByName: jest.fn().mockReturnValue(classMirror),
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
       });
 
       const result = new ReferenceBuilder().build('Set<classname>');

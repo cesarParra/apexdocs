@@ -5,22 +5,27 @@ import {
   SchemaObjectArray,
   SchemaObjectObject,
 } from '../../../model/openapi/open-api-types';
-import { TypesRepository } from '../../../model/types-repository';
+import { TypeBundle, TypesRepository } from '../../../model/types-repository';
 import { ClassMirror, FieldMirror, PropertyMirror, Type } from '@cparra/apex-reflection';
 import { ListObjectType, ReferencedType } from '@cparra/apex-reflection/index';
+
+type TypeBundleWithIsCollection = TypeBundle & { isCollection: boolean };
 
 export class ReferenceBuilder {
   build(referencedTypeName: string): Reference {
     const [parsedReferencedType, isCollection] = this.handlePossibleCollectionReference(referencedTypeName);
+    const referencedTypeBundle = TypesRepository.getInstance().getFromAllByName(parsedReferencedType);
 
-    const referencedType = TypesRepository.getInstance().getFromAllByName(parsedReferencedType);
-    if (!referencedType) {
+    if (!referencedTypeBundle) {
       throw new Error(`The referenced type "${parsedReferencedType}" was not found.`);
     }
-    if (referencedType.type_name !== 'class') {
-      throw new Error(`Expected the referenced type to be a class, but found a ${referencedType.type_name}.`);
+    if (referencedTypeBundle.type.type_name !== 'class') {
+      throw new Error(
+        `Expected the referenced type to be a class, but found a ${referencedTypeBundle.type.type_name}.`,
+      );
     }
-    return this.buildReferenceFromType(referencedType, isCollection);
+    const typeBundleWithIsCollection = { ...referencedTypeBundle, isCollection: isCollection };
+    return this.buildReferenceFromType(typeBundleWithIsCollection);
   }
 
   /**
@@ -44,14 +49,14 @@ export class ReferenceBuilder {
     return [referencedTypeName, false];
   }
 
-  private buildReferenceFromType(referencedType: Type, isCollection = false): Reference {
+  private buildReferenceFromType(typeBundle: TypeBundleWithIsCollection): Reference {
     // Filtering based on Salesforce's documentation:
     // https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_rest_methods.htm#ApexRESTUserDefinedTypes
     // We assume that the class only contains object types allowed by Apex Rest:
     // "Note that the public, private, or global class member variables must be types allowed by Apex REST"
     const propertiesAndFields: (FieldMirror | PropertyMirror)[] = [
-      ...(referencedType as ClassMirror).properties,
-      ...(referencedType as ClassMirror).fields,
+      ...(typeBundle.type as ClassMirror).properties,
+      ...(typeBundle.type as ClassMirror).fields,
     ]
       .filter((current) => !current.memberModifiers.includes('static'))
       .filter((current) => !current.memberModifiers.includes('transient'));
@@ -65,48 +70,56 @@ export class ReferenceBuilder {
       pair.referenceComponents.forEach((current) => referencedComponents.push(current));
     });
 
-    const mainReferenceComponents = this.buildMainReferenceComponent(referencedType.name, properties, isCollection);
+    const mainReferenceComponents = this.buildMainReferenceComponent(typeBundle, properties);
 
     // Make sure to add the "main" reference first
     referencedComponents = [...mainReferenceComponents, ...referencedComponents];
 
-    const referenceName = isCollection ? this.getArrayReferenceName(referencedType.name) : referencedType.name;
     return {
       entrypointReferenceObject: {
-        $ref: `#/components/schemas/${referenceName}`,
+        $ref: `#/components/schemas/${this.getReferenceName(typeBundle)}`,
       },
       referenceComponents: referencedComponents,
     };
   }
 
-  private getArrayReferenceName(referencedTypeName: string): string {
-    return `${referencedTypeName}_array`;
+  private getReferenceName(typeBundle: TypeBundleWithIsCollection): string {
+    let referenceName = typeBundle.type.name;
+    if (typeBundle.isChild) {
+      referenceName = `${typeBundle.parentType?.name}.${typeBundle.type.name}`;
+    }
+    if (typeBundle.isCollection) {
+      referenceName = `${referenceName}_array`;
+    }
+    return referenceName;
   }
 
   private buildMainReferenceComponent(
-    referencedTypeName: string,
+    typeBundle: TypeBundleWithIsCollection,
     properties: PropertiesObject,
-    isCollection: boolean,
   ): ReferenceComponent[] {
+    // For the main reference, we always want to get the reference of the object without the collection part,
+    // so we pass the typeBundle to `getReferenceName` but with the isCollection flag set to false.
+    const mainReferenceName = this.getReferenceName({ ...typeBundle, isCollection: false });
     const mainReference: ReferenceComponent = {
-      referencedClass: referencedTypeName,
+      referencedClass: mainReferenceName,
       schema: {
         type: 'object',
         properties: properties,
       },
     };
     const referencedComponents = [mainReference];
-    if (!isCollection) {
+    if (!typeBundle.isCollection) {
       return referencedComponents;
     }
 
     return [
       {
-        referencedClass: this.getArrayReferenceName(referencedTypeName),
+        referencedClass: this.getReferenceName(typeBundle),
         schema: {
           type: 'array',
           items: {
-            $ref: `#/components/schemas/${referencedTypeName}`,
+            $ref: `#/components/schemas/${mainReferenceName}`,
           },
         },
       },
@@ -152,7 +165,7 @@ export class ReferenceBuilder {
         if (!referencedType) {
           return { schema: { type: 'object' }, referenceComponents: [] };
         }
-        const reference = this.buildReferenceFromType(referencedType);
+        const reference = this.buildReferenceFromType({ ...referencedType, isCollection: false });
         return {
           schema: reference.entrypointReferenceObject,
           referenceComponents: [...reference.referenceComponents],

@@ -328,6 +328,24 @@
           }
         }
       }
+    },
+    "/Contact/*": {
+      "description": "Contact related operations",
+      "get": {
+        "description": "This is a sample HTTP Get method",
+        "responses": {
+          "200": {
+            "description": "Status code 200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SampleRestResourceWithInnerClass.InnerClass"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -441,6 +459,14 @@
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/Reference1"
+        }
+      },
+      "SampleRestResourceWithInnerClass.InnerClass": {
+        "type": "object",
+        "properties": {
+          "stringMember": {
+            "type": "string"
+          }
         }
       }
     }
