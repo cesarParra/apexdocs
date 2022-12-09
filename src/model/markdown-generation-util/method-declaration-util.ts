@@ -148,5 +148,5 @@ function addExample(markdownFile: MarkdownFile, docCommentAware: DocCommentAware
 function isMethod(
   method: MethodMirrorWithInheritance | ConstructorMirror | ParameterAware,
 ): method is ConstructorMirror {
-  return (method as MethodMirrorWithInheritance).typeReference.rawDeclaration !== undefined;
+  return (method as MethodMirrorWithInheritance).typeReference !== undefined;
 }

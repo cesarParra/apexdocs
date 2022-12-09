@@ -5,8 +5,12 @@ import { Builder } from './Builder';
 
 export class ResponsesBuilder extends Builder<ResponseObject, ApexDocHttpResponse> {
   buildBody(apexDocResponseDefinition: ApexDocHttpResponse, reference?: Reference): ResponseObject {
+    let description = `Status code ${apexDocResponseDefinition.statusCode}`;
+    if (apexDocResponseDefinition.description) {
+      description = apexDocResponseDefinition.description;
+    }
     return {
-      description: `Status code ${apexDocResponseDefinition.statusCode}`,
+      description: description,
       content: {
         'application/json': {
           schema: this.getOpenApiSchemaFromApexDocSchema(apexDocResponseDefinition, reference),

@@ -1,6 +1,6 @@
 {
   "name": "@cparra/apexdocs",
-  "version": "2.9.0-alpha.1",
+  "version": "2.9.0-alpha.2",
   "description": "Library with CLI capabilities to generate documentation for Salesforce Apex classes.",
   "keywords": [
     "apex",
@@ -25,7 +25,7 @@
     "docs:init": "docsify init docs",
     "docs:serve": "docsify serve docs",
     "execute:example": "node lib/cli/generate.js -s examples/force-app -t docs --scope global public private protected -g docsify --defaultGroupName \"Misc Group\"",
-    "execute:example:openapi": "node lib/cli/generate.js -s examples/force-app -t docs protected -g openapi --openApiTitle \"My REST Api 2\"",
+    "execute:example:openapi": "node lib/cli/generate.js -s examples/force-app -t docs -g openapi --openApiTitle \"My REST Api 2\"",
     "execute:example:index:only": "node lib/cli/generate.js -s examples/force-app -t docs --scope global public private -g docsify --indexOnly"
   },
   "author": "Cesar Parra",
@@ -43,7 +43,7 @@
     "@types/yargs": "^15.0.3",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@typescript-eslint/parser": "^5.41.0",
-    "docsify": "^4.12.2",
+    "docsify": "^4.13.0",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",

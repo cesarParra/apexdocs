@@ -68,6 +68,7 @@ Constructs a SampleClass with an argument.
 
 * `ANOTHER_CONSTANT` → `String` (*Inherited*)  
 * `A_CONSTANT` → `String` (*Inherited*)  [`NAMESPACEACCESSIBLE` ]  - This is a constant.
+* `listOfStrings` → `List<String>` (*Inherited*)  
 ---
 ### 'General' Constants
 

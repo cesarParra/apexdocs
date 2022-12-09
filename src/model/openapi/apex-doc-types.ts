@@ -5,6 +5,7 @@ import { SchemaObjectArray, SchemaObjectObject } from './open-api-types';
 
 export type ApexDocHttpResponse = {
   statusCode: number;
+  description?: string;
   schema: ApexDocSchemaObject;
 };
 

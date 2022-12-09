@@ -16,7 +16,37 @@
 ### [ParentClass](/Misc-Group/ParentClass.md)
 
 
+### [Reference1](/Misc-Group/Reference1.md)
+
+
+### [Reference2](/Misc-Group/Reference2.md)
+
+
+### [Reference3](/Misc-Group/Reference3.md)
+
+
+### [Reference4](/Misc-Group/Reference4.md)
+
+
+### [Reference5](/Misc-Group/Reference5.md)
+
+
+### [Reference6](/Misc-Group/Reference6.md)
+
+
 ### [SampleClassWithoutModifier](/Misc-Group/SampleClassWithoutModifier.md)
+
+
+### [SampleRestResource](/Misc-Group/SampleRestResource.md)
+
+Account related operations
+
+
+
+### [SampleRestResourceWithInnerClass](/Misc-Group/SampleRestResourceWithInnerClass.md)
+
+Contact related operations
+
 
 ## Main
 
