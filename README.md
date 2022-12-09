@@ -344,7 +344,7 @@ apexdocs-generate -s ./src -t docs -g openapi --openApiTitle "Custom OpenApi Tit
 
 ### How It Works
 
-When generating an OpenApi document, since `@RestResource` need to be global in Apex, the `--scope` parameter will be ignored.
+When generating an OpenApi document, since `@RestResource` classes need to be global in Apex, the `--scope` parameter will be ignored.
 Instead, ApexDocs will run through all classes annotated with `@RestResource` and add it to the output OpenApi file.
 
 Once it finishes running, a file named `openapi.json` will be created in the specified `--targetDir`.
@@ -363,7 +363,7 @@ some custom annotations that are specific to generating OpenApi definitions:
 
 #### @http-request-body
 
-Allows you to specify the HTTP Request's expected Request Body. It supports receiving a `description`,
+Allows you to specify the HTTP request's expected request body. It supports receiving a `description`,
 whether it is `required` or not, and a `schema`, which defines the shape of the object that is expected.
 
 📝 Note that only one `@http-request-body` should be defined per method. If you add more than one, only
@@ -380,6 +380,7 @@ Example
      * description: This is an example of a request body
      * required: true
      * schema: ClassName
+     */ 
     @HttpPost
     global static void doPost() {
       ///...
@@ -476,6 +477,7 @@ to convert that to a valid specification. For this use case, define a Custom Sch
      * @http-request-body
      * description: This is an example of a request body
      * schema: List<ClassName>
+     */
     @HttpPost
     global static void doPost() {
       ///...
@@ -483,7 +485,8 @@ to convert that to a valid specification. For this use case, define a Custom Sch
 ```
 
 Inner class references are also supported, but note that you need to pass the full name of the reference,
-by using the `ParentClassName.InnerClassName` syntax.
+by using the `ParentClassName.InnerClassName` syntax, even if the inner class resides on the same class as the HTTP method
+referencing it.
 
 ```apex
     /**
@@ -491,6 +494,7 @@ by using the `ParentClassName.InnerClassName` syntax.
      * @http-request-body
      * description: This is an example of a request body
      * schema: ParentClass.InnerClass
+     */
     @HttpPost
     global static void doPost() {
       ///...
