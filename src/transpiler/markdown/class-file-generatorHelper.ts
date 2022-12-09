@@ -2,6 +2,7 @@ import { Type } from '@cparra/apex-reflection';
 import { TypesRepository } from '../../model/types-repository';
 import { Settings } from '../../settings';
 import State from '../../service/state';
+import { TypeTranspilerFactory } from '../factory';
 
 export default class ClassFileGeneratorHelper {
   public static getSanitizedGroup(classModel: Type) {
@@ -14,7 +15,7 @@ export default class ClassFileGeneratorHelper {
   }
 
   public static getFileLinkByTypeName(typeName: string) {
-    const type = TypesRepository.getInstance().getByName(typeName);
+    const type = TypesRepository.getInstance().getFromScopedByName(typeName);
     if (!type) {
       // If the type is not found we return a Markdown hyperlink with whatever we received.
       return `[${typeName}](${typeName})`;
@@ -25,7 +26,8 @@ export default class ClassFileGeneratorHelper {
 
   private static getDirectoryRoot(classModel: Type) {
     // root-relative links start from the root by using a leading '/'
-    if (Settings.getInstance().typeTranspiler.getLinkingStrategy() === 'root-relative') {
+    const generator = Settings.getInstance().targetGenerator;
+    if (TypeTranspilerFactory.get(generator).getLinkingStrategy() === 'root-relative') {
       return `/${this.getSanitizedGroup(classModel)}/`;
     }
 

@@ -8,19 +8,19 @@ ParentClass
 
 ## Fields
 
-### `privateString` → `String`
+### `privateStringFromParent` → `String`
 
 
 ### `protectedGrandParentField` → `String`
 
 *Inherited*
 
-### `protectedString` → `String`
+### `protectedStringFromParent` → `String`
 
 
 This is a protected string, use carefully.
 
-### `publicString` → `String`
+### `publicStringFromParent` → `String`
 
 
 ---

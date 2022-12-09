@@ -1,9 +1,4 @@
-import ProcessorTypeTranspiler from './transpiler/processor-type-transpiler';
-import { JekyllDocsProcessor } from './transpiler/markdown/jekyll/jekyll-docsProcessor';
-import DocsifyDocsProcessor from './transpiler/markdown/docsify/docsify-docs-processor';
-import { PlainMarkdownDocsProcessor } from './transpiler/markdown/plain-markdown/plain-docsProcessor';
-
-export type GeneratorChoices = 'jekyll' | 'docsify' | 'plain-markdown';
+import { GeneratorChoices } from './transpiler/generator-choices';
 
 export interface SettingsConfig {
   sourceDirectory: string;
@@ -14,6 +9,7 @@ export interface SettingsConfig {
   indexOnly: boolean;
   defaultGroupName: string;
   sanitizeHtml: boolean;
+  openApiTitle?: string;
 }
 
 export class Settings {
@@ -48,25 +44,8 @@ export class Settings {
     return this.config.outputDir;
   }
 
-  private static typeTranspilerCache?: ProcessorTypeTranspiler;
-
-  get typeTranspiler(): ProcessorTypeTranspiler {
-    if (Settings.typeTranspilerCache) {
-      return Settings.typeTranspilerCache;
-    }
-    switch (this.config.targetGenerator) {
-      case 'jekyll':
-        Settings.typeTranspilerCache = new JekyllDocsProcessor();
-        return Settings.typeTranspilerCache;
-      case 'docsify':
-        Settings.typeTranspilerCache = new DocsifyDocsProcessor();
-        return Settings.typeTranspilerCache;
-      case 'plain-markdown':
-        Settings.typeTranspilerCache = new PlainMarkdownDocsProcessor();
-        return Settings.typeTranspilerCache;
-      default:
-        throw Error('Invalid target generator');
-    }
+  get targetGenerator(): GeneratorChoices {
+    return this.config.targetGenerator;
   }
 
   get indexOnly(): boolean {
@@ -77,11 +56,11 @@ export class Settings {
     return this.config.sanitizeHtml;
   }
 
-  get numberOfVisibleDescriptionLinesOnHomePage() {
-    return 5;
-  }
-
   public getDefaultGroupName(): string {
     return this.config.defaultGroupName;
+  }
+
+  public getOpenApiTitle(): string | undefined {
+    return this.config.openApiTitle;
   }
 }

@@ -1,0 +1,474 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "My REST Api 2",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/services/apexrest/"
+    }
+  ],
+  "paths": {
+    "/Account/*": {
+      "description": "Account related operations",
+      "get": {
+        "description": "This is a sample HTTP Get method",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": true,
+            "description": "Limits the number of items on a page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "complex",
+            "in": "cookie",
+            "description": "A more complex schema",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "100": {
+            "description": "Status code 100",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "anotherObject": {
+                      "description": "An object inside of an object",
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        },
+                        "somethingElse": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Status code 200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "The super Id."
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string",
+                      "format": "byte"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Status code 304",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Status code 400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Status code 500",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "This is a sample HTTP Post method",
+        "requestBody": {
+          "description": "This is an example of a request body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": true,
+            "description": "Limits the number of items on a page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "complex",
+            "in": "cookie",
+            "description": "A more complex schema",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status code 200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "The super Id."
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string",
+                      "format": "byte"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Status code 304",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Status code 400",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Status code 500",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Sample HTTP Delete method with references to other types.",
+        "requestBody": {
+          "description": "This is an example of a request body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SampleClass"
+              }
+            }
+          },
+          "required": true
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "header",
+            "required": true,
+            "description": "My sample description.",
+            "schema": {
+              "$ref": "#/components/schemas/SampleClass"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status code 200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SampleClass"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Status code 304",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChildClass"
+                }
+              }
+            }
+          },
+          "305": {
+            "description": "Status code 305",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reference1"
+                }
+              }
+            }
+          },
+          "306": {
+            "description": "Status code 306",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reference1_array"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Status code 500",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SampleClass"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Contact/*": {
+      "description": "Contact related operations",
+      "get": {
+        "description": "This is a sample HTTP Get method",
+        "responses": {
+          "200": {
+            "description": "Status code 200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SampleRestResourceWithInnerClass.InnerClass"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SampleClass": {
+        "type": "object",
+        "properties": {
+          "MyProp": {
+            "type": "string",
+            "description": "This is a String property."
+          },
+          "AnotherProp": {
+            "type": "number",
+            "description": "This is a Decimal property."
+          },
+          "listOfStrings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "someVariable": {
+            "type": "string"
+          }
+        }
+      },
+      "ChildClass": {
+        "type": "object",
+        "properties": {
+          "AProp": {
+            "type": "string"
+          },
+          "privateStringFromChild": {
+            "type": "string"
+          },
+          "protectedStringFromParent": {
+            "type": "string",
+            "description": "This is a protected string, use carefully."
+          },
+          "publicStringFromParent": {
+            "type": "string"
+          },
+          "protectedGrandParentField": {
+            "type": "string"
+          }
+        }
+      },
+      "Reference1": {
+        "type": "object",
+        "properties": {
+          "reference2Member": {
+            "$ref": "#/components/schemas/Reference2",
+            "description": "This is a reference 2 member. Lorem."
+          },
+          "reference3Member": {
+            "$ref": "#/components/schemas/Reference3"
+          },
+          "reference4Collection": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Reference4"
+            }
+          },
+          "reference5Member": {
+            "$ref": "#/components/schemas/Reference5"
+          }
+        }
+      },
+      "Reference2": {
+        "type": "object",
+        "properties": {
+          "stringMember": {
+            "type": "string"
+          }
+        }
+      },
+      "Reference3": {
+        "type": "object",
+        "properties": {
+          "someBoolean": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Reference4": {
+        "type": "object",
+        "properties": {
+          "someString": {
+            "type": "string"
+          }
+        }
+      },
+      "Reference5": {
+        "type": "object",
+        "properties": {
+          "reference6Member": {
+            "$ref": "#/components/schemas/Reference6"
+          }
+        }
+      },
+      "Reference6": {
+        "type": "object",
+        "properties": {
+          "grandChildString": {
+            "type": "string",
+            "description": "This is the grandchild description."
+          }
+        }
+      },
+      "Reference1_array": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Reference1"
+        }
+      },
+      "SampleRestResourceWithInnerClass.InnerClass": {
+        "type": "object",
+        "properties": {
+          "stringMember": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

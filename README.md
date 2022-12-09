@@ -120,11 +120,12 @@ The CLI supports the following parameters:
 | --sourceDir        | -s    | The directory location which contains your apex .cls classes.                                                                                                                                                                                                                                                                                                               | N/A             | Yes      |
 | --targetDir        | -t    | The directory location where documentation will be generated to.                                                                                                                                                                                                                                                                                                            | `docs`          | No       |
 | --recursive        | -r    | Whether .cls classes will be searched for recursively in the directory provided.                                                                                                                                                                                                                                                                                            | `true`          | No       |
-| --scope            | -p    | A list of scopes to document. Values should be separated by a space, e.g --scope public private                                                                                                                                                                                                                                                                             | `global`        | No       |
-| --targetGenerator  | -g    | Define the static file generator for which the documents will be created. Currently supports: `jekyll`, `docsify`, and `plain-markdown`.                                                                                                                                                                                                                                    | `jekyll`        | No       |
+| --scope            | -p    | A list of scopes to document. Values should be separated by a space, e.g --scope public private. Note that this setting is ignored if generating an OpenApi REST specification since that looks for classes annotated with @RestResource.                                                                                                                                   | `global`        | No       |
+| --targetGenerator  | -g    | Define the static file generator for which the documents will be created. Currently supports: `jekyll`, `docsify`, `plain-markdown`, and `openapi`.                                                                                                                                                                                                                         | `jekyll`        | No       |
 | --indexOnly        | N/A   | Defines whether only the index file should be generated.                                                                                                                                                                                                                                                                                                                    | `false`         | No       |
 | --defaultGroupName | N/A   | Defines the `@group` name to be used when a file does not specify it.                                                                                                                                                                                                                                                                                                       | `Miscellaneous` | No       |
-| --sanitizeHtml     | N/A   | When on, any special character within your ApexDocs is converted into its HTML code representation. This is specially useful when generic objects are described within the docs, e.g. "List< Foo>", "Map<Foo, Bar>" because otherwise the content within < and > would be treated as HTML tags and not shown in the output. Content in @example blocks are never sanitized. | true            | No       |
+| --sanitizeHtml     | N/A   | When on, any special character within your ApexDocs is converted into its HTML code representation. This is specially useful when generic objects are described within the docs, e.g. "List< Foo>", "Map<Foo, Bar>" because otherwise the content within < and > would be treated as HTML tags and not shown in the output. Content in @example blocks are never sanitized. | `Apex REST Api` | No       |
+| --openApiTitle     | N/A   | If using "openapi" as the target generator, this allows you to specify the OpenApi title value.                                                                                                                                                                                                                                                                             | true            | No       |
 
 ### Importing to your project
 
@@ -276,7 +277,7 @@ Apexdocs recognizes 2 different syntax when linking files:
  * @param param1 An <<ExampleClass>> instance. Can also do {@link ExampleClass}
  * @return The result of the operation.
  */
-public static Object class (ExampleClass param1) {
+public static Object doSomething(ExampleClass param1) {}
 ```
 
 ---
@@ -285,7 +286,7 @@ Email addresses can also be inlined linked by using the `{@email EMAIL_ADDRESS}`
 
 ### HTML support
 
-For the most part all HTML is sanitized when the `--sanitizeHtml` flag is passed a true value (which is the default). 
+For the most part all HTML is sanitized when the `--sanitizeHtml` flag is passed a true value (which is the default).
 But there are some tags are allowed to have for the possibility of better
 styling long text.
 
@@ -306,8 +307,10 @@ class MyClass {
 }
 ```
 
-⚠️When the `--sanitizeHtml` flag is ON, any special character between code blocks (i.e. \```, \`, or `<code>`) will also be escaped.
-So if you have references to Apex generic collections (Set, List, or Maps) they will not look right, as the < and > symbols will be escaped.
+⚠️When the `--sanitizeHtml` flag is ON, any special character between code blocks (i.e. \```, \`, or `<code>`) will also
+be escaped.
+So if you have references to Apex generic collections (Set, List, or Maps) they will not look right, as the < and >
+symbols will be escaped.
 To prevent this you can turn the flag off, but be aware of the special considerations when doing this described below.
 
 ---
@@ -316,11 +319,267 @@ For full control over the output you can also turn off the `--sanitizeHtml` flag
 to have any desired HTML within your docs.
 
 ⚠️When the `--sanitizeHtml` flag is OFF, references to Apex generic collections (Set, List or Maps) can be problematic
-as they will be treated as an HTML tag and not displayed. For example if you have something like `@description Returns a List<String>`
+as they will be treated as an HTML tag and not displayed. For example if you have something
+like `@description Returns a List<String>`
 the `<String>` portion will be treated as HTML and thus not appear on the page.
 
-To fix this issue, when not sanitizing HTML, you should wrap any code that contain special characters that can be treated as HTML within '\`'
+To fix this issue, when not sanitizing HTML, you should wrap any code that contain special characters that can be
+treated as HTML within '\`'
 or within `<code>` tags.
+
+## Generating OpenApi REST Definitions
+
+ApexDocs supports generating OpenApi 3.1.0 REST definitions based on any `@RestResource` classes in your source code.
+
+### Usage
+
+To create an OpenApi specification file, run the `apexdocs-generate` and pass `openapi` to the `--targetGenerator` parameter.
+When using this generator, you can also pass a custom title through the `--openApiTitle` parameter. This title will be placed
+in the output file's `info.title` property, as defined by the [OpenApi documentation for the Info Object](https://spec.openapis.org/oas/v3.1.0#info-object)
+
+
+```shell
+apexdocs-generate -s ./src -t docs -g openapi --openApiTitle "Custom OpenApi Title"
+```
+
+### How It Works
+
+When generating an OpenApi document, since `@RestResource` classes need to be global in Apex, the `--scope` parameter will be ignored.
+Instead, ApexDocs will run through all classes annotated with `@RestResource` and add it to the output OpenApi file.
+
+Once it finishes running, a file named `openapi.json` will be created in the specified `--targetDir`.
+
+### Configuring What Gets Created
+
+ApexDocs will automatically parse your source code and generate the OpenApi definition based on the HTTP related Apex
+annotations (RestResource, HttpDelete, HttpGet, HttpPatch, HttpPost, HttpGet). The different HTTP annotations will be used to generate a file that complies with the [OpenApi Specification v3.1.0](https://spec.openapis.org/oas/v3.1.0)
+
+Besides these annotations, the ApexDocs tool will also use any information provided through your code's Apexdocs, relying on
+some custom annotations that are specific to generating OpenApi definitions:
+
+* `@http-request-body`
+* `@http-parameter`
+* `@http-response`
+
+#### @http-request-body
+
+Allows you to specify the HTTP request's expected request body. It supports receiving a `description`,
+whether it is `required` or not, and a `schema`, which defines the shape of the object that is expected.
+
+📝 Note that only one `@http-request-body` should be defined per method. If you add more than one, only
+a single one will be used when generating the OpenApi definition.
+
+The `schema` can either be a reference to another class in your source code (see the `Class References` section below)
+or a fully defined custom schema (See the `Custom Schemas` section below).
+
+Example
+```apex
+    /**
+     * @description This is a sample HTTP Post method
+     * @http-request-body
+     * description: This is an example of a request body
+     * required: true
+     * schema: ClassName
+     */ 
+    @HttpPost
+    global static void doPost() {
+      ///...
+    }
+```
+
+📝 Note that each parameter of this annotation is expected to be on its own line. Parameters are treated as YAML,
+so spacing is important.
+
+#### @http-parameter
+
+Allows you to specify any HTTP parameter expected by your method. It supports receiving a `name`,
+an `in` as defined by the supported [Parameter Locations](https://spec.openapis.org/oas/v3.1.0#parameter-locations),
+whether it is `required` or not, a `description`, and a `schema`.
+
+📝 Note that you can specify as many `@http-parameter` annotations as needed.
+
+Example
+```apex
+    /**
+     * @description This is a sample HTTP Post method
+     * @return A String SObject.
+     * @http-parameter
+     * name: limit
+     * in: query
+     * required: true
+     * description: Limits the number of items on a page
+     * schema:
+     *   type: integer
+     * @http-parameter
+     * name: complex
+     * in: cookie
+     * schema: MyClassName
+     */
+    @HttpPost
+    global static String doPost() {
+        // ..
+    }
+```
+
+📝 Note that each parameter of this annotation is expected to be on its own line. Parameters are treated as YAML,
+   so spacing is important.
+
+#### @http-response
+
+Allows you to specify any HTTP response returned by your method. It supports receiving a `statusCode` with the response code,
+a `description`, and a `schema`.
+
+If no `description` is provided then one will be automatically built using the `statusCode`.
+
+📝 Note that you can specify as many `@http-parameter` annotations as needed.
+
+```apex
+    /**
+     * @description This is a sample HTTP Post method
+     * @return A String SObject.
+     * @http-response
+     * statusCode: 200
+     * schema: SuccessfulResponseClassName
+     * @http-response
+     * statusCode: 500
+     * description: Status Code 500 - An internal server error occurred.
+     * schema:
+     *   type: string
+     */
+    @HttpPost
+    global static String doPost() {
+        // ...
+    }
+```
+
+#### Class References
+
+Whenever specifying a `schema` parameter, you can pass as a string the name of any class in your source code. This
+class will be parsed by the ApexDocs tool and automatically converted to a reference in the resulting OpenApi definition.
+
+The tool will parse the class and create a reference that complies with [Apex's support for User-Defined Types](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_rest_methods.htm#ApexRESTUserDefinedTypes)
+
+---
+
+If dealing with a collection, you can also specify the name of the reference either using the `List` or `Set` syntax.
+
+📝 When using List or Set syntax in the `schema` of the ApexDoc `@http-*` annotation, only collections one level
+deep are supported (e.g. List<List<String>> is not supported). This is only a limitation when referencing collections
+on the ApexDoc `schema` property directly, and is fully supported when multi-level collections are inside of a referenced
+class as part of your codebase.
+
+Maps are not supported, as it is not possible to know which keys the map will contain, and thus it is not possible
+to convert that to a valid specification. For this use case, define a Custom Schema as explained below.
+
+```apex
+    /**
+     * @description This is a sample HTTP Post method
+     * @http-request-body
+     * description: This is an example of a request body
+     * schema: List<ClassName>
+     */
+    @HttpPost
+    global static void doPost() {
+      ///...
+    }
+```
+
+Inner class references are also supported, but note that you need to pass the full name of the reference,
+by using the `ParentClassName.InnerClassName` syntax, even if the inner class resides on the same class as the HTTP method
+referencing it.
+
+```apex
+    /**
+     * @description This is a sample HTTP Post method
+     * @http-request-body
+     * description: This is an example of a request body
+     * schema: ParentClass.InnerClass
+     */
+    @HttpPost
+    global static void doPost() {
+      ///...
+    }
+```
+
+#### Custom Schemas
+
+For any `schema` parameter in any of the HTTP ApexDocs annotations, besides specifying the name of a class, you
+can also specify a custom schema definition. The schema definition can either be for a primitive type, an `object` or an `array`
+
+**Primitives**
+
+For primitives, you should specify the `type` and an optional `format`, as defined by the [OpenApi Specification on Data Types](https://spec.openapis.org/oas/v3.1.0#data-types)
+
+```apex
+/**
+ * ...
+ * schema:
+ *   type: string
+ *   format: password
+ */
+```
+
+**Objects**
+
+To specify a custom object schema, use `object` as the `type`, and specify as many properties as follows:
+
+```apex
+/**
+ * schema:
+ *   type: object
+ *   properties:
+ *     id:
+ *       type: string
+ *       description: The super Id.
+ *     name:
+ *       type: string
+ *     phone:
+ *       type: string
+ *       format: byte
+*/
+```
+
+Properties can be defined as primitives (as explained above), other objects, or arrays (explained below)
+
+**Arrays**
+
+To specify a custom array schema, use `array` as the `type`, and provide an `items` definition. In `items`
+you can specify the definition of any other custom type (primitives, objects, or other arrays).
+
+```apex
+/**
+ * schema:
+ *   type: array
+ *   items:
+ *     type: object
+ *     properties:
+ *       name:
+ *         type: string
+ */
+```
+
+#### SObject References
+
+ApexDocs is not able to automatically parse SObject references, as it can with class references, as it does
+not reach into your org to get existing SObject describes. Because of this, when dealing with SObject references
+you should create a Custom Schema as defined above. This will also allow you to specify which specific
+fields are being received or returned.
+
+
+### Considerations
+
+Please be aware of the following when using ApexDocs to create an OpenApi definition:
+
+* Map references are resolved as `object` with no properties, as it is not possible to know which keys the map will contain.
+When using maps either create a class that better represents the shape of the object and use a Class Reference, or
+define a Custom Schema in the `schema` section of the ApexDoc itself.
+* Same thing when referencing SObjects, as SObject describe parsing is not supported by the ApexDocs tool. When referencing
+SObjects, consider defining a Custom Schema in the `schema` section of the ApexDoc.
+* ApexDoc is only able to parse through your source code, so references to other packages (namespaced classes) or any
+code that lives outside your source code is not supported. Consider creating a Custom Schema for those situations.
+* The return value and received parameters or your methods are currently not being considered when creating the OpenApi definition file.
+Instead, use the `@http-response` ApexDoc annotation to specify the return value, and `@http-parameter` to specify any
+expected parameter.
 
 ## Typescript
 

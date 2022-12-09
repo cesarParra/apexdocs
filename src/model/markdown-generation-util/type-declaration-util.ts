@@ -75,7 +75,7 @@ function addParent(markdownFile: MarkdownFile, classMirror: ClassMirror) {
     return;
   }
 
-  const parentType = TypesRepository.getInstance().getByName(classMirror.extended_class);
+  const parentType = TypesRepository.getInstance().getFromScopedByName(classMirror.extended_class);
   if (!parentType) {
     return;
   }

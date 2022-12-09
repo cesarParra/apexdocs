@@ -5,7 +5,10 @@
     "declaration": true,
     "outDir": "./lib",
     "strict": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "lib": [
+      "ES2021"
+    ]
   },
   "include": [
     "src"

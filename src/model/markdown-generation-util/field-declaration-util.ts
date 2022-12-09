@@ -28,7 +28,10 @@ function addFieldSection(
   grouped: boolean,
 ) {
   if (!grouped) {
-    markdownFile.addTitle(`\`${mirrorModel.name}\` → \`${mirrorModel.type}\``, startingHeadingLevel + 2);
+    markdownFile.addTitle(
+      `\`${mirrorModel.name}\` → \`${mirrorModel.typeReference.rawDeclaration}\``,
+      startingHeadingLevel + 2,
+    );
     markdownFile.addBlankLine();
     if (mirrorModel.inherited) {
       markdownFile.addText('*Inherited*');
@@ -62,7 +65,7 @@ function addFieldSection(
       description = ` - ${mirrorModel.docComment?.description}`;
     }
     markdownFile.addListItem(
-      `\`${mirrorModel.name}\` → \`${mirrorModel.type}\` (*Inherited*) ${annotations} ${description}`,
+      `\`${mirrorModel.name}\` → \`${mirrorModel.typeReference.rawDeclaration}\` (*Inherited*) ${annotations} ${description}`,
     );
     markdownFile.addBlankLine();
   }

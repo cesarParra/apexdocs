@@ -5,7 +5,7 @@ const xssFilter = new xss.FilterXSS({
   whiteList: { br: [], p: [], ul: [], li: [], code: [], pre: [] },
 });
 
-export abstract class File {
+export abstract class OutputFile {
   _contents = '';
 
   constructor(public fileName: string, public dir: string) {}

@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import * as yargs from 'yargs';
 
-import { GeneratorChoices, Settings } from '../settings';
+import { Settings } from '../settings';
 import { Apexdocs } from '../application/Apexdocs';
+import { GeneratorChoices } from '../transpiler/generator-choices';
 
 const argv = yargs.options({
   sourceDir: {
@@ -29,15 +30,17 @@ const argv = yargs.options({
     default: ['global'],
     describe:
       'A list of scopes to document. Values should be separated by a space, e.g --scope global public namespaceaccessible. ' +
-      'Annotations are supported and should be passed lowercased and without the @ symbol, e.g. namespaceaccessible auraenabled',
+      'Annotations are supported and should be passed lowercased and without the @ symbol, e.g. namespaceaccessible auraenabled. ' +
+      'Note that this setting is ignored if generating an OpenApi REST specification since that looks for classes annotated with @RestResource.',
   },
   targetGenerator: {
     type: 'string',
     alias: 'g',
     default: 'jekyll',
-    choices: ['jekyll', 'docsify', 'plain-markdown'],
+    choices: ['jekyll', 'docsify', 'plain-markdown', 'openapi'],
     describe:
-      'Define the static file generator for which the documents will be created. Currently supports jekyll, docsify, and plain markdown.',
+      'Define the static file generator for which the documents will be created. ' +
+      'Currently supports jekyll, docsify, plain markdown, and OpenAPI v3.1.0.',
   },
   indexOnly: {
     type: 'boolean',
@@ -58,6 +61,11 @@ const argv = yargs.options({
       'because otherwise the content within < and > would be treated as HTML tags and not shown in the output. ' +
       'Content in @example blocks are never sanitized.',
   },
+  openApiTitle: {
+    type: 'string',
+    default: 'Apex REST Api',
+    describe: 'If using "openapi" as the target generator, this allows you to specify the OpenApi title value.',
+  },
 }).argv;
 
 Settings.build({
@@ -69,6 +77,7 @@ Settings.build({
   indexOnly: argv.indexOnly,
   defaultGroupName: argv.defaultGroupName,
   sanitizeHtml: argv.sanitizeHtml,
+  openApiTitle: argv.openApiTitle,
 });
 
 Apexdocs.generate();

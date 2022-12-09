@@ -15,17 +15,20 @@ ChildClass
 
 ## Fields
 
+### `privateStringFromChild` → `String`
+
+
 ### `protectedGrandParentField` → `String`
 
 *Inherited*
 
-### `protectedString` → `String`
+### `protectedStringFromParent` → `String`
 
 *Inherited*
 
 This is a protected string, use carefully.
 
-### `publicString` → `String`
+### `publicStringFromParent` → `String`
 
 *Inherited*
 

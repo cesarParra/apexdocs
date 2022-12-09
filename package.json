@@ -1,6 +1,6 @@
 {
   "name": "@cparra/apexdocs",
-  "version": "2.8.2",
+  "version": "2.9.0-alpha.2",
   "description": "Library with CLI capabilities to generate documentation for Salesforce Apex classes.",
   "keywords": [
     "apex",
@@ -25,6 +25,7 @@
     "docs:init": "docsify init docs",
     "docs:serve": "docsify serve docs",
     "execute:example": "node lib/cli/generate.js -s examples/force-app -t docs --scope global public private protected -g docsify --defaultGroupName \"Misc Group\"",
+    "execute:example:openapi": "node lib/cli/generate.js -s examples/force-app -t docs -g openapi --openApiTitle \"My REST Api 2\"",
     "execute:example:index:only": "node lib/cli/generate.js -s examples/force-app -t docs --scope global public private -g docsify --indexOnly"
   },
   "author": "Cesar Parra",
@@ -36,12 +37,13 @@
   "devDependencies": {
     "@types/html-entities": "^1.3.4",
     "@types/jest": "^27.4.1",
+    "@types/js-yaml": "^4.0.5",
     "@types/node": "^13.7.4",
     "@types/shelljs": "^0.8.6",
     "@types/yargs": "^15.0.3",
-    "@typescript-eslint/eslint-plugin": "^5.1.0",
-    "@typescript-eslint/parser": "^5.1.0",
-    "docsify": "^4.12.2",
+    "@typescript-eslint/eslint-plugin": "^5.41.0",
+    "@typescript-eslint/parser": "^5.41.0",
+    "docsify": "^4.13.0",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
@@ -51,7 +53,7 @@
     "prettier": "^2.4.1",
     "rimraf": "^3.0.2",
     "ts-jest": "^27.1.3",
-    "typescript": "^3.8.2"
+    "typescript": "^4.8.4"
   },
   "husky": {
     "hooks": {
@@ -64,9 +66,10 @@
     ]
   },
   "dependencies": {
-    "@cparra/apex-reflection": "1.11.0",
+    "@cparra/apex-reflection": "2.0.1",
     "chalk": "^4.1.2",
     "fast-xml-parser": "^4.0.1",
+    "js-yaml": "^4.1.0",
     "log-update": "4.0.0",
     "xss": "^1.0.11",
     "yargs": "^16.0.3"

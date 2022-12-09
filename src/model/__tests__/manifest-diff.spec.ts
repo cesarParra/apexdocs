@@ -137,6 +137,3 @@ it('detects changes to annotations within an enum', () => {
     deprecatedAnnotation.name,
   );
 });
-
-// TODO: Changes to interfaces
-// TODO: Changes to classes

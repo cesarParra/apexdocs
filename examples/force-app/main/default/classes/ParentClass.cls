@@ -1,10 +1,10 @@
 public virtual class ParentClass extends GrandparentClass{
-    private String privateString;
+    private String privateStringFromParent;
     /**
      * @description This is a protected string, use carefully.
      */
-    protected String protectedString;
-    public String publicString;
+    protected String protectedStringFromParent;
+    public String publicStringFromParent;
 
     public virtual String overridableMethod() {
         return '';
