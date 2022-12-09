@@ -82,10 +82,8 @@ export class MethodParser {
     const requestBodyResponse = new RequestBodyBuilder().build(inJson);
 
     this.openApiModel.paths[urlValue][httpMethodKey]!.requestBody = requestBodyResponse.body;
-    if (requestBodyResponse.reference) {
-      // If a reference is returned, we want to make sure to add it to the OpenApi object as well
-      this.addReference(requestBodyResponse.reference);
-    }
+
+    this.addReference(requestBodyResponse);
   }
 
   private addParametersToOpenApi(inYaml: string, urlValue: string, httpMethodKey: HttpOperations) {
@@ -98,10 +96,8 @@ export class MethodParser {
       this.openApiModel.paths[urlValue][httpMethodKey]!.parameters = [];
     }
     this.openApiModel.paths[urlValue][httpMethodKey]!.parameters!.push(parameterObjectResponse.body);
-    if (parameterObjectResponse.reference) {
-      // If a reference is returned, we want to make sure to add it to the OpenApi object as well
-      this.addReference(parameterObjectResponse.reference);
-    }
+
+    this.addReference(parameterObjectResponse);
   }
 
   private addHttpResponsesToOpenApi(inYaml: string, urlValue: string, httpMethodKey: HttpOperations) {
@@ -114,29 +110,29 @@ export class MethodParser {
     }
 
     this.openApiModel.paths[urlValue][httpMethodKey]!.responses![inJson.statusCode] = responseObjectResponse.body;
-    // TODO: There's some duplication with the next 3 lines, because we do the same in all 3 places
-    if (responseObjectResponse.reference) {
-      // If a reference is returned, we want to make sure to add it to the OpenApi object as well
-      this.addReference(responseObjectResponse.reference);
-    }
+
+    this.addReference(responseObjectResponse);
   }
 
-  private addReference(reference: Reference): void {
-    // Add to "component" section if it hasn't been already
-    if (this.openApiModel.components === undefined) {
-      this.openApiModel.components = {
-        schemas: {},
-      };
-    }
+  private addReference(referenceHolder: { reference?: Reference }): void {
+    if (referenceHolder.reference) {
+      // If a reference is returned, we want to make sure to add it to the OpenApi object as well
+      // Add to "component" section if it hasn't been already
+      if (this.openApiModel.components === undefined) {
+        this.openApiModel.components = {
+          schemas: {},
+        };
+      }
 
-    if (!reference.referenceComponents.length) {
-      return;
-    }
+      if (!referenceHolder.reference.referenceComponents.length) {
+        return;
+      }
 
-    // Add all received references to the OpenApi components section.
-    reference.referenceComponents.forEach((current) => {
-      // Check if the referenced object is already part of the OpenApi object
-      this.openApiModel.components!.schemas![current.referencedClass] = current.schema;
-    });
+      // Add all received references to the OpenApi components section.
+      referenceHolder.reference.referenceComponents.forEach((current) => {
+        // Check if the referenced object is already part of the OpenApi object
+        this.openApiModel.components!.schemas![current.referencedClass] = current.schema;
+      });
+    }
   }
 }

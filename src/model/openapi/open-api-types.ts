@@ -54,8 +54,8 @@ export type RequestBodyContent = {
 
 export type MediaTypeObject = {
   schema?: SchemaObject;
-  example?: any; // TODO: Parse this on the output
-  examples?: { [index: string]: ExampleObject }; // TODO: Parse this on the output
+  example?: any;
+  examples?: { [index: string]: ExampleObject };
 };
 
 export type ExampleObject = {
