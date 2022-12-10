@@ -18,7 +18,7 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
     if (!title) {
       throw Error('No OpenApi title was provided.');
     }
-    this.openApiModel = new OpenApi(title, '1.0.0');
+    this.openApiModel = new OpenApi(title, '1.0.0', Settings.getInstance().getNamespace());
   }
 
   fileBuilder(): FileContainer {

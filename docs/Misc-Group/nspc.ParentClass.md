@@ -1,8 +1,8 @@
-# ParentClass
+# nspc.ParentClass
 
 **Inheritance**
 
-[GrandparentClass](/Misc-Group/GrandparentClass.md)
+[nspc.GrandparentClass](/Misc-Group/nspc.GrandparentClass.md)
  &gt; 
 ParentClass
 

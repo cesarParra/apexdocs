@@ -1,12 +1,12 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "My REST Api 2",
+    "title": "Sample REST Api",
     "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "/services/apexrest/"
+      "url": "/services/apexrest/nspc/"
     }
   ],
   "paths": {

@@ -11,7 +11,8 @@ export default class ClassFileGeneratorHelper {
 
   public static getFileLink(classModel: Type) {
     const directoryRoot = this.getDirectoryRoot(classModel);
-    return `[${classModel.name}](${directoryRoot}${classModel.name}.md)`;
+    const fullClassName = `${Settings.getInstance().getNamespacePrefix()}${classModel.name}`;
+    return `[${fullClassName}](${directoryRoot}${fullClassName}.md)`;
   }
 
   public static getFileLinkByTypeName(typeName: string) {

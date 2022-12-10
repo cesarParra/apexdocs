@@ -1,10 +1,10 @@
-# InterfaceWithInheritance
+# nspc.InterfaceWithInheritance
 
 **Extended types**
 
-[SampleInterface](/Sample-Interfaces/SampleInterface.md)
+[nspc.SampleInterface](/Sample-Interfaces/nspc.SampleInterface.md)
 , 
-[AnotherInterface](/Misc-Group/AnotherInterface.md)
+[nspc.AnotherInterface](/Misc-Group/nspc.AnotherInterface.md)
 ## Methods
 ### `execute()`
 

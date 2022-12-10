@@ -1,17 +1,17 @@
-# ChildClass
+# nspc.ChildClass
 
 **Inheritance**
 
-[GrandparentClass](/Misc-Group/GrandparentClass.md)
+[nspc.GrandparentClass](/Misc-Group/nspc.GrandparentClass.md)
  &gt; 
-[ParentClass](/Misc-Group/ParentClass.md)
+[nspc.ParentClass](/Misc-Group/nspc.ParentClass.md)
  &gt; 
 ChildClass
 
 
 **Implemented types**
 
-[SampleInterface](/Sample-Interfaces/SampleInterface.md)
+[nspc.SampleInterface](/Sample-Interfaces/nspc.SampleInterface.md)
 
 ## Fields
 

@@ -14,7 +14,7 @@ export class OpenApi {
   servers: ServerObject[];
   components?: ComponentsObject;
 
-  constructor(title: string, version: string, public namespace?: string) {
+  constructor(title: string, version: string, private namespace?: string) {
     this.info = {
       title: title,
       version: version,

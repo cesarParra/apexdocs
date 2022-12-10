@@ -12,6 +12,7 @@ import { MarkdownFile } from './markdown-file';
 import { declareType, declareMethod, declareField } from './markdown-generation-util';
 import ClassFileGeneratorHelper from '../transpiler/markdown/class-file-generatorHelper';
 import { FieldMirrorWithInheritance, MethodMirrorWithInheritance, PropertyMirrorWithInheritance } from './inheritance';
+import { Settings } from '../settings';
 
 interface GroupAware {
   group?: string;
@@ -22,8 +23,11 @@ interface GroupMap {
 }
 
 export class MarkdownTypeFile extends MarkdownFile implements WalkerListener {
-  constructor(public type: Type, public headingLevel: number = 1, headerContent?: string) {
-    super(`${type.name}`, ClassFileGeneratorHelper.getSanitizedGroup(type));
+  constructor(private type: Type, private headingLevel: number = 1, headerContent?: string, private isInner = false) {
+    super(
+      `${Settings.getInstance().getNamespacePrefix()}${type.name}`,
+      ClassFileGeneratorHelper.getSanitizedGroup(type),
+    );
     if (headerContent) {
       this.addText(headerContent);
     }
@@ -32,7 +36,13 @@ export class MarkdownTypeFile extends MarkdownFile implements WalkerListener {
   }
 
   public onTypeDeclaration(typeMirror: Type): void {
-    this.addTitle(typeMirror.name, this.headingLevel);
+    let fullTypeName;
+    if (this.isInner) {
+      fullTypeName = typeMirror.name;
+    } else {
+      fullTypeName = `${Settings.getInstance().getNamespacePrefix()}${typeMirror.name}`;
+    }
+    this.addTitle(fullTypeName, this.headingLevel);
     declareType(this, typeMirror);
   }
 
@@ -77,7 +87,7 @@ export class MarkdownTypeFile extends MarkdownFile implements WalkerListener {
         return 0;
       })
       .forEach((currentType) => {
-        const innerFile = new MarkdownTypeFile(currentType, this.headingLevel + 2);
+        const innerFile = new MarkdownTypeFile(currentType, this.headingLevel + 2, undefined, true);
         this.addText(innerFile._contents);
       });
     if (addSeparator) {

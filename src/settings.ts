@@ -10,6 +10,7 @@ export interface SettingsConfig {
   defaultGroupName: string;
   sanitizeHtml: boolean;
   openApiTitle?: string;
+  namespace?: string;
 }
 
 export class Settings {
@@ -62,5 +63,16 @@ export class Settings {
 
   public getOpenApiTitle(): string | undefined {
     return this.config.openApiTitle;
+  }
+
+  public getNamespace(): string | undefined {
+    return this.config.namespace;
+  }
+
+  public getNamespacePrefix(): string {
+    if (!this.config.namespace) {
+      return '';
+    }
+    return `${this.config.namespace}.`;
   }
 }

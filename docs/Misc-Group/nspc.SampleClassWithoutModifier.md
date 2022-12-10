@@ -1,4 +1,4 @@
-# SampleClassWithoutModifier
+# nspc.SampleClassWithoutModifier
 
 `ISTEST`
 ## Methods

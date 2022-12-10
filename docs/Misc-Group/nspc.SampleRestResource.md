@@ -1,4 +1,4 @@
-# SampleRestResource
+# nspc.SampleRestResource
 
 `RESTRESOURCE`
 

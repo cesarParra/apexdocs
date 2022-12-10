@@ -1,4 +1,4 @@
-# SampleInterface
+# nspc.SampleInterface
 
 This is an interface description.
 
