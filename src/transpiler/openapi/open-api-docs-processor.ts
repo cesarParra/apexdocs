@@ -57,9 +57,11 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
 
     // DELETE
     parser.parseMethod(typeAsClass, endpointPath, 'delete');
-
-    this._fileContainer.pushFile(new OpenapiTypeFile(this.openApiModel));
   }
+
+  onAfterProcess: ((types: Type[]) => void) | undefined = () => {
+    this._fileContainer.pushFile(new OpenapiTypeFile(this.openApiModel));
+  };
 
   private getEndpointPath(type: Type): string | null {
     const restResourceAnnotation = type.annotations.find((element) => element.name.toLowerCase() === 'restresource');
