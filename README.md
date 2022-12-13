@@ -460,6 +460,49 @@ class will be parsed by the ApexDocs tool and automatically converted to a refer
 
 The tool will parse the class and create a reference that complies with [Apex's support for User-Defined Types](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_rest_methods.htm#ApexRESTUserDefinedTypes)
 
+##### Reference Overrides
+
+When dealing with references, there might be cases when you want to manually tell the parser what type of object a property
+or field is. For example, let's say we have a class that looks as follows
+
+```apex
+public class MyClass {
+  public Object myObject;
+  public Account myAccountRecord;
+}
+```
+
+In this case `myObject` has a type of `Object`, and `myAccountRecord` is an SObject. Neither of these will be accurately
+parsed when building the OpenApi definition, instead they will be simple be referenced as `object` without any properties.
+
+To accurately represent the shape of these objects, you can use the `@http-schema` annotation to essentially override its
+type during parsing. In this annotation you can specify the same thing you would in any `schema` property when dealing with any
+of the main `@http-*` methods, meaning a reference to another class, or a Custom Schema (as defined below).
+
+```apex
+public class MyClass {
+  /**
+   * @description This is a generic reference to another class 
+   * @http-schema MyOtherClassName
+   */
+  public Object myObject;
+
+  /**
+   * @description This is a reference to an Account SObject
+   * @http-schema
+   * type: object
+   * properties:
+   *   Id:
+   *     type: string
+   *   Name:
+   *     type: string
+   *   CustomField__c:
+   *     type: number
+   */
+  public Account myAccountRecord;
+}
+```
+
 ---
 
 If dealing with a collection, you can also specify the name of the reference either using the `List` or `Set` syntax.

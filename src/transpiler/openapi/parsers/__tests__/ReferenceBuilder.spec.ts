@@ -3,6 +3,8 @@ import { ReferenceBuilder } from '../ReferenceBuilder';
 import { ClassMirrorBuilder } from '../../../../test-helpers/ClassMirrorBuilder';
 import { FieldMirrorBuilder } from '../../../../test-helpers/FieldMirrorBuilder';
 import { SchemaObjectArray, SchemaObjectObject } from '../../../../model/openapi/open-api-types';
+import { DocCommentBuilder } from '../../../../test-helpers/DocCommentBuilder';
+import { DocCommentAnnotationBuilder } from '../../../../test-helpers/DocCommentAnnotationBuilder';
 
 describe('ReferenceBuilder', () => {
   describe('Validation', () => {
@@ -617,6 +619,89 @@ describe('ReferenceBuilder', () => {
       expect(result.entrypointReferenceObject.$ref).toBe('#/components/schemas/classname_array');
       expect((result.referenceComponents[0].schema as SchemaObjectArray).type).toBe('array');
       expect((result.referenceComponents[1].schema as SchemaObjectObject).properties).toHaveProperty('fieldName');
+    });
+  });
+
+  describe('References can override their type', () => {
+    it("should correctly parse a manually defined schema in the reference's ApexDoc", function () {
+      const classMirror = new ClassMirrorBuilder()
+        .addFiled(
+          new FieldMirrorBuilder()
+            .withName('fieldName')
+            .withType('Object')
+            .withDocComment(
+              new DocCommentBuilder()
+                .addAnnotation(
+                  new DocCommentAnnotationBuilder().withName('http-schema').withBodyLines(['type: string']).build(),
+                )
+                .build(),
+            )
+            .build(),
+        )
+        .build();
+
+      TypesRepository.getInstance = jest.fn().mockReturnValue({
+        getFromAllByName: jest.fn().mockReturnValue({ type: classMirror, isChild: false }),
+      });
+
+      const result = new ReferenceBuilder().build('className');
+
+      const schema = result.referenceComponents[0].schema as SchemaObjectObject;
+      expect(schema.properties).toHaveProperty('fieldName');
+      const fieldSchema = schema.properties!['fieldName'] as SchemaObjectObject;
+      expect(fieldSchema.type).toBe('string');
+    });
+
+    it('should correctly parse a manually defined reference while parsing properties', function () {
+      const mainClassMirror = new ClassMirrorBuilder()
+        .withName('parent')
+        .addFiled(
+          new FieldMirrorBuilder()
+            .withName('childClassMember')
+            .withType('Object')
+            .withDocComment(
+              new DocCommentBuilder()
+                .addAnnotation(
+                  new DocCommentAnnotationBuilder().withName('http-schema').withBodyLines(['ChildClass']).build(),
+                )
+                .build(),
+            )
+            .build(),
+        )
+        .build();
+
+      const childClass = new ClassMirrorBuilder()
+        .withName('child')
+        .addFiled(
+          new FieldMirrorBuilder()
+            .withName('grandChildClassMember')
+            .withReferencedType({
+              type: 'GrandChildClass',
+              rawDeclaration: 'GrandChildClass',
+            })
+            .build(),
+        )
+        .build();
+
+      const grandChildClass = new ClassMirrorBuilder()
+        .withName('grandchild')
+        .addFiled(new FieldMirrorBuilder().withName('stringMember').withType('String').build())
+        .build();
+
+      TypesRepository.getInstance = jest.fn().mockReturnValue({
+        getFromAllByName: jest
+          .fn()
+          .mockReturnValueOnce({ type: mainClassMirror, isChild: false })
+          .mockReturnValueOnce({ type: childClass, isChild: false })
+          .mockReturnValueOnce({ type: grandChildClass, isChild: false }),
+      });
+
+      const result = new ReferenceBuilder().build('className');
+
+      expect(result.referenceComponents).toHaveLength(3);
+      expect(result.referenceComponents.some((ref) => ref.referencedClass === 'parent')).toBe(true);
+      expect(result.referenceComponents.some((ref) => ref.referencedClass === 'child')).toBe(true);
+      expect(result.referenceComponents.some((ref) => ref.referencedClass === 'grandchild')).toBe(true);
     });
   });
 });
