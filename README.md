@@ -375,17 +375,17 @@ or a fully defined custom schema (See the `Custom Schemas` section below).
 
 Example
 ```apex
-    /**
-     * @description This is a sample HTTP Post method
-     * @http-request-body
-     * description: This is an example of a request body
-     * required: true
-     * schema: ClassName
-     */ 
-    @HttpPost
-    global static void doPost() {
-      ///...
-    }
+/**
+ * @description This is a sample HTTP Post method
+ * @http-request-body
+ * description: This is an example of a request body
+ * required: true
+ * schema: ClassName
+ */ 
+@HttpPost
+global static void doPost() {
+  ///...
+}
 ```
 
 📝 Note that each parameter of this annotation is expected to be on its own line. Parameters are treated as YAML,
@@ -401,25 +401,25 @@ whether it is `required` or not, a `description`, and a `schema`.
 
 Example
 ```apex
-    /**
-     * @description This is a sample HTTP Post method
-     * @return A String SObject.
-     * @http-parameter
-     * name: limit
-     * in: query
-     * required: true
-     * description: Limits the number of items on a page
-     * schema:
-     *   type: integer
-     * @http-parameter
-     * name: complex
-     * in: cookie
-     * schema: MyClassName
-     */
-    @HttpPost
-    global static String doPost() {
-        // ..
-    }
+/**
+ * @description This is a sample HTTP Post method
+ * @return A String SObject.
+ * @http-parameter
+ * name: limit
+ * in: query
+ * required: true
+ * description: Limits the number of items on a page
+ * schema:
+ *   type: integer
+ * @http-parameter
+ * name: complex
+ * in: cookie
+ * schema: MyClassName
+ */
+@HttpPost
+global static String doPost() {
+    // ..
+}
 ```
 
 📝 Note that each parameter of this annotation is expected to be on its own line. Parameters are treated as YAML,
@@ -435,22 +435,22 @@ If no `description` is provided then one will be automatically built using the `
 📝 Note that you can specify as many `@http-parameter` annotations as needed.
 
 ```apex
-    /**
-     * @description This is a sample HTTP Post method
-     * @return A String SObject.
-     * @http-response
-     * statusCode: 200
-     * schema: SuccessfulResponseClassName
-     * @http-response
-     * statusCode: 500
-     * description: Status Code 500 - An internal server error occurred.
-     * schema:
-     *   type: string
-     */
-    @HttpPost
-    global static String doPost() {
-        // ...
-    }
+/**
+ * @description This is a sample HTTP Post method
+ * @return A String SObject.
+ * @http-response
+ * statusCode: 200
+ * schema: SuccessfulResponseClassName
+ * @http-response
+ * statusCode: 500
+ * description: Status Code 500 - An internal server error occurred.
+ * schema:
+ *   type: string
+ */
+@HttpPost
+global static String doPost() {
+    // ...
+}
 ```
 
 #### Class References
@@ -516,16 +516,16 @@ Maps are not supported, as it is not possible to know which keys the map will co
 to convert that to a valid specification. For this use case, define a Custom Schema as explained below.
 
 ```apex
-    /**
-     * @description This is a sample HTTP Post method
-     * @http-request-body
-     * description: This is an example of a request body
-     * schema: List<ClassName>
-     */
-    @HttpPost
-    global static void doPost() {
-      ///...
-    }
+/**
+ * @description This is a sample HTTP Post method
+ * @http-request-body
+ * description: This is an example of a request body
+ * schema: List<ClassName>
+ */
+@HttpPost
+global static void doPost() {
+  ///...
+}
 ```
 
 Inner class references are also supported, but note that you need to pass the full name of the reference,
@@ -533,16 +533,16 @@ by using the `ParentClassName.InnerClassName` syntax, even if the inner class re
 referencing it.
 
 ```apex
-    /**
-     * @description This is a sample HTTP Post method
-     * @http-request-body
-     * description: This is an example of a request body
-     * schema: ParentClass.InnerClass
-     */
-    @HttpPost
-    global static void doPost() {
-      ///...
-    }
+/**
+ * @description This is a sample HTTP Post method
+ * @http-request-body
+ * description: This is an example of a request body
+ * schema: ParentClass.InnerClass
+ */
+@HttpPost
+global static void doPost() {
+  ///...
+}
 ```
 
 #### Custom Schemas
