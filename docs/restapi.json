@@ -253,17 +253,6 @@
       },
       "delete": {
         "description": "Sample HTTP Delete method with references to other types.",
-        "requestBody": {
-          "description": "This is an example of a request body",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SampleClass"
-              }
-            }
-          },
-          "required": true
-        },
         "parameters": [
           {
             "name": "limit",
