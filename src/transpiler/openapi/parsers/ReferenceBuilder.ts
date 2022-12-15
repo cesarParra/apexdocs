@@ -1,3 +1,4 @@
+import * as yaml from 'js-yaml';
 import {
   PropertiesObject,
   ReferenceObject,
@@ -6,8 +7,9 @@ import {
   SchemaObjectObject,
 } from '../../../model/openapi/open-api-types';
 import { TypeBundle, TypesRepository } from '../../../model/types-repository';
-import { ClassMirror, FieldMirror, PropertyMirror, Type } from '@cparra/apex-reflection';
+import { ClassMirror, DocCommentAnnotation, FieldMirror, PropertyMirror } from '@cparra/apex-reflection';
 import { ListObjectType, ReferencedType } from '@cparra/apex-reflection/index';
+import { ApexDocSchemaObject } from '../../../model/openapi/apex-doc-types';
 
 type TypeBundleWithIsCollection = TypeBundle & { isCollection: boolean };
 
@@ -64,12 +66,20 @@ export class ReferenceBuilder {
     const properties: PropertiesObject = {};
     let referencedComponents: ReferenceComponent[] = [];
     propertiesAndFields.forEach((current) => {
-      const pair = this.getReferenceType(current.typeReference);
-      properties[current.name] = pair.schema;
+      // Check for "@http-schema" annotations within properties themselves. If these are specified they
+      // take precedence over the property type itself.
+      const manuallyDefinedHttpSchema = current.docComment?.annotations.find(
+        (annotation) => annotation.name.toLowerCase() === 'http-schema',
+      );
+      if (manuallyDefinedHttpSchema) {
+        this.handleOverriddenSchema(manuallyDefinedHttpSchema, properties, current, referencedComponents);
+      } else {
+        const pair = this.getReferenceType(current.typeReference);
+        properties[current.name] = pair.schema;
+        pair.referenceComponents.forEach((current) => referencedComponents.push(current));
+      }
       properties[current.name].description = current.docComment?.description;
-      pair.referenceComponents.forEach((current) => referencedComponents.push(current));
     });
-
     const mainReferenceComponents = this.buildMainReferenceComponent(typeBundle, properties);
 
     // Make sure to add the "main" reference first
@@ -81,6 +91,28 @@ export class ReferenceBuilder {
       },
       referenceComponents: referencedComponents,
     };
+  }
+
+  private handleOverriddenSchema(
+    manuallyDefinedHttpSchema: DocCommentAnnotation,
+    properties: PropertiesObject,
+    current: FieldMirror | PropertyMirror,
+    referencedComponents: ReferenceComponent[],
+  ) {
+    // This can be of type ApexDocSchemaObject
+    const inYaml = manuallyDefinedHttpSchema?.bodyLines.reduce((prev, current, _) => prev + '\n' + current);
+    const asJson = yaml.load(inYaml) as ApexDocSchemaObject;
+    const isReference = this.isReferenceString(asJson);
+
+    if (isReference) {
+      const reference = this.build(asJson);
+      properties[current.name] = reference.entrypointReferenceObject;
+      reference.referenceComponents.forEach((current) => referencedComponents.push(current));
+    } else {
+      // If we are dealing with a manually defined schema object, we can add it directly to the "properties" map,
+      // because we don't need to add a reference component.
+      properties[current.name] = asJson;
+    }
   }
 
   private getReferenceName(typeBundle: TypeBundleWithIsCollection): string {
@@ -180,6 +212,10 @@ export class ReferenceBuilder {
       referenceComponents: [...innerReference.referenceComponents],
     };
   }
+
+  private isReferenceString = (targetObject: any): targetObject is string => {
+    return typeof targetObject === 'string' || targetObject instanceof String;
+  };
 }
 
 type SchemaObjectReferencePair = {

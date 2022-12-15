@@ -16,6 +16,7 @@ export class SettingsBuilder {
       defaultGroupName: 'Misc',
       sanitizeHtml: true,
       openApiTitle: 'Apex API',
+      openApiFileName: 'openapi',
     };
   }
 }

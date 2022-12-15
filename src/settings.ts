@@ -11,6 +11,7 @@ export interface SettingsConfig {
   sanitizeHtml: boolean;
   openApiTitle?: string;
   namespace?: string;
+  openApiFileName: string;
 }
 
 export class Settings {
@@ -74,5 +75,9 @@ export class Settings {
       return '';
     }
     return `${this.config.namespace}.`;
+  }
+
+  public openApiFileName(): string {
+    return this.config.openApiFileName;
   }
 }
