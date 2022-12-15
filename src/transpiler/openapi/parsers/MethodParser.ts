@@ -11,8 +11,10 @@ import {
   ApexDocParameterObject,
 } from '../../../model/openapi/apex-doc-types';
 import { RequestBodyBuilder } from './RequestBodyBuilder';
+import { ApexDocSchemaAware } from './Builder';
 
-type AddToOpenApi = (inYaml: string, urlValue: string) => void;
+type FallbackMethodParser = (methodMirror: MethodMirror) => void;
+type AddToOpenApi<T extends ApexDocSchemaAware> = (input: T, urlValue: string, httpMethodKey: HttpOperations) => void;
 
 type HttpOperations = 'get' | 'put' | 'post' | 'delete' | 'patch';
 
@@ -39,26 +41,40 @@ export class MethodParser {
       this.openApiModel.paths[httpUrlEndpoint][httpMethodKey]!.description = httpMethod.docComment.description;
     }
 
-    this.parseHttpAnnotation(httpMethod, httpUrlEndpoint, 'http-request-body', (inYaml, urlValue) =>
-      this.addRequestBodyToOpenApi(inYaml, urlValue, httpMethodKey),
+    this.parseHttpAnnotation<ApexDocHttpRequestBody>(
+      httpMethod,
+      httpUrlEndpoint,
+      httpMethodKey,
+      'http-request-body',
+      this.addRequestBodyToOpenApi,
     );
-    this.parseHttpAnnotation(httpMethod, httpUrlEndpoint, 'http-parameter', (inYaml, urlValue) =>
-      this.addParametersToOpenApi(inYaml, urlValue, httpMethodKey),
+
+    this.parseHttpAnnotation<ApexDocParameterObject>(
+      httpMethod,
+      httpUrlEndpoint,
+      httpMethodKey,
+      'http-parameter',
+      this.addParametersToOpenApi,
     );
-    this.parseHttpAnnotation(httpMethod, httpUrlEndpoint, 'http-response', (inYaml, urlValue) =>
-      this.addHttpResponsesToOpenApi(inYaml, urlValue, httpMethodKey),
+
+    this.parseHttpAnnotation<ApexDocHttpResponse>(
+      httpMethod,
+      httpUrlEndpoint,
+      httpMethodKey,
+      'http-response',
+      this.addHttpResponsesToOpenApi,
     );
   }
 
-  private parseHttpAnnotation(
-    httpGetMethod: MethodMirror,
+  private parseHttpAnnotation<T extends ApexDocSchemaAware>(
+    httpMethod: MethodMirror,
     urlValue: string,
+    httpMethodKey: HttpOperations,
     annotationName: string,
-    addToOpenApi: AddToOpenApi,
+    addToOpenApi: AddToOpenApi<T>,
+    fallbackParser?: FallbackMethodParser,
   ) {
-    const annotations = httpGetMethod.docComment?.annotations.filter(
-      (annotation) => annotation.name === annotationName,
-    );
+    const annotations = httpMethod.docComment?.annotations.filter((annotation) => annotation.name === annotationName);
 
     if (!annotations?.length) {
       return;
@@ -72,46 +88,57 @@ export class MethodParser {
         return;
       }
 
-      addToOpenApi(inYaml, urlValue);
+      if (fallbackParser) {
+        // TODO:
+        fallbackParser(httpMethod);
+      }
+
+      this.addToOpenApiStrategy<T>(inYaml, urlValue, httpMethodKey, addToOpenApi);
     }
   }
 
-  private addRequestBodyToOpenApi(inYaml: string, urlValue: string, httpMethodKey: HttpOperations) {
+  private addToOpenApiStrategy<T extends ApexDocSchemaAware>(
+    inYaml: string,
+    urlValue: string,
+    httpMethodKey: HttpOperations,
+    addToOpenApi: AddToOpenApi<T>,
+  ): void {
     // Convert the YAML into a JSON object.
-    const inJson = yaml.load(inYaml) as ApexDocHttpRequestBody;
+    const inJson = yaml.load(inYaml) as T;
     const requestBodyResponse = new RequestBodyBuilder().build(inJson);
 
-    this.openApiModel.paths[urlValue][httpMethodKey]!.requestBody = requestBodyResponse.body;
+    addToOpenApi(inJson, urlValue, httpMethodKey);
 
     this.addReference(requestBodyResponse);
   }
 
-  private addParametersToOpenApi(inYaml: string, urlValue: string, httpMethodKey: HttpOperations) {
-    // Convert the YAML into a JSON object.
-    const inJson = yaml.load(inYaml) as ApexDocParameterObject;
-    const parameterObjectResponse = new ParameterObjectBuilder().build(inJson);
+  private addRequestBodyToOpenApi(
+    input: ApexDocHttpRequestBody,
+    urlValue: string,
+    httpMethodKey: HttpOperations,
+  ): void {
+    const requestBodyResponse = new RequestBodyBuilder().build(input);
+    this.openApiModel.paths[urlValue][httpMethodKey]!.requestBody = requestBodyResponse.body;
+  }
+
+  private addParametersToOpenApi(input: ApexDocParameterObject, urlValue: string, httpMethodKey: HttpOperations): void {
+    const parameterObjectResponse = new ParameterObjectBuilder().build(input);
 
     if (this.openApiModel.paths[urlValue][httpMethodKey]!.parameters === undefined) {
       // If no parameters have been defined yet, initialize the list.
       this.openApiModel.paths[urlValue][httpMethodKey]!.parameters = [];
     }
     this.openApiModel.paths[urlValue][httpMethodKey]!.parameters!.push(parameterObjectResponse.body);
-
-    this.addReference(parameterObjectResponse);
   }
 
-  private addHttpResponsesToOpenApi(inYaml: string, urlValue: string, httpMethodKey: HttpOperations) {
-    // Convert the YAML into a JSON object.
-    const inJson = yaml.load(inYaml) as ApexDocHttpResponse;
-    const responseObjectResponse = new ResponsesBuilder().build(inJson);
+  private addHttpResponsesToOpenApi(input: ApexDocHttpResponse, urlValue: string, httpMethodKey: HttpOperations): void {
+    const responseObjectResponse = new ResponsesBuilder().build(input);
 
     if (this.openApiModel.paths[urlValue][httpMethodKey]!.responses === undefined) {
       this.openApiModel.paths[urlValue][httpMethodKey]!.responses = {};
     }
 
-    this.openApiModel.paths[urlValue][httpMethodKey]!.responses![inJson.statusCode] = responseObjectResponse.body;
-
-    this.addReference(responseObjectResponse);
+    this.openApiModel.paths[urlValue][httpMethodKey]!.responses![input.statusCode] = responseObjectResponse.body;
   }
 
   private addReference(referenceHolder: { reference?: Reference }): void {
