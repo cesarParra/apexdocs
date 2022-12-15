@@ -66,6 +66,17 @@ const argv = yargs.options({
     default: 'Apex REST Api',
     describe: 'If using "openapi" as the target generator, this allows you to specify the OpenApi title value.',
   },
+  namespace: {
+    type: 'string',
+    describe:
+      'The package namespace, if any. If this value is provided the namespace will be added as a prefix to all of the parsed files. ' +
+      "If generating an OpenApi definition, it will be added to the file's Server Url.",
+  },
+  openApiFileName: {
+    type: 'string',
+    describe: 'If using "openapi" as the target generator, this allows you to specify the name of the output file.',
+    default: 'openapi',
+  },
 }).argv;
 
 Settings.build({
@@ -78,6 +89,8 @@ Settings.build({
   defaultGroupName: argv.defaultGroupName,
   sanitizeHtml: argv.sanitizeHtml,
   openApiTitle: argv.openApiTitle,
+  namespace: argv.namespace,
+  openApiFileName: argv.openApiFileName,
 });
 
 Apexdocs.generate();

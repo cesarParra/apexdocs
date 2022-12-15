@@ -1,4 +1,4 @@
-# SampleClass
+# nspc.SampleClass
 
 `NAMESPACEACCESSIBLE`
 
@@ -6,9 +6,9 @@
 
 `STATUS: ACTIVE`
 
-This is a class description. This class relates to [SampleInterface](/Sample-Interfaces/SampleInterface.md)
+This is a class description. This class relates to [nspc.SampleInterface](/Sample-Interfaces/nspc.SampleInterface.md)
              But this [ClassThatDoesNotExist](ClassThatDoesNotExist) does not exist.
-             You can also link using this syntax [SampleInterface](/Sample-Interfaces/SampleInterface.md)
+             You can also link using this syntax [nspc.SampleInterface](/Sample-Interfaces/nspc.SampleInterface.md)
 
 
 **Group** Main
@@ -20,7 +20,7 @@ This is a class description. This class relates to [SampleInterface](/Sample-Int
 **Author** Cesar Parra
 
 
-**See** [SampleInterface](/Sample-Interfaces/SampleInterface.md)
+**See** [nspc.SampleInterface](/Sample-Interfaces/nspc.SampleInterface.md)
 
 ## Constructors
 ### My Super Group
@@ -28,7 +28,7 @@ This is a class description. This class relates to [SampleInterface](/Sample-Int
 
 `NAMESPACEACCESSIBLE`
 
-Constructs a SampleClass without any arguments. This relates to [SampleInterface](/Sample-Interfaces/SampleInterface.md)
+Constructs a SampleClass without any arguments. This relates to [nspc.SampleInterface](/Sample-Interfaces/nspc.SampleInterface.md)
 
 ###### Throws
 
@@ -40,7 +40,7 @@ Constructs a SampleClass without any arguments. This relates to [SampleInterface
 **CustomAnnotation** A Custom method annotation
 
 
-**See** [SampleInterface](/Sample-Interfaces/SampleInterface.md)
+**See** [nspc.SampleInterface](/Sample-Interfaces/nspc.SampleInterface.md)
 
 ###### Example
 ```apex

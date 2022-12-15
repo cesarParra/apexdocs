@@ -126,6 +126,8 @@ The CLI supports the following parameters:
 | --defaultGroupName | N/A   | Defines the `@group` name to be used when a file does not specify it.                                                                                                                                                                                                                                                                                                       | `Miscellaneous` | No       |
 | --sanitizeHtml     | N/A   | When on, any special character within your ApexDocs is converted into its HTML code representation. This is specially useful when generic objects are described within the docs, e.g. "List< Foo>", "Map<Foo, Bar>" because otherwise the content within < and > would be treated as HTML tags and not shown in the output. Content in @example blocks are never sanitized. | `Apex REST Api` | No       |
 | --openApiTitle     | N/A   | If using "openapi" as the target generator, this allows you to specify the OpenApi title value.                                                                                                                                                                                                                                                                             | true            | No       |
+| --namespace        | N/A   | The package namespace, if any. If this value is provided the namespace will be added as a prefix to all of the parsed files. If generating an OpenApi definition, it will be added to the file's Server Url.                                                                                                                                                                | N/A             | No       |
+| --openApiFileName  | N/A   | If using "openapi" as the target generator, this allows you to specify the name of the output file.                                                                                                                                                                                                                                                                         | `openapi`       | No       |
 
 ### Importing to your project
 
@@ -374,17 +376,17 @@ or a fully defined custom schema (See the `Custom Schemas` section below).
 
 Example
 ```apex
-    /**
-     * @description This is a sample HTTP Post method
-     * @http-request-body
-     * description: This is an example of a request body
-     * required: true
-     * schema: ClassName
-     */ 
-    @HttpPost
-    global static void doPost() {
-      ///...
-    }
+/**
+ * @description This is a sample HTTP Post method
+ * @http-request-body
+ * description: This is an example of a request body
+ * required: true
+ * schema: ClassName
+ */ 
+@HttpPost
+global static void doPost() {
+  ///...
+}
 ```
 
 📝 Note that each parameter of this annotation is expected to be on its own line. Parameters are treated as YAML,
@@ -400,25 +402,25 @@ whether it is `required` or not, a `description`, and a `schema`.
 
 Example
 ```apex
-    /**
-     * @description This is a sample HTTP Post method
-     * @return A String SObject.
-     * @http-parameter
-     * name: limit
-     * in: query
-     * required: true
-     * description: Limits the number of items on a page
-     * schema:
-     *   type: integer
-     * @http-parameter
-     * name: complex
-     * in: cookie
-     * schema: MyClassName
-     */
-    @HttpPost
-    global static String doPost() {
-        // ..
-    }
+/**
+ * @description This is a sample HTTP Post method
+ * @return A String SObject.
+ * @http-parameter
+ * name: limit
+ * in: query
+ * required: true
+ * description: Limits the number of items on a page
+ * schema:
+ *   type: integer
+ * @http-parameter
+ * name: complex
+ * in: cookie
+ * schema: MyClassName
+ */
+@HttpPost
+global static String doPost() {
+    // ..
+}
 ```
 
 📝 Note that each parameter of this annotation is expected to be on its own line. Parameters are treated as YAML,
@@ -434,22 +436,22 @@ If no `description` is provided then one will be automatically built using the `
 📝 Note that you can specify as many `@http-parameter` annotations as needed.
 
 ```apex
-    /**
-     * @description This is a sample HTTP Post method
-     * @return A String SObject.
-     * @http-response
-     * statusCode: 200
-     * schema: SuccessfulResponseClassName
-     * @http-response
-     * statusCode: 500
-     * description: Status Code 500 - An internal server error occurred.
-     * schema:
-     *   type: string
-     */
-    @HttpPost
-    global static String doPost() {
-        // ...
-    }
+/**
+ * @description This is a sample HTTP Post method
+ * @return A String SObject.
+ * @http-response
+ * statusCode: 200
+ * schema: SuccessfulResponseClassName
+ * @http-response
+ * statusCode: 500
+ * description: Status Code 500 - An internal server error occurred.
+ * schema:
+ *   type: string
+ */
+@HttpPost
+global static String doPost() {
+    // ...
+}
 ```
 
 #### Class References
@@ -458,6 +460,49 @@ Whenever specifying a `schema` parameter, you can pass as a string the name of a
 class will be parsed by the ApexDocs tool and automatically converted to a reference in the resulting OpenApi definition.
 
 The tool will parse the class and create a reference that complies with [Apex's support for User-Defined Types](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_rest_methods.htm#ApexRESTUserDefinedTypes)
+
+##### Reference Overrides
+
+When dealing with references, there might be cases when you want to manually tell the parser what type of object a property
+or field is. For example, let's say we have a class that looks as follows
+
+```apex
+public class MyClass {
+  public Object myObject;
+  public Account myAccountRecord;
+}
+```
+
+In this case `myObject` has a type of `Object`, and `myAccountRecord` is an SObject. Neither of these will be accurately
+parsed when building the OpenApi definition, instead they will be simple be referenced as `object` without any properties.
+
+To accurately represent the shape of these objects, you can use the `@http-schema` annotation to essentially override its
+type during parsing. In this annotation you can specify the same thing you would in any `schema` property when dealing with any
+of the main `@http-*` methods, meaning a reference to another class, or a Custom Schema (as defined below).
+
+```apex
+public class MyClass {
+  /**
+   * @description This is a generic reference to another class 
+   * @http-schema MyOtherClassName
+   */
+  public Object myObject;
+
+  /**
+   * @description This is a reference to an Account SObject
+   * @http-schema
+   * type: object
+   * properties:
+   *   Id:
+   *     type: string
+   *   Name:
+   *     type: string
+   *   CustomField__c:
+   *     type: number
+   */
+  public Account myAccountRecord;
+}
+```
 
 ---
 
@@ -472,16 +517,16 @@ Maps are not supported, as it is not possible to know which keys the map will co
 to convert that to a valid specification. For this use case, define a Custom Schema as explained below.
 
 ```apex
-    /**
-     * @description This is a sample HTTP Post method
-     * @http-request-body
-     * description: This is an example of a request body
-     * schema: List<ClassName>
-     */
-    @HttpPost
-    global static void doPost() {
-      ///...
-    }
+/**
+ * @description This is a sample HTTP Post method
+ * @http-request-body
+ * description: This is an example of a request body
+ * schema: List<ClassName>
+ */
+@HttpPost
+global static void doPost() {
+  ///...
+}
 ```
 
 Inner class references are also supported, but note that you need to pass the full name of the reference,
@@ -489,16 +534,16 @@ by using the `ParentClassName.InnerClassName` syntax, even if the inner class re
 referencing it.
 
 ```apex
-    /**
-     * @description This is a sample HTTP Post method
-     * @http-request-body
-     * description: This is an example of a request body
-     * schema: ParentClass.InnerClass
-     */
-    @HttpPost
-    global static void doPost() {
-      ///...
-    }
+/**
+ * @description This is a sample HTTP Post method
+ * @http-request-body
+ * description: This is an example of a request body
+ * schema: ParentClass.InnerClass
+ */
+@HttpPost
+global static void doPost() {
+  ///...
+}
 ```
 
 #### Custom Schemas

@@ -12,6 +12,7 @@ describe('File Reader', () => {
       indexOnly: false,
       defaultGroupName: 'Misc',
       sanitizeHtml: true,
+      openApiFileName: 'openapi',
     } as SettingsConfig);
   });
 

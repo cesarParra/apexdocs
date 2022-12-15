@@ -1,6 +1,6 @@
 {
   "name": "@cparra/apexdocs",
-  "version": "2.9.0-alpha.2",
+  "version": "2.10.0",
   "description": "Library with CLI capabilities to generate documentation for Salesforce Apex classes.",
   "keywords": [
     "apex",
@@ -24,9 +24,9 @@
     "postversion": "git push && git push --tags",
     "docs:init": "docsify init docs",
     "docs:serve": "docsify serve docs",
-    "execute:example": "node lib/cli/generate.js -s examples/force-app -t docs --scope global public private protected -g docsify --defaultGroupName \"Misc Group\"",
-    "execute:example:openapi": "node lib/cli/generate.js -s examples/force-app -t docs -g openapi --openApiTitle \"My REST Api 2\"",
-    "execute:example:index:only": "node lib/cli/generate.js -s examples/force-app -t docs --scope global public private -g docsify --indexOnly"
+    "execute:example": "node lib/cli/generate.js -s examples/force-app -t docs --scope global public private protected -g docsify --defaultGroupName \"Misc Group\" --namespace nspc",
+    "execute:example:index:only": "node lib/cli/generate.js -s examples/force-app -t docs --scope global public private -g docsify --indexOnly",
+    "execute:example:openapi": "node lib/cli/generate.js -s examples/force-app -t docs -g openapi --openApiTitle \"Sample REST Api\" --namespace nspc --openApiFileName restapi"
   },
   "author": "Cesar Parra",
   "license": "MIT",
@@ -66,7 +66,7 @@
     ]
   },
   "dependencies": {
-    "@cparra/apex-reflection": "2.0.1",
+    "@cparra/apex-reflection": "2.0.2",
     "chalk": "^4.1.2",
     "fast-xml-parser": "^4.0.1",
     "js-yaml": "^4.1.0",

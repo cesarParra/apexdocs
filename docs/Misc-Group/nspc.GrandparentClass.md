@@ -1,4 +1,4 @@
-# GrandparentClass
+# nspc.GrandparentClass
 ## Fields
 
 ### `protectedGrandParentField` → `String`

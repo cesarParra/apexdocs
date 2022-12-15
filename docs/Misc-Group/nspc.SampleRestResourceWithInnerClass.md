@@ -1,4 +1,4 @@
-# SampleRestResourceWithInnerClass
+# nspc.SampleRestResourceWithInnerClass
 
 `RESTRESOURCE`
 

@@ -1,9 +1,10 @@
-import { FieldMirror } from '@cparra/apex-reflection';
+import { DocComment, FieldMirror } from '@cparra/apex-reflection';
 import { ReferencedType } from '@cparra/apex-reflection/index';
 
 type MemberModifier = 'static' | 'webservice' | 'final' | 'override' | 'testmethod' | 'transient';
 
 export class FieldMirrorBuilder {
+  private docComment: DocComment | undefined = undefined;
   private accessModifier = 'public';
   private name = 'fieldName';
   private memberModifiers: MemberModifier[] = [];
@@ -40,6 +41,11 @@ export class FieldMirrorBuilder {
     return this;
   }
 
+  withDocComment(docComment: DocComment): FieldMirrorBuilder {
+    this.docComment = docComment;
+    return this;
+  }
+
   build(): FieldMirror {
     return {
       access_modifier: this.accessModifier,
@@ -47,6 +53,7 @@ export class FieldMirrorBuilder {
       name: this.name,
       memberModifiers: this.memberModifiers,
       typeReference: this.type,
+      docComment: this.docComment,
     };
   }
 }

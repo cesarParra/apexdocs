@@ -1,71 +1,71 @@
 # Classes
 ## Misc Group
 
-### [AnotherInterface](/Misc-Group/AnotherInterface.md)
+### [nspc.AnotherInterface](/Misc-Group/nspc.AnotherInterface.md)
 
 
-### [ChildClass](/Misc-Group/ChildClass.md)
+### [nspc.ChildClass](/Misc-Group/nspc.ChildClass.md)
 
 
-### [GrandparentClass](/Misc-Group/GrandparentClass.md)
+### [nspc.GrandparentClass](/Misc-Group/nspc.GrandparentClass.md)
 
 
-### [InterfaceWithInheritance](/Misc-Group/InterfaceWithInheritance.md)
+### [nspc.InterfaceWithInheritance](/Misc-Group/nspc.InterfaceWithInheritance.md)
 
 
-### [ParentClass](/Misc-Group/ParentClass.md)
+### [nspc.ParentClass](/Misc-Group/nspc.ParentClass.md)
 
 
-### [Reference1](/Misc-Group/Reference1.md)
+### [nspc.Reference1](/Misc-Group/nspc.Reference1.md)
 
 
-### [Reference2](/Misc-Group/Reference2.md)
+### [nspc.Reference2](/Misc-Group/nspc.Reference2.md)
 
 
-### [Reference3](/Misc-Group/Reference3.md)
+### [nspc.Reference3](/Misc-Group/nspc.Reference3.md)
 
 
-### [Reference4](/Misc-Group/Reference4.md)
+### [nspc.Reference4](/Misc-Group/nspc.Reference4.md)
 
 
-### [Reference5](/Misc-Group/Reference5.md)
+### [nspc.Reference5](/Misc-Group/nspc.Reference5.md)
 
 
-### [Reference6](/Misc-Group/Reference6.md)
+### [nspc.Reference6](/Misc-Group/nspc.Reference6.md)
 
 
-### [SampleClassWithoutModifier](/Misc-Group/SampleClassWithoutModifier.md)
+### [nspc.SampleClassWithoutModifier](/Misc-Group/nspc.SampleClassWithoutModifier.md)
 
 
-### [SampleRestResource](/Misc-Group/SampleRestResource.md)
+### [nspc.SampleRestResource](/Misc-Group/nspc.SampleRestResource.md)
 
 Account related operations
 
 
 
-### [SampleRestResourceWithInnerClass](/Misc-Group/SampleRestResourceWithInnerClass.md)
+### [nspc.SampleRestResourceWithInnerClass](/Misc-Group/nspc.SampleRestResourceWithInnerClass.md)
 
 Contact related operations
 
 
 ## Main
 
-### [GroupedClass](/Main/GroupedClass.md)
+### [nspc.GroupedClass](/Main/nspc.GroupedClass.md)
 
 Uses a block style apex doc
 
 
 
-### [SampleClass](/Main/SampleClass.md)
+### [nspc.SampleClass](/Main/nspc.SampleClass.md)
 
-This is a class description. This class relates to [SampleInterface](/Sample-Interfaces/SampleInterface.md)
+This is a class description. This class relates to [nspc.SampleInterface](/Sample-Interfaces/nspc.SampleInterface.md)
              But this [ClassThatDoesNotExist](ClassThatDoesNotExist) does not exist.
-             You can also link using this syntax [SampleInterface](/Sample-Interfaces/SampleInterface.md)
+             You can also link using this syntax [nspc.SampleInterface](/Sample-Interfaces/nspc.SampleInterface.md)
 
 
 ## Sample Interfaces
 
-### [SampleInterface](/Sample-Interfaces/SampleInterface.md)
+### [nspc.SampleInterface](/Sample-Interfaces/nspc.SampleInterface.md)
 
 This is an interface description.
 
