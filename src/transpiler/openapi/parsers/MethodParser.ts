@@ -2,7 +2,7 @@ import { ClassMirror, MethodMirror } from '@cparra/apex-reflection';
 import { OpenApi } from '../../../model/openapi/open-api';
 import * as yaml from 'js-yaml';
 import { ClassMirrorWrapper } from '../../../model/apex-type-wrappers/ClassMirrorWrapper';
-import { Reference } from './ReferenceBuilder';
+import { Reference, ReferenceBuilder } from './ReferenceBuilder';
 import { ParameterObjectBuilder } from './ParameterObjectBuilder';
 import { ResponsesBuilder } from './ResponsesBuilder';
 import {
@@ -12,6 +12,7 @@ import {
 } from '../../../model/openapi/apex-doc-types';
 import { RequestBodyBuilder } from './RequestBodyBuilder';
 import { ApexDocSchemaAware } from './Builder';
+import { PropertiesObject, ReferenceObject } from '../../../model/openapi/open-api-types';
 
 type FallbackMethodParser = (methodMirror: MethodMirror) => void;
 type AddToOpenApi<T extends ApexDocSchemaAware> = (input: T, urlValue: string, httpMethodKey: HttpOperations) => void;
@@ -46,7 +47,42 @@ export class MethodParser {
       httpUrlEndpoint,
       httpMethodKey,
       'http-request-body',
-      this.addRequestBodyToOpenApi,
+      this.addRequestBodyToOpenApi.bind(this),
+      (methodMirror) => {
+        // If the Apex method receives parameters, they will be interpreted by Salesforce as a JSON
+        // object, with each key of the object being the parameter name.
+        const parameters = methodMirror.parameters;
+
+        if (!parameters.length) {
+          return;
+        }
+
+        const propertiesObject: PropertiesObject = {};
+        parameters.forEach((currentParameter) => {
+          const propertyKey = currentParameter.name;
+          const propertyReference = new ReferenceBuilder().getReferenceType(currentParameter.typeReference);
+
+          propertiesObject[propertyKey] = propertyReference.schema;
+
+          this.addReference({
+            reference: {
+              entrypointReferenceObject: propertyReference.schema as ReferenceObject,
+              referenceComponents: propertyReference.referenceComponents,
+            },
+          });
+        });
+
+        this.openApiModel.paths[httpUrlEndpoint][httpMethodKey]!.requestBody = {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: propertiesObject,
+              },
+            },
+          },
+        };
+      },
     );
 
     this.parseHttpAnnotation<ApexDocParameterObject>(
@@ -54,7 +90,7 @@ export class MethodParser {
       httpUrlEndpoint,
       httpMethodKey,
       'http-parameter',
-      this.addParametersToOpenApi,
+      this.addParametersToOpenApi.bind(this),
     );
 
     this.parseHttpAnnotation<ApexDocHttpResponse>(
@@ -62,7 +98,7 @@ export class MethodParser {
       httpUrlEndpoint,
       httpMethodKey,
       'http-response',
-      this.addHttpResponsesToOpenApi,
+      this.addHttpResponsesToOpenApi.bind(this),
     );
   }
 
@@ -77,6 +113,9 @@ export class MethodParser {
     const annotations = httpMethod.docComment?.annotations.filter((annotation) => annotation.name === annotationName);
 
     if (!annotations?.length) {
+      if (fallbackParser) {
+        fallbackParser(httpMethod);
+      }
       return;
     }
 
@@ -86,11 +125,6 @@ export class MethodParser {
 
       if (!inYaml) {
         return;
-      }
-
-      if (fallbackParser) {
-        // TODO:
-        fallbackParser(httpMethod);
       }
 
       this.addToOpenApiStrategy<T>(inYaml, urlValue, httpMethodKey, addToOpenApi);

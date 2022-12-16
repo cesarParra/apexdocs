@@ -335,6 +335,10 @@
           }
         }
       }
+    },
+    "/Order/*": {
+      "description": "Order related operations",
+      "get": {}
     }
   },
   "components": {
