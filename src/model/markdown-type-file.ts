@@ -16,6 +16,7 @@ import { Settings } from '../settings';
 
 interface GroupAware {
   group?: string;
+  groupDescription?: string;
 }
 
 interface GroupMap {
@@ -109,8 +110,9 @@ export class MarkdownTypeFile extends MarkdownFile implements WalkerListener {
     } else {
       const groupedConstructors = this.group(methods);
       for (const key in groupedConstructors) {
-        this.startGroup(key);
-        const constructorsForGroup = groupedConstructors[key] as ConstructorMirror[];
+        // For the group description, we can take the first one, since they all have the same description.
+        this.startGroup(key, groupedConstructors[key][0].groupDescription);
+        const constructorsForGroup = groupedConstructors[key] as (ConstructorMirror | MethodMirrorWithInheritance)[];
         declareMethod(this, constructorsForGroup, this.headingLevel, className);
         this.endGroup();
       }
@@ -126,17 +128,21 @@ export class MarkdownTypeFile extends MarkdownFile implements WalkerListener {
     } else {
       const groupedFields = this.group(fieldsOrProperties);
       for (const key in groupedFields) {
-        this.startGroup(key);
-        const fieldsForGroup = groupedFields[key] as FieldMirrorWithInheritance[];
+        // For the group description, we can take the first one, since they all have the same description.
+        this.startGroup(key, groupedFields[key][0].groupDescription);
+        const fieldsForGroup = groupedFields[key] as (FieldMirrorWithInheritance | PropertyMirrorWithInheritance)[];
         declareField(this, fieldsForGroup, this.headingLevel, true);
         this.endGroup();
       }
     }
   }
 
-  private startGroup(groupName: string) {
+  private startGroup(groupName: string, groupDescription?: string) {
     this.headingLevel = this.headingLevel + 2;
     this.addTitle(groupName, this.headingLevel);
+    if (groupDescription) {
+      this.addText(groupDescription);
+    }
   }
 
   private endGroup() {

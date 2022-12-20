@@ -12,9 +12,6 @@ Account related operations
 Sample HTTP Delete method with references to other types.
 
 
-**Http Request Body** description: This is an example of a request body required: true schema: SampleClass
-
-
 **Http Parameter** name: limit in: header required: true description: My sample description. schema: SampleClass
 
 
