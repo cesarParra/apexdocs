@@ -99,6 +99,35 @@ export class MethodParser {
       httpMethodKey,
       'http-response',
       this.addHttpResponsesToOpenApi.bind(this),
+      (methodMirror) => {
+        // Parses methods that return an object (as opposed to void).
+        const returnType = methodMirror.typeReference;
+
+        if (returnType.type.toLowerCase() === 'void') {
+          return;
+        }
+
+        const reference = new ReferenceBuilder().getReferenceType(returnType);
+
+        this.addReference({
+          reference: {
+            entrypointReferenceObject: reference.schema as ReferenceObject,
+            referenceComponents: reference.referenceComponents,
+          },
+        });
+
+        if (this.openApiModel.paths[httpUrlEndpoint][httpMethodKey]!.responses === undefined) {
+          this.openApiModel.paths[httpUrlEndpoint][httpMethodKey]!.responses = {};
+        }
+
+        // Successful responses with a non-void return type always return a status code of 2000
+        this.openApiModel.paths[httpUrlEndpoint][httpMethodKey]!.responses!['200'] = {
+          description: methodMirror.docComment?.description ?? 'Status code 200',
+          content: {
+            'application/json': { schema: reference.schema },
+          },
+        };
+      },
     );
   }
 

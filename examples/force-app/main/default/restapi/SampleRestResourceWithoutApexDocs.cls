@@ -7,4 +7,9 @@ global with sharing class SampleRestResourceWithoutApexDocs {
     global static String doGet(String param1, Reference1 param2) {
         return 'Hello World!';
     }
+
+    @HttpPatch
+    global static String doPatch(String param1, Reference1 param2) {
+        return 'Hello World!';
+    }
 }
