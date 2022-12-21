@@ -48,41 +48,7 @@ export class MethodParser {
       httpMethodKey,
       'http-request-body',
       this.addRequestBodyToOpenApi.bind(this),
-      (methodMirror) => {
-        // If the Apex method receives parameters, they will be interpreted by Salesforce as a JSON
-        // object, with each key of the object being the parameter name.
-        const parameters = methodMirror.parameters;
-
-        if (!parameters.length) {
-          return;
-        }
-
-        const propertiesObject: PropertiesObject = {};
-        parameters.forEach((currentParameter) => {
-          const propertyKey = currentParameter.name;
-          const propertyReference = new ReferenceBuilder().getReferenceType(currentParameter.typeReference);
-
-          propertiesObject[propertyKey] = propertyReference.schema;
-
-          this.addReference({
-            reference: {
-              entrypointReferenceObject: propertyReference.schema as ReferenceObject,
-              referenceComponents: propertyReference.referenceComponents,
-            },
-          });
-        });
-
-        this.openApiModel.paths[httpUrlEndpoint][httpMethodKey]!.requestBody = {
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: propertiesObject,
-              },
-            },
-          },
-        };
-      },
+      this.fallbackHttpRequestBodyParser(httpUrlEndpoint, httpMethodKey),
     );
 
     this.parseHttpAnnotation<ApexDocParameterObject>(
@@ -99,35 +65,7 @@ export class MethodParser {
       httpMethodKey,
       'http-response',
       this.addHttpResponsesToOpenApi.bind(this),
-      (methodMirror) => {
-        // Parses methods that return an object (as opposed to void).
-        const returnType = methodMirror.typeReference;
-
-        if (returnType.type.toLowerCase() === 'void') {
-          return;
-        }
-
-        const reference = new ReferenceBuilder().getReferenceType(returnType);
-
-        this.addReference({
-          reference: {
-            entrypointReferenceObject: reference.schema as ReferenceObject,
-            referenceComponents: reference.referenceComponents,
-          },
-        });
-
-        if (this.openApiModel.paths[httpUrlEndpoint][httpMethodKey]!.responses === undefined) {
-          this.openApiModel.paths[httpUrlEndpoint][httpMethodKey]!.responses = {};
-        }
-
-        // Successful responses with a non-void return type always return a status code of 2000
-        this.openApiModel.paths[httpUrlEndpoint][httpMethodKey]!.responses!['200'] = {
-          description: methodMirror.docComment?.description ?? 'Status code 200',
-          content: {
-            'application/json': { schema: reference.schema },
-          },
-        };
-      },
+      this.getFallbackHttpResponseParser(httpUrlEndpoint, httpMethodKey),
     );
   }
 
@@ -202,6 +140,82 @@ export class MethodParser {
     }
 
     this.openApiModel.paths[urlValue][httpMethodKey]!.responses![input.statusCode] = responseObjectResponse.body;
+  }
+
+  private fallbackHttpRequestBodyParser(
+    httpUrlEndpoint: string,
+    httpMethodKey: 'get' | 'put' | 'post' | 'delete' | 'patch',
+  ) {
+    return (methodMirror: MethodMirror) => {
+      // If the Apex method receives parameters, they will be interpreted by Salesforce as a JSON
+      // object, with each key of the object being the parameter name.
+      const parameters = methodMirror.parameters;
+
+      if (!parameters.length) {
+        return;
+      }
+
+      const propertiesObject: PropertiesObject = {};
+      parameters.forEach((currentParameter) => {
+        const propertyKey = currentParameter.name;
+        const propertyReference = new ReferenceBuilder().getReferenceType(currentParameter.typeReference);
+
+        propertiesObject[propertyKey] = propertyReference.schema;
+
+        this.addReference({
+          reference: {
+            entrypointReferenceObject: propertyReference.schema as ReferenceObject,
+            referenceComponents: propertyReference.referenceComponents,
+          },
+        });
+      });
+
+      this.openApiModel.paths[httpUrlEndpoint][httpMethodKey]!.requestBody = {
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: propertiesObject,
+            },
+          },
+        },
+      };
+    };
+  }
+
+  private getFallbackHttpResponseParser(
+    httpUrlEndpoint: string,
+    httpMethodKey: 'get' | 'put' | 'post' | 'delete' | 'patch',
+  ) {
+    return (methodMirror: MethodMirror) => {
+      // Parses methods that return an object (as opposed to void).
+      const returnType = methodMirror.typeReference;
+
+      if (returnType.type.toLowerCase() === 'void') {
+        return;
+      }
+
+      const reference = new ReferenceBuilder().getReferenceType(returnType);
+
+      this.addReference({
+        reference: {
+          entrypointReferenceObject: reference.schema as ReferenceObject,
+          referenceComponents: reference.referenceComponents,
+        },
+      });
+
+      if (this.openApiModel.paths[httpUrlEndpoint][httpMethodKey]!.responses === undefined) {
+        this.openApiModel.paths[httpUrlEndpoint][httpMethodKey]!.responses = {};
+      }
+
+      // Successful responses with a non-void return type always return a status code of 2000
+      this.openApiModel.paths[httpUrlEndpoint][httpMethodKey]!.responses!['200'] = {
+        description: methodMirror.docComment?.description ?? 'Status code 200',
+        content: {
+          'application/json': { schema: reference.schema },
+        },
+      };
+    };
   }
 
   private addReference(referenceHolder: { reference?: Reference }): void {
