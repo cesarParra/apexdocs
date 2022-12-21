@@ -335,6 +335,71 @@
           }
         }
       }
+    },
+    "/Order/*": {
+      "description": "Order related operations",
+      "get": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "param1": {
+                    "type": "string"
+                  },
+                  "param2": {
+                    "$ref": "#/components/schemas/Reference1"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Status code 200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "param1": {
+                    "type": "string"
+                  },
+                  "param2": {
+                    "$ref": "#/components/schemas/Reference1"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Status code 200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {

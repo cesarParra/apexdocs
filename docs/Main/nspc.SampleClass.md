@@ -66,18 +66,18 @@ Constructs a SampleClass with an argument.
 ## Fields
 ### Common Constants
 
-* `ANOTHER_CONSTANT` → `String` (*Inherited*)  
-* `A_CONSTANT` → `String` (*Inherited*)  [`NAMESPACEACCESSIBLE` ]  - This is a constant.
-* `listOfStrings` → `List<String>` (*Inherited*)  
+* `ANOTHER_CONSTANT` → `String` 
+* `A_CONSTANT` → `String` [`NAMESPACEACCESSIBLE` ]  - This is a constant.
+* `listOfStrings` → `List<String>` 
 ---
 ### 'General' Constants
 
-* `GENERAL_ANOTHER_CONSTANT` → `String` (*Inherited*)  
-* `GENERAL_A_CONSTANT` → `String` (*Inherited*)  [`NAMESPACEACCESSIBLE` ]  - This is a constant.
+* `GENERAL_ANOTHER_CONSTANT` → `String` 
+* `GENERAL_A_CONSTANT` → `String` [`NAMESPACEACCESSIBLE` ]  - This is a constant.
 ---
 ### Other variables
 
-* `someVariable` → `String` (*Inherited*)  
+* `someVariable` → `String` 
 ---
 ## Properties
 
@@ -96,20 +96,21 @@ This is a String property.
 
 ---
 ## Methods
-### `static sampleMethod(String argument1, String argument2)`
+### A method group
+##### `static sampleMethod(String argument1, String argument2)`
 
 `NAMESPACEACCESSIBLE`
 
 Executes commands based on the passed in argument.
 
-#### Parameters
+###### Parameters
 
 |Param|Description|
 |---|---|
 |`argument1`|Argument1 to debug|
 |`argument2`|Argument2 to debug|
 
-#### Return
+###### Return
 
 **Type**
 
@@ -119,21 +120,23 @@ String
 
 Empty string
 
-#### Example
+###### Example
 ```apex
 String result = SampleClass.testMethod();
 System.debug(result);
 ```
 
 
-### `static anotherSampleMethod(String arg1)`
+##### `static anotherSampleMethod(String arg1)`
 
 Something here
 
 
 **Arg1** The arg1 description
 
-### `static call()`
+---
+### Other
+##### `static call()`
 
 Calls the method. This methods allows you to call it.
 

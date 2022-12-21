@@ -64,9 +64,14 @@ function addFieldSection(
     if (mirrorModel.docComment?.description) {
       description = ` - ${mirrorModel.docComment?.description}`;
     }
-    markdownFile.addListItem(
-      `\`${mirrorModel.name}\` → \`${mirrorModel.typeReference.rawDeclaration}\` (*Inherited*) ${annotations} ${description}`,
-    );
+
+    let listItemText = `\`${mirrorModel.name}\` → \`${mirrorModel.typeReference.rawDeclaration}\``;
+    if (mirrorModel.inherited) {
+      listItemText += '(*Inherited*)';
+    }
+    listItemText += `${annotations} ${description}`;
+
+    markdownFile.addListItem(listItemText);
     markdownFile.addBlankLine();
   }
 }

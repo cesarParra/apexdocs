@@ -159,7 +159,7 @@ export class ReferenceBuilder {
     ];
   }
 
-  private getReferenceType(typeInMirror: ReferencedType): SchemaObjectReferencePair {
+  public getReferenceType(typeInMirror: ReferencedType): SchemaObjectReferencePair {
     // Returns a valid type supported by OpenApi from a received Apex type.
     const typeName = typeInMirror.type.toLowerCase();
     switch (typeName) {

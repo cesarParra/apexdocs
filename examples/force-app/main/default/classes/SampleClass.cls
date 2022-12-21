@@ -69,6 +69,8 @@ public with sharing class SampleClass {
         System.debug('Constructor');
     }
 
+
+    // @start-group A method group
     /**
      * @description Executes commands based on the passed in argument.
      * @example
@@ -92,6 +94,7 @@ public with sharing class SampleClass {
         System.debug('something');
         return '';
     }
+    // @end-group
 
 
     /**
