@@ -73,6 +73,6 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
       return null;
     }
 
-    return urlMapping.value.replaceAll('"', '').replaceAll("'", '');
+    return urlMapping.value.replaceAll('"', '').replaceAll("'", '').replaceAll('/*', '/');
   }
 }
