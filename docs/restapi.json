@@ -10,7 +10,7 @@
     }
   ],
   "paths": {
-    "/Account/*": {
+    "/Account/": {
       "description": "Account related operations",
       "get": {
         "description": "This is a sample HTTP Get method",
@@ -318,7 +318,7 @@
         }
       }
     },
-    "/Contact/*": {
+    "/Contact/": {
       "description": "Contact related operations",
       "get": {
         "description": "This is a sample HTTP Get method",
@@ -336,7 +336,7 @@
         }
       }
     },
-    "/Order/*": {
+    "/Order/": {
       "description": "Order related operations",
       "get": {
         "requestBody": {
