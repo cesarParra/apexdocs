@@ -10,9 +10,12 @@
     }
   ],
   "paths": {
-    "/Account/": {
+    "/AccountService/": {
       "description": "Account related operations",
       "get": {
+        "tags": [
+          "Account Service"
+        ],
         "description": "This is a sample HTTP Get method",
         "parameters": [
           {
@@ -135,6 +138,9 @@
         }
       },
       "post": {
+        "tags": [
+          "Account Service"
+        ],
         "description": "This is a sample HTTP Post method",
         "requestBody": {
           "description": "This is an example of a request body",
@@ -252,6 +258,9 @@
         }
       },
       "delete": {
+        "tags": [
+          "Account Service"
+        ],
         "description": "Sample HTTP Delete method with references to other types.",
         "parameters": [
           {
@@ -321,6 +330,9 @@
     "/Contact/": {
       "description": "Contact related operations",
       "get": {
+        "tags": [
+          "Contact"
+        ],
         "description": "This is a sample HTTP Get method",
         "responses": {
           "200": {
@@ -339,6 +351,9 @@
     "/Order/": {
       "description": "Order related operations",
       "get": {
+        "tags": [
+          "Order"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -370,6 +385,9 @@
         }
       },
       "patch": {
+        "tags": [
+          "Order"
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -402,6 +420,20 @@
       }
     }
   },
+  "tags": [
+    {
+      "name": "Account Service",
+      "description": "Account related operations"
+    },
+    {
+      "name": "Contact",
+      "description": "Contact related operations"
+    },
+    {
+      "name": "Order",
+      "description": "Order related operations"
+    }
+  ],
   "components": {
     "schemas": {
       "SampleClass": {

@@ -1,4 +1,4 @@
-import { ComponentsObject, InfoObject, PathsObject, ServerObject } from './open-api-types';
+import { ComponentsObject, InfoObject, PathsObject, ServerObject, TagObject } from './open-api-types';
 
 const OPEN_API_VERSION = '3.1.0';
 const SERVER_URL = '/services/apexrest/';
@@ -10,6 +10,7 @@ const SERVER_URL = '/services/apexrest/';
 export class OpenApi {
   openapi = OPEN_API_VERSION;
   info: InfoObject;
+  tags: TagObject[];
   paths: PathsObject;
   servers: ServerObject[];
   components?: ComponentsObject;
@@ -27,6 +28,7 @@ export class OpenApi {
     ];
 
     this.paths = {};
+    this.tags = [];
   }
 
   private getServerUrl(): string {

@@ -1,7 +1,7 @@
 import { Type } from '@cparra/apex-reflection';
 import ClassFileGeneratorHelper from '../transpiler/markdown/class-file-generatorHelper';
 import { MarkdownFile } from './markdown-file';
-import { truncate } from '../util/truncate';
+import { stringUtils } from '../util/string-utils';
 import { Settings } from '../settings';
 
 export class MarkdownHomeFile extends MarkdownFile {
@@ -34,7 +34,7 @@ export class MarkdownHomeFile extends MarkdownFile {
         (previous, current) => previous + current + '\n',
         '',
       );
-      this.addText(truncate(description, 300));
+      this.addText(stringUtils(description, 300));
       this.addBlankLine();
     }
   }

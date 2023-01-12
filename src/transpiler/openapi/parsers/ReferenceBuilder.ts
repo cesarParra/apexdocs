@@ -8,7 +8,7 @@ import {
 } from '../../../model/openapi/open-api-types';
 import { TypeBundle, TypesRepository } from '../../../model/types-repository';
 import { ClassMirror, DocCommentAnnotation, FieldMirror, PropertyMirror } from '@cparra/apex-reflection';
-import { ListObjectType, ReferencedType } from '@cparra/apex-reflection/index';
+import { ListObjectType, ReferencedType } from '@cparra/apex-reflection';
 import { ApexDocSchemaObject } from '../../../model/openapi/apex-doc-types';
 
 type TypeBundleWithIsCollection = TypeBundle & { isCollection: boolean };
@@ -213,7 +213,7 @@ export class ReferenceBuilder {
     };
   }
 
-  private isReferenceString = (targetObject: any): targetObject is string => {
+  private isReferenceString = (targetObject: unknown): targetObject is string => {
     return typeof targetObject === 'string' || targetObject instanceof String;
   };
 }

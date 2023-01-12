@@ -1,7 +1,7 @@
 /**
  * @description Account related operations
  */
-@RestResource(urlMapping='/Account/*')
+@RestResource(urlMapping='/AccountService/*')
 global with sharing class SampleRestResource {
     /**
      * @description Sample HTTP Delete method with references to other types.
