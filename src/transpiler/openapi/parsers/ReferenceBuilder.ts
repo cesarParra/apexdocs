@@ -20,6 +20,8 @@ type TypeBundleWithIsCollectionAndReferenceOverrides = TypeBundle & {
 export class ReferenceBuilder {
   build(referencedTypeName: string): Reference {
     const originalTypeName = referencedTypeName;
+
+    // Checking for inline overrides of the type: [memberName:ClassOverrideName]
     const regexForSchemaOverrides = /\[(.*?)]/g;
     const schemaOverrides = referencedTypeName.match(regexForSchemaOverrides);
     let referenceOverrides: ReferenceOverride[] = [];
@@ -222,6 +224,8 @@ export class ReferenceBuilder {
       case 'map':
         // For Maps, we treat them as objects but do not try to define their shape, because their keys can vary
         // at runtime.
+        return { schema: { type: 'object' }, referenceComponents: [] };
+      case 'object':
         return { schema: { type: 'object' }, referenceComponents: [] };
       default:
         // If we got here we are dealing with a non-primitive (most likely a custom class or an SObject).
