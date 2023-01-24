@@ -26,7 +26,9 @@ export type PathItemObject = {
 
 // verified
 export type OperationObject = {
+  tags?: string[];
   description?: string;
+  summary?: string;
   requestBody?: RequestBody;
   parameters?: ParameterObject[];
   responses?: ResponsesObject;
@@ -109,4 +111,9 @@ export type ComponentsObject = {
   schemas: {
     [index: string]: SchemaObject;
   };
+};
+
+export type TagObject = {
+  name: string;
+  description?: string;
 };

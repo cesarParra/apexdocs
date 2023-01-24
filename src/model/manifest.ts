@@ -1,6 +1,14 @@
-import { ClassMirror, EnumMirror, InterfaceMirror, Type, Annotation } from '@cparra/apex-reflection';
+import {
+  ClassMirror,
+  EnumMirror,
+  InterfaceMirror,
+  Type,
+  Annotation,
+  DocComment,
+  DocCommentAnnotation,
+} from '@cparra/apex-reflection';
 
-type AccessAware = { access_modifier: string } & { annotations: Annotation[] };
+type AccessAndDocAware = { access_modifier: string; annotations: Annotation[]; docComment?: DocComment };
 
 /**
  * Represents the full library of Apex top-level types (classes, enums, and interface) for a Salesforce project.
@@ -49,8 +57,14 @@ export default class Manifest {
     return typesToReturn;
   }
 
-  filterAccessibleModifier(accessAware: AccessAware[], modifiers: string[]) {
-    return accessAware.filter((currentType) => {
+  filterAccessibleModifier(accessAndDocAwares: AccessAndDocAware[], modifiers: string[]) {
+    return accessAndDocAwares.filter((currentType) => {
+      const hasIgnoreDocAnnotation = currentType.docComment?.annotations.some(
+        (annotation: DocCommentAnnotation) => annotation.name === 'ignore',
+      );
+      if (hasIgnoreDocAnnotation) {
+        return false;
+      }
       return (
         modifiers.includes(currentType.access_modifier) ||
         currentType.annotations.some((annotation: Annotation) => modifiers.includes(annotation.type.toLowerCase()))

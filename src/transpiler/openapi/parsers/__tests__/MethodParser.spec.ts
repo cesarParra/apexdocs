@@ -17,7 +17,7 @@ it('should add an endpoint when there is an HTTP method', function () {
 
   expect(openApi.paths[urlEndpoint]).not.toHaveProperty('get');
 
-  new MethodParser(openApi).parseMethod(classWithGetMethod, urlEndpoint, 'get');
+  new MethodParser(openApi).parseMethod(classWithGetMethod, urlEndpoint, 'get', '');
 
   expect(openApi.paths[urlEndpoint]).toHaveProperty('get');
 });
@@ -37,7 +37,7 @@ it('should add an endpoint with a description when the method has an ApexDoc', f
   const openApi = new OpenApi('Title', '1.0');
   openApi.paths[urlEndpoint] = {};
 
-  new MethodParser(openApi).parseMethod(classWithGetMethod, urlEndpoint, 'get');
+  new MethodParser(openApi).parseMethod(classWithGetMethod, urlEndpoint, 'get', '');
 
   expect(openApi.paths[urlEndpoint]).toHaveProperty('get');
   expect(openApi.paths[urlEndpoint]['get']!.description).toBe('Sample Description');

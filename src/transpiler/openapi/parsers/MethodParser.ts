@@ -13,6 +13,7 @@ import {
 import { RequestBodyBuilder } from './RequestBodyBuilder';
 import { ApexDocSchemaAware } from './Builder';
 import { PropertiesObject, ReferenceObject } from '../../../model/openapi/open-api-types';
+import { MethodMirrorWrapper } from '../../../model/apex-type-wrappers/MethodMirrorWrapper';
 
 type FallbackMethodParser = (methodMirror: MethodMirror) => void;
 type AddToOpenApi<T extends ApexDocSchemaAware> = (input: T, urlValue: string, httpMethodKey: HttpOperations) => void;
@@ -25,7 +26,7 @@ type HttpOperations = 'get' | 'put' | 'post' | 'delete' | 'patch';
 export class MethodParser {
   constructor(public openApiModel: OpenApi) {}
 
-  public parseMethod(classMirror: ClassMirror, httpUrlEndpoint: string, httpMethodKey: HttpOperations) {
+  public parseMethod(classMirror: ClassMirror, httpUrlEndpoint: string, httpMethodKey: HttpOperations, tag: string) {
     const classMirrorWrapper = new ClassMirrorWrapper(classMirror);
     // Apex supports HttpGet, HttpPut, HttpPost, HttpDelete, and HttpPatch, so we search for a method
     // that has one of those annotations.
@@ -38,8 +39,14 @@ export class MethodParser {
     const httpMethod = httpMethods[0];
 
     this.openApiModel.paths[httpUrlEndpoint][httpMethodKey] = {};
+    this.openApiModel.paths[httpUrlEndpoint][httpMethodKey]!.tags = [tag];
     if (httpMethod.docComment?.description) {
       this.openApiModel.paths[httpUrlEndpoint][httpMethodKey]!.description = httpMethod.docComment.description;
+    }
+    const methodMirrorWrapper = new MethodMirrorWrapper(httpMethod);
+    if (methodMirrorWrapper.hasDocCommentAnnotation('summary')) {
+      this.openApiModel.paths[httpUrlEndpoint][httpMethodKey]!.summary =
+        methodMirrorWrapper.getDocCommentAnnotation('summary')?.body;
     }
 
     this.parseHttpAnnotation<ApexDocHttpRequestBody>(

@@ -8,25 +8,45 @@ import {
 } from '../../../model/openapi/open-api-types';
 import { TypeBundle, TypesRepository } from '../../../model/types-repository';
 import { ClassMirror, DocCommentAnnotation, FieldMirror, PropertyMirror } from '@cparra/apex-reflection';
-import { ListObjectType, ReferencedType } from '@cparra/apex-reflection/index';
+import { ListObjectType, ReferencedType } from '@cparra/apex-reflection';
 import { ApexDocSchemaObject } from '../../../model/openapi/apex-doc-types';
 
-type TypeBundleWithIsCollection = TypeBundle & { isCollection: boolean };
+type TypeBundleWithIsCollectionAndReferenceOverrides = TypeBundle & {
+  originalTypeName: string;
+  isCollection: boolean;
+  referenceOverrides: ReferenceOverride[];
+};
 
 export class ReferenceBuilder {
   build(referencedTypeName: string): Reference {
+    const originalTypeName = referencedTypeName;
+
+    // Checking for inline overrides of the type: [memberName:ClassOverrideName]
+    const regexForSchemaOverrides = /\[(.*?)]/g;
+    const schemaOverrides = referencedTypeName.match(regexForSchemaOverrides);
+    let referenceOverrides: ReferenceOverride[] = [];
+    if (schemaOverrides && schemaOverrides.length > 0) {
+      referenceOverrides = ReferenceOverrides.build(schemaOverrides[0]);
+      referencedTypeName = referencedTypeName.replace(regexForSchemaOverrides, '');
+    }
+
     const [parsedReferencedType, isCollection] = this.handlePossibleCollectionReference(referencedTypeName);
     const referencedTypeBundle = TypesRepository.getInstance().getFromAllByName(parsedReferencedType);
 
     if (!referencedTypeBundle) {
-      throw new Error(`The referenced type "${parsedReferencedType}" was not found.`);
+      throw new Error(`The referenced type ${referencedTypeName} was not found.`);
     }
     if (referencedTypeBundle.type.type_name !== 'class') {
       throw new Error(
         `Expected the referenced type to be a class, but found a ${referencedTypeBundle.type.type_name}.`,
       );
     }
-    const typeBundleWithIsCollection = { ...referencedTypeBundle, isCollection: isCollection };
+    const typeBundleWithIsCollection = {
+      ...referencedTypeBundle,
+      originalTypeName: originalTypeName,
+      isCollection: isCollection,
+      referenceOverrides: referenceOverrides,
+    };
     return this.buildReferenceFromType(typeBundleWithIsCollection);
   }
 
@@ -51,7 +71,7 @@ export class ReferenceBuilder {
     return [referencedTypeName, false];
   }
 
-  private buildReferenceFromType(typeBundle: TypeBundleWithIsCollection): Reference {
+  private buildReferenceFromType(typeBundle: TypeBundleWithIsCollectionAndReferenceOverrides): Reference {
     // Filtering based on Salesforce's documentation:
     // https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_rest_methods.htm#ApexRESTUserDefinedTypes
     // We assume that the class only contains object types allowed by Apex Rest:
@@ -66,18 +86,29 @@ export class ReferenceBuilder {
     const properties: PropertiesObject = {};
     let referencedComponents: ReferenceComponent[] = [];
     propertiesAndFields.forEach((current) => {
-      // Check for "@http-schema" annotations within properties themselves. If these are specified they
-      // take precedence over the property type itself.
-      const manuallyDefinedHttpSchema = current.docComment?.annotations.find(
-        (annotation) => annotation.name.toLowerCase() === 'http-schema',
-      );
-      if (manuallyDefinedHttpSchema) {
-        this.handleOverriddenSchema(manuallyDefinedHttpSchema, properties, current, referencedComponents);
+      // Check if there are reference overrides for the current property, this takes priority over anything else.
+      const referenceOverride = typeBundle.referenceOverrides.find((currentOverride) => {
+        return currentOverride.propertyName.toLowerCase() === current.name.toLowerCase();
+      });
+      if (referenceOverride) {
+        const reference = this.build(referenceOverride.referenceName);
+        properties[current.name] = reference.entrypointReferenceObject;
+        reference.referenceComponents.forEach((current) => referencedComponents.push(current));
       } else {
-        const pair = this.getReferenceType(current.typeReference);
-        properties[current.name] = pair.schema;
-        pair.referenceComponents.forEach((current) => referencedComponents.push(current));
+        // Check for "@http-schema" annotations within properties themselves. If these are specified they
+        // take precedence over the property type itself.
+        const manuallyDefinedHttpSchema = current.docComment?.annotations.find(
+          (annotation) => annotation.name.toLowerCase() === 'http-schema',
+        );
+        if (manuallyDefinedHttpSchema) {
+          this.handleOverriddenSchema(manuallyDefinedHttpSchema, properties, current, referencedComponents);
+        } else {
+          const pair = this.getReferenceType(current.typeReference);
+          properties[current.name] = pair.schema;
+          referencedComponents.push(...pair.referenceComponents);
+        }
       }
+
       properties[current.name].description = current.docComment?.description;
     });
     const mainReferenceComponents = this.buildMainReferenceComponent(typeBundle, properties);
@@ -102,9 +133,9 @@ export class ReferenceBuilder {
     // This can be of type ApexDocSchemaObject
     const inYaml = manuallyDefinedHttpSchema?.bodyLines.reduce((prev, current, _) => prev + '\n' + current);
     const asJson = yaml.load(inYaml) as ApexDocSchemaObject;
-    const isReference = this.isReferenceString(asJson);
+    const isReferenceString = this.isReferenceString(asJson);
 
-    if (isReference) {
+    if (isReferenceString) {
       const reference = this.build(asJson);
       properties[current.name] = reference.entrypointReferenceObject;
       reference.referenceComponents.forEach((current) => referencedComponents.push(current));
@@ -115,7 +146,7 @@ export class ReferenceBuilder {
     }
   }
 
-  private getReferenceName(typeBundle: TypeBundleWithIsCollection): string {
+  private getReferenceName(typeBundle: TypeBundleWithIsCollectionAndReferenceOverrides): string {
     let referenceName = typeBundle.type.name;
     if (typeBundle.isChild) {
       referenceName = `${typeBundle.parentType?.name}.${typeBundle.type.name}`;
@@ -123,11 +154,14 @@ export class ReferenceBuilder {
     if (typeBundle.isCollection) {
       referenceName = `${referenceName}_array`;
     }
+    if (typeBundle.referenceOverrides.length) {
+      referenceName = `${referenceName}_${typeBundle.originalTypeName}`;
+    }
     return referenceName;
   }
 
   private buildMainReferenceComponent(
-    typeBundle: TypeBundleWithIsCollection,
+    typeBundle: TypeBundleWithIsCollectionAndReferenceOverrides,
     properties: PropertiesObject,
   ): ReferenceComponent[] {
     // For the main reference, we always want to get the reference of the object without the collection part,
@@ -191,13 +225,20 @@ export class ReferenceBuilder {
         // For Maps, we treat them as objects but do not try to define their shape, because their keys can vary
         // at runtime.
         return { schema: { type: 'object' }, referenceComponents: [] };
+      case 'object':
+        return { schema: { type: 'object' }, referenceComponents: [] };
       default:
         // If we got here we are dealing with a non-primitive (most likely a custom class or an SObject).
         const referencedType = TypesRepository.getInstance().getFromAllByName(typeName);
         if (!referencedType) {
           return { schema: { type: 'object' }, referenceComponents: [] };
         }
-        const reference = this.buildReferenceFromType({ ...referencedType, isCollection: false });
+        const reference = this.buildReferenceFromType({
+          ...referencedType,
+          isCollection: false,
+          referenceOverrides: [],
+          originalTypeName: typeName,
+        });
         return {
           schema: reference.entrypointReferenceObject,
           referenceComponents: [...reference.referenceComponents],
@@ -213,7 +254,7 @@ export class ReferenceBuilder {
     };
   }
 
-  private isReferenceString = (targetObject: any): targetObject is string => {
+  private isReferenceString = (targetObject: unknown): targetObject is string => {
     return typeof targetObject === 'string' || targetObject instanceof String;
   };
 }
@@ -221,6 +262,22 @@ export class ReferenceBuilder {
 type SchemaObjectReferencePair = {
   schema: SchemaObject;
   referenceComponents: ReferenceComponent[];
+};
+
+class ReferenceOverrides {
+  static build(referenceAsString: string): ReferenceOverride[] {
+    const cleanedUpReference = referenceAsString.replace(/[\[\]]/g, '');
+    const referenceStrings = cleanedUpReference.split(',').map((item) => item.replace(/\s/g, ''));
+    return referenceStrings.map((item) => {
+      const [propertyName, referenceName] = item.split(':');
+      return { propertyName, referenceName };
+    });
+  }
+}
+
+type ReferenceOverride = {
+  propertyName: string;
+  referenceName: string;
 };
 
 /**

@@ -29,6 +29,9 @@ Sample HTTP Delete method with references to other types.
 
 **Http Response** statusCode: 306 schema: List&lt;Reference1&gt;
 
+
+**Http Response** statusCode: 307 schema: Reference7[untypedObject:Reference2]
+
 ### `static doGet()`
 
 `HTTPGET`
@@ -81,6 +84,9 @@ String
 **Description**
 
 A String SObject.
+
+
+**Summary** Posts an Account 2
 
 
 **Http Parameter** name: limit in: query required: true description: Limits the number of items on a page schema:   type: integer

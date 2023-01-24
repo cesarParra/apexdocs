@@ -13,7 +13,7 @@ the [Java based ApexDoc tool](https://github.com/SalesforceFoundation/ApexDoc) o
 later maintained by Salesforce.org, as that tool is no longer being maintained.
 
 ApexDocs is a Node.js library built on Typescript and hosted on [npm](https://www.npmjs.com/package/@cparra/apexdocs).
-It offers CLI capabilities to automatically docGenerator a set of files that fully document each one of you classes.
+It offers CLI capabilities to automatically document your source code, based on the ApexDoc style of documentation.
 Additionally, it can be imported and consumed directly by your JavaScript code.
 
 There are some key differences between ApexDocs and the Java based ApexDoc tool:
@@ -71,7 +71,10 @@ public class MyClass {
 * Apex docs blocks can now all be in a single line
 * Support for grouping blocks of related code within a class
 * Support for HTML tags
-* And more!
+* OpenApi REST specification generation
+* Support for ignoring files and members from being documented
+* Namespace support
+* And much, much more!
 
 ### Demo
 
@@ -328,6 +331,23 @@ the `<String>` portion will be treated as HTML and thus not appear on the page.
 To fix this issue, when not sanitizing HTML, you should wrap any code that contain special characters that can be
 treated as HTML within '\`'
 or within `<code>` tags.
+
+
+### Ignoring files and members
+
+You can ignore files and members by using the `@ignore` tag on any ApexDoc block. If used at the class level, the entire
+file will be ignored. If used at the member level, only that member will be ignored.
+
+Example
+
+ ```apex
+ /**
+  * @ignore
+  */
+ public class MyClass {
+     public static void myMethod() {}
+ }
+ ```
 
 ## Generating OpenApi REST Definitions
 

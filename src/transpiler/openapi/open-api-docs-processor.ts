@@ -6,6 +6,7 @@ import { Logger } from '../../util/logger';
 import { OpenApi } from '../../model/openapi/open-api';
 import { Settings } from '../../settings';
 import { MethodParser } from './parsers/MethodParser';
+import { camel2title } from '../../util/string-utils';
 
 export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
   protected readonly _fileContainer: FileContainer;
@@ -41,22 +42,29 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
     // We can safely cast to a ClassMirror, since only these support the @RestResource annotation
     const typeAsClass = type as ClassMirror;
 
+    // Add tags for this Apex class to the OpenApi model
+    const tagName = camel2title(endpointPath.replaceAll('/', ''));
+    this.openApiModel.tags.push({
+      name: tagName,
+      description: type.docComment?.description,
+    });
+
     const parser = new MethodParser(this.openApiModel);
 
     // GET
-    parser.parseMethod(typeAsClass, endpointPath, 'get');
+    parser.parseMethod(typeAsClass, endpointPath, 'get', tagName);
 
     // PATCH
-    parser.parseMethod(typeAsClass, endpointPath, 'patch');
+    parser.parseMethod(typeAsClass, endpointPath, 'patch', tagName);
 
     // POST
-    parser.parseMethod(typeAsClass, endpointPath, 'post');
+    parser.parseMethod(typeAsClass, endpointPath, 'post', tagName);
 
     // PUT
-    parser.parseMethod(typeAsClass, endpointPath, 'put');
+    parser.parseMethod(typeAsClass, endpointPath, 'put', tagName);
 
     // DELETE
-    parser.parseMethod(typeAsClass, endpointPath, 'delete');
+    parser.parseMethod(typeAsClass, endpointPath, 'delete', tagName);
   }
 
   onAfterProcess: ((types: Type[]) => void) | undefined = () => {
@@ -73,6 +81,10 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
       return null;
     }
 
-    return urlMapping.value.replaceAll('"', '').replaceAll("'", '').replaceAll('/*', '/');
+    let endpointPath = urlMapping.value.replaceAll('"', '').replaceAll("'", '').replaceAll('/*', '/');
+    if (endpointPath.startsWith('/')) {
+      endpointPath = endpointPath.substring(1);
+    }
+    return endpointPath;
   }
 }
