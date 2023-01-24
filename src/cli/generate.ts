@@ -93,4 +93,9 @@ Settings.build({
   openApiFileName: argv.openApiFileName,
 });
 
-Apexdocs.generate();
+try {
+  Apexdocs.generate();
+} catch (error) {
+  console.error(error);
+  process.exit(1);
+}

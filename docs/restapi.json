@@ -10,7 +10,7 @@
     }
   ],
   "paths": {
-    "/AccountService/": {
+    "AccountService/": {
       "description": "Account related operations",
       "get": {
         "tags": [
@@ -142,6 +142,7 @@
           "Account Service"
         ],
         "description": "This is a sample HTTP Post method",
+        "summary": "Posts an Account 2",
         "requestBody": {
           "description": "This is an example of a request body",
           "content": {
@@ -314,6 +315,16 @@
               }
             }
           },
+          "307": {
+            "description": "Status code 307",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reference7_Reference7[untypedObject:Reference2]"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Status code 500",
             "content": {
@@ -327,7 +338,7 @@
         }
       }
     },
-    "/Contact/": {
+    "Contact/": {
       "description": "Contact related operations",
       "get": {
         "tags": [
@@ -348,7 +359,7 @@
         }
       }
     },
-    "/Order/": {
+    "Order/": {
       "description": "Order related operations",
       "get": {
         "tags": [
@@ -555,6 +566,14 @@
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/Reference1"
+        }
+      },
+      "Reference7_Reference7[untypedObject:Reference2]": {
+        "type": "object",
+        "properties": {
+          "untypedObject": {
+            "$ref": "#/components/schemas/Reference2"
+          }
         }
       },
       "SampleRestResourceWithInnerClass.InnerClass": {

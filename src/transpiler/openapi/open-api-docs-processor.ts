@@ -81,6 +81,10 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
       return null;
     }
 
-    return urlMapping.value.replaceAll('"', '').replaceAll("'", '').replaceAll('/*', '/');
+    let endpointPath = urlMapping.value.replaceAll('"', '').replaceAll("'", '').replaceAll('/*', '/');
+    if (endpointPath.startsWith('/')) {
+      endpointPath = endpointPath.substring(1);
+    }
+    return endpointPath;
   }
 }

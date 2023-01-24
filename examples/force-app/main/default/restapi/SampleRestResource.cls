@@ -1,7 +1,7 @@
 /**
  * @description Account related operations
  */
-@RestResource(urlMapping='/AccountService/*')
+@RestResource(UrlMapping='/AccountService/*')
 global with sharing class SampleRestResource {
     /**
      * @description Sample HTTP Delete method with references to other types.
@@ -26,6 +26,9 @@ global with sharing class SampleRestResource {
      * @http-response
      * statusCode: 306
      * schema: List<Reference1>
+     * @http-response
+     * statusCode: 307
+     * schema: Reference7[untypedObject:Reference2]
      */
     @HttpDelete
     global static void doDelete() {
@@ -114,6 +117,7 @@ global with sharing class SampleRestResource {
     }
 
     /**
+     * @summary Posts an Account 2
      * @description This is a sample HTTP Post method
      * @return A String SObject.
      * @http-parameter

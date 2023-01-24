@@ -13,6 +13,7 @@ import {
 import { RequestBodyBuilder } from './RequestBodyBuilder';
 import { ApexDocSchemaAware } from './Builder';
 import { PropertiesObject, ReferenceObject } from '../../../model/openapi/open-api-types';
+import { MethodMirrorWrapper } from '../../../model/apex-type-wrappers/MethodMirrorWrapper';
 
 type FallbackMethodParser = (methodMirror: MethodMirror) => void;
 type AddToOpenApi<T extends ApexDocSchemaAware> = (input: T, urlValue: string, httpMethodKey: HttpOperations) => void;
@@ -41,6 +42,11 @@ export class MethodParser {
     this.openApiModel.paths[httpUrlEndpoint][httpMethodKey]!.tags = [tag];
     if (httpMethod.docComment?.description) {
       this.openApiModel.paths[httpUrlEndpoint][httpMethodKey]!.description = httpMethod.docComment.description;
+    }
+    const methodMirrorWrapper = new MethodMirrorWrapper(httpMethod);
+    if (methodMirrorWrapper.hasDocCommentAnnotation('summary')) {
+      this.openApiModel.paths[httpUrlEndpoint][httpMethodKey]!.summary =
+        methodMirrorWrapper.getDocCommentAnnotation('summary')?.body;
     }
 
     this.parseHttpAnnotation<ApexDocHttpRequestBody>(

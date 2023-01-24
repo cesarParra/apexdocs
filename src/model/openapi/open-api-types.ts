@@ -28,6 +28,7 @@ export type PathItemObject = {
 export type OperationObject = {
   tags?: string[];
   description?: string;
+  summary?: string;
   requestBody?: RequestBody;
   parameters?: ParameterObject[];
   responses?: ResponsesObject;
