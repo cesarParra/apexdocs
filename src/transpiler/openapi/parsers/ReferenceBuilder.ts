@@ -10,6 +10,7 @@ import { TypeBundle, TypesRepository } from '../../../model/types-repository';
 import { ClassMirror, DocCommentAnnotation, FieldMirror, PropertyMirror } from '@cparra/apex-reflection';
 import { ListObjectType, ReferencedType } from '@cparra/apex-reflection';
 import { ApexDocSchemaObject } from '../../../model/openapi/apex-doc-types';
+import { ReferenceRepository } from '../utils/ReferenceRepository';
 
 type TypeBundleWithIsCollectionAndReferenceOverrides = TypeBundle & {
   originalTypeName: string;
@@ -105,7 +106,7 @@ export class ReferenceBuilder {
         } else {
           const pair = this.getReferenceType(current.typeReference);
           properties[current.name] = pair.schema;
-          pair.referenceComponents.forEach((current) => referencedComponents.push(current));
+          referencedComponents.push(...pair.referenceComponents);
         }
       }
 

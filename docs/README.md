@@ -37,6 +37,9 @@
 ### [nspc.Reference6](/Misc-Group/nspc.Reference6.md)
 
 
+### [nspc.Reference7](/Misc-Group/nspc.Reference7.md)
+
+
 ### [nspc.SampleClassWithoutModifier](/Misc-Group/nspc.SampleClassWithoutModifier.md)
 
 
