@@ -10,7 +10,7 @@ export class MarkdownHomeFile extends MarkdownFile {
     if (headerContent) {
       this.addText(headerContent);
     }
-    this.addTitle('Classes');
+    this.addTitle(Settings.getInstance().getTitle());
     this.addTypeEntries(types);
   }
 

@@ -66,6 +66,11 @@ const argv = yargs.options({
     default: 'Apex REST Api',
     describe: 'If using "openapi" as the target generator, this allows you to specify the OpenApi title value.',
   },
+  title: {
+    type: 'string',
+    describe: "If this allows you to specify the title of the generated documentation's home file.",
+    default: 'Classes',
+  },
   namespace: {
     type: 'string',
     describe:
@@ -76,6 +81,11 @@ const argv = yargs.options({
     type: 'string',
     describe: 'If using "openapi" as the target generator, this allows you to specify the name of the output file.',
     default: 'openapi',
+  },
+  includeMetadata: {
+    type: 'boolean',
+    describe: "Whether to include the file's meta.xml information: Whether it is active and and the API version",
+    default: false,
   },
 }).argv;
 
@@ -89,8 +99,10 @@ Settings.build({
   defaultGroupName: argv.defaultGroupName,
   sanitizeHtml: argv.sanitizeHtml,
   openApiTitle: argv.openApiTitle,
+  title: argv.title,
   namespace: argv.namespace,
   openApiFileName: argv.openApiFileName,
+  includeMetadata: argv.includeMetadata,
 });
 
 try {

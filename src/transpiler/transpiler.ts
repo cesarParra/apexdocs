@@ -13,7 +13,7 @@ export default class Transpiler {
 
     processor.onBeforeProcess?.(sortedTypes);
 
-    if (Settings.getInstance().indexOnly === true) {
+    if (Settings.getInstance().indexOnly) {
       return;
     }
 

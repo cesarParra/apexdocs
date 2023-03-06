@@ -27,7 +27,11 @@ export class ApexFileReader {
 
       const rawApexFile = fileSystem.readFile(currentPath);
       const metadataPath = fileSystem.joinPath(rootPath, `${currentFilePath}-meta.xml`);
-      const rawMetadataFile = fileSystem.exists(metadataPath) ? fileSystem.readFile(metadataPath) : null;
+      let rawMetadataFile = null;
+      if (Settings.getInstance().includeMetadata()) {
+        rawMetadataFile = fileSystem.exists(metadataPath) ? fileSystem.readFile(metadataPath) : null;
+      }
+
       bundles.push(new ApexBundle(currentFilePath, rawApexFile, rawMetadataFile));
     });
     return bundles;

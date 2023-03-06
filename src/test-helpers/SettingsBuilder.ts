@@ -17,6 +17,8 @@ export class SettingsBuilder {
       sanitizeHtml: true,
       openApiTitle: 'Apex API',
       openApiFileName: 'openapi',
+      title: 'Classes',
+      includeMetadata: false,
     };
   }
 }

@@ -1,12 +1,4 @@
-import {
-  Type,
-  ReflectionResult,
-  ClassMirror,
-  FieldMirror,
-  PropertyMirror,
-  MethodMirror,
-  InterfaceMirror,
-} from '@cparra/apex-reflection';
+import { ClassMirror, InterfaceMirror, ReflectionResult, Type } from '@cparra/apex-reflection';
 import ApexBundle from '../model/apex-bundle';
 import MetadataProcessor from './metadata-processor';
 import { Logger } from '../util/logger';
@@ -30,7 +22,7 @@ export class RawBodyParser implements TypeParser {
           const metadataParams = MetadataProcessor.process(currentBundle.rawMetadataContent);
           metadataParams.forEach((value, key) => {
             const declaration = `${key}: ${value}`;
-            result.typeMirror!.annotations.push({
+            result.typeMirror?.annotations.push({
               rawDeclaration: declaration,
               name: declaration,
               type: declaration,
@@ -42,6 +34,7 @@ export class RawBodyParser implements TypeParser {
       .filter((reflectionResult) => {
         return reflectionResult.typeMirror;
       })
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       .map((reflectionResult) => reflectionResult.typeMirror!);
 
     return this.addFieldsFromParent(types);
@@ -76,7 +69,6 @@ export class RawBodyParser implements TypeParser {
 
       typeAsInterface = this.addMethodsFromParent(typeAsInterface, types);
       typesWithFields.push(typeAsInterface);
-      continue;
     }
 
     return typesWithFields;
@@ -131,45 +123,48 @@ export class RawBodyParser implements TypeParser {
   }
 
   private getInheritedFields(parentAsClass: ClassMirror, currentClass: ClassMirror) {
-    const parentFields = parentAsClass.fields
-      // Filter out private fields
-      .filter((currentField) => currentField.access_modifier.toLowerCase() !== 'private')
-      // Filter out fields that also exist on the child
-      .filter((currentField) => !this.memberExists(currentClass.fields, currentField.name))
-      .map((currentField) => ({
-        ...currentField,
-        inherited: true,
-      }));
-    return parentFields;
+    return (
+      parentAsClass.fields
+        // Filter out private fields
+        .filter((currentField) => currentField.access_modifier.toLowerCase() !== 'private')
+        // Filter out fields that also exist on the child
+        .filter((currentField) => !this.memberExists(currentClass.fields, currentField.name))
+        .map((currentField) => ({
+          ...currentField,
+          inherited: true,
+        }))
+    );
   }
 
   private getInheritedProperties(parentAsClass: ClassMirror, currentClass: ClassMirror) {
-    const parentProperties = parentAsClass.properties
-      // Filter out private properties
-      .filter((currentProperty) => currentProperty.access_modifier.toLowerCase() !== 'private')
-      // Filter out properties that also exist on the child
-      .filter((currentProperty) => !this.memberExists(currentClass.properties, currentProperty.name))
-      .map((currentProperty) => ({
-        ...currentProperty,
-        inherited: true,
-      }));
-    return parentProperties;
+    return (
+      parentAsClass.properties
+        // Filter out private properties
+        .filter((currentProperty) => currentProperty.access_modifier.toLowerCase() !== 'private')
+        // Filter out properties that also exist on the child
+        .filter((currentProperty) => !this.memberExists(currentClass.properties, currentProperty.name))
+        .map((currentProperty) => ({
+          ...currentProperty,
+          inherited: true,
+        }))
+    );
   }
 
   private getInheritedMethods(
     parentAsClass: ClassMirror | InterfaceMirror,
     currentClass: ClassMirror | InterfaceMirror,
   ) {
-    const parentMethods = parentAsClass.methods
-      // Filter out private methods
-      .filter((currentMethod) => currentMethod.access_modifier.toLowerCase() !== 'private')
-      // Filter out methods that also exist on the child
-      .filter((currentMethod) => !this.memberExists(currentClass.methods, currentMethod.name))
-      .map((currentMethod) => ({
-        ...currentMethod,
-        inherited: true,
-      }));
-    return parentMethods;
+    return (
+      parentAsClass.methods
+        // Filter out private methods
+        .filter((currentMethod) => currentMethod.access_modifier.toLowerCase() !== 'private')
+        // Filter out methods that also exist on the child
+        .filter((currentMethod) => !this.memberExists(currentClass.methods, currentMethod.name))
+        .map((currentMethod) => ({
+          ...currentMethod,
+          inherited: true,
+        }))
+    );
   }
 
   memberExists(members: NameAware[], fieldName: string): boolean {
