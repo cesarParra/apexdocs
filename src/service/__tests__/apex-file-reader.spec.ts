@@ -13,6 +13,8 @@ describe('File Reader', () => {
       defaultGroupName: 'Misc',
       sanitizeHtml: true,
       openApiFileName: 'openapi',
+      title: 'Classes',
+      includeMetadata: false,
     } as SettingsConfig);
   });
 
