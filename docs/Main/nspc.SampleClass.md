@@ -2,10 +2,6 @@
 
 `NAMESPACEACCESSIBLE`
 
-`APIVERSION: 54`
-
-`STATUS: ACTIVE`
-
 This is a class description. This class relates to [nspc.SampleInterface](/Sample-Interfaces/nspc.SampleInterface.md)
              But this [ClassThatDoesNotExist](ClassThatDoesNotExist) does not exist.
              You can also link using this syntax [nspc.SampleInterface](/Sample-Interfaces/nspc.SampleInterface.md)

@@ -12,6 +12,7 @@ export interface SettingsConfig {
   openApiTitle?: string;
   namespace?: string;
   openApiFileName: string;
+  includeMetadata: boolean;
 }
 
 export class Settings {
@@ -79,5 +80,9 @@ export class Settings {
 
   public openApiFileName(): string {
     return this.config.openApiFileName;
+  }
+
+  public includeMetadata(): boolean {
+    return this.config.includeMetadata;
   }
 }

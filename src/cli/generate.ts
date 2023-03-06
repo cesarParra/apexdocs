@@ -77,6 +77,11 @@ const argv = yargs.options({
     describe: 'If using "openapi" as the target generator, this allows you to specify the name of the output file.',
     default: 'openapi',
   },
+  includeMetadata: {
+    type: 'boolean',
+    describe: "Whether to include the file's meta.xml information: Whether it is active and and the API version",
+    default: false,
+  },
 }).argv;
 
 Settings.build({
@@ -91,6 +96,7 @@ Settings.build({
   openApiTitle: argv.openApiTitle,
   namespace: argv.namespace,
   openApiFileName: argv.openApiFileName,
+  includeMetadata: argv.includeMetadata,
 });
 
 try {
