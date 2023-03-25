@@ -90,7 +90,7 @@ const argv = yargs.options({
   documentationRootDir: {
     type: 'string',
     describe:
-      'Allows you to specify the root directory for where the files are being generated. This can be helpful when embedding the generated docs into an existing site so that the links are generated correctly.',
+      'Allows you to specify the root documentation directory where the files are being generated. This can be helpful when embedding the generated docs into an existing site so that the links are generated correctly.',
   },
 }).argv;
 
