@@ -2,9 +2,9 @@
 
 **Extended types**
 
-[nspc.SampleInterface](/Sample-Interfaces/nspc.SampleInterface.md)
+[nspc.SampleInterface](types/Sample-Interfaces/nspc.SampleInterface.md)
 , 
-[nspc.AnotherInterface](/Misc-Group/nspc.AnotherInterface.md)
+[nspc.AnotherInterface](types/Classes/nspc.AnotherInterface.md)
 ## Methods
 ### `execute()`
 

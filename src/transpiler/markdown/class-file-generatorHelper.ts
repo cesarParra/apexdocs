@@ -10,7 +10,8 @@ export default class ClassFileGeneratorHelper {
   }
 
   public static getFileLink(classModel: Type) {
-    const directoryRoot = this.getDirectoryRoot(classModel);
+    const documentationRoot = Settings.getInstance().getRootDir() ?? '';
+    const directoryRoot = `${documentationRoot}${this.getDirectoryRoot(classModel)}`;
     const fullClassName = `${Settings.getInstance().getNamespacePrefix()}${classModel.name}`;
     return `[${fullClassName}](${directoryRoot}${fullClassName}.md)`;
   }
