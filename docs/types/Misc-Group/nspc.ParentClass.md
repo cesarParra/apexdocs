@@ -2,7 +2,7 @@
 
 **Inheritance**
 
-[nspc.GrandparentClass](/Misc-Group/nspc.GrandparentClass.md)
+[nspc.GrandparentClass](types/Misc-Group/nspc.GrandparentClass.md)
  &gt; 
 ParentClass
 

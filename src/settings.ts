@@ -14,6 +14,7 @@ export interface SettingsConfig {
   namespace?: string;
   openApiFileName: string;
   includeMetadata: boolean;
+  rootDir?: string;
 }
 
 export class Settings {
@@ -89,5 +90,9 @@ export class Settings {
 
   public includeMetadata(): boolean {
     return this.config.includeMetadata;
+  }
+
+  public getRootDir(): string | undefined {
+    return this.config.rootDir;
   }
 }

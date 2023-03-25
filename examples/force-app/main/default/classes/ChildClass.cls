@@ -1,3 +1,7 @@
+/**
+ * @description Some desc
+ * @group Classes
+ */
 public class ChildClass extends ParentClass implements SampleInterface {
     private String privateStringFromChild;
 

@@ -1,6 +1,6 @@
 {
   "name": "@cparra/apexdocs",
-  "version": "2.14.0",
+  "version": "2.15.0",
   "description": "Library with CLI capabilities to generate documentation for Salesforce Apex classes.",
   "keywords": [
     "apex",
@@ -24,7 +24,7 @@
     "postversion": "git push && git push --tags",
     "docs:init": "docsify init docs",
     "docs:serve": "docsify serve docs",
-    "execute:example": "node lib/cli/generate.js -s examples/force-app -t docs --scope global public private protected -g docsify --defaultGroupName \"Misc Group\" --namespace nspc --title \"Sample Documentation\"",
+    "execute:example": "node lib/cli/generate.js -s examples/force-app -t docs/types --scope global public private protected -g docsify --defaultGroupName \"Misc Group\" --namespace nspc --title \"Sample Documentation\" --documentationRootDir types",
     "execute:example:index:only": "node lib/cli/generate.js -s examples/force-app -t docs --scope global public private -g docsify --indexOnly",
     "execute:example:openapi": "node lib/cli/generate.js -s examples/force-app -t docs -g openapi --openApiTitle \"Sample REST Api\" --namespace nspc --openApiFileName restapi"
   },
