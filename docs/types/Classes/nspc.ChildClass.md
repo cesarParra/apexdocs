@@ -21,66 +21,58 @@ ChildClass
 
 ## Fields
 
-### `privateStringFromChild` → `String`
+### `private privateStringFromChild` → `String`
 
 
-### `protectedGrandParentField` → `String`
+### `protected protectedGrandParentField` → `String`
 
 *Inherited*
 
-### `protectedStringFromParent` → `String`
+### `protected protectedStringFromParent` → `String`
 
 *Inherited*
 
 This is a protected string, use carefully.
 
-### `publicStringFromParent` → `String`
+### `public publicStringFromParent` → `String`
 
 *Inherited*
 
 ---
 ## Properties
 
-### `AProp` → `String`
+### `protected AProp` → `String`
 
 *Inherited*
 
 ---
 ## Methods
-### `doSomething()`
-### `override overridableMethodOverridden()`
+### `public doSomething()`
+### `public override overridableMethodOverridden()`
 
 This method was overridden.
 
-#### Return
+#### Returns
 
-**Type**
+|Type|Description|
+|---|---|
+|String|A String.|
 
-String
-
-**Description**
-
-A String.
-
-### `execute()`
+### `public execute()`
 
 Executes the command.
 
-### `getValue()`
+### `public getValue()`
 
 Returns a value based on the executed command.
 
-#### Return
+#### Returns
 
-**Type**
+|Type|Description|
+|---|---|
+|String|The value|
 
-String
-
-**Description**
-
-The value
-
-### `overridableMethod()`
+### `public overridableMethod()`
 
 *Inherited*
 

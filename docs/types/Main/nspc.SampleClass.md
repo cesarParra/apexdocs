@@ -20,7 +20,7 @@ This is a class description. This class relates to [nspc.SampleInterface](types/
 
 ## Constructors
 ### My Super Group
-##### `SampleClass()`
+##### `public SampleClass()`
 
 `NAMESPACEACCESSIBLE`
 
@@ -47,7 +47,7 @@ SampleClass sampleInstance = new SampleClass();
 
 ---
 ### Other
-##### `SampleClass(String argument1, String argument2)`
+##### `public SampleClass(String argument1, String argument2)`
 
 Constructs a SampleClass with an argument.
 
@@ -62,28 +62,32 @@ Constructs a SampleClass with an argument.
 ## Fields
 ### Common Constants
 
-* `ANOTHER_CONSTANT` → `String` 
-* `A_CONSTANT` → `String` [`NAMESPACEACCESSIBLE` ]  - This is a constant.
-* `listOfStrings` → `List<String>` 
+* `public ANOTHER_CONSTANT` → `String` 
+* `public A_CONSTANT` → `String` [`NAMESPACEACCESSIBLE` ]  - This is a constant.
+* `public listOfStrings` → `List<String>` 
 ---
 ### 'General' Constants
 
-* `GENERAL_ANOTHER_CONSTANT` → `String` 
-* `GENERAL_A_CONSTANT` → `String` [`NAMESPACEACCESSIBLE` ]  - This is a constant.
+* `public GENERAL_ANOTHER_CONSTANT` → `String` 
+* `public GENERAL_A_CONSTANT` → `String` [`NAMESPACEACCESSIBLE` ]  - This is a constant.
 ---
 ### Other variables
 
-* `someVariable` → `String` 
+* `public someVariable` → `String` 
+---
+### Other
+
+* `private somePrivateStuff` → `String` 
 ---
 ## Properties
 
-### `AnotherProp` → `Decimal`
+### `public AnotherProp` → `Decimal`
 
 `AURAENABLED` 
 
 This is a Decimal property.
 
-### `MyProp` → `String`
+### `public MyProp` → `String`
 
 `AURAENABLED` 
 `DEPRECATED` 
@@ -93,7 +97,7 @@ This is a String property.
 ---
 ## Methods
 ### A method group
-##### `static sampleMethod(String argument1, String argument2)`
+##### `public static sampleMethod(String argument1, String argument2)`
 
 `NAMESPACEACCESSIBLE`
 
@@ -106,15 +110,11 @@ Executes commands based on the passed in argument.
 |`argument1`|Argument1 to debug|
 |`argument2`|Argument2 to debug|
 
-###### Return
+###### Returns
 
-**Type**
-
-String
-
-**Description**
-
-Empty string
+|Type|Description|
+|---|---|
+|String|Empty string|
 
 ###### Example
 ```apex
@@ -123,7 +123,7 @@ System.debug(result);
 ```
 
 
-##### `static anotherSampleMethod(String arg1)`
+##### `public static anotherSampleMethod(String arg1)`
 
 Something here
 
@@ -132,7 +132,7 @@ Something here
 
 ---
 ### Other
-##### `static call()`
+##### `public static call()`
 
 Calls the method. This methods allows you to call it.
 
@@ -153,14 +153,14 @@ Inner class belonging to SampleClass.
 
 #### Properties
 
-##### `InnerProp` → `String`
+##### `public InnerProp` → `String`
 
 
 Description of the inner property.
 
 ---
 #### Methods
-##### `innerMethod()`
+##### `public innerMethod()`
 
 Executes from the inner class.
 
@@ -172,14 +172,14 @@ Inner class belonging to SampleClass.
 
 #### Properties
 
-##### `InnerProp` → `String`
+##### `public InnerProp` → `String`
 
 
 Description of the inner property.
 
 ---
 #### Methods
-##### `innerMethod()`
+##### `public innerMethod()`
 
 Executes from the inner class.
 

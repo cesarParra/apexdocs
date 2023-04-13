@@ -2,12 +2,12 @@
 ## Fields
 ### Group old syntax
 
-* `anotherInGroup1` → `String` 
-* `inGroup1` → `String` 
+* `public anotherInGroup1` → `String` 
+* `public inGroup1` → `String` 
 ---
 ### Group new syntax
 Group's description
 
-* `anotherInGroup2` → `String` 
-* `inGroup2` → `String`  - Description for constant in group 2
+* `public anotherInGroup2` → `String` 
+* `public inGroup2` → `String`  - Description for constant in group 2
 ---

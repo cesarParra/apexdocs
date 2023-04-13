@@ -1,13 +1,13 @@
 # nspc.GrandparentClass
 ## Fields
 
-### `protectedGrandParentField` → `String`
+### `protected protectedGrandParentField` → `String`
 
 
 ---
 ## Properties
 
-### `AProp` → `String`
+### `protected AProp` → `String`
 
 
 ---

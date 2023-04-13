@@ -1,18 +1,18 @@
 # nspc.Reference1
 ## Fields
 
-### `reference2Member` → `Reference2`
+### `public reference2Member` → `Reference2`
 
 
 This is a reference 2 member. Lorem.
 
-### `reference3Member` → `Reference3`
+### `public reference3Member` → `Reference3`
 
 
-### `reference4Collection` → `List<Reference4>`
+### `public reference4Collection` → `List<Reference4>`
 
 
-### `reference5Member` → `Reference5`
+### `public reference5Member` → `Reference5`
 
 
 ---

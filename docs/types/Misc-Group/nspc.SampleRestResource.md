@@ -5,7 +5,7 @@
 Account related operations
 
 ## Methods
-### `static doDelete()`
+### `global static doDelete()`
 
 `HTTPDELETE`
 
@@ -32,21 +32,17 @@ Sample HTTP Delete method with references to other types.
 
 **Http Response** statusCode: 307 schema: Reference7[untypedObject:Reference2]
 
-### `static doGet()`
+### `global static doGet()`
 
 `HTTPGET`
 
 This is a sample HTTP Get method
 
-#### Return
+#### Returns
 
-**Type**
-
-Account
-
-**Description**
-
-An Account SObject.
+|Type|Description|
+|---|---|
+|Account|An Account SObject.|
 
 
 **Http Parameter** name: limit in: query required: true description: Limits the number of items on a page schema:   type: integer
@@ -69,21 +65,17 @@ An Account SObject.
 
 **Http Response** statusCode: 100 schema:   type: object   properties:     anotherObject:       description: An object inside of an object       type: object       properties:         message:           type: string         somethingElse:           type: number
 
-### `static doPost(String name, String phone, String website)`
+### `global static doPost(String name, String phone, String website)`
 
 `HTTPPOST`
 
 This is a sample HTTP Post method
 
-#### Return
+#### Returns
 
-**Type**
-
-String
-
-**Description**
-
-A String SObject.
+|Type|Description|
+|---|---|
+|String|A String SObject.|
 
 
 **Summary** Posts an Account 2

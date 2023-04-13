@@ -1,7 +1,7 @@
 # nspc.Reference3
 ## Fields
 
-### `someBoolean` → `Boolean`
+### `public someBoolean` → `Boolean`
 
 
 ---

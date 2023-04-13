@@ -8,30 +8,30 @@ ParentClass
 
 ## Fields
 
-### `privateStringFromParent` → `String`
+### `private privateStringFromParent` → `String`
 
 
-### `protectedGrandParentField` → `String`
+### `protected protectedGrandParentField` → `String`
 
 *Inherited*
 
-### `protectedStringFromParent` → `String`
+### `protected protectedStringFromParent` → `String`
 
 
 This is a protected string, use carefully.
 
-### `publicStringFromParent` → `String`
+### `public publicStringFromParent` → `String`
 
 
 ---
 ## Properties
 
-### `AProp` → `String`
+### `protected AProp` → `String`
 
 *Inherited*
 
 ---
 ## Methods
-### `overridableMethod()`
-### `overridableMethodOverridden()`
+### `public overridableMethod()`
+### `public overridableMethodOverridden()`
 ---
