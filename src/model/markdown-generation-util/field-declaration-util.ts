@@ -29,7 +29,7 @@ function addFieldSection(
 ) {
   if (!grouped) {
     markdownFile.addTitle(
-      `\`${mirrorModel.name}\` → \`${mirrorModel.typeReference.rawDeclaration}\``,
+      `\`${mirrorModel.access_modifier} ${mirrorModel.name}\` → \`${mirrorModel.typeReference.rawDeclaration}\``,
       startingHeadingLevel + 2,
     );
     markdownFile.addBlankLine();
@@ -65,7 +65,7 @@ function addFieldSection(
       description = ` - ${mirrorModel.docComment?.description}`;
     }
 
-    let listItemText = `\`${mirrorModel.name}\` → \`${mirrorModel.typeReference.rawDeclaration}\``;
+    let listItemText = `\`${mirrorModel.access_modifier} ${mirrorModel.name}\` → \`${mirrorModel.typeReference.rawDeclaration}\``;
     if (mirrorModel.inherited) {
       listItemText += '(*Inherited*)';
     }

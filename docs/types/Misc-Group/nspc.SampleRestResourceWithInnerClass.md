@@ -5,21 +5,17 @@
 Contact related operations
 
 ## Methods
-### `static doGet()`
+### `global static doGet()`
 
 `HTTPGET`
 
 This is a sample HTTP Get method
 
-#### Return
+#### Returns
 
-**Type**
-
-InnerClass
-
-**Description**
-
-A SampleRestResourceWithInnerClass.InnerClass Object.
+|Type|Description|
+|---|---|
+|InnerClass|A SampleRestResourceWithInnerClass.InnerClass Object.|
 
 
 **Http Response** statusCode: 200 schema: SampleRestResourceWithInnerClass.InnerClass
@@ -29,7 +25,7 @@ A SampleRestResourceWithInnerClass.InnerClass Object.
 ### InnerClass
 #### Fields
 
-##### `stringMember` → `String`
+##### `global stringMember` → `String`
 
 
 ---

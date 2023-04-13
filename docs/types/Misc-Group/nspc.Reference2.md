@@ -1,12 +1,12 @@
 # nspc.Reference2
 ## Fields
 
-### `objectReference` → `Object`
+### `public objectReference` → `Object`
 
 
 This is an object reference.
 
-### `stringMember` → `String`
+### `public stringMember` → `String`
 
 
 ---

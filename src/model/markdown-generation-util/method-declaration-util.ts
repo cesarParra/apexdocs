@@ -11,8 +11,13 @@ export function declareMethod(
   className = '',
 ): void {
   methods.forEach((currentMethod) => {
-    const signatureName = isMethod(currentMethod) ? (currentMethod as MethodMirrorWithInheritance).name : className;
-    markdownFile.addTitle(`\`${buildSignature(signatureName, currentMethod)}\``, startingHeadingLevel + 2);
+    const signatureName = isMethod(currentMethod)
+      ? `${(currentMethod as MethodMirrorWithInheritance).name}`
+      : className;
+    markdownFile.addTitle(
+      `\`${buildSignature(currentMethod.access_modifier, signatureName, currentMethod)}\``,
+      startingHeadingLevel + 2,
+    );
 
     // Inheritance tag
     if (isMethod(currentMethod)) {
@@ -63,10 +68,17 @@ type DocCommentAware = {
   docComment?: DocComment;
 };
 
-function buildSignature(name: string, parameterAware: ParameterAware): string {
+function buildSignature(accessModifier: string, name: string, parameterAware: ParameterAware): string {
   let signature = `${name}(`;
   if (isMethod(parameterAware) && (parameterAware as MethodMirrorWithInheritance).memberModifiers.length) {
-    signature = (parameterAware as MethodMirrorWithInheritance).memberModifiers.join(' ') + ' ' + signature;
+    signature =
+      accessModifier +
+      ' ' +
+      (parameterAware as MethodMirrorWithInheritance).memberModifiers.join(' ') +
+      ' ' +
+      signature;
+  } else {
+    signature = accessModifier + ' ' + signature;
   }
   const signatureParameters = parameterAware.parameters.map(
     (param) => `${param.typeReference.rawDeclaration} ${param.name}`,
@@ -106,15 +118,12 @@ function addReturns(
     return;
   }
 
-  markdownFile.addTitle('Return', startingHeadingLevel + 3);
-  markdownFile.addBlankLine();
-  markdownFile.addText('**Type**');
-  markdownFile.addBlankLine();
-  markdownFile.addText(methodModel.typeReference.rawDeclaration);
-  markdownFile.addBlankLine();
-  markdownFile.addText('**Description**');
-  markdownFile.addBlankLine();
-  markdownFile.addText(methodModel.docComment?.returnAnnotation.bodyLines.join(' '));
+  markdownFile.addTitle('Returns', startingHeadingLevel + 3);
+  markdownFile.initializeTable('Type', 'Description');
+  markdownFile.addTableRow(
+    methodModel.typeReference.rawDeclaration,
+    methodModel.docComment?.returnAnnotation.bodyLines.join(' '),
+  );
   markdownFile.addBlankLine();
 }
 

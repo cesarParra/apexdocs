@@ -1,7 +1,7 @@
 # nspc.Reference5
 ## Fields
 
-### `reference6Member` → `Reference6`
+### `public reference6Member` → `Reference6`
 
 
 ---

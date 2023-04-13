@@ -1,7 +1,7 @@
 # nspc.Reference7
 ## Fields
 
-### `untypedObject` → `Object`
+### `public untypedObject` → `Object`
 
 
 ---

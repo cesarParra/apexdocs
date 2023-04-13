@@ -6,22 +6,18 @@ This is an interface description.
 **Group** Sample Interfaces
 
 ## Methods
-### `execute()`
+### `global execute()`
 
 Executes the command.
 
-### `getValue()`
+### `global getValue()`
 
 Returns a value based on the executed command.
 
-#### Return
+#### Returns
 
-**Type**
-
-String
-
-**Description**
-
-The value
+|Type|Description|
+|---|---|
+|String|The value|
 
 ---

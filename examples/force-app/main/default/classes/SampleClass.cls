@@ -117,6 +117,8 @@ public with sharing class SampleClass {
     @AuraEnabled
     public Decimal AnotherProp { get; private set; }
 
+    private String somePrivateStuff;
+
     /**
      * @description Inner class belonging to SampleClass.
      */

@@ -1,7 +1,7 @@
 # nspc.Reference4
 ## Fields
 
-### `someString` → `String`
+### `public someString` → `String`
 
 
 ---

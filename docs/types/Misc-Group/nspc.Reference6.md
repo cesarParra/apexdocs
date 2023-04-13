@@ -1,7 +1,7 @@
 # nspc.Reference6
 ## Fields
 
-### `grandChildString` → `String`
+### `public grandChildString` → `String`
 
 
 This is the grandchild description.
