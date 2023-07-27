@@ -11,6 +11,7 @@ public class MemberGrouping {
 
     /** @description Description for constant in group 2 */
     public static final String inGroup2;
+    /** @description Description for another constant in group 2 @future annotation */
     public static final String anotherInGroup2;
     /** @end-group */
 }
