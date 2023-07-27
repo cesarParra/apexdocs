@@ -69,6 +69,16 @@ public class MyClass {
 ```
 
 * Apex docs blocks can now all be in a single line
+
+📒 Note: If you wish to have multiple `@` tags in a single line but don't want them to be treated as ApexDoc annotations, you can
+escape them by adding wrapping the annotation in ticks, for example
+
+```apex
+/**
+ * @MyCustomAnnotation This is a custom annotation with an `@embedded` annotation
+ */
+```
+
 * Support for grouping blocks of related code within a class
 * Support for HTML tags
 * OpenApi REST specification generation

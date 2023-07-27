@@ -14,6 +14,12 @@ Some desc
 
 ## Misc Group
 
+### [nspc.EscapedAnnotations](types/Misc-Group/nspc.EscapedAnnotations.md)
+
+This sentence has an `@embedded` annotation.
+
+
+
 ### [nspc.GrandparentClass](types/Misc-Group/nspc.GrandparentClass.md)
 
 
