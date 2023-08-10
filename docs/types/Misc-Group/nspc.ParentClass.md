@@ -32,6 +32,6 @@ This is a protected string, use carefully.
 
 ---
 ## Methods
-### `public overridableMethod()`
-### `public overridableMethodOverridden()`
+### `public String overridableMethod()`
+### `public String overridableMethodOverridden()`
 ---

@@ -2,7 +2,7 @@
 
 `ISTEST`
 ## Methods
-### `private static thisIsAClassWithoutAModifier()`
+### `private static void thisIsAClassWithoutAModifier()`
 
 `ISTEST`
 

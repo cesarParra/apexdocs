@@ -97,7 +97,7 @@ This is a String property.
 ---
 ## Methods
 ### A method group
-##### `public static sampleMethod(String argument1, String argument2)`
+##### `public static String sampleMethod(String argument1, String argument2)`
 
 `NAMESPACEACCESSIBLE`
 
@@ -123,7 +123,7 @@ System.debug(result);
 ```
 
 
-##### `public static anotherSampleMethod(String arg1)`
+##### `public static String anotherSampleMethod(String arg1)`
 
 Something here
 
@@ -132,7 +132,7 @@ Something here
 
 ---
 ### Other
-##### `public static call()`
+##### `public static void call()`
 
 Calls the method. This methods allows you to call it.
 
@@ -160,7 +160,7 @@ Description of the inner property.
 
 ---
 #### Methods
-##### `public innerMethod()`
+##### `public void innerMethod()`
 
 Executes from the inner class.
 
@@ -179,7 +179,7 @@ Description of the inner property.
 
 ---
 #### Methods
-##### `public innerMethod()`
+##### `public void innerMethod()`
 
 Executes from the inner class.
 
