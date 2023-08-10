@@ -6,14 +6,14 @@
 , 
 [nspc.AnotherInterface](types/Classes/nspc.AnotherInterface.md)
 ## Methods
-### `global execute()`
+### `global void execute()`
 
 *Inherited*
 
 
 Executes the command.
 
-### `global getValue()`
+### `global String getValue()`
 
 *Inherited*
 

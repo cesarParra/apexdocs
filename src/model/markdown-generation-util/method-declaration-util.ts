@@ -12,7 +12,9 @@ export function declareMethod(
 ): void {
   methods.forEach((currentMethod) => {
     const signatureName = isMethod(currentMethod)
-      ? `${(currentMethod as MethodMirrorWithInheritance).name}`
+      ? `${(currentMethod as MethodMirrorWithInheritance).typeReference.type} ${
+          (currentMethod as MethodMirrorWithInheritance).name
+        }`
       : className;
     markdownFile.addTitle(
       `\`${buildSignature(currentMethod.access_modifier, signatureName, currentMethod)}\``,

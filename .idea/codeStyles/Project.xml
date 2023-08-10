@@ -16,7 +16,6 @@
       <option name="APEX_DOC_BLANK_LINE_BEFORE_AUTHOR" value="false" />
       <option name="APEX_DOC_BLANK_LINE_BEFORE_DATE" value="false" />
       <option name="APEX_DOC_REQUIRE_DESCRIPTION_TAG" value="true" />
-      <option name="APEX_DOC_P_TAG_ON_EMPTY_LINES" value="false" />
     </ApexCodeStyleSettings>
     <HTMLCodeStyleSettings>
       <option name="HTML_SPACE_INSIDE_EMPTY_TAG" value="true" />
