@@ -12,7 +12,7 @@ export function declareMethod(
 ): void {
   methods.forEach((currentMethod) => {
     const signatureName = isMethod(currentMethod)
-      ? `${(currentMethod as MethodMirrorWithInheritance).typeReference.type} ${
+      ? `${(currentMethod as MethodMirrorWithInheritance).typeReference.rawDeclaration} ${
           (currentMethod as MethodMirrorWithInheritance).name
         }`
       : className;
