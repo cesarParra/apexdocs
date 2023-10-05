@@ -5,7 +5,7 @@
 Contact related operations
 
 ## Methods
-### `global static doGet()`
+### `global static InnerClass doGet()`
 
 `HTTPGET`
 

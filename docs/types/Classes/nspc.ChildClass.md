@@ -47,8 +47,8 @@ This is a protected string, use carefully.
 
 ---
 ## Methods
-### `public doSomething()`
-### `public override overridableMethodOverridden()`
+### `public void doSomething()`
+### `public override String overridableMethodOverridden()`
 
 This method was overridden.
 
@@ -58,11 +58,11 @@ This method was overridden.
 |---|---|
 |String|A String.|
 
-### `public execute()`
+### `public void execute()`
 
 Executes the command.
 
-### `public getValue()`
+### `public String getValue()`
 
 Returns a value based on the executed command.
 
@@ -72,7 +72,7 @@ Returns a value based on the executed command.
 |---|---|
 |String|The value|
 
-### `public overridableMethod()`
+### `public String overridableMethod()`
 
 *Inherited*
 

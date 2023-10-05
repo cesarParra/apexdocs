@@ -6,11 +6,11 @@ This is an interface description.
 **Group** Sample Interfaces
 
 ## Methods
-### `global execute()`
+### `global void execute()`
 
 Executes the command.
 
-### `global getValue()`
+### `global String getValue()`
 
 Returns a value based on the executed command.
 

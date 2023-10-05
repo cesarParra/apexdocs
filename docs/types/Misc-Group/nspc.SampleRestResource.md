@@ -5,7 +5,7 @@
 Account related operations
 
 ## Methods
-### `global static doDelete()`
+### `global static void doDelete()`
 
 `HTTPDELETE`
 
@@ -32,7 +32,7 @@ Sample HTTP Delete method with references to other types.
 
 **Http Response** statusCode: 307 schema: Reference7[untypedObject:Reference2]
 
-### `global static doGet()`
+### `global static Account doGet()`
 
 `HTTPGET`
 
@@ -65,7 +65,7 @@ This is a sample HTTP Get method
 
 **Http Response** statusCode: 100 schema:   type: object   properties:     anotherObject:       description: An object inside of an object       type: object       properties:         message:           type: string         somethingElse:           type: number
 
-### `global static doPost(String name, String phone, String website)`
+### `global static String doPost(String name, String phone, String website)`
 
 `HTTPPOST`
 
