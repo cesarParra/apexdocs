@@ -130,6 +130,7 @@ Something here
 
 **Arg1** The arg1 description
 
+##### `public static Map<Id,List<String>> yetAnotherSampleMethod(String arg1)`
 ---
 ### Other
 ##### `public static call()`

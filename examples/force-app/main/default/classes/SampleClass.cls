@@ -94,6 +94,11 @@ public with sharing class SampleClass {
         System.debug('something');
         return '';
     }
+
+    public static Map<Id, List<String>> yetAnotherSampleMethod(String arg1) {
+        System.debug('something');
+        return new Map<Id, List<String>>();
+    }
     // @end-group
 
 
