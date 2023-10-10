@@ -123,7 +123,7 @@ function addReturns(
   markdownFile.addTitle('Returns', startingHeadingLevel + 3);
   markdownFile.initializeTable('Type', 'Description');
   markdownFile.addTableRow(
-    methodModel.typeReference.rawDeclaration,
+    `\`${methodModel.typeReference.rawDeclaration}\``,
     methodModel.docComment?.returnAnnotation.bodyLines.join(' '),
   );
   markdownFile.addBlankLine();
