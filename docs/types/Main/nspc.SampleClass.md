@@ -114,7 +114,7 @@ Executes commands based on the passed in argument.
 
 |Type|Description|
 |---|---|
-|String|Empty string|
+|`String`|Empty string|
 
 ###### Example
 ```apex

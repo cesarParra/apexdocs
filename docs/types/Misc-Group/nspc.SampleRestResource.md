@@ -42,7 +42,7 @@ This is a sample HTTP Get method
 
 |Type|Description|
 |---|---|
-|Account|An Account SObject.|
+|`Account`|An Account SObject.|
 
 
 **Http Parameter** name: limit in: query required: true description: Limits the number of items on a page schema:   type: integer
@@ -75,7 +75,7 @@ This is a sample HTTP Post method
 
 |Type|Description|
 |---|---|
-|String|A String SObject.|
+|`String`|A String SObject.|
 
 
 **Summary** Posts an Account 2

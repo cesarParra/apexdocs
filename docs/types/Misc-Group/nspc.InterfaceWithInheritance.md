@@ -24,6 +24,6 @@ Returns a value based on the executed command.
 
 |Type|Description|
 |---|---|
-|String|The value|
+|`String`|The value|
 
 ---

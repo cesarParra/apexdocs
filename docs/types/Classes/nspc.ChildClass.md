@@ -56,7 +56,7 @@ This method was overridden.
 
 |Type|Description|
 |---|---|
-|String|A String.|
+|`String`|A String.|
 
 ### `public void execute()`
 
@@ -70,7 +70,7 @@ Returns a value based on the executed command.
 
 |Type|Description|
 |---|---|
-|String|The value|
+|`String`|The value|
 
 ### `public String overridableMethod()`
 
