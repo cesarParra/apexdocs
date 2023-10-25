@@ -1,6 +1,6 @@
 import { ConstructorMirror, DocComment } from '@cparra/apex-reflection';
 import { MarkdownFile } from '../markdown-file';
-import { ParameterMirror } from '@cparra/apex-reflection/index';
+import { ParameterMirror } from '@cparra/apex-reflection';
 import { addCustomDocCommentAnnotations } from './doc-comment-annotation-util';
 import { MethodMirrorWithInheritance } from '../inheritance';
 
@@ -16,10 +16,6 @@ export function declareMethod(
           (currentMethod as MethodMirrorWithInheritance).name
         }`
       : className;
-
-    if (isMethod(currentMethod)) {
-      console.log(currentMethod.memberModifiers);
-    }
 
     markdownFile.addTitle(
       `\`${buildSignature(currentMethod.access_modifier, signatureName, currentMethod)}\``,
