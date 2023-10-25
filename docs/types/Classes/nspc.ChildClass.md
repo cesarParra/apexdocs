@@ -72,7 +72,7 @@ Returns a value based on the executed command.
 |---|---|
 |`String`|The value|
 
-### `public String overridableMethod()`
+### `public virtual String overridableMethod()`
 
 *Inherited*
 

@@ -1,4 +1,4 @@
-public virtual class ParentClass extends GrandparentClass{
+public abstract class ParentClass extends GrandparentClass{
     private String privateStringFromParent;
     /**
      * @description This is a protected string, use carefully.

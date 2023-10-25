@@ -41,10 +41,20 @@ export class MarkdownTypeFile extends MarkdownFile implements WalkerListener {
     if (this.isInner) {
       fullTypeName = typeMirror.name;
     } else {
-      fullTypeName = `${Settings.getInstance().getNamespacePrefix()}${typeMirror.name}`;
+      // If we are dealing with a class, we want to check if it has a class
+      // modifier and add it to the name.
+      if (this.isClass(typeMirror) && typeMirror.classModifier) {
+        fullTypeName = `${typeMirror.classModifier} ${Settings.getInstance().getNamespacePrefix()}${typeMirror.name}`;
+      } else {
+        fullTypeName = `${Settings.getInstance().getNamespacePrefix()}${typeMirror.name}`;
+      }
     }
     this.addTitle(fullTypeName, this.headingLevel);
     declareType(this, typeMirror);
+  }
+
+  private isClass(typeMirror: Type): typeMirror is ClassMirror {
+    return typeMirror.type_name === 'class';
   }
 
   public onConstructorDeclaration(className: string, constructors: ConstructorMirror[]): void {

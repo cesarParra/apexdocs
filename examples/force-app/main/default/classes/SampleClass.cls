@@ -8,7 +8,7 @@
  * @see SampleInterface
  */
 @NamespaceAccessible
-public with sharing class SampleClass {
+public virtual with sharing class SampleClass {
     /**
      * @description This is a namespace accessible enum
      */
