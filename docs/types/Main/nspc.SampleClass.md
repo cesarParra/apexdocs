@@ -1,4 +1,4 @@
-# nspc.SampleClass
+# virtual nspc.SampleClass
 
 `NAMESPACEACCESSIBLE`
 

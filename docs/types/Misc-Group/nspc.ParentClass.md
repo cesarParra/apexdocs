@@ -1,4 +1,4 @@
-# nspc.ParentClass
+# abstract nspc.ParentClass
 
 **Inheritance**
 
@@ -32,6 +32,6 @@ This is a protected string, use carefully.
 
 ---
 ## Methods
-### `public String overridableMethod()`
-### `public String overridableMethodOverridden()`
+### `public virtual String overridableMethod()`
+### `public virtual String overridableMethodOverridden()`
 ---
