@@ -25,31 +25,6 @@ There are some key differences between ApexDocs and the Java based ApexDoc tool:
   Markdown like Github Pages or Netlify, and use site generators like Jekyll or Gatsby. This gives you the freedom to
   decide how to style your site to match your needs.
 
-## Version 2.X
-
-Version shares almost* all the same functionality (and more) of 1.X , but is a rewrite from the ground up of the tool,
-so please be aware if migrating from a 1.X version.
-
-The Apex code parsing logic for the 1.X codebase was almost a one-to-one translation of the Java based ApexDoc tool to
-Javascript. With 2.X the parsing logic has been improved and extracted out of this codebase, and into its own standalone
-NPM module which is solely focused on Apex code reflection: https://www.npmjs.com/package/@cparra/apex-reflection
-
-This allows for an improved code quality of both code bases and an increased ease of introducing future improvements and
-fixing issues.
-
-### Differences between the versions
-
-When migrating from 1.X please be aware of these changes between the major versions:
-
-#### Deprecated features
-
-* The `--group` CLI parameter has been deprecated. All files are grouped by default.
-
-#### Features from 1.X not supported in 2.X
-
-* The `--configPath` CLI parameter has been temporarily deprecated. We are planning on reintroducing it but the config
-  file will use a different format.
-
 #### New features
 
 * All Apex annotations are now supported through the `--scope` CLI parameter, not just `namespaceaccessible`. This means

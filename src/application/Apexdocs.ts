@@ -30,9 +30,14 @@ export class Apexdocs {
     const processor = TypeTranspilerFactory.get(Settings.getInstance().targetGenerator);
     Transpiler.generate(filteredTypes, processor);
     const generatedFiles = processor.fileBuilder().files();
+
+    const generatedFilePaths: string[] = [];
     FileWriter.write(generatedFiles, (fileName: string) => {
       Logger.logSingle(`${fileName} processed.`, false, 'green', false);
+      generatedFilePaths.push(fileName);
     });
+
+    Settings.getInstance().onAfterProcess(generatedFilePaths);
 
     // Error logging
     ErrorLogger.logErrors(filteredTypes);

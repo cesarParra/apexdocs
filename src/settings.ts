@@ -15,6 +15,8 @@ export interface SettingsConfig {
   openApiFileName: string;
   includeMetadata: boolean;
   rootDir?: string;
+  onAfterProcess?: (files: string[]) => void;
+  onBeforeFileWrite?: (outputDir: string, fileName: string) => { dir: string; fileName: string };
 }
 
 export class Settings {
@@ -94,5 +96,19 @@ export class Settings {
 
   public getRootDir(): string | undefined {
     return this.config.rootDir;
+  }
+
+  public onAfterProcess(files: string[]) {
+    if (this.config.onAfterProcess) {
+      this.config.onAfterProcess(files);
+    }
+  }
+
+  public onBeforeFileWrite(outputDir: string, fileName: string): { dir: string; fileName: string } {
+    console.log('the config', this.config);
+    // if (this.config?.onBeforeFileWrite) {
+    //   return this.config.onBeforeFileWrite(outputDir, fileName);
+    // }
+    return { dir: outputDir, fileName };
   }
 }

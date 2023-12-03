@@ -1,6 +1,6 @@
 {
   "name": "@cparra/apexdocs",
-  "version": "2.18.0",
+  "version": "2.19.0-alpha.1",
   "description": "Library with CLI capabilities to generate documentation for Salesforce Apex classes.",
   "keywords": [
     "apex",
@@ -68,6 +68,7 @@
   "dependencies": {
     "@cparra/apex-reflection": "2.5.0",
     "chalk": "^4.1.2",
+    "cosmiconfig": "^9.0.0",
     "fast-xml-parser": "^4.0.1",
     "js-yaml": "^4.1.0",
     "log-update": "4.0.0",
