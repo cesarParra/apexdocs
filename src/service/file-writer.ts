@@ -1,32 +1,34 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { OutputFile } from '../model/outputFile';
-import { OnBeforeFileWrite, OutputDir, Settings, TargetLocation } from '../settings';
+import { OnBeforeFileWrite, Settings, TargetFile } from '../settings';
 
 export class FileWriter {
-  static write(files: OutputFile[], onWriteCallback: (file: TargetLocation) => void) {
-    const onBeforeFileWrite = (outputDir: OutputDir, fileName: string) =>
-      Settings.getInstance().onBeforeFileWrite(outputDir, fileName);
+  static write(files: OutputFile[], onWriteCallback: (file: TargetFile) => void) {
+    const onBeforeFileWrite: OnBeforeFileWrite = (file: TargetFile) => Settings.getInstance().onBeforeFileWrite(file);
     files.forEach((file) => {
-      const { dir: dirPath, fileName } = this.getTargetLocation(file, onBeforeFileWrite);
-      if (!fs.existsSync(dirPath)) {
-        fs.mkdirSync(dirPath, { recursive: true });
+      const resolvedFile = this.getTargetLocation(file, onBeforeFileWrite);
+      const fullDir = path.join(resolvedFile.dir.baseDir, resolvedFile.dir.fileDir);
+      if (!fs.existsSync(fullDir)) {
+        fs.mkdirSync(fullDir, { recursive: true });
       }
 
-      const filePath = path.join(dirPath, fileName);
+      const filePath = path.join(fullDir, `${resolvedFile.name}${resolvedFile.extension}`);
       fs.writeFileSync(filePath, file.body, 'utf8');
-      onWriteCallback({ dir: dirPath, fileName });
+      onWriteCallback(resolvedFile);
     });
   }
 
-  private static getTargetLocation(file: OutputFile, onBeforeFileWrite: OnBeforeFileWrite): TargetLocation {
-    const fileName = `${file.fileName}${file.fileExtension()}`;
-    return onBeforeFileWrite(
-      {
+  private static getTargetLocation(file: OutputFile, onBeforeFileWrite: OnBeforeFileWrite): TargetFile {
+    const targetFile: TargetFile = {
+      name: file.fileName,
+      extension: file.fileExtension(),
+      dir: {
         baseDir: Settings.getInstance().outputDir,
         fileDir: file.dir,
       },
-      fileName,
-    );
+    };
+
+    return onBeforeFileWrite(targetFile);
   }
 }

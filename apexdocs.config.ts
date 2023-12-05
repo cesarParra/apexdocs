@@ -1,17 +1,11 @@
-import * as path from 'path';
-
-type OutputDir = {
-  baseDir: string;
-  fileDir: string;
-};
+import { TargetFile } from './src/settings';
 
 export default {
-  onBeforeFileWrite: (dir: OutputDir, fileName: string) => {
-    console.log('onBefore writing', dir, fileName);
-    const defaultDir = path.join(dir.baseDir, dir.fileDir);
-    return { dir: defaultDir, fileName };
+  onBeforeFileWrite: (file: TargetFile): TargetFile => {
+    console.log('onBefore writing', file);
+    return file;
   },
-  onAfterProcess: (files: { dir: string; fileName: string }[]) => {
+  onAfterProcess: (files: TargetFile[]) => {
     console.log('onAfterProcess files', files);
   },
 };

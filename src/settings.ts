@@ -1,11 +1,11 @@
 import { GeneratorChoices } from './transpiler/generator-choices';
-import * as path from 'path';
 
-export type OnBeforeFileWrite = (outputDir: OutputDir, fileName: string) => TargetLocation;
+export type OnBeforeFileWrite = (file: TargetFile) => TargetFile;
 
-export type TargetLocation = {
-  dir: string;
-  fileName: string;
+export type TargetFile = {
+  name: string;
+  extension: string;
+  dir: OutputDir;
 };
 
 export type OutputDir = {
@@ -28,8 +28,8 @@ export interface SettingsConfig {
   openApiFileName: string;
   includeMetadata: boolean;
   rootDir?: string;
-  onAfterProcess?: (files: { dir: string; fileName: string }[]) => void;
-  onBeforeFileWrite?: (outputDir: OutputDir, fileName: string) => { dir: string; fileName: string };
+  onAfterProcess?: (files: TargetFile[]) => void;
+  onBeforeFileWrite?: (file: TargetFile) => TargetFile;
 }
 
 export class Settings {
@@ -111,17 +111,16 @@ export class Settings {
     return this.config.rootDir;
   }
 
-  public onAfterProcess(files: { dir: string; fileName: string }[]) {
+  public onAfterProcess(files: TargetFile[]): void {
     if (this.config.onAfterProcess) {
       this.config.onAfterProcess(files);
     }
   }
 
-  public onBeforeFileWrite(outputDir: OutputDir, fileName: string): { dir: string; fileName: string } {
+  public onBeforeFileWrite(file: TargetFile): TargetFile {
     if (this.config.onBeforeFileWrite) {
-      return this.config.onBeforeFileWrite(outputDir, fileName);
+      return this.config.onBeforeFileWrite(file);
     }
-    const defaultDir = path.join(outputDir.baseDir, outputDir.fileDir);
-    return { dir: defaultDir, fileName };
+    return file;
   }
 }

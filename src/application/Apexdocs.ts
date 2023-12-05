@@ -4,7 +4,7 @@ import { ReflectionResult, reflect, Type } from '@cparra/apex-reflection';
 import { Logger } from '../util/logger';
 import { createManifest } from '../service/manifest-factory';
 import { RawBodyParser } from '../service/parser';
-import { Settings } from '../settings';
+import { Settings, TargetFile } from '../settings';
 import Transpiler from '../transpiler/transpiler';
 import { FileWriter } from '../service/file-writer';
 import ErrorLogger from '../util/error-logger';
@@ -31,13 +31,13 @@ export class Apexdocs {
     Transpiler.generate(filteredTypes, processor);
     const generatedFiles = processor.fileBuilder().files();
 
-    const generatedFilePaths: { dir: string; fileName: string }[] = [];
-    FileWriter.write(generatedFiles, (file: { dir: string; fileName: string }) => {
-      Logger.logSingle(`${file.fileName} processed.`, false, 'green', false);
-      generatedFilePaths.push(file);
+    const files: TargetFile[] = [];
+    FileWriter.write(generatedFiles, (file: TargetFile) => {
+      Logger.logSingle(`${file.name} processed.`, false, 'green', false);
+      files.push(file);
     });
 
-    Settings.getInstance().onAfterProcess(generatedFilePaths);
+    Settings.getInstance().onAfterProcess(files);
 
     // Error logging
     ErrorLogger.logErrors(filteredTypes);
