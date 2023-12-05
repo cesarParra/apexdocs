@@ -31,10 +31,10 @@ export class Apexdocs {
     Transpiler.generate(filteredTypes, processor);
     const generatedFiles = processor.fileBuilder().files();
 
-    const generatedFilePaths: string[] = [];
-    FileWriter.write(generatedFiles, (fileName: string) => {
-      Logger.logSingle(`${fileName} processed.`, false, 'green', false);
-      generatedFilePaths.push(fileName);
+    const generatedFilePaths: { dir: string; fileName: string }[] = [];
+    FileWriter.write(generatedFiles, (file: { dir: string; fileName: string }) => {
+      Logger.logSingle(`${file.fileName} processed.`, false, 'green', false);
+      generatedFilePaths.push(file);
     });
 
     Settings.getInstance().onAfterProcess(generatedFilePaths);
