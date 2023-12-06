@@ -1,5 +1,18 @@
 import { GeneratorChoices } from './transpiler/generator-choices';
 
+export type OnBeforeFileWrite = (file: TargetFile) => TargetFile;
+
+export type TargetFile = {
+  name: string;
+  extension: string;
+  dir: OutputDir;
+};
+
+export type OutputDir = {
+  baseDir: string;
+  fileDir: string;
+};
+
 export interface SettingsConfig {
   sourceDirectory: string;
   recursive: boolean;
@@ -15,6 +28,8 @@ export interface SettingsConfig {
   openApiFileName: string;
   includeMetadata: boolean;
   rootDir?: string;
+  onAfterProcess?: (files: TargetFile[]) => void;
+  onBeforeFileWrite?: (file: TargetFile) => TargetFile;
 }
 
 export class Settings {
@@ -94,5 +109,18 @@ export class Settings {
 
   public getRootDir(): string | undefined {
     return this.config.rootDir;
+  }
+
+  public onAfterProcess(files: TargetFile[]): void {
+    if (this.config.onAfterProcess) {
+      this.config.onAfterProcess(files);
+    }
+  }
+
+  public onBeforeFileWrite(file: TargetFile): TargetFile {
+    if (this.config.onBeforeFileWrite) {
+      return this.config.onBeforeFileWrite(file);
+    }
+    return file;
   }
 }
