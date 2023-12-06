@@ -25,14 +25,11 @@ There are some key differences between ApexDocs and the Java based ApexDoc tool:
   Markdown like Github Pages or Netlify, and use site generators like Jekyll or Gatsby. This gives you the freedom to
   decide how to style your site to match your needs.
 
-#### New features
+#### Features
 
-* All Apex annotations are now supported through the `--scope` CLI parameter, not just `namespaceaccessible`. This means
-  that scopes like `auraenabled`, `invocablemethod`, `invocablevariable`, `remoteaction`, and all other valid Apex
-  annotations are supported.
-* Just like Javadoc, both `@throws` and `@exception` are supported when referencing an exception thrown by a method or
-  constructor.
-* Any custom annotation defined in the Apexdoc is at the class level are supported, for example the following will be
+* Custom Annotations
+
+Any custom annotation defined in the Apexdoc is at the class level are supported, for example the following will be
   output to the resulting markdown file:
 
 ```apex
@@ -43,7 +40,7 @@ public class MyClass {
 }
 ```
 
-* Apex docs blocks can now all be in a single line
+* Single Line ApexDoc Blocks
 
 📒 Note: If you wish to have multiple `@` tags in a single line but don't want them to be treated as ApexDoc annotations, you can
 escape them by adding wrapping the annotation in ticks, for example
@@ -59,6 +56,7 @@ escape them by adding wrapping the annotation in ticks, for example
 * OpenApi REST specification generation
 * Support for ignoring files and members from being documented
 * Namespace support
+* Configuration file support
 * And much, much more!
 
 ### Demo
@@ -119,6 +117,44 @@ The CLI supports the following parameters:
 | --openApiFileName      | N/A   | If using "openapi" as the target generator, this allows you to specify the name of the output file.                                                                                                                                                                                                                                                                         | `openapi`       | No       |
 | --includeMetadata      | N/A   | Whether to include the file's meta.xml information: Whether it is active and and the API version                                                                                                                                                                                                                                                                            | false           | No       |
 | --documentationRootDir | N/A   | The root directory where the documentation will be generated. This is useful when you want to generate the documentation in a subdirectory of your project.                                                                                                                                                                                                                 | N/A             | No       |
+
+### Using a configuration file
+
+You can also use a configuration file to define the parameters that will be used when generating the documentation. Apexdocs
+uses [cosmiconfig](https://www.npmjs.com/package/cosmiconfig) to load the configuration file, which means it supports
+the following formats:
+
+- A `package.json` property, e.g. `{ "apexdocs": { "sourceDir": "src", "targetDir": "docs" } }`
+- A `.apexdocsrc` file, written in YAML or JSON, with optional extensions: `.yaml/.yml/.json/.js`
+- An `apexdocs.config.js` file that exports an object
+- A `apexdocs.config.ts` file that exports an object
+
+The configuration file should be placed in the root directory of your project.
+
+**Note that when using a configuration file, you can still override any of the parameters by passing them through the CLI.**
+
+When defining a `.js` or `.ts` configuration file, your object export can also contain the following functions that will
+allow you to override some of the default behavior:
+
+- `onBeforeFileWrite` - A function that will be called before a file is written to disk. It receives a `TargetFile` object
+  that contains the file's content, path, and name, etc. It should return a `TargetFile` object with the updated content.
+  The full object definition can be imported from `@cparra/apexdocs/lib/settings`
+- `onAfterProcess` - A function that will be called after all files have been processed. It receives a `TargetFile[]` array
+  with all of the files that were processed and does not return anything.
+
+```typescript
+import {TargetFile} from "@cparra/apexdocs/lib/settings";
+export default {
+  onBeforeFileWrite: (file: TargetFile): TargetFile => {
+    console.log('onBefore writing', file);
+    return file;
+  },
+  onAfterProcess: (files: TargetFile[]) => {
+    console.log('onAfterProcess files', files);
+  },
+};
+
+```
 
 ### Importing to your project
 
