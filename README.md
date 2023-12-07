@@ -66,6 +66,7 @@ files.
 
 ### In the wild
 
+- [Expression](https://cesarparra.github.io/expression/)
 - [Nimble AMS Docs](https://nimbleuser.github.io/nams-api-docs/#/api-reference/)
 - [Yet Another Salesforce Logger](https://cesarparra.github.io/yet-another-salesforce-logger/#/)
 
