@@ -43,7 +43,7 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
     const typeAsClass = type as ClassMirror;
 
     // Add tags for this Apex class to the OpenApi model
-    const tagName = camel2title(endpointPath.replaceAll('/', ''));
+    const tagName = camel2title(endpointPath);
     this.openApiModel.tags.push({
       name: tagName,
       description: type.docComment?.description,
