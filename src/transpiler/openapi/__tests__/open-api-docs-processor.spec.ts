@@ -24,6 +24,21 @@ it('should add a path based on the @UrlResource annotation on the class', functi
   expect(processor.openApiModel.paths).toHaveProperty('Account/');
 });
 
+it('should respect slashes', function () {
+  const annotationElementValue = {
+    key: 'urlMapping',
+    value: "'v1/Account/*'",
+  };
+  const classMirror = new ClassMirrorBuilder()
+    .addAnnotation(new AnnotationBuilder().addElementValue(annotationElementValue).build())
+    .build();
+
+  const processor = new OpenApiDocsProcessor();
+  processor.onProcess(classMirror);
+
+  expect(processor.openApiModel.paths).toHaveProperty('v1/Account/');
+});
+
 it('should contain a path with a description when the class has an ApexDoc comment', function () {
   const annotationElementValue = {
     key: 'urlMapping',
