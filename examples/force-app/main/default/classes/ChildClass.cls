@@ -14,7 +14,7 @@ public class ChildClass extends ParentClass implements SampleInterface {
      * @return A String.
      */
     public override String overridableMethodOverridden() {
-        return '';
+        return null ?? '';
     }
 
     /**
