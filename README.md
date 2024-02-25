@@ -381,7 +381,7 @@ public class MyClass {
 }
 ```
 
-[Here's an example of how that looks](/docs/types/Classes.nspc.AnotherInterface.md)
+[Here's an example of how that looks](/docs/types/Classes/nspc.AnotherInterface.md)
 
 ### Ignoring files and members
 
