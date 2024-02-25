@@ -6,9 +6,25 @@ interface DocCommentAware {
   docComment?: DocComment;
 }
 
+export function addMermaid(markdownFile: MarkdownFile, docCommentAware: DocCommentAware) {
+  const mermaid = docCommentAware.docComment?.annotations.find((annotation) => annotation.name === 'mermaid');
+  if (!mermaid) {
+    return;
+  }
+
+  markdownFile.addBlankLine();
+  markdownFile.startCodeBlock('mermaid');
+  mermaid.bodyLines.forEach((line) => {
+    markdownFile.addText(line, false);
+  });
+  markdownFile.endCodeBlock();
+  markdownFile.addBlankLine();
+}
+
 export function addCustomDocCommentAnnotations(markdownFile: MarkdownFile, docCommentAware: DocCommentAware) {
   docCommentAware.docComment?.annotations
     .filter((currentAnnotation: DocCommentAnnotation) => currentAnnotation.name !== 'description')
+    .filter((currentAnnotation: DocCommentAnnotation) => currentAnnotation.name !== 'mermaid')
     .forEach((currentAnnotation: DocCommentAnnotation) => {
       markdownFile.addBlankLine();
       markdownFile.addText(buildDocAnnotationText(currentAnnotation));

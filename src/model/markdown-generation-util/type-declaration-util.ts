@@ -1,5 +1,5 @@
 import { MarkdownFile } from '../markdown-file';
-import { addCustomDocCommentAnnotations } from './doc-comment-annotation-util';
+import { addCustomDocCommentAnnotations, addMermaid } from './doc-comment-annotation-util';
 import { Annotation, ClassMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
 import { TypesRepository } from '../types-repository';
 
@@ -26,6 +26,8 @@ export function declareType(markdownFile: MarkdownFile, typeMirror: Type): void 
   }
 
   addCustomDocCommentAnnotations(markdownFile, typeMirror);
+
+  addMermaid(markdownFile, typeMirror);
 }
 
 function addInheritanceSectionForClass(typeMirror: Type, markdownFile: MarkdownFile) {

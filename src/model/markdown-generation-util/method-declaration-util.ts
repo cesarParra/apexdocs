@@ -1,7 +1,7 @@
 import { ConstructorMirror, DocComment } from '@cparra/apex-reflection';
 import { MarkdownFile } from '../markdown-file';
 import { ParameterMirror } from '@cparra/apex-reflection';
-import { addCustomDocCommentAnnotations } from './doc-comment-annotation-util';
+import { addCustomDocCommentAnnotations, addMermaid } from './doc-comment-annotation-util';
 import { MethodMirrorWithInheritance } from '../inheritance';
 
 export function declareMethod(
@@ -54,6 +54,8 @@ export function declareMethod(
     addThrowsBlock(markdownFile, currentMethod, startingHeadingLevel);
 
     addCustomDocCommentAnnotations(markdownFile, currentMethod);
+
+    addMermaid(markdownFile, currentMethod);
 
     if (currentMethod.docComment?.exampleAnnotation) {
       addExample(markdownFile, currentMethod, startingHeadingLevel);
