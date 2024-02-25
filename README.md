@@ -357,6 +357,31 @@ To fix this issue, when not sanitizing HTML, you should wrap any code that conta
 treated as HTML within '\`'
 or within `<code>` tags.
 
+### Displaying diagrams
+
+You can display diagrams in your documentation by leveraging Github's built-in [Mermaid](https://mermaid-js.github.io/mermaid/#/) support.
+
+If you are using a markdown generator that supports Mermaid (e.g. [Github's markdown](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/), 
+you can add diagrams to your documentation by using the
+`@mermaid` tag.
+
+**Example**
+
+```apex
+/**
+ * @mermaid
+ * graph TD
+ *     A[Christmas] -->|Get money| B(Go shopping)
+ *     B --> C{Let me think}
+ *     C -->|One| D[Laptop]
+ *     C -->|Two| E[iPhone]
+ *     C -->|Three| F[Car]
+ */
+public class MyClass {
+}
+```
+
+[Here's an example of how that looks](/docs/types/Classes/nspc.AnotherInterface.md)
 
 ### Ignoring files and members
 

@@ -26,8 +26,8 @@ export class MarkdownFile extends OutputFile {
     this.addText(`\{@link ${text}\}`, encodeHtml);
   }
 
-  startCodeBlock() {
-    this.addText('```apex');
+  startCodeBlock(language = 'apex') {
+    this.addText(`\`\`\`${language}`);
   }
 
   endCodeBlock() {
