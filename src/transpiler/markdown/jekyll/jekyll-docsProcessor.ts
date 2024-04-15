@@ -24,6 +24,7 @@ export class JekyllDocsProcessor extends MarkdownTranspilerBase {
 
   getFrontMatterHeader(type: Type): string {
     const headerLines = ['---'];
+    // "layout: default" is a required front matter header for Jekyll
     headerLines.push('layout: default');
     // Add any additional front matter headers that might have been configured in the settings
     const targetType = {
