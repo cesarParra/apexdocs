@@ -36,7 +36,6 @@ export class MarkdownTypeFile extends MarkdownFile implements WalkerListener {
     walker.walk(this);
   }
 
-  // TODO: Sort types
   public onTypeDeclaration(typeMirror: Type): void {
     let fullTypeName;
     if (this.isInner) {
@@ -63,13 +62,11 @@ export class MarkdownTypeFile extends MarkdownFile implements WalkerListener {
     this.declareMethodWithGroupings(constructors, className);
   }
 
-  // TODO: Sort fields
   public onFieldsDeclaration(fields: FieldMirrorWithInheritance[]): void {
     this.addTitle('Fields', this.headingLevel + 1);
     this.declareFieldOrProperty(fields);
   }
 
-  //TODO: Sort properties
   public onPropertiesDeclaration(properties: PropertyMirrorWithInheritance[]): void {
     this.addTitle('Properties', this.headingLevel + 1);
     this.declareFieldOrProperty(properties);
@@ -81,33 +78,24 @@ export class MarkdownTypeFile extends MarkdownFile implements WalkerListener {
     this.declareMethodWithGroupings(methods);
   }
 
-  // TODO: Sort this stuff
   public onInnerEnumsDeclaration(enums: EnumMirror[]): void {
     this.addInnerTypes('Enums', enums);
   }
 
-  // TODO: Sort this stuff as well
   public onInnerClassesDeclaration(classes: ClassMirror[]): void {
     this.addInnerTypes('Classes', classes);
   }
 
-  // TODO: Sort this stuff
   public onInnerInterfacesDeclaration(interfaces: InterfaceMirror[]): void {
     this.addInnerTypes('Interfaces', interfaces, false);
   }
 
   private addInnerTypes(title: string, types: Type[], addSeparator = true) {
     this.addTitle(title, this.headingLevel + 1);
-    types
-      .sort((typeA, typeB) => {
-        if (typeA.name < typeB.name) return -1;
-        if (typeA.name > typeB.name) return 1;
-        return 0;
-      })
-      .forEach((currentType) => {
-        const innerFile = new MarkdownTypeFile(currentType, this.headingLevel + 2, undefined, true);
-        this.addText(innerFile._contents);
-      });
+    types.forEach((currentType) => {
+      const innerFile = new MarkdownTypeFile(currentType, this.headingLevel + 2, undefined, true);
+      this.addText(innerFile._contents);
+    });
     if (addSeparator) {
       this.addHorizontalRule();
     }
