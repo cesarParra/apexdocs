@@ -8,7 +8,6 @@ import {
   PropertyMirror,
   Type,
 } from '@cparra/apex-reflection';
-import { Annotation } from '@cparra/apex-reflection/index';
 
 export interface WalkerListener {
   onTypeDeclaration(typeMirror: Type): void;

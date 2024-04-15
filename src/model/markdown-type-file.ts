@@ -72,7 +72,6 @@ export class MarkdownTypeFile extends MarkdownFile implements WalkerListener {
     this.declareFieldOrProperty(properties);
   }
 
-  // TODO: Sort methods
   public onMethodsDeclaration(methods: MethodMirror[]): void {
     this.addTitle('Methods', this.headingLevel + 1);
     this.declareMethodWithGroupings(methods);
