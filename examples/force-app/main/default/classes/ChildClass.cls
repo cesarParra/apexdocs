@@ -4,6 +4,7 @@
  */
 public class ChildClass extends ParentClass implements SampleInterface {
     private String privateStringFromChild;
+    private String aPrivateString;
 
     public void doSomething() {
         System.debug('Do something');

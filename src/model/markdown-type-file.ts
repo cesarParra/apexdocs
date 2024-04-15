@@ -36,6 +36,7 @@ export class MarkdownTypeFile extends MarkdownFile implements WalkerListener {
     walker.walk(this);
   }
 
+  // TODO: Sort types
   public onTypeDeclaration(typeMirror: Type): void {
     let fullTypeName;
     if (this.isInner) {
@@ -62,29 +63,35 @@ export class MarkdownTypeFile extends MarkdownFile implements WalkerListener {
     this.declareMethodWithGroupings(constructors, className);
   }
 
+  // TODO: Sort fields
   public onFieldsDeclaration(fields: FieldMirrorWithInheritance[]): void {
     this.addTitle('Fields', this.headingLevel + 1);
     this.declareFieldOrProperty(fields);
   }
 
+  //TODO: Sort properties
   public onPropertiesDeclaration(properties: PropertyMirrorWithInheritance[]): void {
     this.addTitle('Properties', this.headingLevel + 1);
     this.declareFieldOrProperty(properties);
   }
 
+  // TODO: Sort methods
   public onMethodsDeclaration(methods: MethodMirror[]): void {
     this.addTitle('Methods', this.headingLevel + 1);
     this.declareMethodWithGroupings(methods);
   }
 
+  // TODO: Sort this stuff
   public onInnerEnumsDeclaration(enums: EnumMirror[]): void {
     this.addInnerTypes('Enums', enums);
   }
 
+  // TODO: Sort this stuff as well
   public onInnerClassesDeclaration(classes: ClassMirror[]): void {
     this.addInnerTypes('Classes', classes);
   }
 
+  // TODO: Sort this stuff
   public onInnerInterfacesDeclaration(interfaces: InterfaceMirror[]): void {
     this.addInnerTypes('Interfaces', interfaces, false);
   }

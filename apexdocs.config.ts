@@ -9,4 +9,5 @@ export default {
     console.log('onAfterProcess files', files);
   },
   frontMatterHeader: (file: TargetType) => [`title: ${file.name}.cls`, `description: ${file.description}`],
+  sortMembersAlphabetically: true,
 };
