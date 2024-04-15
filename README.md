@@ -142,6 +142,16 @@ allow you to override some of the default behavior:
   The full object definition can be imported from `@cparra/apexdocs/lib/settings`
 - `onAfterProcess` - A function that will be called after all files have been processed. It receives a `TargetFile[]` array
   with all of the files that were processed and does not return anything.
+- `frontMatterHeader` - A function that will be called before the front matter is written to the file (when using the Jekyll generator).
+  It receives a `TargetType` object
+  and should return a list of strings that will be written to the file as the front matter.
+  The full object definition can be imported from `@cparra/apexdocs/lib/settings`
+  and contains the following properties:
+  - `name` - The name of the type
+  - `typeName` - Can be 'class', 'interface', or 'enum'
+  -  `accessModifier` - The access modifier of the type
+  - `group` - The group to which the type belongs (if any)
+  - `description` - The description of the type as defined in the ApexDoc
 
 ```typescript
 import {TargetFile} from "@cparra/apexdocs/lib/settings";
