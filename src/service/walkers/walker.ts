@@ -8,6 +8,7 @@ import {
   PropertyMirror,
   Type,
 } from '@cparra/apex-reflection';
+import { Settings } from '../../settings';
 
 export interface WalkerListener {
   onTypeDeclaration(typeMirror: Type): void;
@@ -31,4 +32,11 @@ export abstract class Walker {
   constructor(public type: Type) {}
 
   abstract walk(listener: WalkerListener): void;
+
+  protected sortType<T extends { name: string }>(types: T[]): T[] {
+    if (Settings.getInstance().sortMembersAlphabetically()) {
+      return types.sort((a, b) => a.name.localeCompare(b.name));
+    }
+    return types;
+  }
 }
