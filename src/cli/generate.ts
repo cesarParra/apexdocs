@@ -118,6 +118,7 @@ result.then((config) => {
     rootDir: argv.documentationRootDir,
     onAfterProcess: config?.config?.onAfterProcess,
     onBeforeFileWrite: config?.config?.onBeforeFileWrite,
+    frontMatterHeader: config?.config?.frontMatterHeader,
   });
 
   try {
