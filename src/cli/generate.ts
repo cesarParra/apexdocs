@@ -87,7 +87,7 @@ result.then((config) => {
     },
     sortMembersAlphabetically: {
       type: 'boolean',
-      describe: 'Whether to sort class members alphabetically',
+      describe: 'Whether to sort members alphabetically.',
     },
     includeMetadata: {
       type: 'boolean',
