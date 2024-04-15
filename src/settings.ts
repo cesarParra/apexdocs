@@ -36,6 +36,7 @@ export interface SettingsConfig {
   openApiFileName: string;
   includeMetadata: boolean;
   rootDir?: string;
+  sortMembersAlphabetically?: boolean;
   onAfterProcess?: (files: TargetFile[]) => void;
   onBeforeFileWrite?: (file: TargetFile) => TargetFile;
   frontMatterHeader?: (file: TargetType) => string[];
@@ -114,6 +115,10 @@ export class Settings {
 
   public includeMetadata(): boolean {
     return this.config.includeMetadata;
+  }
+
+  public sortMembersAlphabetically(): boolean {
+    return this.config.sortMembersAlphabetically ?? false;
   }
 
   public getRootDir(): string | undefined {

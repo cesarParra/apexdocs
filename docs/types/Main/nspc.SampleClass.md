@@ -62,22 +62,22 @@ Constructs a SampleClass with an argument.
 ## Fields
 ### Common Constants
 
-* `public ANOTHER_CONSTANT` → `String` 
 * `public A_CONSTANT` → `String` [`NAMESPACEACCESSIBLE` ]  - This is a constant.
+* `public ANOTHER_CONSTANT` → `String` 
 * `public listOfStrings` → `List<String>` 
 ---
 ### 'General' Constants
 
-* `public GENERAL_ANOTHER_CONSTANT` → `String` 
 * `public GENERAL_A_CONSTANT` → `String` [`NAMESPACEACCESSIBLE` ]  - This is a constant.
----
-### Other variables
-
-* `public someVariable` → `String` 
+* `public GENERAL_ANOTHER_CONSTANT` → `String` 
 ---
 ### Other
 
 * `private somePrivateStuff` → `String` 
+---
+### Other variables
+
+* `public someVariable` → `String` 
 ---
 ## Properties
 
@@ -97,6 +97,13 @@ This is a String property.
 ---
 ## Methods
 ### A method group
+##### `public static String anotherSampleMethod(String arg1)`
+
+Something here
+
+
+**Arg1** The arg1 description
+
 ##### `public static String sampleMethod(String argument1, String argument2)`
 
 `NAMESPACEACCESSIBLE`
@@ -122,13 +129,6 @@ String result = SampleClass.testMethod();
 System.debug(result);
 ```
 
-
-##### `public static String anotherSampleMethod(String arg1)`
-
-Something here
-
-
-**Arg1** The arg1 description
 
 ##### `public static Map<Id,List<String>> yetAnotherSampleMethod(String arg1)`
 ---

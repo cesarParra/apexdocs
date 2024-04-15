@@ -91,16 +91,10 @@ export class MarkdownTypeFile extends MarkdownFile implements WalkerListener {
 
   private addInnerTypes(title: string, types: Type[], addSeparator = true) {
     this.addTitle(title, this.headingLevel + 1);
-    types
-      .sort((typeA, typeB) => {
-        if (typeA.name < typeB.name) return -1;
-        if (typeA.name > typeB.name) return 1;
-        return 0;
-      })
-      .forEach((currentType) => {
-        const innerFile = new MarkdownTypeFile(currentType, this.headingLevel + 2, undefined, true);
-        this.addText(innerFile._contents);
-      });
+    types.forEach((currentType) => {
+      const innerFile = new MarkdownTypeFile(currentType, this.headingLevel + 2, undefined, true);
+      this.addText(innerFile._contents);
+    });
     if (addSeparator) {
       this.addHorizontalRule();
     }

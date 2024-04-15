@@ -40,11 +40,11 @@ export default class ClassFileGeneratorHelper {
         // If the types the same groups then we simply link directly to that file
         return './';
       } else {
-        // If the types have different groups then we have to go up a directory
+        // If the types have different groups, then we have to go up a directory
         return `../${this.getSanitizedGroup(classModel)}/`;
       }
     } else {
-      // If nothing is being processed then we assume we are at the root and links should include the groups
+      // If nothing is being processed, then we assume we are at the root and links should include the groups
       return `./${this.getSanitizedGroup(classModel)}/`;
     }
   }
