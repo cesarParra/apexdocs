@@ -8,6 +8,7 @@ import { cosmiconfig } from 'cosmiconfig';
 
 const result = cosmiconfig('apexdocs').search();
 result.then((config) => {
+  yargs.config(config?.config);
   let argv = yargs.options({
     sourceDir: {
       type: 'string',
@@ -88,6 +89,7 @@ result.then((config) => {
     sortMembersAlphabetically: {
       type: 'boolean',
       describe: 'Whether to sort members alphabetically.',
+      default: false,
     },
     includeMetadata: {
       type: 'boolean',
