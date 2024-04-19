@@ -21,6 +21,9 @@ ChildClass
 
 ## Fields
 
+### `private aPrivateString` → `String`
+
+
 ### `private privateStringFromChild` → `String`
 
 
@@ -48,6 +51,24 @@ This is a protected string, use carefully.
 ---
 ## Methods
 ### `public void doSomething()`
+### `public void execute()`
+
+Executes the command.
+
+### `public String getValue()`
+
+Returns a value based on the executed command.
+
+#### Returns
+
+|Type|Description|
+|---|---|
+|`String`|The value|
+
+### `public virtual String overridableMethod()`
+
+*Inherited*
+
 ### `public override String overridableMethodOverridden()`
 
 This method was overridden.
@@ -72,23 +93,5 @@ sequenceDiagram
     iframe->>iframe: render mermaid
 ```
 
-
-### `public void execute()`
-
-Executes the command.
-
-### `public String getValue()`
-
-Returns a value based on the executed command.
-
-#### Returns
-
-|Type|Description|
-|---|---|
-|`String`|The value|
-
-### `public virtual String overridableMethod()`
-
-*Inherited*
 
 ---

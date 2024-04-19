@@ -13,6 +13,14 @@ export type OutputDir = {
   fileDir: string;
 };
 
+export type TargetType = {
+  name: string;
+  typeName: 'class' | 'interface' | 'enum';
+  accessModifier: string;
+  description?: string;
+  group?: string;
+};
+
 export interface SettingsConfig {
   sourceDirectory: string;
   recursive: boolean;
@@ -28,8 +36,10 @@ export interface SettingsConfig {
   openApiFileName: string;
   includeMetadata: boolean;
   rootDir?: string;
+  sortMembersAlphabetically?: boolean;
   onAfterProcess?: (files: TargetFile[]) => void;
   onBeforeFileWrite?: (file: TargetFile) => TargetFile;
+  frontMatterHeader?: (file: TargetType) => string[];
 }
 
 export class Settings {
@@ -107,6 +117,10 @@ export class Settings {
     return this.config.includeMetadata;
   }
 
+  public sortMembersAlphabetically(): boolean {
+    return this.config.sortMembersAlphabetically ?? false;
+  }
+
   public getRootDir(): string | undefined {
     return this.config.rootDir;
   }
@@ -122,5 +136,12 @@ export class Settings {
       return this.config.onBeforeFileWrite(file);
     }
     return file;
+  }
+
+  public frontMatterHeader(file: TargetType): string[] {
+    if (this.config.frontMatterHeader) {
+      return this.config.frontMatterHeader(file);
+    }
+    return [];
   }
 }

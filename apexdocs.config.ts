@@ -1,4 +1,4 @@
-import { TargetFile } from './src/settings';
+import { TargetFile, TargetType } from './src/settings';
 
 export default {
   onBeforeFileWrite: (file: TargetFile): TargetFile => {
@@ -8,4 +8,6 @@ export default {
   onAfterProcess: (files: TargetFile[]) => {
     console.log('onAfterProcess files', files);
   },
+  frontMatterHeader: (file: TargetType) => [`title: ${file.name}.cls`, `description: ${file.description}`],
+  sortMembersAlphabetically: true,
 };

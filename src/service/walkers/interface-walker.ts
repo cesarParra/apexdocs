@@ -6,7 +6,7 @@ export class InterfaceWalker extends Walker {
     listener.onTypeDeclaration(this.type);
     const interfaceMirror = this.type as InterfaceMirror;
     if (interfaceMirror.methods.length) {
-      listener.onMethodsDeclaration(interfaceMirror.methods);
+      listener.onMethodsDeclaration(this.sortType(interfaceMirror.methods));
     }
   }
 }

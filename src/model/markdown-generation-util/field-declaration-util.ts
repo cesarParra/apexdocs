@@ -8,15 +8,9 @@ export function declareField(
   grouped = false,
 ) {
   markdownFile.addBlankLine();
-  fields
-    .sort((propA, propB) => {
-      if (propA.name < propB.name) return -1;
-      if (propA.name > propB.name) return 1;
-      return 0;
-    })
-    .forEach((propertyModel) => {
-      addFieldSection(markdownFile, propertyModel, startingHeadingLevel, grouped);
-    });
+  fields.forEach((propertyModel) => {
+    addFieldSection(markdownFile, propertyModel, startingHeadingLevel, grouped);
+  });
 
   markdownFile.addHorizontalRule();
 }
