@@ -5,7 +5,7 @@
       <configuration>
         <option name="moduleContents">
           <ModuleContents>
-            <option name="contentSelectionType" value="SELECTED" />
+            <option name="contentSelectionType" />
           </ModuleContents>
         </option>
       </configuration>
@@ -35,7 +35,5 @@
       <excludeFolder url="file://$MODULE_DIR$/lib" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="@types/jest" level="application" />
-    <orderEntry type="library" name="@types/node" level="application" />
   </component>
 </module>
