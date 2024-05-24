@@ -50,6 +50,9 @@ function render(node: RenderableTreeNodes): string {
     case 'Paragraph': {
       return render(children);
     }
+    case 'hr': {
+      return '---';
+    }
     default: {
       throw new Error(`Unknown tag: ${name}`);
     }

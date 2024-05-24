@@ -28,6 +28,13 @@ describe('Markdown Renderer', () => {
 
     expect(result).toBe('Hello,\nworld!');
   });
+
+  it('renders horizontal rules', () => {
+    const content = '---';
+    const result = parse(content);
+
+    expect(result).toBe('---');
+  });
 });
 
 // HRs
