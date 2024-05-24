@@ -53,6 +53,9 @@ function render(node: RenderableTreeNodes): string {
     case 'hr': {
       return '---';
     }
+    case 'blockquote': {
+      return '> ' + render(children);
+    }
     default: {
       throw new Error(`Unknown tag: ${name}`);
     }

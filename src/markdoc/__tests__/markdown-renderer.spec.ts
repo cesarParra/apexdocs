@@ -35,10 +35,15 @@ describe('Markdown Renderer', () => {
 
     expect(result).toBe('---');
   });
+
+  it('renders blockquotes', () => {
+    const content = '> Hello, world!';
+    const result = parse(content);
+
+    expect(result).toBe('> Hello, world!');
+  });
 });
 
-// HRs
-// blockquotes
 // fence (``` blocks)
 // lists
 // item
