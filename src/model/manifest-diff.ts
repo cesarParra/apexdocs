@@ -1,6 +1,8 @@
 import Manifest from './manifest';
 import { Type } from '@cparra/apex-reflection';
-import { Annotation } from '@cparra/apex-reflection/index';
+import { Annotation } from '@cparra/apex-reflection';
+
+// TODO: Does any of this even get used?
 
 export class ManifestDiff {
   added: Type[] = [];
