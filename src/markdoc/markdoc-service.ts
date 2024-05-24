@@ -9,6 +9,9 @@ const config: Config = {
         level: { type: Number },
       },
     },
+    paragraph: {
+      render: 'Paragraph',
+    },
   },
 };
 
@@ -39,6 +42,9 @@ function render(node: RenderableTreeNodes): string {
     }
     case 'Heading': {
       return Array.from({ length: attributes.level }, () => '#').join('') + ' ' + render(children);
+    }
+    case 'Paragraph': {
+      return render(children);
     }
     default: {
       throw new Error(`Unknown tag: ${name}`);

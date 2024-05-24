@@ -14,6 +14,13 @@ describe('Markdown Renderer', () => {
 
     expect(result).toBe('## Heading 2');
   });
+
+  it('renders paragraphs', () => {
+    const content = 'Hello, world!';
+    const result = parse(content);
+
+    expect(result).toBe('Hello, world!');
+  });
 });
 
 // Paragraphs
