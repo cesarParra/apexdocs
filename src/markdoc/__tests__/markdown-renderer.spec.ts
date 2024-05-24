@@ -7,9 +7,15 @@ describe('Markdown Renderer', () => {
 
     expect(result).toBe('# Heading 1');
   });
+
+  it('renders headings of different levels', () => {
+    const content = '## Heading 2';
+    const result = parse(content);
+
+    expect(result).toBe('## Heading 2');
+  });
 });
 
-// TODO: Headings of different levels
 // Paragraphs
 // HRs
 // blockquotes
