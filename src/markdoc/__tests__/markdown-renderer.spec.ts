@@ -21,9 +21,15 @@ describe('Markdown Renderer', () => {
 
     expect(result).toBe('Hello, world!');
   });
+
+  it('renders paragraphs with multiple lines', () => {
+    const content = 'Hello,\nworld!';
+    const result = parse(content);
+
+    expect(result).toBe('Hello,\nworld!');
+  });
 });
 
-// Paragraphs
 // HRs
 // blockquotes
 // fence (``` blocks)

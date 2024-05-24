@@ -23,6 +23,10 @@ export default function parse(markdown: string) {
 
 function render(node: RenderableTreeNodes): string {
   if (typeof node === 'string' || typeof node === 'number') {
+    // Empy strings should be represented as blank lines (\n)
+    if (node === ' ') {
+      return '\n';
+    }
     return String(node);
   }
 
