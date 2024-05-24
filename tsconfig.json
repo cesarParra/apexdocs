@@ -1,14 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "moduleResolution": "node",
+    "target": "esnext",
     "module": "commonjs",
     "declaration": true,
     "outDir": "./lib",
     "strict": true,
     "sourceMap": true,
-    "lib": [
-      "ES2021"
-    ]
+    "esModuleInterop": true,
   },
   "include": [
     "src"
