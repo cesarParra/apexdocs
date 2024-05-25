@@ -90,8 +90,6 @@ describe('Markdown Renderer', () => {
   });
 });
 
-// lists
-// item
 // table
 // thead
 // tbody

@@ -35,6 +35,10 @@ const config: Config = {
   },
 };
 
+/**
+ * Takes a markdown string and returns a parsed and rendered markdown back.
+ * @param markdown
+ */
 export default function parse(markdown: string) {
   const ast = Markdoc.parse(markdown);
   const tree = Markdoc.transform(ast, config);
@@ -61,7 +65,6 @@ function render(node: RenderableTreeNodes): string {
     return '';
   }
 
-  console.log(JSON.stringify(node, null, 2));
   const { name, attributes, children } = node;
 
   switch (name) {
