@@ -19,6 +19,19 @@ const config: Config = {
         content: { type: String },
       },
     },
+    list: {
+      render: 'List',
+      attributes: {
+        ordered: { type: Boolean },
+      },
+      transform(node, config) {
+        return new Tag(
+          node.attributes.ordered ? 'ordered-list' : 'unordered-list',
+          node.transformAttributes(config),
+          node.transformChildren(config),
+        );
+      },
+    },
   },
 };
 
@@ -48,6 +61,7 @@ function render(node: RenderableTreeNodes): string {
     return '';
   }
 
+  console.log(JSON.stringify(node, null, 2));
   const { name, attributes, children } = node;
 
   switch (name) {
@@ -72,6 +86,15 @@ function render(node: RenderableTreeNodes): string {
     case 'Fence': {
       console.log(attributes);
       return '```' + attributes.language + '\n' + attributes.content + '```';
+    }
+    case 'unordered-list': {
+      return children.map((child) => `- ${render(child)}`).join('\n');
+    }
+    case 'ordered-list': {
+      return children.map((child, index) => `${index + 1}. ${render(child)}`).join('\n');
+    }
+    case 'li': {
+      return render(children).trim();
     }
     default: {
       throw new Error(`Unknown tag: ${name}`);

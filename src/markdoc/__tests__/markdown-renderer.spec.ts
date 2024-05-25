@@ -74,6 +74,20 @@ describe('Markdown Renderer', () => {
 
     expect(result).toBe('```js\nconsole.log("Hello, world!");\n```');
   });
+
+  it('renders unordered lists', () => {
+    const content = '- Hello, world!\n - Another item';
+    const result = parse(content);
+
+    expect(result).toBe('- Hello, world!\n- Another item');
+  });
+
+  it('renders ordered lists', () => {
+    const content = '1. Hello, world!\n 2. Another item';
+    const result = parse(content);
+
+    expect(result).toBe('1. Hello, world!\n2. Another item');
+  });
 });
 
 // lists
