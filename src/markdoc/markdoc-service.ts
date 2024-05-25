@@ -12,6 +12,13 @@ const config: Config = {
     paragraph: {
       render: 'Paragraph',
     },
+    fence: {
+      render: 'Fence',
+      attributes: {
+        language: { type: String },
+        content: { type: String },
+      },
+    },
   },
 };
 
@@ -61,6 +68,10 @@ function render(node: RenderableTreeNodes): string {
         .split('\n')
         .map((line) => (line === '' ? '' : '> ' + line))
         .join('\n');
+    }
+    case 'Fence': {
+      console.log(attributes);
+      return '```' + attributes.language + '\n' + attributes.content + '```';
     }
     default: {
       throw new Error(`Unknown tag: ${name}`);

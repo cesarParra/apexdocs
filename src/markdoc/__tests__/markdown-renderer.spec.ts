@@ -67,9 +67,15 @@ describe('Markdown Renderer', () => {
 
     expect(result).toBe('> Hello,\n> world!');
   });
+
+  it('renders fences', () => {
+    const content = '```js\nconsole.log("Hello, world!");\n```';
+    const result = parse(content);
+
+    expect(result).toBe('```js\nconsole.log("Hello, world!");\n```');
+  });
 });
 
-// fence (``` blocks)
 // lists
 // item
 // table
