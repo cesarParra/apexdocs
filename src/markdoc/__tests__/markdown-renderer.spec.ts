@@ -1,5 +1,23 @@
 import parse from '../markdoc-service';
 
+describe('Integration tests', () => {
+  it('should parse markdown content', () => {
+    const doc = `
+# Heading 1
+
+Hello, world!
+Hello, world!
+
+> This is a blockquote.
+
+---
+`;
+    const result = parse(doc);
+
+    expect(result).toBe('# Heading 1\nHello, world!\nHello, world!\n> This is a blockquote.\n---');
+  });
+});
+
 describe('Markdown Renderer', () => {
   it('renders headings as headings', () => {
     const content = '# Heading 1';
@@ -41,6 +59,13 @@ describe('Markdown Renderer', () => {
     const result = parse(content);
 
     expect(result).toBe('> Hello, world!');
+  });
+
+  it('renders blockquotes with multiple lines', () => {
+    const content = '> Hello,\n> world!';
+    const result = parse(content);
+
+    expect(result).toBe('> Hello,\n> world!');
   });
 });
 

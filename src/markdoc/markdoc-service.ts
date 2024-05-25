@@ -18,16 +18,19 @@ const config: Config = {
 export default function parse(markdown: string) {
   const ast = Markdoc.parse(markdown);
   const tree = Markdoc.transform(ast, config);
-  return render(tree);
+  return removeTrailingNewline(render(tree));
+}
+
+function removeTrailingNewline(str: string): string {
+  return str.replace(/\n$/, '');
 }
 
 function render(node: RenderableTreeNodes): string {
   if (typeof node === 'string' || typeof node === 'number') {
-    // Empy strings should be represented as blank lines (\n)
     if (node === ' ') {
-      return '\n';
+      return '';
     }
-    return String(node);
+    return String(node) + '\n';
   }
 
   if (Array.isArray(node)) {
@@ -54,7 +57,10 @@ function render(node: RenderableTreeNodes): string {
       return '---';
     }
     case 'blockquote': {
-      return '> ' + render(children);
+      return render(children)
+        .split('\n')
+        .map((line) => (line === '' ? '' : '> ' + line))
+        .join('\n');
     }
     default: {
       throw new Error(`Unknown tag: ${name}`);
