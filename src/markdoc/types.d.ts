@@ -1,9 +1,10 @@
-export type ApexType = {
+export type SourceFile = {
   name: string;
-  url: string;
   description?: string;
+  group?: string;
+  url: string;
 };
 
-export type SourceManifest = {
-  [key: string]: ApexType[];
+export type Manifest = {
+  files: SourceFile[];
 };

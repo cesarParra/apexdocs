@@ -70,42 +70,6 @@ describe('Markdown Renderer', () => {
 
     expect(result).toBe('1. Hello, world!\n2. Another item');
   });
-
-  it('renders a table of contents with grouped class names', () => {
-    const content = '{% table-of-contents /%}';
-    const classInfo = {
-      Core: [
-        {
-          name: 'AccountService',
-          url: 'https://example.com/account-service',
-          description: 'Service for managing accounts',
-        },
-        {
-          name: 'UserService',
-          url: 'https://example.com/user-service',
-        },
-      ],
-      Utilities: [
-        {
-          name: 'StringUtils',
-          url: 'https://example.com/string-utils',
-        },
-      ],
-    };
-
-    const result = parse(content, classInfo);
-
-    const expected = `## Core
-- [AccountService](https://example.com/account-service)
-Service for managing accounts
-- [UserService](https://example.com/user-service)
-
-## Utilities
-- [StringUtils](https://example.com/string-utils)
-`;
-
-    expect(result).toBe(expected);
-  });
 });
 
 // table

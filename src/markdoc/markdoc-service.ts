@@ -1,6 +1,6 @@
 import Markdoc, { Config, RenderableTreeNodes, Tag } from '@cparra/markdoc';
 import tableOfContents from './table-of-contents';
-import { SourceManifest } from './types';
+import { Manifest } from './types';
 
 const config: Config = {
   nodes: {
@@ -47,7 +47,7 @@ const config: Config = {
  * @param markdown
  * @param sourceManifest
  */
-export default function parse(markdown: string, sourceManifest: SourceManifest = {}): string {
+export default function parse(markdown: string, sourceManifest: Manifest = { files: [] }): string {
   const ast = Markdoc.parse(markdown);
   const tree = Markdoc.transform(ast, config);
   return removeTrailingNewline(render(tree, sourceManifest));
@@ -57,7 +57,7 @@ function removeTrailingNewline(str: string): string {
   return str.replace(/\n$/, '');
 }
 
-function render(node: RenderableTreeNodes, sourceManifest: SourceManifest): string {
+function render(node: RenderableTreeNodes, sourceManifest: Manifest): string {
   if (typeof node === 'string' || typeof node === 'number') {
     if (node === ' ') {
       return '';
@@ -95,7 +95,6 @@ function render(node: RenderableTreeNodes, sourceManifest: SourceManifest): stri
         .join('\n');
     }
     case 'Fence': {
-      console.log(attributes);
       return '```' + attributes.language + '\n' + attributes.content + '```';
     }
     case 'unordered-list': {
