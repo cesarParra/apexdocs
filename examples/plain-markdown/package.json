@@ -1,0 +1,6 @@
+{
+  "name": "plain-markdown",
+  "scripts": {
+    "generate:docs": "node ./../../lib/cli/generate.js -s force-app -t docs -g plain-markdown"
+  }
+}
