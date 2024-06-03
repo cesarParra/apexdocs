@@ -44,6 +44,11 @@ const config: Config = {
           default: 'Miscellaneous',
           required: false,
         },
+        'disable-grouping': {
+          type: Boolean,
+          default: false,
+          required: false,
+        },
       },
     },
   },
@@ -114,7 +119,7 @@ function render(node: RenderableTreeNodes, sourceManifest: Manifest): string {
       return render(children, sourceManifest).trim();
     }
     case 'TableOfContents': {
-      return tableOfContents(sourceManifest, attributes['default-group-name']);
+      return tableOfContents(sourceManifest, attributes['default-group-name'], attributes['disable-grouping']);
     }
     default: {
       throw new Error(`Unknown tag: ${name}`);

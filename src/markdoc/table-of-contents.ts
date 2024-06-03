@@ -1,6 +1,18 @@
 import { SourceFile, Manifest } from './types';
 
-export default function tableOfContents(sourceManifest: Manifest, defaultGroupName: string): string {
+export default function tableOfContents(
+  sourceManifest: Manifest,
+  defaultGroupName: string,
+  disableGrouping: boolean,
+): string {
+  return disableGrouping ? flat(sourceManifest) : grouped(sourceManifest, defaultGroupName);
+}
+
+function flat(sourceManifest: Manifest) {
+  return sourceManifest.files.map((value) => apexType(value)).join('\n');
+}
+
+function grouped(sourceManifest: Manifest, defaultGroupName: string) {
   // Group by the group property and if it is not defined then name is "Miscellaneous"
   const grouped = sourceManifest.files.reduce((acc, file) => {
     const group = file.group || defaultGroupName;

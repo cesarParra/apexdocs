@@ -109,4 +109,36 @@ Service for managing accounts
 
     expect(result).toBe(expected);
   });
+
+  it('can be be configured to not display any groups', () => {
+    const content = '{% table-of-contents disable-grouping=true /%}';
+    const manifest = {
+      files: [
+        {
+          name: 'AccountService',
+          url: 'https://example.com/account-service',
+          description: 'Service for managing accounts',
+          group: 'Core',
+        },
+        {
+          name: 'UserService',
+          url: 'https://example.com/user-service',
+          group: 'Core',
+        },
+        {
+          name: 'StringUtils',
+          url: 'https://example.com/string-utils',
+        },
+      ],
+    };
+
+    const result = parse(content, manifest);
+
+    const expected = `- [AccountService](https://example.com/account-service)
+Service for managing accounts
+- [UserService](https://example.com/user-service)
+- [StringUtils](https://example.com/string-utils)`;
+
+    expect(result).toBe(expected);
+  });
 });
