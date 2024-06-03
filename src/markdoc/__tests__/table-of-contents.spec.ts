@@ -73,4 +73,40 @@ Service for managing accounts
 
     expect(result).toBe(expected);
   });
+
+  it('can receive a custom name for ungrouped classes', () => {
+    const content = '{% table-of-contents default-group-name="Custom" /%}';
+    const manifest = {
+      files: [
+        {
+          name: 'AccountService',
+          url: 'https://example.com/account-service',
+          description: 'Service for managing accounts',
+          group: 'Core',
+        },
+        {
+          name: 'UserService',
+          url: 'https://example.com/user-service',
+          group: 'Core',
+        },
+        {
+          name: 'StringUtils',
+          url: 'https://example.com/string-utils',
+        },
+      ],
+    };
+
+    const result = parse(content, manifest);
+
+    const expected = `## Core
+- [AccountService](https://example.com/account-service)
+Service for managing accounts
+- [UserService](https://example.com/user-service)
+
+## Custom
+- [StringUtils](https://example.com/string-utils)
+`;
+
+    expect(result).toBe(expected);
+  });
 });

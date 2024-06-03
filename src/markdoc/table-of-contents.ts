@@ -1,9 +1,9 @@
 import { SourceFile, Manifest } from './types';
 
-export default function tableOfContents(sourceManifest: Manifest): string {
+export default function tableOfContents(sourceManifest: Manifest, defaultGroupName: string): string {
   // Group by the group property and if it is not defined then name is "Miscellaneous"
   const grouped = sourceManifest.files.reduce((acc, file) => {
-    const group = file.group || 'Miscellaneous';
+    const group = file.group || defaultGroupName;
     if (!acc[group]) {
       acc[group] = [];
     }

@@ -38,6 +38,13 @@ const config: Config = {
   tags: {
     'table-of-contents': {
       render: 'TableOfContents',
+      attributes: {
+        'default-group-name': {
+          type: String,
+          default: 'Miscellaneous',
+          required: false,
+        },
+      },
     },
   },
 };
@@ -107,7 +114,7 @@ function render(node: RenderableTreeNodes, sourceManifest: Manifest): string {
       return render(children, sourceManifest).trim();
     }
     case 'TableOfContents': {
-      return tableOfContents(sourceManifest);
+      return tableOfContents(sourceManifest, attributes['default-group-name']);
     }
     default: {
       throw new Error(`Unknown tag: ${name}`);
