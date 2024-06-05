@@ -1,6 +1,14 @@
+type LinkNode = {
+  type: 'link';
+  url: string;
+  title: string;
+};
+
+type DescriptionNode = string | LinkNode;
+
 export type SourceFile = {
   name: string;
-  description?: string;
+  descriptionNodes?: DescriptionNode[];
   group?: string;
   url: string;
 };

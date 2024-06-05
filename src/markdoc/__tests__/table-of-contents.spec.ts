@@ -8,7 +8,7 @@ describe('Markdown Renderer', () => {
         {
           name: 'AccountService',
           url: 'https://example.com/account-service',
-          description: 'Service for managing accounts',
+          descriptionNodes: ['Service for managing accounts'],
           group: 'Core',
         },
         {
@@ -45,7 +45,7 @@ Service for managing accounts
         {
           name: 'AccountService',
           url: 'https://example.com/account-service',
-          description: 'Service for managing accounts',
+          descriptionNodes: ['Service for managing accounts'],
           group: 'Core',
         },
         {
@@ -81,7 +81,7 @@ Service for managing accounts
         {
           name: 'AccountService',
           url: 'https://example.com/account-service',
-          description: 'Service for managing accounts',
+          descriptionNodes: ['Service for managing accounts'],
           group: 'Core',
         },
         {
@@ -117,7 +117,7 @@ Service for managing accounts
         {
           name: 'AccountService',
           url: 'https://example.com/account-service',
-          description: 'Service for managing accounts',
+          descriptionNodes: ['Service for managing accounts'],
           group: 'Core',
         },
         {

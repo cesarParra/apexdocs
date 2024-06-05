@@ -1,4 +1,4 @@
-import { SourceFile, Manifest } from './types';
+import { SourceFile, Manifest, DescriptionNode } from './types';
 
 export default function tableOfContents(
   sourceManifest: Manifest,
@@ -37,5 +37,17 @@ function apexTypeList(apexTypes: SourceFile[]) {
 }
 
 function apexType(value: SourceFile) {
-  return `- [${value.name}](${value.url})${value.description ? `\n${value.description}` : ''}`;
+  return `- [${value.name}](${value.url})${value.descriptionNodes ? `\n${description(value.descriptionNodes)}` : ''}`;
+}
+
+function description(descriptionNodes: DescriptionNode[]) {
+  return descriptionNodes.map((value) => descriptionNode(value)).join('');
+}
+
+function descriptionNode(descriptionNode: DescriptionNode) {
+  if (typeof descriptionNode === 'string') {
+    return descriptionNode;
+  }
+
+  return `[${descriptionNode.title}](${descriptionNode.url})`;
 }
