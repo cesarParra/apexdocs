@@ -1,4 +1,5 @@
 import parse from '../markdoc-service';
+import { Manifest } from '../types';
 
 describe('Markdown Renderer', () => {
   it('renders a table of contents with grouped class names', () => {
@@ -138,6 +139,32 @@ Service for managing accounts
 Service for managing accounts
 - [UserService](https://example.com/user-service)
 - [StringUtils](https://example.com/string-utils)`;
+
+    expect(result).toBe(expected);
+  });
+
+  it('can render descriptions with links', () => {
+    const content = '{% table-of-contents /%}';
+    const manifest: Manifest = {
+      files: [
+        {
+          name: 'AccountService',
+          url: 'https://example.com/account-service',
+          descriptionNodes: [
+            'Service for managing accounts',
+            { type: 'link', url: 'https://example.com/docs', title: 'Docs' },
+          ],
+          group: 'Core',
+        },
+      ],
+    };
+
+    const result = parse(content, manifest);
+
+    const expected = `## Core
+- [AccountService](https://example.com/account-service)
+Service for managing accounts[Docs](https://example.com/docs)
+`;
 
     expect(result).toBe(expected);
   });
