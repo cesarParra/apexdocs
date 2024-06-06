@@ -18,13 +18,24 @@ describe('enum', () => {
 
     const enumSource = {
       name: 'MyEnum',
-      description: 'An enum of things',
+      description: ['An enum of things'],
     };
 
     const result = compile(template, enumSource);
 
     expect(result).toBe('An enum of things');
   });
-});
 
-// TODO: description with links
+  it('can reference a description with links', () => {
+    const template = '{{description}}';
+
+    const enumSource = {
+      name: 'MyEnum',
+      description: ['An enum of things: ', { title: 'More info', url: 'https://example.com' }],
+    };
+
+    const result = compile(template, enumSource);
+
+    expect(result).toBe('An enum of things: [More info](https://example.com)');
+  });
+});
