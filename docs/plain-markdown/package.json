@@ -13,6 +13,7 @@
   },
   "apexdocs": {
     "sourceDir": "force-app",
-    "targetGenerator": "plain-markdown"
+    "targetGenerator": "plain-markdown",
+    "scope": ["global", "public", "protected", "private"]
   }
 }
