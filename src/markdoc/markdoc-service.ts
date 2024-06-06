@@ -1,6 +1,6 @@
 import Markdoc, { Config, RenderableTreeNodes, Tag } from '@cparra/markdoc';
 import tableOfContents from './table-of-contents';
-import { Manifest } from './types';
+import { Manifest, SourceFile } from './types';
 
 const config: Config = {
   nodes: {
@@ -51,25 +51,30 @@ const config: Config = {
         },
       },
     },
+
+    // Tags related to a single source file
+    name: {
+      render: 'Name',
+    },
   },
 };
 
 /**
  * Takes a markdown string and returns a parsed and rendered markdown back.
  * @param markdown
- * @param sourceManifest
+ * @param source
  */
-export default function parse(markdown: string, sourceManifest: Manifest = { files: [] }): string {
+export default function parse(markdown: string, source?: Manifest | SourceFile): string {
   const ast = Markdoc.parse(markdown);
   const tree = Markdoc.transform(ast, config);
-  return removeTrailingNewline(render(tree, sourceManifest));
+  return removeTrailingNewline(render(tree, source));
 }
 
 function removeTrailingNewline(str: string): string {
   return str.replace(/\n$/, '');
 }
 
-function render(node: RenderableTreeNodes, sourceManifest: Manifest): string {
+function render(node: RenderableTreeNodes, source?: Manifest | SourceFile): string {
   if (typeof node === 'string' || typeof node === 'number') {
     if (node === ' ') {
       return '';
@@ -78,7 +83,7 @@ function render(node: RenderableTreeNodes, sourceManifest: Manifest): string {
   }
 
   if (Array.isArray(node)) {
-    return node.map((current) => render(current, sourceManifest)).join('');
+    return node.map((current) => render(current, source)).join('');
   }
 
   if (node === null || typeof node !== 'object' || !Tag.isTag(node)) {
@@ -89,19 +94,19 @@ function render(node: RenderableTreeNodes, sourceManifest: Manifest): string {
 
   switch (name) {
     case 'article': {
-      return render(children, sourceManifest);
+      return render(children, source);
     }
     case 'Heading': {
-      return Array.from({ length: attributes.level }, () => '#').join('') + ' ' + render(children, sourceManifest);
+      return Array.from({ length: attributes.level }, () => '#').join('') + ' ' + render(children, source);
     }
     case 'Paragraph': {
-      return render(children, sourceManifest);
+      return render(children, source);
     }
     case 'hr': {
       return '---';
     }
     case 'blockquote': {
-      return render(children, sourceManifest)
+      return render(children, source)
         .split('\n')
         .map((line) => (line === '' ? '' : '> ' + line))
         .join('\n');
@@ -110,19 +115,36 @@ function render(node: RenderableTreeNodes, sourceManifest: Manifest): string {
       return '```' + attributes.language + '\n' + attributes.content + '```';
     }
     case 'unordered-list': {
-      return children.map((child) => `- ${render(child, sourceManifest)}`).join('\n');
+      return children.map((child) => `- ${render(child, source)}`).join('\n');
     }
     case 'ordered-list': {
-      return children.map((child, index) => `${index + 1}. ${render(child, sourceManifest)}`).join('\n');
+      return children.map((child, index) => `${index + 1}. ${render(child, source)}`).join('\n');
     }
     case 'li': {
-      return render(children, sourceManifest).trim();
+      return render(children, source).trim();
     }
     case 'TableOfContents': {
-      return tableOfContents(sourceManifest, attributes['default-group-name'], attributes['disable-grouping']);
+      if (!source || !isManifest(source)) {
+        throw new Error('Source is required for table-of-contents tag');
+      }
+      return tableOfContents(source, attributes['default-group-name'], attributes['disable-grouping']);
+    }
+    case 'Name': {
+      if (!source || !isSourceFile(source)) {
+        throw new Error('Source is required for name tag');
+      }
+      return source.name;
     }
     default: {
       throw new Error(`Unknown tag: ${name}`);
     }
   }
+}
+
+function isManifest(source: Manifest | SourceFile): source is Manifest {
+  return (source as Manifest).files !== undefined;
+}
+
+function isSourceFile(source: Manifest | SourceFile): source is SourceFile {
+  return (source as SourceFile).name !== undefined;
 }

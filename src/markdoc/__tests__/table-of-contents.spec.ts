@@ -1,24 +1,27 @@
 import parse from '../markdoc-service';
 import { Manifest } from '../types';
 
-describe('Markdown Renderer', () => {
+describe('Rendering a Table of Contents', () => {
   it('renders a table of contents with grouped class names', () => {
     const content = '{% table-of-contents /%}';
-    const manifest = {
+    const manifest: Manifest = {
       files: [
         {
           name: 'AccountService',
+          sourceType: 'class',
           url: 'https://example.com/account-service',
           descriptionNodes: ['Service for managing accounts'],
           group: 'Core',
         },
         {
           name: 'UserService',
+          sourceType: 'class',
           url: 'https://example.com/user-service',
           group: 'Core',
         },
         {
           name: 'StringUtils',
+          sourceType: 'class',
           url: 'https://example.com/string-utils',
           group: 'Utilities',
         },
@@ -41,21 +44,24 @@ Service for managing accounts
 
   it('marks ungrouped classes as miscellaneous', () => {
     const content = '{% table-of-contents /%}';
-    const manifest = {
+    const manifest: Manifest = {
       files: [
         {
           name: 'AccountService',
+          sourceType: 'class',
           url: 'https://example.com/account-service',
           descriptionNodes: ['Service for managing accounts'],
           group: 'Core',
         },
         {
           name: 'UserService',
+          sourceType: 'class',
           url: 'https://example.com/user-service',
           group: 'Core',
         },
         {
           name: 'StringUtils',
+          sourceType: 'class',
           url: 'https://example.com/string-utils',
         },
       ],
@@ -77,21 +83,24 @@ Service for managing accounts
 
   it('can receive a custom name for ungrouped classes', () => {
     const content = '{% table-of-contents default-group-name="Custom" /%}';
-    const manifest = {
+    const manifest: Manifest = {
       files: [
         {
           name: 'AccountService',
+          sourceType: 'class',
           url: 'https://example.com/account-service',
           descriptionNodes: ['Service for managing accounts'],
           group: 'Core',
         },
         {
           name: 'UserService',
+          sourceType: 'class',
           url: 'https://example.com/user-service',
           group: 'Core',
         },
         {
           name: 'StringUtils',
+          sourceType: 'class',
           url: 'https://example.com/string-utils',
         },
       ],
@@ -113,21 +122,24 @@ Service for managing accounts
 
   it('can be be configured to not display any groups', () => {
     const content = '{% table-of-contents disable-grouping=true /%}';
-    const manifest = {
+    const manifest: Manifest = {
       files: [
         {
           name: 'AccountService',
+          sourceType: 'class',
           url: 'https://example.com/account-service',
           descriptionNodes: ['Service for managing accounts'],
           group: 'Core',
         },
         {
           name: 'UserService',
+          sourceType: 'class',
           url: 'https://example.com/user-service',
           group: 'Core',
         },
         {
           name: 'StringUtils',
+          sourceType: 'class',
           url: 'https://example.com/string-utils',
         },
       ],
@@ -149,6 +161,7 @@ Service for managing accounts
       files: [
         {
           name: 'AccountService',
+          sourceType: 'class',
           url: 'https://example.com/account-service',
           descriptionNodes: [
             'Service for managing accounts',
