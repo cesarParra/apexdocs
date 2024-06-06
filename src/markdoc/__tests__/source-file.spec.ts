@@ -17,4 +17,14 @@ describe('Rendering a single source file', () => {
     const expected = 'AccountService';
     expect(result).toBe(expected);
   });
+
+  describe('enum', () => {
+    it('render enum values', () => {
+      const content = `
+{% enum-values value='currentValue' /%}
+  {% enum-value
+{% /enum-values %}
+`;
+    });
+  });
 });

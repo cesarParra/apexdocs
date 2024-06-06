@@ -53,8 +53,15 @@ const config: Config = {
     },
 
     // Tags related to a single source file
+
+    // General
     name: {
       render: 'Name',
+    },
+
+    // Enums
+    'enum-values': {
+      render: 'EnumValues',
     },
   },
 };
