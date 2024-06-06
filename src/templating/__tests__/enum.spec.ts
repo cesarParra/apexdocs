@@ -12,7 +12,19 @@ describe('enum', () => {
 
     expect(result).toBe('MyEnum enum');
   });
+
+  it('can reference the enum name with a description', () => {
+    const template = '{{description}}';
+
+    const enumSource = {
+      name: 'MyEnum',
+      description: 'An enum of things',
+    };
+
+    const result = compile(template, enumSource);
+
+    expect(result).toBe('An enum of things');
+  });
 });
 
-// description
-// description with links
+// TODO: description with links
