@@ -7,5 +7,6 @@ type DescriptionContent = string | Link;
 
 export type EnumSource = {
   name: string;
+  values: string[];
   description?: DescriptionContent[];
 };

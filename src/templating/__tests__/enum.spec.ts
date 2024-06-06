@@ -6,6 +6,7 @@ describe('enum', () => {
 
     const enumSource = {
       name: 'MyEnum',
+      values: [],
     };
 
     const result = compile(template, enumSource);
@@ -18,6 +19,7 @@ describe('enum', () => {
 
     const enumSource = {
       name: 'MyEnum',
+      values: [],
       description: ['An enum of things'],
     };
 
@@ -31,11 +33,25 @@ describe('enum', () => {
 
     const enumSource = {
       name: 'MyEnum',
+      values: [],
       description: ['An enum of things: ', { title: 'More info', url: 'https://example.com' }],
     };
 
     const result = compile(template, enumSource);
 
     expect(result).toBe('An enum of things: [More info](https://example.com)');
+  });
+
+  it('can reference enum values', () => {
+    const template = '{{#each values}}{{this}}{{/each}}';
+
+    const enumSource = {
+      name: 'MyEnum',
+      values: ['Value1', 'Value2'],
+    };
+
+    const result = compile(template, enumSource);
+
+    expect(result).toBe('Value1Value2');
   });
 });

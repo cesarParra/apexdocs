@@ -10,6 +10,7 @@ export function compile(template: string, source: EnumSource) {
 function prepare(source: EnumSource) {
   return {
     name: source.name,
+    values: source.values,
     description: source.description?.reduce((acc, curr) => {
       if (typeof curr === 'string') {
         return acc + curr;
