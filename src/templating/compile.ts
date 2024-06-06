@@ -1,5 +1,5 @@
 import * as handlebars from 'handlebars';
-import { EnumSource, Link } from './types';
+import { DescriptionContent, EnumSource, Link } from './types';
 
 export function compile(template: string, source: EnumSource) {
   const prepared = prepare(source);
@@ -10,15 +10,28 @@ export function compile(template: string, source: EnumSource) {
 function prepare(source: EnumSource) {
   return {
     name: source.name,
-    values: source.values,
-    description: source.description?.reduce((acc, curr) => {
-      if (typeof curr === 'string') {
-        return acc + curr;
-      } else {
-        return acc + linkToMarkdown(curr);
-      }
-    }, ''),
+    values: source.values.map((value) => ({
+      value: value.value,
+      description: prepareDescription(value.description),
+    })),
+    description: prepareDescription(source.description),
   };
+}
+
+function prepareDescription(description?: DescriptionContent[]) {
+  if (!description) {
+    return '';
+  }
+
+  return description.reduce(reduceDescription, '');
+}
+
+function reduceDescription(acc: string, curr: DescriptionContent) {
+  if (typeof curr === 'string') {
+    return acc + curr;
+  } else {
+    return acc + linkToMarkdown(curr);
+  }
 }
 
 function linkToMarkdown(link: Link) {

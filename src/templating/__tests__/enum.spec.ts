@@ -43,15 +43,31 @@ describe('enum', () => {
   });
 
   it('can reference enum values', () => {
-    const template = '{{#each values}}{{this}}{{/each}}';
+    const template = '{{#each values}}{{value}}{{/each}}';
 
     const enumSource = {
       name: 'MyEnum',
-      values: ['Value1', 'Value2'],
+      values: [{ value: 'Value1' }, { value: 'Value2' }],
     };
 
     const result = compile(template, enumSource);
 
     expect(result).toBe('Value1Value2');
+  });
+
+  it('can reference enum values with a description', () => {
+    const template = '{{#each values}}{{value}} - {{description}}{{/each}}';
+
+    const enumSource = {
+      name: 'MyEnum',
+      values: [
+        { value: 'Value1', description: ['The first value'] },
+        { value: 'Value2', description: ['The second value'] },
+      ],
+    };
+
+    const result = compile(template, enumSource);
+
+    expect(result).toBe('Value1 - The first valueValue2 - The second value');
   });
 });
