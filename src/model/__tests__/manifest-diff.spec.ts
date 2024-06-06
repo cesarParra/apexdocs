@@ -1,3 +1,5 @@
+// TODO: Get rid of everything that has to do with this?
+
 import Manifest from '../manifest';
 import { EnumMirror } from '@cparra/apex-reflection';
 import { ManifestDiff } from '../manifest-diff';
