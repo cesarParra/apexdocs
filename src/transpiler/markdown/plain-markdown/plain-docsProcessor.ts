@@ -36,6 +36,7 @@ class EnumFile extends OutputFile {
     );
 
     const enumSource = enumTypeToEnumSource(type);
+    console.log(JSON.stringify(enumSource, null, 2));
     this.addText(compile(enumMarkdownTemplate, enumSource));
   }
 
@@ -50,6 +51,6 @@ function enumTypeToEnumSource(enumType: EnumMirror): EnumSource {
     name: enumType.name,
     // TODO: Today, enum mirror does not provide this, we want it.
     values: [],
-    description: enumType.docComment?.descriptionLines.map(replaceInlineReferences),
+    description: enumType.docComment?.description ? replaceInlineReferences(enumType.docComment.description) : [],
   };
 }

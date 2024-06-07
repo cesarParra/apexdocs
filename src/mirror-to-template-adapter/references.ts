@@ -1,60 +1,97 @@
 import ClassFileGeneratorHelper from '../transpiler/markdown/class-file-generatorHelper';
-
-// TODO: Unit test
-// TODO: JS Docs
-export function replaceInlineReferences(text: string): string {
-  text = replaceInlineLinks(text);
-  text = replaceInlineEmails(text);
-  return text;
-}
-
-// TODO: What this should return is some kind of RenderableText, which is a list of string | Link
-// then we can give the concern of how to render that to someone else. That way it is easier
-// to have different implementations of how links (and other things) are rendered.
-type GetFileLinkByTypeName = (typeName: string) => string;
+import { Link, RenderableContent } from '../templating/types';
 
 /**
- * Replaces inline links in the format of `<<ClassName>>` and `{@link ClassName}` with the corresponding
- * file link.
- * @param text The text to replace the links in.
- * @param getFileLinkByTypeName A function that returns the file link for a given type name.
+ * Replaces any inline references (links and emails) in the given text.
+ * @param text The text to replace the references in.
  */
-export function replaceInlineLinks(
-  text: string,
-  getFileLinkByTypeName: GetFileLinkByTypeName = ClassFileGeneratorHelper.getFileLinkByTypeName,
-): string {
-  // Parsing text to extract possible linking classes.
-  const possibleLinks = text.match(/<<.*?>>/g);
-  possibleLinks?.forEach((currentMatch) => {
-    const classNameForMatch = currentMatch.replace('<<', '').replace('>>', '');
-    text = text.replace(currentMatch, getFileLinkByTypeName(classNameForMatch));
-  });
-
-  // Parsing links using {@link ClassName} format
-  const linkFormatRegEx = '{@link (.*?)}';
-  const expression = new RegExp(linkFormatRegEx, 'gi');
-  let match;
-  const matches = [];
-
-  do {
-    match = expression.exec(text);
-    if (match) {
-      matches.push(match);
-    }
-  } while (match);
-
-  for (const currentMatch of matches) {
-    text = text.replace(currentMatch[0], getFileLinkByTypeName(currentMatch[1]));
-  }
-  return text;
+// TODO: Unit test this to make sure it is all kosher
+export function replaceInlineReferences(text: string): RenderableContent[] {
+  return replaceInlineEmails(replaceInlineLinks([text]), defaultGetEmailByReference);
 }
 
-// TODO: Unit test
-// TODO: JSDocs
-export function replaceInlineEmails(text: string) {
+export type GetLinkByTypeName = (typeName: string) => Link;
+
+export function replaceInlineLinks(
+  renderableContents: RenderableContent[],
+  getLinkByTypeName: GetLinkByTypeName = ClassFileGeneratorHelper.getRenderableLinkByTypeName,
+): RenderableContent[] {
+  return renderableContents.flatMap((renderableContent) => inlineLinkContent(renderableContent, getLinkByTypeName));
+}
+
+function inlineLinkContent(
+  renderableContent: RenderableContent,
+  getLinkByTypeName: GetLinkByTypeName = ClassFileGeneratorHelper.getRenderableLinkByTypeName,
+): RenderableContent[] {
+  if (typeof renderableContent !== 'string') {
+    return [renderableContent];
+  }
+
+  const text = renderableContent;
+
+  // Matches either `<<ClassName>>` or `{@link ClassName}`
+  const linkFormatRegEx = '{@link (.*?)}|<<([^>]+)>>';
+  const matches = match(linkFormatRegEx, text);
+
+  const result: RenderableContent[] = [];
+  let lastIndex = 0;
+  for (const currentMatch of matches) {
+    const typeName = currentMatch[1] || currentMatch[2];
+    result.push(text.slice(lastIndex, currentMatch.index));
+    result.push(getLinkByTypeName(typeName));
+
+    lastIndex = currentMatch.index + currentMatch[0].length;
+  }
+  return result;
+}
+
+function defaultGetEmailByReference(email: string): Link {
+  return {
+    title: email,
+    url: `mailto:${email}`,
+  };
+}
+
+export function replaceInlineEmails(
+  renderableContents: RenderableContent[],
+  getLinkByTypeName: GetLinkByTypeName,
+): RenderableContent[] {
+  return renderableContents.flatMap((renderableContent) => inlineEmailContent(renderableContent, getLinkByTypeName));
+}
+
+function inlineEmailContent(
+  renderableContent: RenderableContent,
+  getLinkByTypeName: GetLinkByTypeName,
+): RenderableContent[] {
+  if (typeof renderableContent !== 'string') {
+    return [renderableContent];
+  }
+
+  const text = renderableContent;
+
   // Parsing links using {@link ClassName} format
   const linkFormatRegEx = '{@email (.*?)}';
-  const expression = new RegExp(linkFormatRegEx, 'gi');
+  const matches = match(linkFormatRegEx, text);
+
+  const result: RenderableContent[] = [];
+  let lastIndex = 0;
+  for (const match of matches) {
+    // split the string into the part before the match, then the match, then everything after the match
+    // using the index property of the match to get where to split it, and the length of the match to get the end of the match
+    const index = match.index;
+    const length = match[0].length;
+
+    result.push(text.slice(lastIndex, index));
+    result.push(getLinkByTypeName(match[1]));
+
+    lastIndex = index + length;
+  }
+
+  return result;
+}
+
+function match(regex: string, text: string) {
+  const expression = new RegExp(regex, 'gi');
   let match;
   const matches = [];
 
@@ -65,8 +102,5 @@ export function replaceInlineEmails(text: string) {
     }
   } while (match);
 
-  for (const currentMatch of matches) {
-    text = text.replace(currentMatch[0], `[${currentMatch[1]}](mailto:${currentMatch[1]})`);
-  }
-  return text;
+  return matches;
 }
