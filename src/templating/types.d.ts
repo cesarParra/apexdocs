@@ -16,5 +16,6 @@ export type EnumSource = {
   name: string;
   values: EnumValue[];
   description?: RenderableContent[];
+  group?: string;
   sees?: Link[];
 };

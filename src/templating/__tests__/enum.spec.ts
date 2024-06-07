@@ -94,6 +94,20 @@ describe('enum', () => {
     expect(result).toBe('Value1 - The first valueValue2 - The second value');
   });
 
+  it('can reference a group reference', () => {
+    const template = '** Group {{group}}';
+
+    const enumSource = {
+      name: 'MyEnum',
+      values: [],
+      group: 'MyGroup',
+    };
+
+    const result = compile(template, enumSource);
+
+    expect(result).toBe('** Group MyGroup');
+  });
+
   it('can reference see references', () => {
     const template = '{{#each sees}}**See** [{{title}}]({{url}}){{/each}}';
 
