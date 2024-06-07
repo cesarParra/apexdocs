@@ -1,4 +1,3 @@
-// TODO: author
 // TODO: date
 // TODO: mermaid tags
 // TODO: custom tags
@@ -9,7 +8,11 @@ export const enumMarkdownTemplate = `
 {{description}}
 
 {{#if group}}
-** Group {{group}}
+**Group** {{group}}
+{{/if}}
+
+{{#if author}}
+**Author** {{author}}
 {{/if}}
 
 {{#each sees}}

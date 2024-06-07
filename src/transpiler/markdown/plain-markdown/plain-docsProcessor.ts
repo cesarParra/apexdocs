@@ -28,6 +28,7 @@ export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
   }
 }
 
+// TODO: Unit test the Enum use case
 class EnumFile extends OutputFile {
   constructor(private type: EnumMirror) {
     super(
@@ -76,12 +77,18 @@ function enumTypeToEnumSource(enumType: EnumMirror): EnumSource {
     values: [],
     description: enumType.docComment?.description ? replaceInlineReferences(enumType.docComment.description) : [],
     group: extractGroupAnnotation(enumType),
+    author: extractAuthorAnnotation(enumType),
     sees: extractSeeAnnotations(enumType).map(linkFromTypeNameGenerator),
   };
 }
 
 function extractGroupAnnotation(enumType: EnumMirror): string | undefined {
   return enumType.docComment?.annotations.find((currentAnnotation) => currentAnnotation.name.toLowerCase() === 'group')
+    ?.body;
+}
+
+function extractAuthorAnnotation(enumType: EnumMirror): string | undefined {
+  return enumType.docComment?.annotations.find((currentAnnotation) => currentAnnotation.name.toLowerCase() === 'author')
     ?.body;
 }
 

@@ -108,6 +108,20 @@ describe('enum', () => {
     expect(result).toBe('** Group MyGroup');
   });
 
+  it('can reference an author reference', () => {
+    const template = '** Author {{author}}';
+
+    const enumSource = {
+      name: 'MyEnum',
+      values: [],
+      author: 'Test Testerson',
+    };
+
+    const result = compile(template, enumSource);
+
+    expect(result).toBe('** Author Test Testerson');
+  });
+
   it('can reference see references', () => {
     const template = '{{#each sees}}**See** [{{title}}]({{url}}){{/each}}';
 
