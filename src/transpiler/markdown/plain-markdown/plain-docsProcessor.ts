@@ -76,20 +76,17 @@ function enumTypeToEnumSource(enumType: EnumMirror): EnumSource {
     // TODO: Today, enum mirror does not provide this, we want it.
     values: [],
     description: enumType.docComment?.description ? replaceInlineReferences(enumType.docComment.description) : [],
-    group: extractGroupAnnotation(enumType),
-    author: extractAuthorAnnotation(enumType),
+    group: extractAnnotation(enumType, 'group'),
+    author: extractAnnotation(enumType, 'author'),
+    date: extractAnnotation(enumType, 'date'),
     sees: extractSeeAnnotations(enumType).map(linkFromTypeNameGenerator),
   };
 }
 
-function extractGroupAnnotation(enumType: EnumMirror): string | undefined {
-  return enumType.docComment?.annotations.find((currentAnnotation) => currentAnnotation.name.toLowerCase() === 'group')
-    ?.body;
-}
-
-function extractAuthorAnnotation(enumType: EnumMirror): string | undefined {
-  return enumType.docComment?.annotations.find((currentAnnotation) => currentAnnotation.name.toLowerCase() === 'author')
-    ?.body;
+function extractAnnotation(enumType: EnumMirror, annotationName: string): string | undefined {
+  return enumType.docComment?.annotations.find(
+    (currentAnnotation) => currentAnnotation.name.toLowerCase() === annotationName,
+  )?.body;
 }
 
 function extractSeeAnnotations(enumType: EnumMirror): string[] {

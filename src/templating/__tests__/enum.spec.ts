@@ -122,6 +122,20 @@ describe('enum', () => {
     expect(result).toBe('** Author Test Testerson');
   });
 
+  it('can reference a date reference', () => {
+    const template = '** Date {{date}}';
+
+    const enumSource = {
+      name: 'MyEnum',
+      values: [],
+      date: '2021-01-01',
+    };
+
+    const result = compile(template, enumSource);
+
+    expect(result).toBe('** Date 2021-01-01');
+  });
+
   it('can reference see references', () => {
     const template = '{{#each sees}}**See** [{{title}}]({{url}}){{/each}}';
 
