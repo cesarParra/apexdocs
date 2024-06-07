@@ -1,5 +1,6 @@
 /**
  * @description This is a sample enum. This references {@link ReferencedEnum}.
+ * @see ReferencedEnum
  */
 public enum SampleEnum {
     /**

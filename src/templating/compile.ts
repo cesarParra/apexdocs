@@ -1,9 +1,9 @@
-import * as handlebars from 'handlebars';
+import { compile as handlebars } from 'handlebars';
 import { RenderableContent, EnumSource, Link } from './types';
 
 export function compile(template: string, source: EnumSource) {
   const prepared = prepare(source);
-  const compiled = handlebars.compile(template);
+  const compiled = handlebars(template);
   return compiled(prepared);
 }
 
@@ -15,6 +15,7 @@ function prepare(source: EnumSource) {
       description: prepareDescription(value.description),
     })),
     description: prepareDescription(source.description),
+    sees: source.sees,
   };
 }
 
@@ -34,6 +35,7 @@ function reduceDescription(acc: string, curr: RenderableContent) {
   }
 }
 
+// TODO: Avoid hardcoding markdown things in here. It should be injected
 function linkToMarkdown(link: Link) {
   return `[${link.title}](${link.url})`;
 }

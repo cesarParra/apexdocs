@@ -70,4 +70,18 @@ describe('enum', () => {
 
     expect(result).toBe('Value1 - The first valueValue2 - The second value');
   });
+
+  it('can reference see references', () => {
+    const template = '{{#each sees}}**See** [{{title}}]({{url}}){{/each}}';
+
+    const enumSource = {
+      name: 'MyEnum',
+      values: [],
+      sees: [{ title: 'More info', url: 'https://example.com' }],
+    };
+
+    const result = compile(template, enumSource);
+
+    expect(result).toBe('**See** [More info](https://example.com)');
+  });
 });

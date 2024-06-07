@@ -20,11 +20,11 @@ export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
   }
 
   onProcess(type: Type): void {
-    if (type.type_name === 'enum') {
-      this._fileContainer.pushFile(new EnumFile(type as EnumMirror));
-    } else {
-      this._fileContainer.pushFile(new MarkdownTypeFile(type));
-    }
+    //if (type.type_name === 'enum') {
+    //  this._fileContainer.pushFile(new EnumFile(type as EnumMirror));
+    //} else {
+    this._fileContainer.pushFile(new MarkdownTypeFile(type));
+    //}
   }
 }
 

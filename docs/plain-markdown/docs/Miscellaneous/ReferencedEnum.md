@@ -1,2 +1,1 @@
-# ReferencedEnum enum
-
+# ReferencedEnum
