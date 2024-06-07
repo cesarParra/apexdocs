@@ -6,6 +6,7 @@
     "outDir": "./lib",
     "strict": true,
     "sourceMap": true,
+    "esModuleInterop": true,
     "lib": [
       "ES2021"
     ]

@@ -3,6 +3,7 @@ import { TypesRepository } from '../../model/types-repository';
 import { Settings } from '../../settings';
 import State from '../../service/state';
 import { TypeTranspilerFactory } from '../factory';
+import { Link } from '../../templating/types';
 
 export default class ClassFileGeneratorHelper {
   public static getSanitizedGroup(classModel: Type) {
@@ -10,13 +11,18 @@ export default class ClassFileGeneratorHelper {
   }
 
   public static getFileLink(classModel: Type) {
+    const [fullClassName, fileLink] = ClassFileGeneratorHelper.getFileLinkTuple(classModel);
+    return `[${fullClassName}](${fileLink})`;
+  }
+
+  private static getFileLinkTuple(classModel: Type): [string, string] {
     const documentationRoot = Settings.getInstance().getRootDir() ?? '';
     const directoryRoot = `${documentationRoot}${this.getDirectoryRoot(classModel)}`;
     const fullClassName = `${Settings.getInstance().getNamespacePrefix()}${classModel.name}`;
-    return `[${fullClassName}](${directoryRoot}${fullClassName}.md)`;
+    return [fullClassName, `${directoryRoot}${fullClassName}.md`];
   }
 
-  public static getFileLinkByTypeName(typeName: string) {
+  public static getFileLinkByTypeName(typeName: string): string {
     const type = TypesRepository.getInstance().getFromScopedByName(typeName);
     if (!type) {
       // If the type is not found, we return a Markdown hyperlink with whatever we received.
@@ -24,6 +30,23 @@ export default class ClassFileGeneratorHelper {
     }
 
     return this.getFileLink(type);
+  }
+
+  public static getRenderableLinkByTypeName(typeName: string): Link {
+    const type = TypesRepository.getInstance().getFromScopedByName(typeName);
+    if (!type) {
+      // If the type is not found, we return a Markdown hyperlink with whatever we received.
+      return {
+        title: typeName,
+        url: typeName,
+      };
+    }
+
+    const [fullClassName, fileLink] = ClassFileGeneratorHelper.getFileLinkTuple(type);
+    return {
+      title: fullClassName,
+      url: fileLink,
+    };
   }
 
   private static getDirectoryRoot(classModel: Type) {
