@@ -6,7 +6,7 @@ import { Settings } from '../../../settings';
 import ClassFileGeneratorHelper from '../class-file-generatorHelper';
 import { enumMarkdownTemplate } from './enum-template';
 import { compile } from '../../../templating/compile';
-import { EnumSource } from '../../../templating/types';
+import { EnumSource, Link, RenderableContent } from '../../../templating/types';
 import { MarkdownTypeFile } from '../../../model/markdown-type-file';
 import { linkFromTypeNameGenerator, replaceInlineReferences } from '../../../mirror-to-template-adapter/references';
 
@@ -36,12 +36,36 @@ class EnumFile extends OutputFile {
     );
 
     const enumSource = enumTypeToEnumSource(type);
-    this.addText(compile(enumMarkdownTemplate, enumSource));
+    this.addText(
+      compile(enumMarkdownTemplate, enumSource, {
+        renderableContentConverter: prepareDescription,
+      }),
+    );
   }
 
   fileExtension(): string {
     return '.md';
   }
+}
+
+function prepareDescription(description?: RenderableContent[]) {
+  if (!description) {
+    return '';
+  }
+
+  function reduceDescription(acc: string, curr: RenderableContent) {
+    if (typeof curr === 'string') {
+      return acc + curr;
+    } else {
+      return acc + linkToMarkdown(curr);
+    }
+  }
+
+  function linkToMarkdown(link: Link) {
+    return `[${link.title}](${link.url})`;
+  }
+
+  return description.reduce(reduceDescription, '');
 }
 
 // TODO: Move to the mirror-to-template-adapter directory

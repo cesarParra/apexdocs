@@ -1,4 +1,27 @@
-import { compile } from '../compile';
+import { compile as testSubject } from '../compile';
+import { EnumSource, RenderableContent } from '../types';
+
+function renderableContentsToString(content?: RenderableContent[]) {
+  if (!content) {
+    return '';
+  }
+
+  function reduceDescription(acc: string, curr: RenderableContent) {
+    if (typeof curr === 'string') {
+      return acc + curr;
+    } else {
+      return acc + curr.title;
+    }
+  }
+
+  return content.reduce(reduceDescription, '');
+}
+
+function compile(template: string, source: EnumSource) {
+  return testSubject(template, source, {
+    renderableContentConverter: renderableContentsToString,
+  });
+}
 
 describe('enum', () => {
   it('can reference the enum name', () => {
@@ -39,7 +62,7 @@ describe('enum', () => {
 
     const result = compile(template, enumSource);
 
-    expect(result).toBe('An enum of things: [More info](https://example.com)');
+    expect(result).toBe('An enum of things: More info');
   });
 
   it('can reference enum values', () => {
