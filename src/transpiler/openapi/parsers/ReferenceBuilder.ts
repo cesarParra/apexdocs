@@ -131,7 +131,7 @@ export class ReferenceBuilder {
     referencedComponents: ReferenceComponent[],
   ) {
     // This can be of type ApexDocSchemaObject
-    const inYaml = manuallyDefinedHttpSchema?.bodyLines.reduce((prev, current, _) => prev + '\n' + current);
+    const inYaml = manuallyDefinedHttpSchema?.bodyLines.reduce((prev, current) => prev + '\n' + current);
     const asJson = yaml.load(inYaml) as ApexDocSchemaObject;
     const isReferenceString = this.isReferenceString(asJson);
 

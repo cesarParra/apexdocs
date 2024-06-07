@@ -8,7 +8,7 @@ export default class ErrorLogger {
     });
   }
 
-  private static logErrorsForSingleType(currentType: Type, parentType?: Type): void {
+  private static logErrorsForSingleType(currentType: Type): void {
     this.logTypeErrors(currentType);
 
     if (currentType.type_name === 'class') {
@@ -67,15 +67,15 @@ export default class ErrorLogger {
     });
 
     classMirror.enums.forEach((currentEnum) => {
-      this.logErrorsForSingleType(currentEnum, classMirror);
+      this.logErrorsForSingleType(currentEnum);
     });
 
     classMirror.interfaces.forEach((currentInterface) => {
-      this.logErrorsForSingleType(currentInterface, classMirror);
+      this.logErrorsForSingleType(currentInterface);
     });
 
     classMirror.classes.forEach((currentClass) => {
-      this.logErrorsForSingleType(currentClass, classMirror);
+      this.logErrorsForSingleType(currentClass);
     });
   }
 

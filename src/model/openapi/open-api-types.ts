@@ -56,14 +56,14 @@ export type RequestBodyContent = {
 
 export type MediaTypeObject = {
   schema?: SchemaObject;
-  example?: any;
+  example?: unknown;
   examples?: { [index: string]: ExampleObject };
 };
 
 export type ExampleObject = {
   summary?: string;
   description?: string;
-  value?: any;
+  value?: unknown;
 };
 
 // Responses
