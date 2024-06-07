@@ -43,14 +43,14 @@
     "@types/yargs": "^15.0.3",
     "@typescript-eslint/eslint-plugin": "^7.12.0",
     "@typescript-eslint/parser": "^7.12.0",
-    "docsify": "^4.13.0",
-    "eslint": "^8.0.1",
+    "docsify": "^4.13.1",
+    "eslint": "^8.57.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "husky": "^8.0.3",
     "jest": "^29.7.0",
     "lint-staged": "^13.2.1",
-    "prettier": "^2.4.1",
+    "prettier": "^2.8.8",
     "rimraf": "^3.0.2",
     "ts-jest": "^29.1.4",
     "typescript": "^4.8.4"
@@ -67,12 +67,12 @@
   },
   "dependencies": {
     "@cparra/apex-reflection": "2.8.0",
-    "chalk": "^4.1.2",
+    "chalk": "^5.3.0",
     "cosmiconfig": "^9.0.0",
-    "fast-xml-parser": "^4.0.1",
+    "fast-xml-parser": "^4.4.0",
     "handlebars": "^4.7.8",
     "js-yaml": "^4.1.0",
-    "log-update": "4.0.0",
+    "log-update": "6.0.0",
     "xss": "^1.0.11",
     "yargs": "^16.0.3"
   }
