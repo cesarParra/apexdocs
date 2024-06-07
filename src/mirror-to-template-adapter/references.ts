@@ -13,8 +13,12 @@ export function replaceInlineReferences(text: string): string {
 // to have different implementations of how links (and other things) are rendered.
 type GetFileLinkByTypeName = (typeName: string) => string;
 
-// TODO: Unit test
-// TODO: JSDocs
+/**
+ * Replaces inline links in the format of `<<ClassName>>` and `{@link ClassName}` with the corresponding
+ * file link.
+ * @param text The text to replace the links in.
+ * @param getFileLinkByTypeName A function that returns the file link for a given type name.
+ */
 export function replaceInlineLinks(
   text: string,
   getFileLinkByTypeName: GetFileLinkByTypeName = ClassFileGeneratorHelper.getFileLinkByTypeName,
