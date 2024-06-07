@@ -29,7 +29,7 @@ export abstract class Builder<T, K> {
     return schemaAware.schema;
   }
 
-  private isReferenceString = (targetObject: any): targetObject is string => {
+  private isReferenceString = (targetObject: unknown): targetObject is string => {
     return typeof targetObject === 'string' || targetObject instanceof String;
   };
 }

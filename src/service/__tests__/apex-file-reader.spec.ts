@@ -45,16 +45,16 @@ describe('File Reader', () => {
 
   it('returns an empty list when there are no Apex files in the directory', () => {
     const result = ApexFileReader.processFiles({
-      isDirectory(_: string): boolean {
+      isDirectory(): boolean {
         return false;
       },
-      joinPath(_: string): string {
+      joinPath(): string {
         return '';
       },
-      readDirectory(_: string): string[] {
+      readDirectory(): string[] {
         return ['SomeFile.md'];
       },
-      readFile(_: string): string {
+      readFile(): string {
         return '';
       },
       exists(): boolean {

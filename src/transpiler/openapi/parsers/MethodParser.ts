@@ -95,7 +95,7 @@ export class MethodParser {
 
     for (const annotation of annotations) {
       // We expect the ApexDoc data representing this to be in YAML format.
-      const inYaml = annotation?.bodyLines.reduce((prev, current, _) => prev + '\n' + current);
+      const inYaml = annotation?.bodyLines.reduce((prev, current) => prev + '\n' + current);
 
       if (!inYaml) {
         return;

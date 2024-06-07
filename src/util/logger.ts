@@ -28,7 +28,7 @@ export class Logger {
    */
   public static error(message: string, ...args: string[]) {
     this.logSingle(message, false, 'red', false);
-    args.forEach((arg) => {
+    args.forEach(() => {
       this.logSingle(message, false, 'red', false);
     });
   }

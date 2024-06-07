@@ -48,7 +48,7 @@ export class MarkdownFile extends OutputFile {
     });
     this.addBlankLine();
     this._contents += '|';
-    headers.forEach((_) => {
+    headers.forEach(() => {
       this._contents += '---' + '|';
     });
     this.addBlankLine();
