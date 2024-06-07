@@ -60,7 +60,7 @@ function inlineEmailContent(
 
   const text = renderableContent;
 
-  // Parsing links using {@link ClassName} format
+  // Parsing references using the format '{@email email}'
   const linkFormatRegEx = '{@email (.*?)}';
   const matches = match(linkFormatRegEx, text);
   return createRenderableContents(matches, text, getLinkByTypeName);
