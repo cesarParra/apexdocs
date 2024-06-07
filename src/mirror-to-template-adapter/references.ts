@@ -3,7 +3,7 @@ import { Link, RenderableContent } from '../templating/types';
 
 export type GetLinkByTypeName = (typeName: string) => Link;
 
-const defaultLinkReplacer: GetLinkByTypeName = ClassFileGeneratorHelper.getRenderableLinkByTypeName;
+export const linkFromTypeNameGenerator: GetLinkByTypeName = ClassFileGeneratorHelper.getRenderableLinkByTypeName;
 
 function defaultGetEmailByReference(email: string): Link {
   return {
@@ -14,7 +14,7 @@ function defaultGetEmailByReference(email: string): Link {
 
 export function replaceInlineReferences(
   text: string,
-  linkReplacer: GetLinkByTypeName = defaultLinkReplacer,
+  linkReplacer: GetLinkByTypeName = linkFromTypeNameGenerator,
   emailReplacer: GetLinkByTypeName = defaultGetEmailByReference,
 ): RenderableContent[] {
   return replaceInlineEmails(replaceInlineLinks([text], linkReplacer), emailReplacer);

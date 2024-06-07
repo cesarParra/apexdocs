@@ -9,8 +9,7 @@ export const enumMarkdownTemplate = `
 # {{ name}} enum
 {{ description }}
 
-{{ #each sees }}
-**See** [{{title}}](url)
-{{ /each }}
-
+{{#each sees}}
+**See** [{{title}}]({{url}})
+{{/each}}
 `.trim();

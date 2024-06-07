@@ -8,7 +8,7 @@ import { enumMarkdownTemplate } from './enum-template';
 import { compile } from '../../../templating/compile';
 import { EnumSource } from '../../../templating/types';
 import { MarkdownTypeFile } from '../../../model/markdown-type-file';
-import { replaceInlineReferences } from '../../../mirror-to-template-adapter/references';
+import { linkFromTypeNameGenerator, replaceInlineReferences } from '../../../mirror-to-template-adapter/references';
 
 export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
   homeFileName(): string {
@@ -20,11 +20,11 @@ export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
   }
 
   onProcess(type: Type): void {
-    //if (type.type_name === 'enum') {
-    //  this._fileContainer.pushFile(new EnumFile(type as EnumMirror));
-    //} else {
-    this._fileContainer.pushFile(new MarkdownTypeFile(type));
-    //}
+    if (type.type_name === 'enum') {
+      this._fileContainer.pushFile(new EnumFile(type as EnumMirror));
+    } else {
+      this._fileContainer.pushFile(new MarkdownTypeFile(type));
+    }
   }
 }
 
@@ -51,5 +51,14 @@ function enumTypeToEnumSource(enumType: EnumMirror): EnumSource {
     // TODO: Today, enum mirror does not provide this, we want it.
     values: [],
     description: enumType.docComment?.description ? replaceInlineReferences(enumType.docComment.description) : [],
+    sees: extractSeeAnnotations(enumType).map(linkFromTypeNameGenerator),
   };
+}
+
+function extractSeeAnnotations(enumType: EnumMirror): string[] {
+  return (
+    enumType.docComment?.annotations
+      .filter((currentAnnotation) => currentAnnotation.name.toLowerCase() === 'see')
+      .map((currentAnnotation) => currentAnnotation.body) ?? []
+  );
 }

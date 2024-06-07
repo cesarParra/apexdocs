@@ -4,7 +4,7 @@ import { RenderableContent, EnumSource, Link } from './types';
 export function compile(template: string, source: EnumSource) {
   const prepared = prepare(source);
   const compiled = handlebars(template);
-  return compiled(prepared);
+  return compiled(prepared).trim();
 }
 
 function prepare(source: EnumSource) {
