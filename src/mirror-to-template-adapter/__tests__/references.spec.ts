@@ -1,18 +1,34 @@
-import { replaceInlineEmails, replaceInlineLinks } from '../references';
+import { replaceInlineReferences } from '../references';
 import { Link } from '../../templating/types';
 
+function getFileLink(typeName: string): Link {
+  return {
+    title: typeName,
+    url: `/api/${typeName}.html`,
+  };
+}
+
+function getEmailLink(typeName: string) {
+  return {
+    title: typeName,
+    url: `mailto:${typeName}`,
+  };
+}
+
 describe('reference utilities', () => {
+  it('returns a RenderableContent array with the full string when there are no links', () => {
+    const text = 'This is a test';
+    const result = replaceInlineReferences(text, getFileLink, getEmailLink);
+
+    const expected = ['This is a test'];
+
+    expect(result).toEqual(expected);
+  });
+
   describe('replace inline links', () => {
     it('replaces links in the format of <<ClassName>>', () => {
-      function getFileLinkByTypeName(typeName: string): Link {
-        return {
-          title: typeName,
-          url: `/api/${typeName}.html`,
-        };
-      }
-
-      const text = 'This is a test <<ClassName>>';
-      const result = replaceInlineLinks([text], getFileLinkByTypeName);
+      const text = 'This is a test <<ClassName>>.';
+      const result = replaceInlineReferences(text, getFileLink, getEmailLink);
 
       const expected = [
         'This is a test ',
@@ -20,11 +36,11 @@ describe('reference utilities', () => {
           title: 'ClassName',
           url: '/api/ClassName.html',
         },
+        '.',
       ];
 
       expect(result).toEqual(expected);
     });
-
     it('replaces links in the format of {@link ClassName}', () => {
       function getFileLinkByTypeName(typeName: string): Link {
         return {
@@ -34,7 +50,7 @@ describe('reference utilities', () => {
       }
 
       const text = 'This is a test {@link ClassName}';
-      const result = replaceInlineLinks([text], getFileLinkByTypeName);
+      const result = replaceInlineReferences(text, getFileLinkByTypeName, getEmailLink);
 
       const expected = [
         'This is a test ',
@@ -58,7 +74,7 @@ describe('reference utilities', () => {
       }
 
       const text = 'This is an email {@email example@example.com}';
-      const result = replaceInlineEmails([text], getLinkByTypeName);
+      const result = replaceInlineReferences(text, getFileLink, getLinkByTypeName);
 
       const expected = [
         'This is an email ',
@@ -70,5 +86,30 @@ describe('reference utilities', () => {
 
       expect(result).toEqual(expected);
     });
+  });
+
+  it('replaces both links and emails in the same string', () => {
+    const text = 'This is a test <<ClassName>>, and {@link AnotherClass}, and an email {@email testerson}';
+    const result = replaceInlineReferences(text, getFileLink, getEmailLink);
+
+    const expected = [
+      'This is a test ',
+      {
+        title: 'ClassName',
+        url: '/api/ClassName.html',
+      },
+      ', and ',
+      {
+        title: 'AnotherClass',
+        url: '/api/AnotherClass.html',
+      },
+      ', and an email ',
+      {
+        title: 'testerson',
+        url: 'mailto:testerson',
+      },
+    ];
+
+    expect(result).toEqual(expected);
   });
 });

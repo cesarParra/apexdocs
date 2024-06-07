@@ -1,27 +1,35 @@
 import ClassFileGeneratorHelper from '../transpiler/markdown/class-file-generatorHelper';
 import { Link, RenderableContent } from '../templating/types';
 
-/**
- * Replaces any inline references (links and emails) in the given text.
- * @param text The text to replace the references in.
- */
-// TODO: Unit test this to make sure it is all kosher
-export function replaceInlineReferences(text: string): RenderableContent[] {
-  return replaceInlineEmails(replaceInlineLinks([text]), defaultGetEmailByReference);
-}
-
 export type GetLinkByTypeName = (typeName: string) => Link;
 
-export function replaceInlineLinks(
+const defaultLinkReplacer: GetLinkByTypeName = ClassFileGeneratorHelper.getRenderableLinkByTypeName;
+
+function defaultGetEmailByReference(email: string): Link {
+  return {
+    title: email,
+    url: `mailto:${email}`,
+  };
+}
+
+export function replaceInlineReferences(
+  text: string,
+  linkReplacer: GetLinkByTypeName = defaultLinkReplacer,
+  emailReplacer: GetLinkByTypeName = defaultGetEmailByReference,
+): RenderableContent[] {
+  return replaceInlineEmails(replaceInlineLinks([text], linkReplacer), emailReplacer);
+}
+
+function replaceInlineLinks(
   renderableContents: RenderableContent[],
-  getLinkByTypeName: GetLinkByTypeName = ClassFileGeneratorHelper.getRenderableLinkByTypeName,
+  getLinkByTypeName: GetLinkByTypeName,
 ): RenderableContent[] {
   return renderableContents.flatMap((renderableContent) => inlineLinkContent(renderableContent, getLinkByTypeName));
 }
 
 function inlineLinkContent(
   renderableContent: RenderableContent,
-  getLinkByTypeName: GetLinkByTypeName = ClassFileGeneratorHelper.getRenderableLinkByTypeName,
+  getLinkByTypeName: GetLinkByTypeName,
 ): RenderableContent[] {
   if (typeof renderableContent !== 'string') {
     return [renderableContent];
@@ -33,6 +41,10 @@ function inlineLinkContent(
   const linkFormatRegEx = '{@link (.*?)}|<<([^>]+)>>';
   const matches = match(linkFormatRegEx, text);
 
+  if (matches.length === 0) {
+    return [text];
+  }
+
   const result: RenderableContent[] = [];
   let lastIndex = 0;
   for (const currentMatch of matches) {
@@ -42,14 +54,12 @@ function inlineLinkContent(
 
     lastIndex = currentMatch.index + currentMatch[0].length;
   }
-  return result;
-}
 
-function defaultGetEmailByReference(email: string): Link {
-  return {
-    title: email,
-    url: `mailto:${email}`,
-  };
+  if (lastIndex < text.length) {
+    result.push(text.slice(lastIndex));
+  }
+
+  return result;
 }
 
 export function replaceInlineEmails(
@@ -73,6 +83,10 @@ function inlineEmailContent(
   const linkFormatRegEx = '{@email (.*?)}';
   const matches = match(linkFormatRegEx, text);
 
+  if (matches.length === 0) {
+    return [text];
+  }
+
   const result: RenderableContent[] = [];
   let lastIndex = 0;
   for (const match of matches) {
@@ -85,6 +99,10 @@ function inlineEmailContent(
     result.push(getLinkByTypeName(match[1]));
 
     lastIndex = index + length;
+  }
+
+  if (lastIndex < text.length) {
+    result.push(text.slice(lastIndex));
   }
 
   return result;
