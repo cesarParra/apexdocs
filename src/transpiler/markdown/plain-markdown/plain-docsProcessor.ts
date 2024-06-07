@@ -75,7 +75,11 @@ function enumTypeToEnumSource(enumType: EnumMirror): EnumSource {
     name: enumType.name,
     // TODO: Today, enum mirror does not provide this, we want it.
     values: [],
-    description: enumType.docComment?.description ? replaceInlineReferences(enumType.docComment.description) : [],
+    description: enumType.docComment?.descriptionLines
+      ? enumType.docComment.descriptionLines
+          .map((line) => [...replaceInlineReferences(line), '\n\n'])
+          .flatMap((line) => line)
+      : [],
     group: extractAnnotation(enumType, 'group'),
     author: extractAnnotation(enumType, 'author'),
     date: extractAnnotation(enumType, 'date'),
