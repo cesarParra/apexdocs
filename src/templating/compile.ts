@@ -1,13 +1,15 @@
-import { compile as handlebars } from 'handlebars';
+import Handlebars from 'handlebars';
 import { EnumSource, ConvertRenderableContentsToString } from './types';
+import { splitAndCapitalize } from './helpers';
 
 type CompileOptions = {
   renderableContentConverter: ConvertRenderableContentsToString;
 };
 
 export function compile(template: string, source: EnumSource, options: CompileOptions) {
+  Handlebars.registerHelper('splitAndCapitalize', splitAndCapitalize);
   const prepared = prepare(source, options.renderableContentConverter);
-  const compiled = handlebars(template);
+  const compiled = Handlebars.compile(template);
   return (
     compiled(prepared)
       .trim()

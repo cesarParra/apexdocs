@@ -136,6 +136,20 @@ describe('enum', () => {
     expect(result).toBe('** Date 2021-01-01');
   });
 
+  it('can reference custom tags', () => {
+    const template = '{{#each customTags}}**{{name}}** {{value}}{{/each}}';
+
+    const enumSource = {
+      name: 'MyEnum',
+      values: [],
+      customTags: [{ name: 'CustomTag', value: 'My custom tag' }],
+    };
+
+    const result = compile(template, enumSource);
+
+    expect(result).toBe('**CustomTag** My custom tag');
+  });
+
   it('can reference see references', () => {
     const template = '{{#each sees}}**See** [{{title}}]({{url}}){{/each}}';
 

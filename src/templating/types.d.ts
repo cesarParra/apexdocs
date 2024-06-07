@@ -12,6 +12,11 @@ type EnumValue = {
   description?: RenderableContent[];
 };
 
+type CustomTag = {
+  name: string;
+  value: string;
+};
+
 export type EnumSource = {
   name: string;
   values: EnumValue[];
@@ -19,5 +24,6 @@ export type EnumSource = {
   group?: string;
   author?: string;
   date?: string;
+  customTags?: CustomTag[];
   sees?: Link[];
 };

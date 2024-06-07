@@ -79,6 +79,7 @@ function enumTypeToEnumSource(enumType: EnumMirror): EnumSource {
     group: extractAnnotation(enumType, 'group'),
     author: extractAnnotation(enumType, 'author'),
     date: extractAnnotation(enumType, 'date'),
+    customTags: extractCustomTags(enumType),
     sees: extractSeeAnnotations(enumType).map(linkFromTypeNameGenerator),
   };
 }
@@ -94,5 +95,18 @@ function extractSeeAnnotations(enumType: EnumMirror): string[] {
     enumType.docComment?.annotations
       .filter((currentAnnotation) => currentAnnotation.name.toLowerCase() === 'see')
       .map((currentAnnotation) => currentAnnotation.body) ?? []
+  );
+}
+
+const baseTags = ['description', 'group', 'author', 'date', 'see'];
+
+function extractCustomTags(enumType: EnumMirror): { name: string; value: string }[] {
+  return (
+    enumType.docComment?.annotations
+      .filter((currentAnnotation) => !baseTags.includes(currentAnnotation.name.toLowerCase()))
+      .map((currentAnnotation) => ({
+        name: currentAnnotation.name,
+        value: currentAnnotation.body,
+      })) ?? []
   );
 }
