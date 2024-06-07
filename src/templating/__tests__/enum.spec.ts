@@ -1,5 +1,5 @@
 import { compile as testSubject } from '../compile';
-import { EnumSource, RenderableContent } from '../types';
+import { EnumSource, Link, RenderableContent } from '../types';
 
 function renderableContentsToString(content?: RenderableContent[]) {
   if (!content) {
@@ -9,8 +9,10 @@ function renderableContentsToString(content?: RenderableContent[]) {
   function reduceDescription(acc: string, curr: RenderableContent) {
     if (typeof curr === 'string') {
       return acc + curr;
+    } else if (Object.keys(curr).includes('title')) {
+      return acc + (curr as Link).title;
     } else {
-      return acc + curr.title;
+      return acc;
     }
   }
 
