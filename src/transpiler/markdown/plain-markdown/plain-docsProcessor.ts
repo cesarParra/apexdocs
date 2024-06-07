@@ -8,6 +8,7 @@ import { enumMarkdownTemplate } from './enum-template';
 import { compile } from '../../../templating/compile';
 import { EnumSource } from '../../../templating/types';
 import { MarkdownTypeFile } from '../../../model/markdown-type-file';
+import { replaceInlineReferences } from '../../../mirror-to-template-adapter/references';
 
 export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
   homeFileName(): string {
@@ -43,13 +44,12 @@ class EnumFile extends OutputFile {
   }
 }
 
+// TODO: Move to the mirror-to-template-adapter directory
 function enumTypeToEnumSource(enumType: EnumMirror): EnumSource {
   return {
     name: enumType.name,
     // TODO: Today, enum mirror does not provide this, we want it.
     values: [],
-    // TODO: See if there are references to other files in the description
-    // lines and convert those to links
-    description: enumType.docComment?.descriptionLines,
+    description: enumType.docComment?.descriptionLines.map(replaceInlineReferences),
   };
 }
