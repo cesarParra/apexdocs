@@ -36,7 +36,6 @@ class EnumFile extends OutputFile {
     );
 
     const enumSource = enumTypeToEnumSource(type);
-    console.log(JSON.stringify(enumSource, null, 2));
     this.addText(compile(enumMarkdownTemplate, enumSource));
   }
 

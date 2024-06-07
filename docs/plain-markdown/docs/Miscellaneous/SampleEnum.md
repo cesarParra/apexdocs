@@ -1,2 +1,2 @@
 # SampleEnum enum
-[ReferencedEnum](./ReferencedEnum.md)
+This is a sample enum. This references [ReferencedEnum](./ReferencedEnum.md).
