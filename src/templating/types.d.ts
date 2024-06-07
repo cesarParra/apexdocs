@@ -3,7 +3,11 @@ export type Link = {
   url: string;
 };
 
-export type RenderableContent = string | Link;
+export type EmptyLine = {
+  type: 'empty-line';
+};
+
+export type RenderableContent = string | Link | EmptyLine;
 
 export type ConvertRenderableContentsToString = (content?: RenderableContent[]) => string;
 

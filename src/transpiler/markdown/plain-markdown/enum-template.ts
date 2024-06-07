@@ -1,4 +1,3 @@
-// TODO: handle when the description has multiple lines since we'd like to respect that
 export const enumMarkdownTemplate = `
 # {{name}} enum
 {{description}}
