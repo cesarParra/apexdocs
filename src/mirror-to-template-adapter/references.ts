@@ -40,26 +40,7 @@ function inlineLinkContent(
   // Matches either `<<ClassName>>` or `{@link ClassName}`
   const linkFormatRegEx = '{@link (.*?)}|<<([^>]+)>>';
   const matches = match(linkFormatRegEx, text);
-
-  if (matches.length === 0) {
-    return [text];
-  }
-
-  const result: RenderableContent[] = [];
-  let lastIndex = 0;
-  for (const currentMatch of matches) {
-    const typeName = currentMatch[1] || currentMatch[2];
-    result.push(text.slice(lastIndex, currentMatch.index));
-    result.push(getLinkByTypeName(typeName));
-
-    lastIndex = currentMatch.index + currentMatch[0].length;
-  }
-
-  if (lastIndex < text.length) {
-    result.push(text.slice(lastIndex));
-  }
-
-  return result;
+  return createRenderableContents(matches, text, getLinkByTypeName);
 }
 
 export function replaceInlineEmails(
@@ -82,30 +63,7 @@ function inlineEmailContent(
   // Parsing links using {@link ClassName} format
   const linkFormatRegEx = '{@email (.*?)}';
   const matches = match(linkFormatRegEx, text);
-
-  if (matches.length === 0) {
-    return [text];
-  }
-
-  const result: RenderableContent[] = [];
-  let lastIndex = 0;
-  for (const match of matches) {
-    // split the string into the part before the match, then the match, then everything after the match
-    // using the index property of the match to get where to split it, and the length of the match to get the end of the match
-    const index = match.index;
-    const length = match[0].length;
-
-    result.push(text.slice(lastIndex, index));
-    result.push(getLinkByTypeName(match[1]));
-
-    lastIndex = index + length;
-  }
-
-  if (lastIndex < text.length) {
-    result.push(text.slice(lastIndex));
-  }
-
-  return result;
+  return createRenderableContents(matches, text, getLinkByTypeName);
 }
 
 function match(regex: string, text: string) {
@@ -121,4 +79,36 @@ function match(regex: string, text: string) {
   } while (match);
 
   return matches;
+}
+
+function createRenderableContents(matches: RegExpExecArray[], text: string, linker: GetLinkByTypeName) {
+  if (matches.length === 0) {
+    return [text];
+  }
+
+  const result: RenderableContent[] = [];
+  let lastIndex = 0;
+  for (const match of matches) {
+    // split the string into the part before the match, then the match, then everything after the match
+    // using the index property of the match to get where to split it, and the length of the match to get the end of the match
+    const index = match.index;
+    const length = match[0].length;
+
+    // loop through the matches (skip the first one, which is the full match)
+    // until we find the first capturing group that has a value
+    const capturedGroup = match.slice(1).find((group) => group);
+    if (!capturedGroup) {
+      continue;
+    }
+    result.push(text.slice(lastIndex, index));
+    result.push(linker(capturedGroup));
+
+    lastIndex = index + length;
+  }
+
+  if (lastIndex < text.length) {
+    result.push(text.slice(lastIndex));
+  }
+
+  return result;
 }
