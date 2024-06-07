@@ -3,15 +3,15 @@ export type Link = {
   url: string;
 };
 
-export type DescriptionContent = string | Link;
+export type RenderableContent = string | Link;
 
 type EnumValue = {
   value: string;
-  description?: DescriptionContent[];
+  description?: RenderableContent[];
 };
 
 export type EnumSource = {
   name: string;
   values: EnumValue[];
-  description?: DescriptionContent[];
+  description?: RenderableContent[];
 };

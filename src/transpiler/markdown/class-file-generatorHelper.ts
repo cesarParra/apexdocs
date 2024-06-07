@@ -16,7 +16,7 @@ export default class ClassFileGeneratorHelper {
     return `[${fullClassName}](${directoryRoot}${fullClassName}.md)`;
   }
 
-  public static getFileLinkByTypeName(typeName: string) {
+  public static getFileLinkByTypeName(typeName: string): string {
     const type = TypesRepository.getInstance().getFromScopedByName(typeName);
     if (!type) {
       // If the type is not found, we return a Markdown hyperlink with whatever we received.

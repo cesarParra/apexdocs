@@ -8,14 +8,22 @@ export function replaceInlineReferences(text: string): string {
   return text;
 }
 
+// TODO: What this should return is some kind of RenderableText, which is a list of string | Link
+// then we can give the concern of how to render that to someone else. That way it is easier
+// to have different implementations of how links (and other things) are rendered.
+type GetFileLinkByTypeName = (typeName: string) => string;
+
 // TODO: Unit test
 // TODO: JSDocs
-export function replaceInlineLinks(text: string) {
+export function replaceInlineLinks(
+  text: string,
+  getFileLinkByTypeName: GetFileLinkByTypeName = ClassFileGeneratorHelper.getFileLinkByTypeName,
+): string {
   // Parsing text to extract possible linking classes.
   const possibleLinks = text.match(/<<.*?>>/g);
   possibleLinks?.forEach((currentMatch) => {
     const classNameForMatch = currentMatch.replace('<<', '').replace('>>', '');
-    text = text.replace(currentMatch, ClassFileGeneratorHelper.getFileLinkByTypeName(classNameForMatch));
+    text = text.replace(currentMatch, getFileLinkByTypeName(classNameForMatch));
   });
 
   // Parsing links using {@link ClassName} format
@@ -32,7 +40,7 @@ export function replaceInlineLinks(text: string) {
   } while (match);
 
   for (const currentMatch of matches) {
-    text = text.replace(currentMatch[0], ClassFileGeneratorHelper.getFileLinkByTypeName(currentMatch[1]));
+    text = text.replace(currentMatch[0], getFileLinkByTypeName(currentMatch[1]));
   }
   return text;
 }
