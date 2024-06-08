@@ -71,6 +71,21 @@ describe('compile', () => {
 
       expect(result).toBe('public interface');
     });
+
+    it('can reference the interface name with annotations', () => {
+      const template = '{{name}} interface {{#each annotations}}{{this}} {{/each}}';
+
+      const interfaceSource: InterfaceSource = {
+        __type: 'interface',
+        name: 'MyInterface',
+        accessModifier: 'public',
+        annotations: ['MyAnnotation'],
+      };
+
+      const result = compile(template, interfaceSource);
+
+      expect(result).toBe('MyInterface interface MyAnnotation');
+    });
   });
 
   describe('enum', () => {

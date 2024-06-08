@@ -6,6 +6,6 @@ export function interfaceTypeToInterfaceSource(interfaceType: InterfaceMirror): 
     __type: 'interface',
     name: interfaceType.name,
     accessModifier: interfaceType.access_modifier,
-    annotations: interfaceType.annotations.map((annotation) => annotation.name.toUpperCase()),
+    annotations: interfaceType.annotations.map((annotation) => annotation.type.toUpperCase()),
   };
 }
