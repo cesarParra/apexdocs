@@ -8,4 +8,11 @@ describe('Conversion from InterfaceMirror to InterfaceSource understandable by t
 
     expect(interfaceSource.name).toBe('SampleInterface');
   });
+
+  it('converts the access modifier', () => {
+    const interfaceMirror = new InterfaceMirrorBuilder().build();
+    const interfaceSource = interfaceTypeToInterfaceSource(interfaceMirror);
+
+    expect(interfaceSource.accessModifier).toBe('public');
+  });
 });
