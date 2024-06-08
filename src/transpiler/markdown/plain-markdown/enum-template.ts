@@ -1,6 +1,7 @@
-// TODO: What about modifiers (public, global, etc.)
 export const enumMarkdownTemplate = `
 # {{name}} enum
+Access: \`{{accessModifier}}\`
+
 {{description}}
 
 {{#if group}}

@@ -30,6 +30,7 @@ describe('enum', () => {
     const template = '{{name}} enum';
 
     const enumSource = {
+      accessModifier: 'public',
       name: 'MyEnum',
       values: [],
     };
@@ -39,10 +40,25 @@ describe('enum', () => {
     expect(result).toBe('MyEnum enum');
   });
 
+  it('can reference the access modifier', () => {
+    const template = '{{accessModifier}} enum';
+
+    const enumSource = {
+      accessModifier: 'public',
+      name: 'MyEnum',
+      values: [],
+    };
+
+    const result = compile(template, enumSource);
+
+    expect(result).toBe('public enum');
+  });
+
   it('can reference the enum name with a description', () => {
     const template = '{{description}}';
 
     const enumSource = {
+      accessModifier: 'public',
       name: 'MyEnum',
       values: [],
       description: ['An enum of things'],
@@ -57,6 +73,7 @@ describe('enum', () => {
     const template = '{{description}}';
 
     const enumSource = {
+      accessModifier: 'public',
       name: 'MyEnum',
       values: [],
       description: ['An enum of things: ', { title: 'More info', url: 'https://example.com' }],
@@ -71,6 +88,7 @@ describe('enum', () => {
     const template = '{{#each values}}{{value}}{{/each}}';
 
     const enumSource = {
+      accessModifier: 'public',
       name: 'MyEnum',
       values: [{ value: 'Value1' }, { value: 'Value2' }],
     };
@@ -84,6 +102,7 @@ describe('enum', () => {
     const template = '{{#each values}}{{value}} - {{description}}{{/each}}';
 
     const enumSource = {
+      accessModifier: 'public',
       name: 'MyEnum',
       values: [
         { value: 'Value1', description: ['The first value'] },
@@ -100,6 +119,7 @@ describe('enum', () => {
     const template = '** Group {{group}}';
 
     const enumSource = {
+      accessModifier: 'public',
       name: 'MyEnum',
       values: [],
       group: 'MyGroup',
@@ -114,6 +134,7 @@ describe('enum', () => {
     const template = '** Author {{author}}';
 
     const enumSource = {
+      accessModifier: 'public',
       name: 'MyEnum',
       values: [],
       author: 'Test Testerson',
@@ -128,6 +149,7 @@ describe('enum', () => {
     const template = '** Date {{date}}';
 
     const enumSource = {
+      accessModifier: 'public',
       name: 'MyEnum',
       values: [],
       date: '2021-01-01',
@@ -142,6 +164,7 @@ describe('enum', () => {
     const template = '{{#each customTags}}**{{name}}** {{value}}{{/each}}';
 
     const enumSource = {
+      accessModifier: 'public',
       name: 'MyEnum',
       values: [],
       customTags: [{ name: 'CustomTag', value: 'My custom tag' }],
@@ -156,6 +179,7 @@ describe('enum', () => {
     const template = '{{#each sees}}**See** [{{title}}]({{url}}){{/each}}';
 
     const enumSource = {
+      accessModifier: 'public',
       name: 'MyEnum',
       values: [],
       sees: [{ title: 'More info', url: 'https://example.com' }],
