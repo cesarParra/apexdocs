@@ -207,9 +207,13 @@ public with sharing class TestClass {
 
 The following tags are supported on the enum level:
 
-| Tag            | Description                            |
-|----------------|----------------------------------------|
-| `@description` | One or more lines describing the enum. |
+| Tag            | Description                                                                                                                               |
+|----------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| `@description` | One or more lines describing the enum.                                                                                                    |
+| `@see`         | The name of a related class, enum, or interface.                                                                                          |
+| `@group`       | The group to which the enum belongs to.                                                                                                   |
+| `@author`      | The author of the enum. Note that this only gets added if it is explicitly defined through the configuration class that it should.        |
+| `@date`        | The date the enum was created. Note that this only gets added if it is explicitly defined through the configuration class that it should. |
 
 **Example**
 
@@ -219,6 +223,25 @@ The following tags are supported on the enum level:
  */
 public Enum ExampleEnum {
     VALUE_1, VALUE_2
+}
+```
+
+### Documenting Enum Values
+
+The following tags are supported on the enum value level:
+
+| Tag            | Description                             |
+|----------------|-----------------------------------------|
+| `@description` | One or more lines describing the value. |
+
+**Example**
+
+```apex
+public enum ExampleEnum {
+    /** @description This is my enum value description. */
+    VALUE_1,
+    /** @description This is my other enum value description. */
+    VALUE_2
 }
 ```
 
