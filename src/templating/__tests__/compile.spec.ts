@@ -50,11 +50,26 @@ describe('compile', () => {
       const interfaceSource: InterfaceSource = {
         __type: 'interface',
         name: 'MyInterface',
+        accessModifier: 'public',
       };
 
       const result = compile(template, interfaceSource);
 
       expect(result).toBe('MyInterface interface');
+    });
+
+    it('can reference the access modifier', () => {
+      const template = '{{accessModifier}} interface';
+
+      const interfaceSource: InterfaceSource = {
+        __type: 'interface',
+        name: 'MyInterface',
+        accessModifier: 'public',
+      };
+
+      const result = compile(template, interfaceSource);
+
+      expect(result).toBe('public interface');
     });
   });
 
