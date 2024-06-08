@@ -21,10 +21,16 @@ type CustomTag = {
   value: string;
 };
 
+/**
+ * Represents an annotation to a top-level type. For example @NamespaceAccessible.
+ */
+type Annotation = string;
+
 export type InterfaceSource = {
   __type: 'interface';
   name: string;
   accessModifier: string;
+  annotations?: Annotation[];
 };
 
 export type EnumSource = {

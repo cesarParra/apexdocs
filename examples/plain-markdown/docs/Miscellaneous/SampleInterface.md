@@ -1,1 +1,2 @@
 # SampleInterface interface
+Access: `public`

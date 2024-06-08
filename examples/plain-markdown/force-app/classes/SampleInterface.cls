@@ -1,1 +1,2 @@
+@NamespaceAccessible
 public interface SampleInterface {}
