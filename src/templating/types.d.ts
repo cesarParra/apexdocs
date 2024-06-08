@@ -26,22 +26,23 @@ type CustomTag = {
  */
 type Annotation = string;
 
-export type InterfaceSource = {
-  __type: 'interface';
+type BaseTypeSource = {
   name: string;
   accessModifier: string;
-  annotations?: Annotation[];
-};
-
-export type EnumSource = {
-  __type: 'enum';
-  name: string;
-  accessModifier: string;
-  values: EnumValue[];
   description?: RenderableContent[];
   group?: string;
   author?: string;
   date?: string;
   customTags?: CustomTag[];
   sees?: Link[];
+};
+
+export type InterfaceSource = BaseTypeSource & {
+  __type: 'interface';
+  annotations?: Annotation[];
+};
+
+export type EnumSource = BaseTypeSource & {
+  __type: 'enum';
+  values: EnumValue[];
 };

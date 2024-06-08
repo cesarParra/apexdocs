@@ -1,12 +1,14 @@
 import Handlebars from 'handlebars';
 import { EnumSource, ConvertRenderableContentsToString, InterfaceSource } from './types';
 import { splitAndCapitalize } from './helpers';
+import { typeLevelApexDocPartialTemplate } from '../transpiler/markdown/plain-markdown/type-level-apex-doc-partial-template';
 
 type CompileOptions = {
   renderableContentConverter: ConvertRenderableContentsToString;
 };
 
 export function compile(template: string, source: EnumSource | InterfaceSource, options: CompileOptions) {
+  Handlebars.registerPartial('typeLevelApexDocPartialTemplate', typeLevelApexDocPartialTemplate);
   Handlebars.registerHelper('splitAndCapitalize', splitAndCapitalize);
   const prepared = prepare(source, options.renderableContentConverter);
   const compiled = Handlebars.compile(template);
@@ -22,7 +24,7 @@ function prepare(source: EnumSource | InterfaceSource, renderableContentConverte
   if (isEnumSource(source)) {
     return prepareEnum(source, renderableContentConverter);
   } else if (isInterfaceSource(source)) {
-    return prepareInterface(source);
+    return prepareInterface(source, renderableContentConverter);
   }
 }
 
@@ -37,9 +39,10 @@ function prepareEnum(source: EnumSource, renderableContentConverter: ConvertRend
   };
 }
 
-function prepareInterface(source: InterfaceSource) {
+function prepareInterface(source: InterfaceSource, renderableContentConverter: ConvertRenderableContentsToString) {
   return {
     ...source,
+    description: renderableContentConverter(source.description),
   };
 }
 

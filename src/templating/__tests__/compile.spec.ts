@@ -86,6 +86,36 @@ describe('compile', () => {
 
       expect(result).toBe('MyInterface interface MyAnnotation');
     });
+
+    it('can reference the interface name with a description', () => {
+      const template = '{{description}}';
+
+      const interfaceSource: InterfaceSource = {
+        __type: 'interface',
+        name: 'MyInterface',
+        accessModifier: 'public',
+        description: ['An interface of things'],
+      };
+
+      const result = compile(template, interfaceSource);
+
+      expect(result).toBe('An interface of things');
+    });
+
+    it('can reference a description with links', () => {
+      const template = '{{description}}';
+
+      const interfaceSource: InterfaceSource = {
+        __type: 'interface',
+        name: 'MyInterface',
+        accessModifier: 'public',
+        description: ['An interface of things: ', { title: 'More info', url: 'https://example.com' }],
+      };
+
+      const result = compile(template, interfaceSource);
+
+      expect(result).toBe('An interface of things: More info');
+    });
   });
 
   describe('enum', () => {

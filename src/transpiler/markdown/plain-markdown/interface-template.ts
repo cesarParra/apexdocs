@@ -7,4 +7,6 @@ Access: \`{{accessModifier}}\`
 \`@{{this}}\`
 {{/each}}
 {{/if}}
+
+{{> typeLevelApexDocPartialTemplate}}
 `.trim();
