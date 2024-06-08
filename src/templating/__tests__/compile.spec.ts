@@ -1,5 +1,5 @@
 import { compile as testSubject } from '../compile';
-import { EnumSource, Link, RenderableContent } from '../types';
+import { EnumSource, InterfaceSource, Link, RenderableContent } from '../types';
 
 function renderableContentsToString(content?: RenderableContent[]) {
   if (!content) {
@@ -19,7 +19,7 @@ function renderableContentsToString(content?: RenderableContent[]) {
   return content.reduce(reduceDescription, '');
 }
 
-function compile(template: string, source: EnumSource) {
+function compile(template: string, source: EnumSource | InterfaceSource) {
   return testSubject(template, source, {
     renderableContentConverter: renderableContentsToString,
   });
@@ -42,6 +42,22 @@ describe('compile', () => {
       expect(result).toBe('My Enum');
     });
   });
+
+  describe('interface', () => {
+    it('can reference the interface name', () => {
+      const template = '{{name}} interface';
+
+      const interfaceSource: InterfaceSource = {
+        __type: 'interface',
+        name: 'MyInterface',
+      };
+
+      const result = compile(template, interfaceSource);
+
+      expect(result).toBe('MyInterface interface');
+    });
+  });
+
   describe('enum', () => {
     it('can reference the enum name', () => {
       const template = '{{name}} enum';
