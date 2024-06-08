@@ -178,20 +178,20 @@ which is what gets used by this library behind the scenes to generate the docume
 
 ApexDocs picks up blocks of comments throughout your `.cls` files. The block must begin with `/**` and end with `*/`.
 
-### Documenting Classes
+### Documenting Classes and Interfaces
 
-The following tags are supported on the class level:
+The following tags are supported at the class or interface level:
 
 **Note** Any custom generated tag is also supported. Custom tags can be added with at symbol (`@`) followed by the name
 of the tag. For example `@custom-tag`
 
-| Tag            | Description                                                                                                                                |
-|----------------|--------------------------------------------------------------------------------------------------------------------------------------------|
-| `@description` | One or more lines describing the class.                                                                                                    |
-| `@see`         | The name of a related class.                                                                                                               |
-| `@group`       | The group to which the class belongs to.                                                                                                   |
-| `@author`      | The author of the class. Note that this only gets added if it is explicitly defined through the configuration class that it should.        |
-| `@date`        | The date the class was created. Note that this only gets added if it is explicitly defined through the configuration class that it should. |
+| Tag            | Description                              |
+|----------------|------------------------------------------|
+| `@description` | One or more lines describing the class.  |
+| `@see`         | The name of a related class.             |
+| `@group`       | The group to which the class belongs to. |
+| `@author`      | The author of the class.                 |
+| `@date`        | The date the class was created.          |
 
 **Example**
 
@@ -207,13 +207,13 @@ public with sharing class TestClass {
 
 The following tags are supported on the enum level:
 
-| Tag            | Description                                                                                                                               |
-|----------------|-------------------------------------------------------------------------------------------------------------------------------------------|
-| `@description` | One or more lines describing the enum.                                                                                                    |
-| `@see`         | The name of a related class, enum, or interface.                                                                                          |
-| `@group`       | The group to which the enum belongs to.                                                                                                   |
-| `@author`      | The author of the enum. Note that this only gets added if it is explicitly defined through the configuration class that it should.        |
-| `@date`        | The date the enum was created. Note that this only gets added if it is explicitly defined through the configuration class that it should. |
+| Tag            | Description                                      |
+|----------------|--------------------------------------------------|
+| `@description` | One or more lines describing the enum.           |
+| `@see`         | The name of a related class, enum, or interface. |
+| `@group`       | The group to which the enum belongs to.          |
+| `@author`      | The author of the enum.                          |
+| `@date`        | The date the enum was created.                   |
 
 **Example**
 

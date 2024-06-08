@@ -9,6 +9,8 @@ This description has several lines
 
 **Author** John Doe
 
+**Date** 2022-01-01
+
 **Some Custom** Test
 
 **See** [ReferencedEnum](../Miscellaneous/ReferencedEnum.md)
