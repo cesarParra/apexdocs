@@ -6,7 +6,7 @@ import { Settings } from '../../../settings';
 import ClassFileGeneratorHelper from '../class-file-generatorHelper';
 import { enumMarkdownTemplate } from './enum-template';
 import { compile } from '../../../templating/compile';
-import { EmptyLine, Link, RenderableContent } from '../../../templating/types';
+import { EmptyLine, EnumSource, InterfaceSource, Link, RenderableContent } from '../../../templating/types';
 import { MarkdownTypeFile } from '../../../model/markdown-type-file';
 import { enumTypeToEnumSource } from '../../../mirror-to-template-adapter/enum-adapter';
 import { interfaceTypeToInterfaceSource } from '../../../mirror-to-template-adapter/interface-adapter';
@@ -23,47 +23,33 @@ export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
 
   onProcess(type: Type): void {
     if (type.type_name === 'enum') {
-      this._fileContainer.pushFile(new EnumFile(type as EnumMirror));
+      this._fileContainer.pushFile(
+        new GenericFile<EnumMirror>(type as EnumMirror, enumTypeToEnumSource, enumMarkdownTemplate),
+      );
     } else if (type.type_name === 'interface') {
-      this._fileContainer.pushFile(new InterfaceFile(type as InterfaceMirror));
+      this._fileContainer.pushFile(
+        new GenericFile<InterfaceMirror>(
+          type as InterfaceMirror,
+          interfaceTypeToInterfaceSource,
+          interfaceMarkdownTemplate,
+        ),
+      );
     } else {
       this._fileContainer.pushFile(new MarkdownTypeFile(type));
     }
   }
 }
 
-// TODO: These classes should be combined and we can use generics to figure out what to return
-
-class EnumFile extends OutputFile {
-  constructor(private type: EnumMirror) {
+class GenericFile<T extends Type> extends OutputFile {
+  constructor(private type: T, toSource: (type: T) => EnumSource | InterfaceSource, template: string) {
     super(
       `${Settings.getInstance().getNamespacePrefix()}${type.name}`,
       ClassFileGeneratorHelper.getSanitizedGroup(type),
     );
 
-    const enumSource = enumTypeToEnumSource(type);
+    const source = toSource(type);
     this.addText(
-      compile(enumMarkdownTemplate, enumSource, {
-        renderableContentConverter: prepareDescription,
-      }),
-    );
-  }
-
-  fileExtension(): string {
-    return '.md';
-  }
-}
-
-class InterfaceFile extends OutputFile {
-  constructor(private type: InterfaceMirror) {
-    super(
-      `${Settings.getInstance().getNamespacePrefix()}${type.name}`,
-      ClassFileGeneratorHelper.getSanitizedGroup(type),
-    );
-
-    const interfaceSource = interfaceTypeToInterfaceSource(type);
-    this.addText(
-      compile(interfaceMarkdownTemplate, interfaceSource, {
+      compile(template, source, {
         renderableContentConverter: prepareDescription,
       }),
     );

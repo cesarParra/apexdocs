@@ -24,6 +24,7 @@ type CustomTag = {
 export type InterfaceSource = {
   __type: 'interface';
   name: string;
+  accessModifier: string;
 };
 
 export type EnumSource = {
