@@ -1,3 +1,4 @@
+// TODO: What about modifiers (public, global, etc.)
 export const enumMarkdownTemplate = `
 # {{name}} enum
 {{description}}
@@ -20,5 +21,10 @@ export const enumMarkdownTemplate = `
 
 {{#each sees}}
 **See** [{{title}}]({{url}})
+{{/each}}
+
+{{#each values}}
+## {{value}}
+{{description}}
 {{/each}}
 `.trim();
