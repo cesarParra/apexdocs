@@ -1,5 +1,7 @@
 export const enumMarkdownTemplate = `
 # {{name}} enum
+Access: \`{{accessModifier}}\`
+
 {{description}}
 
 {{#if group}}
@@ -20,5 +22,10 @@ export const enumMarkdownTemplate = `
 
 {{#each sees}}
 **See** [{{title}}]({{url}})
+{{/each}}
+
+{{#each values}}
+## {{value}}
+{{description}}
 {{/each}}
 `.trim();

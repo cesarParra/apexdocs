@@ -4,6 +4,7 @@
  * This description has several lines
  * @group Sample Enums
  * @author John Doe
+ * @date 2022-01-01
  * @some-custom Test
  * @see ReferencedEnum
  */

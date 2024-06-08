@@ -1,27 +1,37 @@
-import { EnumMirror } from '@cparra/apex-reflection';
+import { DocComment, EnumMirror } from '@cparra/apex-reflection';
 import { EnumSource, RenderableContent } from '../templating/types';
 import { linkFromTypeNameGenerator, replaceInlineReferences } from './references';
 
 export function enumTypeToEnumSource(enumType: EnumMirror): EnumSource {
   return {
+    accessModifier: enumType.access_modifier,
     name: enumType.name,
-    values: [],
-    description: enumType.docComment?.descriptionLines
-      ? enumType.docComment.descriptionLines
-          .map<RenderableContent[]>((line) => [
-            ...replaceInlineReferences(line),
-            {
-              type: 'empty-line',
-            },
-          ])
-          .flatMap((line) => line)
-      : [],
+    values: enumType.values.map((value) => ({
+      value: value.name,
+      description: docCommentDescriptionToRenderableContent(value.docComment),
+    })),
+    description: docCommentDescriptionToRenderableContent(enumType.docComment),
     group: extractAnnotation(enumType, 'group'),
     author: extractAnnotation(enumType, 'author'),
     date: extractAnnotation(enumType, 'date'),
     customTags: extractCustomTags(enumType),
     sees: extractSeeAnnotations(enumType).map(linkFromTypeNameGenerator),
   };
+}
+
+function docCommentDescriptionToRenderableContent(
+  description: DocComment | undefined,
+): RenderableContent[] | undefined {
+  return description?.descriptionLines
+    ? description.descriptionLines
+        .map<RenderableContent[]>((line) => [
+          ...replaceInlineReferences(line),
+          {
+            type: 'empty-line',
+          },
+        ])
+        .flatMap((line) => line)
+    : undefined;
 }
 
 function extractAnnotation(enumType: EnumMirror, annotationName: string): string | undefined {

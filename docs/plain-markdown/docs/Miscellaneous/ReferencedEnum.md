@@ -1,1 +1,2 @@
 # ReferencedEnum enum
+Access: `public`

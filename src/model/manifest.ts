@@ -38,7 +38,7 @@ export default class Manifest {
         properties: this.filterAccessibleModifier(currentClass.properties, modifiers),
         fields: this.filterAccessibleModifier(currentClass.fields, modifiers),
         constructors: this.filterAccessibleModifier(currentClass.constructors, modifiers),
-      };
+      } as ClassMirror;
 
       if (!this.isForInnerTypes) {
         filteredClass = {
@@ -57,8 +57,8 @@ export default class Manifest {
     return typesToReturn;
   }
 
-  filterAccessibleModifier(accessAndDocAwares: AccessAndDocAware[], modifiers: string[]) {
-    return accessAndDocAwares.filter((currentType) => {
+  filterAccessibleModifier(accessAndDocAware: AccessAndDocAware[], modifiers: string[]) {
+    return accessAndDocAware.filter((currentType) => {
       const hasIgnoreDocAnnotation = currentType.docComment?.annotations.some(
         (annotation: DocCommentAnnotation) => annotation.name === 'ignore',
       );

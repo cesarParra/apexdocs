@@ -23,6 +23,7 @@ type CustomTag = {
 
 export type EnumSource = {
   name: string;
+  accessModifier: string;
   values: EnumValue[];
   description?: RenderableContent[];
   group?: string;
