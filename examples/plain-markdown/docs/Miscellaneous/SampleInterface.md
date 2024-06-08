@@ -1,1 +1,1 @@
-# SampleInterface
+# SampleInterface interface

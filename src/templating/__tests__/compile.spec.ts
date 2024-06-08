@@ -30,7 +30,8 @@ describe('compile', () => {
     it('can split and capitalize text', () => {
       const template = '{{splitAndCapitalize name}}';
 
-      const enumSource = {
+      const enumSource: EnumSource = {
+        __type: 'enum',
         accessModifier: 'public',
         name: 'my-enum',
         values: [],
@@ -45,7 +46,8 @@ describe('compile', () => {
     it('can reference the enum name', () => {
       const template = '{{name}} enum';
 
-      const enumSource = {
+      const enumSource: EnumSource = {
+        __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',
         values: [],
@@ -59,7 +61,8 @@ describe('compile', () => {
     it('can reference the access modifier', () => {
       const template = '{{accessModifier}} enum';
 
-      const enumSource = {
+      const enumSource: EnumSource = {
+        __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',
         values: [],
@@ -73,7 +76,8 @@ describe('compile', () => {
     it('can reference the enum name with a description', () => {
       const template = '{{description}}';
 
-      const enumSource = {
+      const enumSource: EnumSource = {
+        __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',
         values: [],
@@ -88,7 +92,8 @@ describe('compile', () => {
     it('can reference a description with links', () => {
       const template = '{{description}}';
 
-      const enumSource = {
+      const enumSource: EnumSource = {
+        __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',
         values: [],
@@ -103,7 +108,8 @@ describe('compile', () => {
     it('can reference enum values', () => {
       const template = '{{#each values}}{{value}}{{/each}}';
 
-      const enumSource = {
+      const enumSource: EnumSource = {
+        __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',
         values: [{ value: 'Value1' }, { value: 'Value2' }],
@@ -117,7 +123,8 @@ describe('compile', () => {
     it('can reference enum values with a description', () => {
       const template = '{{#each values}}{{value}} - {{description}}{{/each}}';
 
-      const enumSource = {
+      const enumSource: EnumSource = {
+        __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',
         values: [
@@ -134,7 +141,8 @@ describe('compile', () => {
     it('can reference a group reference', () => {
       const template = '** Group {{group}}';
 
-      const enumSource = {
+      const enumSource: EnumSource = {
+        __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',
         values: [],
@@ -149,7 +157,8 @@ describe('compile', () => {
     it('can reference an author reference', () => {
       const template = '** Author {{author}}';
 
-      const enumSource = {
+      const enumSource: EnumSource = {
+        __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',
         values: [],
@@ -164,7 +173,8 @@ describe('compile', () => {
     it('can reference a date reference', () => {
       const template = '** Date {{date}}';
 
-      const enumSource = {
+      const enumSource: EnumSource = {
+        __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',
         values: [],
@@ -179,7 +189,8 @@ describe('compile', () => {
     it('can reference custom tags', () => {
       const template = '{{#each customTags}}**{{name}}** {{value}}{{/each}}';
 
-      const enumSource = {
+      const enumSource: EnumSource = {
+        __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',
         values: [],
@@ -194,7 +205,8 @@ describe('compile', () => {
     it('can reference see references', () => {
       const template = '{{#each sees}}**See** [{{title}}]({{url}}){{/each}}';
 
-      const enumSource = {
+      const enumSource: EnumSource = {
+        __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',
         values: [],

@@ -21,7 +21,13 @@ type CustomTag = {
   value: string;
 };
 
+export type InterfaceSource = {
+  __type: 'interface';
+  name: string;
+};
+
 export type EnumSource = {
+  __type: 'enum';
   name: string;
   accessModifier: string;
   values: EnumValue[];

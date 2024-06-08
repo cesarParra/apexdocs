@@ -4,6 +4,7 @@ import { linkFromTypeNameGenerator, replaceInlineReferences } from './references
 
 export function enumTypeToEnumSource(enumType: EnumMirror): EnumSource {
   return {
+    __type: 'enum',
     accessModifier: enumType.access_modifier,
     name: enumType.name,
     values: enumType.values.map((value) => ({
