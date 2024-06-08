@@ -3,6 +3,9 @@
 
 ### [ReferencedEnum](./Miscellaneous/ReferencedEnum.md)
 
+
+### [SampleInterface](./Miscellaneous/SampleInterface.md)
+
 ## Sample Enums
 
 ### [SampleEnum](./Sample-Enums/SampleEnum.md)
