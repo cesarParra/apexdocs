@@ -37,7 +37,7 @@ export function extractSeeAnnotations(type: Type): string[] {
   );
 }
 
-const baseTags = ['description', 'group', 'author', 'date', 'see'];
+const baseTags = ['description', 'group', 'author', 'date', 'see', 'example', 'mermaid', 'throws', 'exception'];
 
 export function extractCustomTags(type: Type): { name: string; value: string }[] {
   return (
