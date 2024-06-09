@@ -41,6 +41,7 @@ export type InterfaceSource = BaseTypeSource & {
   __type: 'interface';
   annotations?: Annotation[];
   extends?: Link[];
+  mermaid?: string[];
 };
 
 export type EnumSource = BaseTypeSource & {

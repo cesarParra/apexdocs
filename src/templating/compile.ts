@@ -5,12 +5,13 @@ import { typeLevelApexDocPartialTemplate } from '../transpiler/markdown/plain-ma
 
 type CompileOptions = {
   renderableContentConverter: ConvertRenderableContentsToString;
+  codeBlockConverter: (language: string, lines: string[]) => string;
 };
 
 export function compile(template: string, source: EnumSource | InterfaceSource, options: CompileOptions) {
   Handlebars.registerPartial('typeLevelApexDocPartialTemplate', typeLevelApexDocPartialTemplate);
   Handlebars.registerHelper('splitAndCapitalize', splitAndCapitalize);
-  const prepared = prepare(source, options.renderableContentConverter);
+  const prepared = prepare(source, options);
   const compiled = Handlebars.compile(template);
   return (
     compiled(prepared)
@@ -20,11 +21,14 @@ export function compile(template: string, source: EnumSource | InterfaceSource, 
   );
 }
 
-function prepare(source: EnumSource | InterfaceSource, renderableContentConverter: ConvertRenderableContentsToString) {
+function prepare(
+  source: EnumSource | InterfaceSource,
+  { renderableContentConverter, codeBlockConverter }: CompileOptions,
+) {
   if (isEnumSource(source)) {
     return prepareEnum(source, renderableContentConverter);
   } else if (isInterfaceSource(source)) {
-    return prepareInterface(source, renderableContentConverter);
+    return prepareInterface(source, renderableContentConverter, codeBlockConverter);
   }
 }
 
@@ -39,10 +43,15 @@ function prepareEnum(source: EnumSource, renderableContentConverter: ConvertRend
   };
 }
 
-function prepareInterface(source: InterfaceSource, renderableContentConverter: ConvertRenderableContentsToString) {
+function prepareInterface(
+  source: InterfaceSource,
+  renderableContentConverter: ConvertRenderableContentsToString,
+  codeBlockConverter: (language: string, lines: string[]) => string,
+) {
   return {
     ...source,
     description: renderableContentConverter(source.description),
+    mermaid: source.mermaid ? codeBlockConverter('mermaid', source.mermaid) : undefined,
   };
 }
 

@@ -19,9 +19,14 @@ function renderableContentsToString(content?: RenderableContent[]) {
   return content.reduce(reduceDescription, '');
 }
 
+function linesToCodeBlock(_: string, lines: string[]): string {
+  return lines.join('\n');
+}
+
 function compile(template: string, source: EnumSource | InterfaceSource) {
   return testSubject(template, source, {
     renderableContentConverter: renderableContentsToString,
+    codeBlockConverter: linesToCodeBlock,
   });
 }
 
@@ -133,6 +138,21 @@ describe('compile', () => {
       const result = compile(template, interfaceSource);
 
       expect(result).toBe('MyInterface, MyOtherInterface');
+    });
+
+    it('can have a mermaid block at the top level description', () => {
+      const template = '{{{mermaid}}}';
+
+      const interfaceSource: InterfaceSource = {
+        __type: 'interface',
+        name: 'MyInterface',
+        accessModifier: 'public',
+        mermaid: ['graph TD;', 'A-->B;', 'A-->C;'],
+      };
+
+      const result = compile(template, interfaceSource);
+
+      expect(result).toBe('graph TD;\nA-->B;\nA-->C;');
     });
   });
 
