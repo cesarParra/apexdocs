@@ -22,5 +22,6 @@ export function interfaceTypeToInterfaceSource(interfaceType: InterfaceMirror): 
     date: extractAnnotation(interfaceType, 'date'),
     customTags: extractCustomTags(interfaceType),
     sees: extractSeeAnnotations(interfaceType).map(linkFromTypeNameGenerator),
+    extends: interfaceType.extended_interfaces.map(linkFromTypeNameGenerator),
   };
 }

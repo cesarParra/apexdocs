@@ -116,6 +116,24 @@ describe('compile', () => {
 
       expect(result).toBe('An interface of things: More info');
     });
+
+    it('can reference the extended interfaces of an interface', () => {
+      const template = '{{#each extends}}{{title}}{{#unless @last}}, {{/unless}}{{/each}}';
+
+      const interfaceSource: InterfaceSource = {
+        __type: 'interface',
+        name: 'MyInterface',
+        accessModifier: 'public',
+        extends: [
+          { title: 'MyInterface', url: 'https://example.com' },
+          { title: 'MyOtherInterface', url: 'https://example.com' },
+        ],
+      };
+
+      const result = compile(template, interfaceSource);
+
+      expect(result).toBe('MyInterface, MyOtherInterface');
+    });
   });
 
   describe('enum', () => {

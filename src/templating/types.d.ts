@@ -40,6 +40,7 @@ type BaseTypeSource = {
 export type InterfaceSource = BaseTypeSource & {
   __type: 'interface';
   annotations?: Annotation[];
+  extends?: Link[];
 };
 
 export type EnumSource = BaseTypeSource & {

@@ -6,4 +6,6 @@
  * @see ReferencedEnum
  */
 @NamespaceAccessible
-public interface SampleInterface {}
+public interface SampleInterface extends ParentInterface {
+    void sampleMethod();
+}

@@ -1,6 +1,9 @@
 # SampleInterface interface
 Access: `public`
 
+**Extends**
+[ParentInterface](./ParentInterface.md)
+
 `@NAMESPACEACCESSIBLE`
 
 This is a sample interface
