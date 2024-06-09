@@ -51,6 +51,7 @@ class GenericFile<T extends Type> extends OutputFile {
     this.addText(
       compile(template, source, {
         renderableContentConverter: prepareDescription,
+        codeBlockConverter: convertCodeBlock,
       }),
     );
   }
@@ -84,4 +85,12 @@ function prepareDescription(description?: RenderableContent[]) {
   }
 
   return description.reduce(reduceDescription, '');
+}
+
+function convertCodeBlock(language: string, lines: string[]): string {
+  return `
+\`\`\`${language}
+${lines.join('\n')}
+\`\`\`
+  `.trim();
 }

@@ -2,7 +2,8 @@ import { InterfaceMirror } from '@cparra/apex-reflection';
 import { InterfaceSource } from '../templating/types';
 import {
   docCommentDescriptionToRenderableContent,
-  extractAnnotation,
+  extractAnnotationBody,
+  extractAnnotationBodyLines,
   extractCustomTags,
   extractSeeAnnotations,
 } from './apex-doc-adapters';
@@ -17,11 +18,12 @@ export function interfaceTypeToInterfaceSource(interfaceType: InterfaceMirror): 
     accessModifier: interfaceType.access_modifier,
     annotations: interfaceType.annotations.map((annotation) => annotation.type.toUpperCase()),
     description: docCommentDescriptionToRenderableContent(interfaceType.docComment),
-    group: extractAnnotation(interfaceType, 'group'),
-    author: extractAnnotation(interfaceType, 'author'),
-    date: extractAnnotation(interfaceType, 'date'),
+    group: extractAnnotationBody(interfaceType, 'group'),
+    author: extractAnnotationBody(interfaceType, 'author'),
+    date: extractAnnotationBody(interfaceType, 'date'),
     customTags: extractCustomTags(interfaceType),
     sees: extractSeeAnnotations(interfaceType).map(linkFromTypeNameGenerator),
     extends: interfaceType.extended_interfaces.map(linkFromTypeNameGenerator),
+    mermaid: extractAnnotationBodyLines(interfaceType, 'mermaid'),
   };
 }

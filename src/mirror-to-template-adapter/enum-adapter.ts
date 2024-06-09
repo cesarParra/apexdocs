@@ -3,7 +3,7 @@ import { EnumSource } from '../templating/types';
 import { linkFromTypeNameGenerator } from './references';
 import {
   docCommentDescriptionToRenderableContent,
-  extractAnnotation,
+  extractAnnotationBody,
   extractCustomTags,
   extractSeeAnnotations,
 } from './apex-doc-adapters';
@@ -18,9 +18,9 @@ export function enumTypeToEnumSource(enumType: EnumMirror): EnumSource {
       description: docCommentDescriptionToRenderableContent(value.docComment),
     })),
     description: docCommentDescriptionToRenderableContent(enumType.docComment),
-    group: extractAnnotation(enumType, 'group'),
-    author: extractAnnotation(enumType, 'author'),
-    date: extractAnnotation(enumType, 'date'),
+    group: extractAnnotationBody(enumType, 'group'),
+    author: extractAnnotationBody(enumType, 'author'),
+    date: extractAnnotationBody(enumType, 'date'),
     customTags: extractCustomTags(enumType),
     sees: extractSeeAnnotations(enumType).map(linkFromTypeNameGenerator),
   };

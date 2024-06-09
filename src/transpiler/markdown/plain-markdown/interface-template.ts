@@ -16,4 +16,6 @@ Access: \`{{accessModifier}}\`
 {{/if}}
 
 {{> typeLevelApexDocPartialTemplate}}
+
+{{{mermaid}}}
 `.trim();

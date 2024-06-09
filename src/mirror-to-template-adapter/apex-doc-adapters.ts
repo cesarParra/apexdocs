@@ -1,4 +1,4 @@
-import { DocComment, EnumMirror, Type } from '@cparra/apex-reflection';
+import { DocComment, Type } from '@cparra/apex-reflection';
 import { RenderableContent } from '../templating/types';
 import { replaceInlineReferences } from './references';
 
@@ -17,10 +17,16 @@ export function docCommentDescriptionToRenderableContent(
     : undefined;
 }
 
-export function extractAnnotation(type: Type, annotationName: string): string | undefined {
+export function extractAnnotationBody(type: Type, annotationName: string): string | undefined {
   return type.docComment?.annotations.find(
     (currentAnnotation) => currentAnnotation.name.toLowerCase() === annotationName,
   )?.body;
+}
+
+export function extractAnnotationBodyLines(type: Type, annotationName: string): string[] | undefined {
+  return type.docComment?.annotations.find(
+    (currentAnnotation) => currentAnnotation.name.toLowerCase() === annotationName,
+  )?.bodyLines;
 }
 
 export function extractSeeAnnotations(type: Type): string[] {
