@@ -18,4 +18,14 @@ Access: \`{{accessModifier}}\`
 {{> typeLevelApexDocPartialTemplate}}
 
 {{{mermaid}}}
+
+{{#if methods}}
+## Methods
+{{#each methods}}
+### \`{{declaration}}\`
+
+{{#unless @last}}---{{/unless}}
+
+{{/each}}
+{{/if}}
 `.trim();

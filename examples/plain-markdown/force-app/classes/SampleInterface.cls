@@ -12,5 +12,6 @@
  */
 @NamespaceAccessible
 public interface SampleInterface extends ParentInterface {
-    void sampleMethod();
+    String sampleMethod();
+    String sampleMethodWithParams(String param1, Integer param2);
 }

@@ -37,11 +37,16 @@ type BaseTypeSource = {
   sees?: Link[];
 };
 
+type MethodSource = {
+  declaration: string;
+};
+
 export type InterfaceSource = BaseTypeSource & {
   __type: 'interface';
   annotations?: Annotation[];
   extends?: Link[];
   mermaid?: string[];
+  methods?: MethodSource[];
 };
 
 export type EnumSource = BaseTypeSource & {

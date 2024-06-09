@@ -154,6 +154,21 @@ describe('compile', () => {
 
       expect(result).toBe('graph TD;\nA-->B;\nA-->C;');
     });
+
+    it('can display methods', () => {
+      const template = '{{#each methods}}{{declaration}}{{/each}}';
+
+      const interfaceSource: InterfaceSource = {
+        __type: 'interface',
+        name: 'MyInterface',
+        accessModifier: 'public',
+        methods: [{ declaration: 'void myMethod()' }],
+      };
+
+      const result = compile(template, interfaceSource);
+
+      expect(result).toBe('void myMethod()');
+    });
   });
 
   describe('enum', () => {

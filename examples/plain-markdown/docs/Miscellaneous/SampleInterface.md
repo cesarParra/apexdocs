@@ -22,3 +22,10 @@ graph TD
    B --&gt;|extends| C[GrandParentInterface]
    C --&gt;|extends| D[GreatGrandParentInterface]
 ```
+
+## Methods
+### `public String sampleMethod()`
+
+---
+
+### `public String sampleMethodWithParams(String param1, Integer param2)`
