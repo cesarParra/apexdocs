@@ -26,14 +26,14 @@ export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
       this._fileContainer.pushFile(
         new GenericFile<EnumMirror>(type as EnumMirror, enumTypeToEnumSource, enumMarkdownTemplate),
       );
-    } else if (type.type_name === 'interface') {
-      this._fileContainer.pushFile(
-        new GenericFile<InterfaceMirror>(
-          type as InterfaceMirror,
-          interfaceTypeToInterfaceSource,
-          interfaceMarkdownTemplate,
-        ),
-      );
+      //} else if (type.type_name === 'interface') {
+      //  this._fileContainer.pushFile(
+      //    new GenericFile<InterfaceMirror>(
+      //      type as InterfaceMirror,
+      //      interfaceTypeToInterfaceSource,
+      //      interfaceMarkdownTemplate,
+      //    ),
+      //  );
     } else {
       this._fileContainer.pushFile(new MarkdownTypeFile(type));
     }

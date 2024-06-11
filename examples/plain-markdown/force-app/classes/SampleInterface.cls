@@ -12,6 +12,17 @@
  */
 @NamespaceAccessible
 public interface SampleInterface extends ParentInterface {
+    /**
+     * @description This is a sample method
+     * @return String
+     */
     String sampleMethod();
+
+    /**
+     * @description This is a sample method with parameters
+     * @param param1 This is the first parameter
+     * @param param2 This is the second parameter
+     * @return String
+     */
     String sampleMethodWithParams(String param1, Integer param2);
 }

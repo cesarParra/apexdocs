@@ -169,6 +169,21 @@ describe('compile', () => {
 
       expect(result).toBe('void myMethod()');
     });
+
+    it('can display methods with a description', () => {
+      const template = '{{#each methods}}{{declaration}} - {{description}}{{/each}}';
+
+      const interfaceSource: InterfaceSource = {
+        __type: 'interface',
+        name: 'MyInterface',
+        accessModifier: 'public',
+        methods: [{ declaration: 'void myMethod()', description: ['The method'] }],
+      };
+
+      const result = compile(template, interfaceSource);
+
+      expect(result).toBe('void myMethod() - The method');
+    });
   });
 
   describe('enum', () => {

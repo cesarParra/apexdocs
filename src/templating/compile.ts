@@ -52,6 +52,10 @@ function prepareInterface(
     ...source,
     description: renderableContentConverter(source.description),
     mermaid: source.mermaid ? codeBlockConverter('mermaid', source.mermaid) : undefined,
+    methods: source.methods?.map((method) => ({
+      ...method,
+      description: renderableContentConverter(method.description),
+    })),
   };
 }
 
