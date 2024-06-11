@@ -28,6 +28,7 @@ export function interfaceTypeToInterfaceSource(interfaceType: InterfaceMirror): 
     mermaid: extractAnnotationBodyLines(interfaceType, 'mermaid'),
     methods: interfaceType.methods.map((method) => ({
       declaration: buildDeclaration(method as MethodMirrorWithInheritance),
+      description: docCommentDescriptionToRenderableContent(method.docComment),
     })),
   };
 }
