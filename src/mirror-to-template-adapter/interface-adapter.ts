@@ -32,30 +32,8 @@ export function interfaceTypeToInterfaceSource(interfaceType: InterfaceMirror): 
   };
 }
 
-// TODO: Unit test all of this and then refactor
 function buildDeclaration(method: MethodMirrorWithInheritance): string {
-  const signatureName = `${(method as MethodMirrorWithInheritance).typeReference.rawDeclaration} ${
-    (method as MethodMirrorWithInheritance).name
-  }`;
-
-  return buildSignature(method.access_modifier, signatureName, method);
-}
-
-function buildSignature(accessModifier: string, name: string, parameterAware: MethodMirrorWithInheritance): string {
-  let signature = `${name}(`;
-  if ((parameterAware as MethodMirrorWithInheritance).memberModifiers.length) {
-    signature =
-      accessModifier +
-      ' ' +
-      (parameterAware as MethodMirrorWithInheritance).memberModifiers.join(' ') +
-      ' ' +
-      signature;
-  } else {
-    signature = accessModifier + ' ' + signature;
-  }
-  const signatureParameters = parameterAware.parameters.map(
-    (param) => `${param.typeReference.rawDeclaration} ${param.name}`,
-  );
-  signature += signatureParameters.join(', ');
-  return `${signature})`;
+  const { access_modifier, typeReference, name } = method;
+  const parameters = method.parameters.map((param) => `${param.typeReference.rawDeclaration} ${param.name}`).join(', ');
+  return `${access_modifier} ${typeReference.rawDeclaration} ${name}(${parameters})`;
 }

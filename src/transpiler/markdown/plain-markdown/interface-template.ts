@@ -11,7 +11,7 @@ Access: \`{{accessModifier}}\`
 
 {{#if annotations}}
 {{#each annotations}}
-\`@{{this}}\`
+\`{{this}}\`
 {{/each}}
 {{/if}}
 

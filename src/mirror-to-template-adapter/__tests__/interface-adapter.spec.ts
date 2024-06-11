@@ -1,6 +1,7 @@
 import { InterfaceMirrorBuilder } from '../../test-helpers/InterfaceMirrorBuilder';
 import { interfaceTypeToInterfaceSource } from '../interface-adapter';
 import { AnnotationBuilder } from '../../test-helpers/AnnotationBuilder';
+import { MethodMirrorBuilder, ParameterBuilder } from '../../test-helpers/MethodMirrorBuilder';
 
 describe('Conversion from InterfaceMirror to InterfaceSource understandable by the templating engine', () => {
   it('converts the name', () => {
@@ -24,5 +25,58 @@ describe('Conversion from InterfaceMirror to InterfaceSource understandable by t
     const interfaceSource = interfaceTypeToInterfaceSource(interfaceMirror);
 
     expect(interfaceSource.annotations).toEqual(['MYANNOTATION']);
+  });
+
+  it('converts method declarations. Method with no parameters', () => {
+    const interfaceMirror = new InterfaceMirrorBuilder()
+      .addMethod(
+        new MethodMirrorBuilder()
+          .withName('sampleMethod')
+          .withTypeReference({
+            type: 'String',
+            rawDeclaration: 'String',
+          })
+          .build(),
+      )
+      .build();
+
+    const interfaceSource = interfaceTypeToInterfaceSource(interfaceMirror);
+
+    expect(interfaceSource.methods).toEqual([
+      {
+        declaration: 'public String sampleMethod()',
+      },
+    ]);
+  });
+
+  it('converts method declarations. Method with parameters', () => {
+    const interfaceMirror = new InterfaceMirrorBuilder()
+      .addMethod(
+        new MethodMirrorBuilder()
+          .withName('sampleMethod')
+          .withTypeReference({
+            type: 'String',
+            rawDeclaration: 'String',
+          })
+          .addParameter(
+            new ParameterBuilder()
+              .withName('param1')
+              .withTypeReference({
+                type: 'String',
+                rawDeclaration: 'String',
+              })
+              .build(),
+          )
+          .build(),
+      )
+      .build();
+
+    const interfaceSource = interfaceTypeToInterfaceSource(interfaceMirror);
+
+    expect(interfaceSource.methods).toEqual([
+      {
+        declaration: 'public String sampleMethod(String param1)',
+      },
+    ]);
   });
 });
