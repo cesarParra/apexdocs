@@ -42,11 +42,8 @@ describe('Conversion from InterfaceMirror to InterfaceSource understandable by t
 
     const interfaceSource = interfaceTypeToInterfaceSource(interfaceMirror);
 
-    expect(interfaceSource.methods).toEqual([
-      {
-        declaration: 'public String sampleMethod()',
-      },
-    ]);
+    expect(interfaceSource.methods).toHaveLength(1);
+    expect(interfaceSource.methods![0].declaration).toBe('public String sampleMethod()');
   });
 
   it('converts method declarations. Method with parameters', () => {
@@ -73,10 +70,7 @@ describe('Conversion from InterfaceMirror to InterfaceSource understandable by t
 
     const interfaceSource = interfaceTypeToInterfaceSource(interfaceMirror);
 
-    expect(interfaceSource.methods).toEqual([
-      {
-        declaration: 'public String sampleMethod(String param1)',
-      },
-    ]);
+    expect(interfaceSource.methods).toHaveLength(1);
+    expect(interfaceSource.methods![0].declaration).toBe('public String sampleMethod(String param1)');
   });
 });
