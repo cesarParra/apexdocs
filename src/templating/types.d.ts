@@ -40,6 +40,7 @@ type BaseTypeSource = {
 type MethodSource = {
   declaration: string;
   description?: RenderableContent[];
+  annotations?: Annotation[];
 };
 
 export type InterfaceSource = BaseTypeSource & {

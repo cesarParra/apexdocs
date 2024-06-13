@@ -184,6 +184,21 @@ describe('compile', () => {
 
       expect(result).toBe('void myMethod() - The method');
     });
+
+    it('can display annotations of a method', () => {
+      const template = '{{#each methods}}{{#each annotations}}{{this}}{{/each}}{{/each}}';
+
+      const interfaceSource: InterfaceSource = {
+        __type: 'interface',
+        name: 'MyInterface',
+        accessModifier: 'public',
+        methods: [{ declaration: 'void myMethod()', annotations: ['MyAnnotation'] }],
+      };
+
+      const result = compile(template, interfaceSource);
+
+      expect(result).toBe('MyAnnotation');
+    });
   });
 
   describe('enum', () => {

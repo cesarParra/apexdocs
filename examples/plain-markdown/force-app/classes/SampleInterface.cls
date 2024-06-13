@@ -24,5 +24,6 @@ public interface SampleInterface extends ParentInterface {
      * @param param2 This is the second parameter
      * @return String
      */
+    @Deprecated
     String sampleMethodWithParams(String param1, Integer param2);
 }
