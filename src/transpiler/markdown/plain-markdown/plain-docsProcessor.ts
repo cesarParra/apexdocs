@@ -6,11 +6,12 @@ import { Settings } from '../../../settings';
 import ClassFileGeneratorHelper from '../class-file-generatorHelper';
 import { enumMarkdownTemplate } from './enum-template';
 import { compile } from '../../../templating/compile';
-import { EmptyLine, EnumSource, InterfaceSource, Link, RenderableContent } from '../../../templating/types';
+import { EnumSource, InterfaceSource, Link, RenderableContent } from '../../../templating/types';
 import { MarkdownTypeFile } from '../../../model/markdown-type-file';
 import { enumTypeToEnumSource } from '../../../mirror-to-template-adapter/enum-adapter';
 import { interfaceTypeToInterfaceSource } from '../../../mirror-to-template-adapter/interface-adapter';
 import { interfaceMarkdownTemplate } from './interface-template';
+import { isEmptyLine } from '../../../mirror-to-template-adapter/apex-doc-adapters';
 
 export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
   homeFileName(): string {
@@ -74,10 +75,6 @@ function prepareDescription(description?: RenderableContent[]) {
     } else {
       return acc + linkToMarkdown(curr);
     }
-  }
-
-  function isEmptyLine(content: RenderableContent): content is EmptyLine {
-    return Object.keys(content).includes('type') && (content as { type: string }).type === 'empty-line';
   }
 
   function linkToMarkdown(link: Link) {

@@ -30,6 +30,15 @@ Access: \`{{accessModifier}}\`
 
 {{description}}
 
+{{#if parameters}}
+#### Parameters
+| Name | Type | Description |
+|------|------|-------------|
+{{#each parameters}}
+| {{name}} | {{type}} | {{description}} |
+{{/each}}
+{{/if}}
+
 {{#unless @last}}---{{/unless}}
 
 {{/each}}

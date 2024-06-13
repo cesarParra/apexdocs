@@ -1,20 +1,27 @@
-import { DocComment, Type } from '@cparra/apex-reflection';
-import { RenderableContent } from '../templating/types';
+import { Type } from '@cparra/apex-reflection';
+import { EmptyLine, RenderableContent } from '../templating/types';
 import { replaceInlineReferences } from './references';
 
+// TODO: Rename to documentationLinesToRenderableContent
 export function docCommentDescriptionToRenderableContent(
-  description: DocComment | undefined,
+  documentationLines: string[] | undefined,
 ): RenderableContent[] | undefined {
-  return description?.descriptionLines
-    ? description.descriptionLines
-        .map<RenderableContent[]>((line) => [
-          ...replaceInlineReferences(line),
-          {
-            type: 'empty-line',
-          },
-        ])
-        .flatMap((line) => line)
-    : undefined;
+  if (!documentationLines) {
+    return;
+  }
+
+  return (
+    documentationLines
+      .map<RenderableContent[]>((line) => [
+        ...replaceInlineReferences(line),
+        {
+          type: 'empty-line',
+        },
+      ])
+      .flatMap((line) => line)
+      // If the last element is an empty line, remove it
+      .filter((line, index, lines) => !(isEmptyLine(line) && index === lines.length - 1))
+  );
 }
 
 export function extractAnnotationBody(type: Type, annotationName: string): string | undefined {
@@ -48,4 +55,8 @@ export function extractCustomTags(type: Type): { name: string; value: string }[]
         value: currentAnnotation.body,
       })) ?? []
   );
+}
+
+export function isEmptyLine(content: RenderableContent): content is EmptyLine {
+  return Object.keys(content).includes('type') && (content as { type: string }).type === 'empty-line';
 }

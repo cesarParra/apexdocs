@@ -18,7 +18,7 @@ export function interfaceTypeToInterfaceSource(interfaceType: InterfaceMirror): 
     name: interfaceType.name,
     accessModifier: interfaceType.access_modifier,
     annotations: interfaceType.annotations.map((annotation) => annotation.type.toUpperCase()),
-    description: docCommentDescriptionToRenderableContent(interfaceType.docComment),
+    description: docCommentDescriptionToRenderableContent(interfaceType.docComment?.descriptionLines),
     group: extractAnnotationBody(interfaceType, 'group'),
     author: extractAnnotationBody(interfaceType, 'author'),
     date: extractAnnotationBody(interfaceType, 'date'),
@@ -28,8 +28,20 @@ export function interfaceTypeToInterfaceSource(interfaceType: InterfaceMirror): 
     mermaid: extractAnnotationBodyLines(interfaceType, 'mermaid'),
     methods: interfaceType.methods.map((method) => ({
       declaration: buildDeclaration(method as MethodMirrorWithInheritance),
-      description: docCommentDescriptionToRenderableContent(method.docComment),
+      description: docCommentDescriptionToRenderableContent(method.docComment?.descriptionLines),
       annotations: method.annotations.map((annotation) => annotation.type.toUpperCase()),
+      parameters: method.parameters.map((param) => {
+        const paramAnnotation = method.docComment?.paramAnnotations.find(
+          (pa) => pa.paramName.toLowerCase() === param.name.toLowerCase(),
+        );
+        return {
+          name: param.name,
+          type: param.typeReference.rawDeclaration,
+          description: paramAnnotation
+            ? docCommentDescriptionToRenderableContent(paramAnnotation.bodyLines)
+            : undefined,
+        };
+      }),
     })),
   };
 }

@@ -15,9 +15,9 @@ export function enumTypeToEnumSource(enumType: EnumMirror): EnumSource {
     name: enumType.name,
     values: enumType.values.map((value) => ({
       value: value.name,
-      description: docCommentDescriptionToRenderableContent(value.docComment),
+      description: docCommentDescriptionToRenderableContent(value.docComment?.descriptionLines),
     })),
-    description: docCommentDescriptionToRenderableContent(enumType.docComment),
+    description: docCommentDescriptionToRenderableContent(enumType.docComment?.descriptionLines),
     group: extractAnnotationBody(enumType, 'group'),
     author: extractAnnotationBody(enumType, 'author'),
     date: extractAnnotationBody(enumType, 'date'),
