@@ -1,1 +1,2 @@
-# ParentInterface
+# ParentInterface interface
+Access: `public`

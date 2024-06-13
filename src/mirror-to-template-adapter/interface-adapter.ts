@@ -29,6 +29,7 @@ export function interfaceTypeToInterfaceSource(interfaceType: InterfaceMirror): 
     methods: interfaceType.methods.map((method) => ({
       declaration: buildDeclaration(method as MethodMirrorWithInheritance),
       description: docCommentDescriptionToRenderableContent(method.docComment),
+      annotations: method.annotations.map((annotation) => annotation.type.toUpperCase()),
     })),
   };
 }

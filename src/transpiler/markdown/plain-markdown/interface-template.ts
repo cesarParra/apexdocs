@@ -24,6 +24,10 @@ Access: \`{{accessModifier}}\`
 {{#each methods}}
 ### \`{{declaration}}\`
 
+{{#each annotations}}
+\`{{this}}\`
+{{/each}}
+
 {{description}}
 
 {{#unless @last}}---{{/unless}}
