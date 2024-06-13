@@ -199,6 +199,25 @@ describe('compile', () => {
 
       expect(result).toBe('MyAnnotation');
     });
+
+    it('can display the parameters of a method', () => {
+      const template = '{{#each methods}}{{#each parameters}}{{name}} - {{description}}{{/each}}{{/each}}';
+
+      const parameters = [
+        { name: 'arg1', type: 'String', description: ['The first argument'] },
+        { name: 'arg2', type: 'Integer' },
+      ];
+      const interfaceSource: InterfaceSource = {
+        __type: 'interface',
+        name: 'MyInterface',
+        accessModifier: 'public',
+        methods: [{ declaration: 'void myMethod(String arg1, Integer arg2)', parameters }],
+      };
+
+      const result = compile(template, interfaceSource);
+
+      expect(result).toBe('arg1 - The first argumentarg2 -');
+    });
   });
 
   describe('enum', () => {

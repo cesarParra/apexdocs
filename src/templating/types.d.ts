@@ -37,10 +37,17 @@ type BaseTypeSource = {
   sees?: Link[];
 };
 
+type MethodParameterSource = {
+  name: string;
+  type: string;
+  description?: RenderableContent[];
+};
+
 type MethodSource = {
   declaration: string;
   description?: RenderableContent[];
   annotations?: Annotation[];
+  parameters?: MethodParameterSource[];
 };
 
 export type InterfaceSource = BaseTypeSource & {
