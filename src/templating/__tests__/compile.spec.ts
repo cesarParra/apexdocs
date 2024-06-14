@@ -218,6 +218,29 @@ describe('compile', () => {
 
       expect(result).toBe('arg1 - The first argumentarg2 -');
     });
+
+    it('can display the return value of a method', () => {
+      const template = '{{#each methods}}{{returnType.type}}{{/each}}';
+
+      const interfaceSource: InterfaceSource = {
+        __type: 'interface',
+        name: 'MyInterface',
+        accessModifier: 'public',
+        methods: [
+          {
+            declaration: 'String myMethod()',
+            returnType: {
+              type: 'String',
+              description: ['The return value'],
+            },
+          },
+        ],
+      };
+
+      const result = compile(template, interfaceSource);
+
+      expect(result).toBe('String');
+    });
   });
 
   describe('enum', () => {

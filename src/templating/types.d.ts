@@ -43,11 +43,17 @@ type MethodParameterSource = {
   description?: RenderableContent[];
 };
 
+type MethodReturnTypeSource = {
+  type: string;
+  description?: RenderableContent[];
+};
+
 type MethodSource = {
   declaration: string;
   description?: RenderableContent[];
   annotations?: Annotation[];
   parameters?: MethodParameterSource[];
+  returnType?: MethodReturnTypeSource;
 };
 
 export type InterfaceSource = BaseTypeSource & {

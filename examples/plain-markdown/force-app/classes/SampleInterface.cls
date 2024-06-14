@@ -14,7 +14,7 @@
 public interface SampleInterface extends ParentInterface {
     /**
      * @description This is a sample method
-     * @return String
+     * @return Some return value
      */
     String sampleMethod();
 
@@ -22,8 +22,8 @@ public interface SampleInterface extends ParentInterface {
      * @description This is a sample method with parameters
      * @param param1 This is the first parameter
      * @param param2 This is the second parameter
-     * @return String
+     * @return Some return value
      */
     @Deprecated
-    String sampleMethodWithParams(String param1, Integer param2);
+    SampleEnum sampleMethodWithParams(String param1, Integer param2);
 }

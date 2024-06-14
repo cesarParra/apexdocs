@@ -39,6 +39,11 @@ Access: \`{{accessModifier}}\`
 {{/each}}
 {{/if}}
 
+{{#if returnType}}
+#### Returns
+{{returnType.type}}: {{returnType.description}}
+{{/if}}
+
 {{#unless @last}}---{{/unless}}
 
 {{/each}}

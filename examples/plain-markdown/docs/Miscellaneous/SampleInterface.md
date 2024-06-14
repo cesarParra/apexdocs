@@ -1,5 +1,4 @@
 # SampleInterface interface
-
 Access: `public`
 
 **Extends**
@@ -25,24 +24,28 @@ graph TD
 ```
 
 ## Methods
-
 ### `public String sampleMethod()`
 
 `NAMESPACEACCESSIBLE`
 
 This is a sample method
 
+#### Returns
+String: Some return value
+
 ---
 
-### `public String sampleMethodWithParams(String param1, Integer param2)`
+### `public SampleEnum sampleMethodWithParams(String param1, Integer param2)`
 
 `NAMESPACEACCESSIBLE`
 
 This is a sample method with parameters
 
 #### Parameters
-
-| Name   | Type    | Description                  |
-|--------|---------|------------------------------|
-| param1 | String  | This is the first parameter  |
+| Name | Type | Description |
+|------|------|-------------|
+| param1 | String | This is the first parameter |
 | param2 | Integer | This is the second parameter |
+
+#### Returns
+SampleEnum: Some return value
