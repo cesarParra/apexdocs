@@ -15,6 +15,7 @@ export const typeLevelApexDocPartialTemplate = `
 
 {{#each customTags}}
 **{{splitAndCapitalize name}}** {{value}}
+
 {{/each}}
 
 {{#each sees}}

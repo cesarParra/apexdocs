@@ -36,6 +36,12 @@ String: Some return value
 #### Throws
 SampleException: This is a sample exception
 
+AnotherSampleException: This is another sample exception
+
+**Custom Tag** This is a custom tag
+
+**Another Custom Tag** This is another custom tag
+
 ---
 
 ### `public SampleEnum sampleMethodWithParams(String param1, Integer param2)`

@@ -50,6 +50,7 @@ export function interfaceTypeToInterfaceSource(interfaceType: InterfaceMirror): 
             : undefined,
         };
       }),
+      customTags: extractCustomTags(method),
     })),
   };
 }

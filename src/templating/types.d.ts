@@ -55,6 +55,7 @@ type MethodSource = {
   parameters?: MethodParameterSource[];
   returnType?: TypeSource;
   throws?: TypeSource[];
+  customTags?: CustomTag[];
 };
 
 export type InterfaceSource = BaseTypeSource & {

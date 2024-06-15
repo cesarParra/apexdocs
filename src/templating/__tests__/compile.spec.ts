@@ -261,6 +261,26 @@ describe('compile', () => {
 
       expect(result).toBe('IOException');
     });
+
+    it('can display custom tags in a method', () => {
+      const template = '{{#each methods}}{{#each customTags}}{{name}} - {{value}}{{/each}}{{/each}}';
+
+      const interfaceSource: InterfaceSource = {
+        __type: 'interface',
+        name: 'MyInterface',
+        accessModifier: 'public',
+        methods: [
+          {
+            declaration: 'void myMethod()',
+            customTags: [{ name: 'CustomTag', value: 'My custom tag' }],
+          },
+        ],
+      };
+
+      const result = compile(template, interfaceSource);
+
+      expect(result).toBe('CustomTag - My custom tag');
+    });
   });
 
   describe('enum', () => {

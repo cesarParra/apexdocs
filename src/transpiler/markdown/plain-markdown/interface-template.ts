@@ -48,8 +48,14 @@ Access: \`{{accessModifier}}\`
 #### Throws
 {{#each throws}}
 {{this.type}}: {{this.description}}
+
 {{/each}}
 {{/if}}
+
+{{#each customTags}}
+**{{splitAndCapitalize name}}** {{value}}
+
+{{/each}}
 
 {{#unless @last}}---{{/unless}}
 
