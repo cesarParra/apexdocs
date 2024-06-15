@@ -32,8 +32,12 @@ export function interfaceTypeToInterfaceSource(interfaceType: InterfaceMirror): 
       annotations: method.annotations.map((annotation) => annotation.type.toUpperCase()),
       returnType: {
         type: method.typeReference.rawDeclaration,
-        description: docCommentDescriptionToRenderableContent(method.docComment?.returnAnnotation.bodyLines),
+        description: docCommentDescriptionToRenderableContent(method.docComment?.returnAnnotation?.bodyLines),
       },
+      throws: method.docComment?.throwsAnnotations.map((thrown) => ({
+        type: thrown.exceptionName,
+        description: docCommentDescriptionToRenderableContent(thrown.bodyLines),
+      })),
       parameters: method.parameters.map((param) => {
         const paramAnnotation = method.docComment?.paramAnnotations.find(
           (pa) => pa.paramName.toLowerCase() === param.name.toLowerCase(),

@@ -59,6 +59,10 @@ function prepareInterface(
         ...method.returnType,
         description: renderableContentConverter(method.returnType?.description),
       },
+      throws: method.throws?.map((thrown) => ({
+        ...thrown,
+        description: renderableContentConverter(thrown.description),
+      })),
       parameters: method.parameters?.map((param) => ({
         ...param,
         description: renderableContentConverter(param.description),

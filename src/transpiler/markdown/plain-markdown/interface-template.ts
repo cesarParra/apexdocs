@@ -44,6 +44,13 @@ Access: \`{{accessModifier}}\`
 {{returnType.type}}: {{returnType.description}}
 {{/if}}
 
+{{#if throws}}
+#### Throws
+{{#each throws}}
+{{this.type}}: {{this.description}}
+{{/each}}
+{{/if}}
+
 {{#unless @last}}---{{/unless}}
 
 {{/each}}

@@ -33,6 +33,9 @@ This is a sample method
 #### Returns
 String: Some return value
 
+#### Throws
+SampleException: This is a sample exception
+
 ---
 
 ### `public SampleEnum sampleMethodWithParams(String param1, Integer param2)`

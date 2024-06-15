@@ -241,6 +241,26 @@ describe('compile', () => {
 
       expect(result).toBe('String');
     });
+
+    it('can display the exceptions that a method throws', () => {
+      const template = '{{#each methods}}{{#each throws}}{{type}}{{/each}}{{/each}}';
+
+      const interfaceSource: InterfaceSource = {
+        __type: 'interface',
+        name: 'MyInterface',
+        accessModifier: 'public',
+        methods: [
+          {
+            declaration: 'void myMethod()',
+            throws: [{ type: 'IOException', description: ['An exception'] }],
+          },
+        ],
+      };
+
+      const result = compile(template, interfaceSource);
+
+      expect(result).toBe('IOException');
+    });
   });
 
   describe('enum', () => {

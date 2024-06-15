@@ -15,6 +15,7 @@ public interface SampleInterface extends ParentInterface {
     /**
      * @description This is a sample method
      * @return Some return value
+     * @throws SampleException This is a sample exception
      */
     String sampleMethod();
 
