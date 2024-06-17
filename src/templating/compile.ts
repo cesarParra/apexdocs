@@ -41,6 +41,10 @@ function prepareBase(
     description: renderableContentConverter(source.description),
     mermaid: source.mermaid ? codeBlockConverter('mermaid', source.mermaid) : undefined,
     example: source.example ? codeBlockConverter('apex', source.example) : undefined,
+    customTags: source.customTags?.map((tag) => ({
+      name: tag.name,
+      value: renderableContentConverter(tag.value),
+    })),
   };
 }
 

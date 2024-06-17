@@ -1,5 +1,5 @@
 import { DocComment, Type } from '@cparra/apex-reflection';
-import { EmptyLine, RenderableContent } from '../templating/types';
+import { CustomTag, EmptyLine, RenderableContent } from '../templating/types';
 import { replaceInlineReferences } from './references';
 
 type DocCommentsAware = { docComment?: DocComment };
@@ -47,13 +47,13 @@ export function extractSeeAnnotations(type: Type): string[] {
 
 const baseTags = ['description', 'group', 'author', 'date', 'see', 'example', 'mermaid', 'throws', 'exception'];
 
-export function extractCustomTags(type: DocCommentsAware): { name: string; value: string }[] {
+export function extractCustomTags(type: DocCommentsAware): CustomTag[] {
   return (
     type.docComment?.annotations
       .filter((currentAnnotation) => !baseTags.includes(currentAnnotation.name.toLowerCase()))
-      .map((currentAnnotation) => ({
+      .map<CustomTag>((currentAnnotation) => ({
         name: currentAnnotation.name,
-        value: currentAnnotation.body,
+        value: documentationLinesToRenderableContent(currentAnnotation.bodyLines)!,
       })) ?? []
   );
 }

@@ -20,7 +20,7 @@ type EnumValue = {
 
 type CustomTag = {
   name: string;
-  value: string;
+  value: RenderableContent[];
 };
 
 /**

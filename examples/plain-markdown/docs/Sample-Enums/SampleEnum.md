@@ -14,7 +14,9 @@ This description has several lines
 
 **Date** 2022-01-01
 
-**Some Custom** Test
+**Some Custom** Test. I can also have a [ReferencedEnum](../Miscellaneous/ReferencedEnum.md) here. 
+
+And it can be multiline.
 
 **See** [ReferencedEnum](../Miscellaneous/ReferencedEnum.md)
 

@@ -5,7 +5,8 @@
  * @group Sample Enums
  * @author John Doe
  * @date 2022-01-01
- * @some-custom Test
+ * @some-custom Test. I can also have a {@link ReferencedEnum} here.
+ *                    And it can be multiline.
  * @see ReferencedEnum
  * @mermaid
  * graph TD
