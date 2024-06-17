@@ -9,7 +9,6 @@ export const splitAndCapitalize = (text: string) => {
   return capitalizedWords.join(' ');
 };
 
-export const namespacedName = (name: string) => {
-  const namespace = Settings.getInstance().getNamespacePrefix();
-  return namespace ? `${namespace}${name}` : name;
+export const namespace = () => {
+  return Settings.getInstance().getNamespace();
 };

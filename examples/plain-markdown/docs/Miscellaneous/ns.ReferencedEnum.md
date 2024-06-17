@@ -1,3 +1,6 @@
-# ns.ReferencedEnum enum
+# ReferencedEnum Enum
 
 Access: `public`
+
+## Namespace
+ns

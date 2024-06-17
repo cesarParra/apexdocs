@@ -1,6 +1,11 @@
 export const typeLevelApexDocPartialTemplate = `
 Access: \`{{accessModifier}}\`
 
+{{#if namespace}}
+## Namespace
+{{namespace}}
+{{/if}}
+
 {{#if annotations}}
 {{#each annotations}}
 \`{{this}}\`

@@ -1,5 +1,5 @@
 export const enumMarkdownTemplate = `
-# {{namespacedName name}} enum
+# {{name}} Enum
 
 {{> typeLevelApexDocPartialTemplate}}
 

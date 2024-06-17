@@ -1,5 +1,5 @@
 export const interfaceMarkdownTemplate = `
-# {{namespacedName name}} interface
+# {{name}} Interface
 
 {{> typeLevelApexDocPartialTemplate}}
 
@@ -13,7 +13,7 @@ export const interfaceMarkdownTemplate = `
 {{#if methods}}
 ## Methods
 {{#each methods}}
-### \`{{declaration}}\`
+### \`{{title}}\`
 
 {{#if inherited}}
 *Inherited*
@@ -25,8 +25,13 @@ export const interfaceMarkdownTemplate = `
 
 {{description}}
 
+### Signature
+\`\`\`apex
+{{signature}}
+\`\`\` 
+
 {{#if parameters}}
-#### Parameters
+### Parameters
 | Name | Type | Description |
 |------|------|-------------|
 {{#each parameters}}
@@ -35,14 +40,14 @@ export const interfaceMarkdownTemplate = `
 {{/if}}
 
 {{#if returnType}}
-#### Returns
+### Returns
 **{{returnType.type}}**
 
 {{returnType.description}}
 {{/if}}
 
 {{#if throws}}
-#### Throws
+### Throws
 {{#each throws}}
 {{this.type}}: {{this.description}}
 

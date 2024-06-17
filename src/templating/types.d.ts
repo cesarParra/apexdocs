@@ -58,7 +58,8 @@ type TypeSource = {
 };
 
 type MethodSource = BaseDocAwareSource & {
-  declaration: string;
+  title: string;
+  signature: string;
   annotations?: Annotation[];
   parameters?: MethodParameterSource[];
   returnType?: TypeSource;

@@ -1,9 +1,17 @@
-# ns.ParentInterface interface
+# ParentInterface Interface
 
 Access: `public`
 
-## Methods
-### `public void sampleParentMethod()`
+## Namespace
+ns
 
-#### Returns
+## Methods
+### `sampleParentMethod()`
+
+### Signature
+```apex
+public void sampleParentMethod()
+``` 
+
+### Returns
 **void**

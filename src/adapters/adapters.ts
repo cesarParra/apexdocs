@@ -1,5 +1,5 @@
 import { EnumMirror, InterfaceMirror, MethodMirror } from '@cparra/apex-reflection';
-import { EnumSource, InterfaceSource } from '../templating/types';
+import { EnumSource, InterfaceSource, MethodSource } from '../templating/types';
 import { linkFromTypeNameGenerator } from './references';
 import {
   documentationLinesToRenderableContent,
@@ -46,9 +46,10 @@ export function interfaceTypeToInterfaceSource(interfaceType: InterfaceMirror): 
   };
 }
 
-function adaptMethod(method: MethodMirror) {
+function adaptMethod(method: MethodMirror): MethodSource {
   return {
-    declaration: buildDeclaration(method as MethodMirrorWithInheritance),
+    title: buildTitle(method as MethodMirrorWithInheritance),
+    signature: buildSignature(method as MethodMirrorWithInheritance),
     description: documentationLinesToRenderableContent(method.docComment?.descriptionLines),
     annotations: method.annotations.map((annotation) => annotation.type.toUpperCase()),
     returnType: {
@@ -76,7 +77,13 @@ function adaptMethod(method: MethodMirror) {
   };
 }
 
-function buildDeclaration(method: MethodMirrorWithInheritance): string {
+function buildTitle(method: MethodMirrorWithInheritance): string {
+  const { name, parameters } = method;
+  const parametersString = parameters.map((param) => param.name).join(', ');
+  return `${name}(${parametersString})`;
+}
+
+function buildSignature(method: MethodMirrorWithInheritance): string {
   const { access_modifier, typeReference, name } = method;
   const parameters = method.parameters.map((param) => `${param.typeReference.rawDeclaration} ${param.name}`).join(', ');
   return `${access_modifier} ${typeReference.rawDeclaration} ${name}(${parameters})`;

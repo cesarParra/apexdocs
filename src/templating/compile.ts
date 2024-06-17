@@ -1,6 +1,6 @@
 import Handlebars from 'handlebars';
 import { EnumSource, ConvertRenderableContentsToString, InterfaceSource } from './types';
-import { namespacedName, splitAndCapitalize } from './helpers';
+import { namespace, splitAndCapitalize } from './helpers';
 import { typeLevelApexDocPartialTemplate } from '../transpiler/markdown/plain-markdown/type-level-apex-doc-partial-template';
 
 type CompileOptions = {
@@ -11,9 +11,8 @@ type CompileOptions = {
 export function compile(template: string, source: EnumSource | InterfaceSource, options: CompileOptions) {
   Handlebars.registerPartial('typeLevelApexDocPartialTemplate', typeLevelApexDocPartialTemplate);
   Handlebars.registerHelper('splitAndCapitalize', splitAndCapitalize);
-  Handlebars.registerHelper('namespacedName', namespacedName);
 
-  const prepared = prepare(source, options);
+  const prepared = { ...prepare(source, options), namespace: namespace() };
   const compiled = Handlebars.compile(template);
   return (
     compiled(prepared)

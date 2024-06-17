@@ -1,6 +1,9 @@
-# ns.SampleEnum enum
+# SampleEnum Enum
 
 Access: `public`
+
+## Namespace
+ns
 
 `NAMESPACEACCESSIBLE`
 
