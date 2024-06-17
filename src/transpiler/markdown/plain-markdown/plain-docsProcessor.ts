@@ -68,11 +68,11 @@ function prepareDescription(description?: RenderableContent[]) {
 
   function reduceDescription(acc: string, curr: RenderableContent) {
     if (typeof curr === 'string') {
-      return acc + curr;
+      return acc + curr.trim() + ' ';
     } else if (isEmptyLine(curr)) {
       return acc + '\n\n';
     } else {
-      return acc + linkToMarkdown(curr);
+      return acc + linkToMarkdown(curr) + ' ';
     }
   }
 
@@ -80,7 +80,7 @@ function prepareDescription(description?: RenderableContent[]) {
     return `[${link.title}](${link.url})`;
   }
 
-  return description.reduce(reduceDescription, '');
+  return description.reduce(reduceDescription, '').trim();
 }
 
 function convertCodeBlock(language: string, lines: string[]): string {

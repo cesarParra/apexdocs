@@ -35,6 +35,7 @@ public interface SampleInterface extends ParentInterface {
 
     /**
      * @description This is a sample method with parameters
+     *              Sometimes it won't be possible to find a {@link NonExistent} link.
      * @param param1 This is the first parameter
      * @param param2 This is the second parameter
      * @return Some return value
