@@ -48,7 +48,7 @@ type BaseTypeSource = BaseDocAwareSource & {
 
 type MethodParameterSource = {
   name: string;
-  type: string;
+  type: StringOrLink;
   description?: RenderableContent[];
 };
 

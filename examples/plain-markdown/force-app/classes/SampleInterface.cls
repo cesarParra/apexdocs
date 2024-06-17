@@ -38,8 +38,9 @@ public interface SampleInterface extends ParentInterface {
      *              Sometimes it won't be possible to find a {@link NonExistent} link.
      * @param param1 This is the first parameter
      * @param param2 This is the second parameter
+     * @param theEnum This is an enum parameter
      * @return Some return value
      */
     @Deprecated
-    SampleEnum sampleMethodWithParams(String param1, Integer param2);
+    SampleEnum sampleMethodWithParams(String param1, Integer param2, SampleEnum theEnum);
 }

@@ -86,6 +86,7 @@ function prepareInterface(
       })),
       parameters: method.parameters?.map((param) => ({
         ...param,
+        type: renderableContentConverter([param.type]),
         description: renderableContentConverter(param.description),
       })),
       mermaid: method.mermaid ? codeBlockConverter('mermaid', method.mermaid) : undefined,

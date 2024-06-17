@@ -63,7 +63,7 @@ sampleInterface.sampleMethod();
 
 ---
 
-### `public SampleEnum sampleMethodWithParams(String param1, Integer param2)`
+### `public SampleEnum sampleMethodWithParams(String param1, Integer param2, SampleEnum theEnum)`
 
 `NAMESPACEACCESSIBLE`
 `DEPRECATED`
@@ -77,6 +77,7 @@ Sometimes it won&#x27;t be possible to find a NonExistent link.
 |------|------|-------------|
 | param1 | String | This is the first parameter |
 | param2 | Integer | This is the second parameter |
+| theEnum | [SampleEnum](../Sample-Enums/SampleEnum.md) | This is an enum parameter |
 
 #### Returns
 **[SampleEnum](../Sample-Enums/SampleEnum.md)**

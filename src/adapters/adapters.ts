@@ -65,7 +65,7 @@ function adaptMethod(method: MethodMirror) {
       );
       return {
         name: param.name,
-        type: param.typeReference.rawDeclaration,
+        type: linkFromTypeNameGenerator(param.typeReference.rawDeclaration),
         description: paramAnnotation ? documentationLinesToRenderableContent(paramAnnotation.bodyLines) : undefined,
       };
     }),
