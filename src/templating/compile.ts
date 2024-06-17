@@ -32,6 +32,18 @@ function prepare(
   }
 }
 
+function prepareBase(
+  source: EnumSource | InterfaceSource,
+  renderableContentConverter: ConvertRenderableContentsToString,
+  codeBlockConverter: (language: string, lines: string[]) => string,
+) {
+  return {
+    description: renderableContentConverter(source.description),
+    mermaid: source.mermaid ? codeBlockConverter('mermaid', source.mermaid) : undefined,
+    example: source.example ? codeBlockConverter('apex', source.example) : undefined,
+  };
+}
+
 function prepareEnum(
   source: EnumSource,
   renderableContentConverter: ConvertRenderableContentsToString,
@@ -39,12 +51,11 @@ function prepareEnum(
 ) {
   return {
     ...source,
+    ...prepareBase(source, renderableContentConverter, codeBlockConverter),
     values: source.values.map((value) => ({
       value: value.value,
       description: renderableContentConverter(value.description),
     })),
-    description: renderableContentConverter(source.description),
-    mermaid: source.mermaid ? codeBlockConverter('mermaid', source.mermaid) : undefined,
   };
 }
 
@@ -55,8 +66,7 @@ function prepareInterface(
 ) {
   return {
     ...source,
-    description: renderableContentConverter(source.description),
-    mermaid: source.mermaid ? codeBlockConverter('mermaid', source.mermaid) : undefined,
+    ...prepareBase(source, renderableContentConverter, codeBlockConverter),
     methods: source.methods?.map((method) => ({
       ...method,
       description: renderableContentConverter(method.description),

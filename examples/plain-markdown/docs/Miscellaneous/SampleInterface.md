@@ -20,6 +20,11 @@ graph TD
    B --&gt;|extends| C[GrandParentInterface]
    C --&gt;|extends| D[GreatGrandParentInterface]
 ```
+
+```apex
+SampleInterface sampleInterface = new SampleInterface();
+sampleInterface.sampleMethod();
+```
 **Extends**
 [ParentInterface](./ParentInterface.md)
 

@@ -28,6 +28,8 @@ type Annotation = string;
 
 type CodeBlock = string[];
 
+// TODO: Refactor. We can have a base doc that can be used accross anything that supports descriptions, examples, etc.
+// and then an extension for the types
 type BaseTypeSource = {
   name: string;
   accessModifier: string;
@@ -38,6 +40,7 @@ type BaseTypeSource = {
   customTags?: CustomTag[];
   sees?: Link[];
   mermaid?: CodeBlock;
+  example?: CodeBlock;
 };
 
 type MethodParameterSource = {
