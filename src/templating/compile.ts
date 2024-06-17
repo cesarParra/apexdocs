@@ -1,14 +1,17 @@
 import Handlebars from 'handlebars';
-import { EnumSource, ConvertRenderableContentsToString } from './types';
+import { EnumSource, ConvertRenderableContentsToString, InterfaceSource } from './types';
 import { splitAndCapitalize } from './helpers';
+import { typeLevelApexDocPartialTemplate } from '../transpiler/markdown/plain-markdown/type-level-apex-doc-partial-template';
 
 type CompileOptions = {
   renderableContentConverter: ConvertRenderableContentsToString;
+  codeBlockConverter: (language: string, lines: string[]) => string;
 };
 
-export function compile(template: string, source: EnumSource, options: CompileOptions) {
+export function compile(template: string, source: EnumSource | InterfaceSource, options: CompileOptions) {
+  Handlebars.registerPartial('typeLevelApexDocPartialTemplate', typeLevelApexDocPartialTemplate);
   Handlebars.registerHelper('splitAndCapitalize', splitAndCapitalize);
-  const prepared = prepare(source, options.renderableContentConverter);
+  const prepared = prepare(source, options);
   const compiled = Handlebars.compile(template);
   return (
     compiled(prepared)
@@ -18,7 +21,18 @@ export function compile(template: string, source: EnumSource, options: CompileOp
   );
 }
 
-function prepare(source: EnumSource, renderableContentConverter: ConvertRenderableContentsToString) {
+function prepare(
+  source: EnumSource | InterfaceSource,
+  { renderableContentConverter, codeBlockConverter }: CompileOptions,
+) {
+  if (isEnumSource(source)) {
+    return prepareEnum(source, renderableContentConverter);
+  } else if (isInterfaceSource(source)) {
+    return prepareInterface(source, renderableContentConverter, codeBlockConverter);
+  }
+}
+
+function prepareEnum(source: EnumSource, renderableContentConverter: ConvertRenderableContentsToString) {
   return {
     ...source,
     values: source.values.map((value) => ({
@@ -27,4 +41,42 @@ function prepare(source: EnumSource, renderableContentConverter: ConvertRenderab
     })),
     description: renderableContentConverter(source.description),
   };
+}
+
+function prepareInterface(
+  source: InterfaceSource,
+  renderableContentConverter: ConvertRenderableContentsToString,
+  codeBlockConverter: (language: string, lines: string[]) => string,
+) {
+  return {
+    ...source,
+    description: renderableContentConverter(source.description),
+    mermaid: source.mermaid ? codeBlockConverter('mermaid', source.mermaid) : undefined,
+    methods: source.methods?.map((method) => ({
+      ...method,
+      description: renderableContentConverter(method.description),
+      returnType: {
+        ...method.returnType,
+        description: renderableContentConverter(method.returnType?.description),
+      },
+      throws: method.throws?.map((thrown) => ({
+        ...thrown,
+        description: renderableContentConverter(thrown.description),
+      })),
+      parameters: method.parameters?.map((param) => ({
+        ...param,
+        description: renderableContentConverter(param.description),
+      })),
+      mermaid: method.mermaid ? codeBlockConverter('mermaid', method.mermaid) : undefined,
+      example: method.example ? codeBlockConverter('apex', method.example) : undefined,
+    })),
+  };
+}
+
+function isEnumSource(source: EnumSource | InterfaceSource): source is EnumSource {
+  return source.__type === 'enum';
+}
+
+function isInterfaceSource(source: EnumSource | InterfaceSource): source is InterfaceSource {
+  return source.__type === 'interface';
 }

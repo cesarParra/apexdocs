@@ -1,7 +1,16 @@
 # Classes
 ## Miscellaneous
 
+### [ParentInterface](./Miscellaneous/ParentInterface.md)
+
+
 ### [ReferencedEnum](./Miscellaneous/ReferencedEnum.md)
+
+
+### [SampleInterface](./Miscellaneous/SampleInterface.md)
+
+This is a sample interface
+
 
 ## Sample Enums
 

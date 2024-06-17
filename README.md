@@ -276,6 +276,7 @@ The following tags are supported on the method level:
 | `@example`                   | Example of how the code can be used or called.    |
 | `@throws` _ExceptionName_    | Description of an exception thrown by the method. |
 | `@exception` _ExceptionName_ | Same as `@throws`. V2 only                        |
+| `@mermaid`                   | Diagrams in Mermaid format.                       |
 
 **Example**
 

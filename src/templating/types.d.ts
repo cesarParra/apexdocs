@@ -21,14 +21,57 @@ type CustomTag = {
   value: string;
 };
 
-export type EnumSource = {
+/**
+ * Represents an annotation to a top-level type. For example @NamespaceAccessible.
+ */
+type Annotation = string;
+
+type CodeBlock = string[];
+
+type BaseTypeSource = {
   name: string;
   accessModifier: string;
-  values: EnumValue[];
   description?: RenderableContent[];
   group?: string;
   author?: string;
   date?: string;
   customTags?: CustomTag[];
   sees?: Link[];
+};
+
+type MethodParameterSource = {
+  name: string;
+  type: string;
+  description?: RenderableContent[];
+};
+
+type TypeSource = {
+  type: string;
+  description?: RenderableContent[];
+};
+
+type MethodSource = {
+  declaration: string;
+  description?: RenderableContent[];
+  annotations?: Annotation[];
+  parameters?: MethodParameterSource[];
+  returnType?: TypeSource;
+  throws?: TypeSource[];
+  customTags?: CustomTag[];
+  mermaid?: CodeBlock;
+  example?: CodeBlock;
+  inherited?: boolean;
+};
+
+export type InterfaceSource = BaseTypeSource & {
+  __type: 'interface';
+  annotations?: Annotation[];
+  extends?: Link[];
+  mermaid?: CodeBlock;
+  methods?: MethodSource[];
+};
+
+export type EnumSource = BaseTypeSource & {
+  __type: 'enum';
+  values: EnumValue[];
 };
