@@ -8,8 +8,7 @@ import { enumMarkdownTemplate } from './enum-template';
 import { compile } from '../../../templating/compile';
 import { EnumSource, InterfaceSource, Link, RenderableContent } from '../../../templating/types';
 import { MarkdownTypeFile } from '../../../model/markdown-type-file';
-import { enumTypeToEnumSource } from '../../../mirror-to-template-adapter/enum-adapter';
-import { interfaceTypeToInterfaceSource } from '../../../mirror-to-template-adapter/interface-adapter';
+import { enumTypeToEnumSource, interfaceTypeToInterfaceSource } from '../../../mirror-to-template-adapter/adapters';
 import { interfaceMarkdownTemplate } from './interface-template';
 import { isEmptyLine } from '../../../mirror-to-template-adapter/apex-doc-adapters';
 

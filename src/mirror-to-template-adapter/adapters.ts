@@ -1,0 +1,80 @@
+import { EnumMirror, InterfaceMirror, MethodMirror } from '@cparra/apex-reflection';
+import { EnumSource, InterfaceSource } from '../templating/types';
+import { linkFromTypeNameGenerator } from './references';
+import {
+  documentationLinesToRenderableContent,
+  extractAnnotationBody,
+  extractAnnotationBodyLines,
+  extractCustomTags,
+  extractSeeAnnotations,
+} from './apex-doc-adapters';
+import { MethodMirrorWithInheritance } from '../model/inheritance';
+
+function baseAdapter(type: EnumMirror | InterfaceMirror) {
+  return {
+    accessModifier: type.access_modifier,
+    name: type.name,
+    annotations: type.annotations.map((annotation) => annotation.type.toUpperCase()),
+    description: documentationLinesToRenderableContent(type.docComment?.descriptionLines),
+    group: extractAnnotationBody(type, 'group'),
+    author: extractAnnotationBody(type, 'author'),
+    date: extractAnnotationBody(type, 'date'),
+    customTags: extractCustomTags(type),
+    sees: extractSeeAnnotations(type).map(linkFromTypeNameGenerator),
+    mermaid: extractAnnotationBodyLines(type, 'mermaid'),
+  };
+}
+
+export function enumTypeToEnumSource(enumType: EnumMirror): EnumSource {
+  return {
+    __type: 'enum',
+    ...baseAdapter(enumType),
+    values: enumType.values.map((value) => ({
+      value: value.name,
+      description: documentationLinesToRenderableContent(value.docComment?.descriptionLines),
+    })),
+  };
+}
+
+export function interfaceTypeToInterfaceSource(interfaceType: InterfaceMirror): InterfaceSource {
+  return {
+    __type: 'interface',
+    ...baseAdapter(interfaceType),
+    extends: interfaceType.extended_interfaces.map(linkFromTypeNameGenerator),
+    methods: interfaceType.methods.map(adaptMethod),
+  };
+}
+
+function adaptMethod(method: MethodMirror) {
+  return {
+    declaration: buildDeclaration(method as MethodMirrorWithInheritance),
+    description: documentationLinesToRenderableContent(method.docComment?.descriptionLines),
+    annotations: method.annotations.map((annotation) => annotation.type.toUpperCase()),
+    returnType: {
+      type: method.typeReference.rawDeclaration,
+      description: documentationLinesToRenderableContent(method.docComment?.returnAnnotation?.bodyLines),
+    },
+    throws: method.docComment?.throwsAnnotations.map((thrown) => ({
+      type: thrown.exceptionName,
+      description: documentationLinesToRenderableContent(thrown.bodyLines),
+    })),
+    parameters: method.parameters.map((param) => {
+      const paramAnnotation = method.docComment?.paramAnnotations.find(
+        (pa) => pa.paramName.toLowerCase() === param.name.toLowerCase(),
+      );
+      return {
+        name: param.name,
+        type: param.typeReference.rawDeclaration,
+        description: paramAnnotation ? documentationLinesToRenderableContent(paramAnnotation.bodyLines) : undefined,
+      };
+    }),
+    customTags: extractCustomTags(method),
+    mermaid: extractAnnotationBodyLines(method, 'mermaid'),
+  };
+}
+
+function buildDeclaration(method: MethodMirrorWithInheritance): string {
+  const { access_modifier, typeReference, name } = method;
+  const parameters = method.parameters.map((param) => `${param.typeReference.rawDeclaration} ${param.name}`).join(', ');
+  return `${access_modifier} ${typeReference.rawDeclaration} ${name}(${parameters})`;
+}

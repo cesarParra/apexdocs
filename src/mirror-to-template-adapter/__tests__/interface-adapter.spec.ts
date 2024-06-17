@@ -1,7 +1,7 @@
 import { InterfaceMirrorBuilder } from '../../test-helpers/InterfaceMirrorBuilder';
-import { interfaceTypeToInterfaceSource } from '../interface-adapter';
 import { AnnotationBuilder } from '../../test-helpers/AnnotationBuilder';
 import { MethodMirrorBuilder, ParameterBuilder } from '../../test-helpers/MethodMirrorBuilder';
+import { interfaceTypeToInterfaceSource } from '../adapters';
 
 describe('Conversion from InterfaceMirror to InterfaceSource understandable by the templating engine', () => {
   it('converts the name', () => {
