@@ -281,6 +281,26 @@ describe('compile', () => {
 
       expect(result).toBe('CustomTag - My custom tag');
     });
+
+    it('can display mermaid blocks in a method', () => {
+      const template = '{{#each methods}}{{{mermaid}}}{{/each}}';
+
+      const interfaceSource: InterfaceSource = {
+        __type: 'interface',
+        name: 'MyInterface',
+        accessModifier: 'public',
+        methods: [
+          {
+            declaration: 'void myMethod()',
+            mermaid: ['graph TD;', 'A-->B;', 'A-->C;'],
+          },
+        ],
+      };
+
+      const result = compile(template, interfaceSource);
+
+      expect(result).toBe('graph TD;\nA-->B;\nA-->C;');
+    });
   });
 
   describe('enum', () => {

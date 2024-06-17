@@ -67,6 +67,7 @@ function prepareInterface(
         ...param,
         description: renderableContentConverter(param.description),
       })),
+      mermaid: method.mermaid ? codeBlockConverter('mermaid', method.mermaid) : undefined,
     })),
   };
 }
