@@ -2,6 +2,8 @@
 
 Access: `public`
 
+`NAMESPACEACCESSIBLE`
+
 This is a sample enum. This references [ReferencedEnum](../Miscellaneous/ReferencedEnum.md).
 
 This description has several lines
@@ -16,6 +18,11 @@ This description has several lines
 
 **See** [ReferencedEnum](../Miscellaneous/ReferencedEnum.md)
 
+```mermaid
+graph TD
+ A[SampleEnum] --&gt;|references| B[ReferencedEnum]
+ B --&gt;|referenced by| A
+```
 ## VALUE1
 This is value 1
 ## VALUE2
