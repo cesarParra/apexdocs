@@ -1,7 +1,7 @@
 import { InterfaceMirror } from '@cparra/apex-reflection';
 import { InterfaceSource } from '../templating/types';
 import {
-  docCommentDescriptionToRenderableContent,
+  documentationLinesToRenderableContent,
   extractAnnotationBody,
   extractAnnotationBodyLines,
   extractCustomTags,
@@ -18,7 +18,7 @@ export function interfaceTypeToInterfaceSource(interfaceType: InterfaceMirror): 
     name: interfaceType.name,
     accessModifier: interfaceType.access_modifier,
     annotations: interfaceType.annotations.map((annotation) => annotation.type.toUpperCase()),
-    description: docCommentDescriptionToRenderableContent(interfaceType.docComment?.descriptionLines),
+    description: documentationLinesToRenderableContent(interfaceType.docComment?.descriptionLines),
     group: extractAnnotationBody(interfaceType, 'group'),
     author: extractAnnotationBody(interfaceType, 'author'),
     date: extractAnnotationBody(interfaceType, 'date'),
@@ -28,15 +28,15 @@ export function interfaceTypeToInterfaceSource(interfaceType: InterfaceMirror): 
     mermaid: extractAnnotationBodyLines(interfaceType, 'mermaid'),
     methods: interfaceType.methods.map((method) => ({
       declaration: buildDeclaration(method as MethodMirrorWithInheritance),
-      description: docCommentDescriptionToRenderableContent(method.docComment?.descriptionLines),
+      description: documentationLinesToRenderableContent(method.docComment?.descriptionLines),
       annotations: method.annotations.map((annotation) => annotation.type.toUpperCase()),
       returnType: {
         type: method.typeReference.rawDeclaration,
-        description: docCommentDescriptionToRenderableContent(method.docComment?.returnAnnotation?.bodyLines),
+        description: documentationLinesToRenderableContent(method.docComment?.returnAnnotation?.bodyLines),
       },
       throws: method.docComment?.throwsAnnotations.map((thrown) => ({
         type: thrown.exceptionName,
-        description: docCommentDescriptionToRenderableContent(thrown.bodyLines),
+        description: documentationLinesToRenderableContent(thrown.bodyLines),
       })),
       parameters: method.parameters.map((param) => {
         const paramAnnotation = method.docComment?.paramAnnotations.find(
@@ -45,9 +45,7 @@ export function interfaceTypeToInterfaceSource(interfaceType: InterfaceMirror): 
         return {
           name: param.name,
           type: param.typeReference.rawDeclaration,
-          description: paramAnnotation
-            ? docCommentDescriptionToRenderableContent(paramAnnotation.bodyLines)
-            : undefined,
+          description: paramAnnotation ? documentationLinesToRenderableContent(paramAnnotation.bodyLines) : undefined,
         };
       }),
       customTags: extractCustomTags(method),

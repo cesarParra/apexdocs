@@ -4,8 +4,7 @@ import { replaceInlineReferences } from './references';
 
 type DocCommentsAware = { docComment?: DocComment };
 
-// TODO: Rename to documentationLinesToRenderableContent
-export function docCommentDescriptionToRenderableContent(
+export function documentationLinesToRenderableContent(
   documentationLines: string[] | undefined,
 ): RenderableContent[] | undefined {
   if (!documentationLines) {

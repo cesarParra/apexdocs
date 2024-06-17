@@ -2,7 +2,7 @@ import { EnumMirror } from '@cparra/apex-reflection';
 import { EnumSource } from '../templating/types';
 import { linkFromTypeNameGenerator } from './references';
 import {
-  docCommentDescriptionToRenderableContent,
+  documentationLinesToRenderableContent,
   extractAnnotationBody,
   extractCustomTags,
   extractSeeAnnotations,
@@ -15,9 +15,9 @@ export function enumTypeToEnumSource(enumType: EnumMirror): EnumSource {
     name: enumType.name,
     values: enumType.values.map((value) => ({
       value: value.name,
-      description: docCommentDescriptionToRenderableContent(value.docComment?.descriptionLines),
+      description: documentationLinesToRenderableContent(value.docComment?.descriptionLines),
     })),
-    description: docCommentDescriptionToRenderableContent(enumType.docComment?.descriptionLines),
+    description: documentationLinesToRenderableContent(enumType.docComment?.descriptionLines),
     group: extractAnnotationBody(enumType, 'group'),
     author: extractAnnotationBody(enumType, 'author'),
     date: extractAnnotationBody(enumType, 'date'),
