@@ -6,7 +6,12 @@ Access: `public`
 ns
 
 ## Methods
-### `public void sampleParentMethod()`
+### `sampleParentMethod()`
 
-#### Returns
+### Signature
+```apex
+public void sampleParentMethod()
+``` 
+
+### Returns
 **void**
