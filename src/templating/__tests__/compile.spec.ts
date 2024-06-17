@@ -1,6 +1,16 @@
 import { compile as testSubject } from '../compile';
 import { EnumSource, InterfaceSource, Link, RenderableContent } from '../types';
 
+jest.mock('../../settings', () => {
+  return {
+    Settings: {
+      getInstance: jest.fn(() => ({
+        getNamespace: jest.fn(() => 'MyNamespace'),
+      })),
+    },
+  };
+});
+
 function renderableContentsToString(content?: RenderableContent[]) {
   if (!content) {
     return '';
