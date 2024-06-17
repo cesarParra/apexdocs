@@ -7,7 +7,9 @@ export type EmptyLine = {
   type: 'empty-line';
 };
 
-export type RenderableContent = string | Link | EmptyLine;
+export type StringOrLink = string | Link;
+
+export type RenderableContent = StringOrLink | EmptyLine;
 
 export type ConvertRenderableContentsToString = (content?: RenderableContent[]) => string;
 
@@ -41,7 +43,7 @@ type BaseTypeSource = BaseDocAwareSource & {
   group?: string;
   author?: string;
   date?: string;
-  sees?: Link[];
+  sees?: StringOrLink[];
 };
 
 type MethodParameterSource = {
@@ -67,7 +69,7 @@ type MethodSource = BaseDocAwareSource & {
 export type InterfaceSource = BaseTypeSource & {
   __type: 'interface';
   annotations?: Annotation[];
-  extends?: Link[];
+  extends?: StringOrLink[];
   methods?: MethodSource[];
 };
 

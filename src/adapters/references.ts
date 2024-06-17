@@ -1,9 +1,10 @@
 import ClassFileGeneratorHelper from '../transpiler/markdown/class-file-generatorHelper';
-import { Link, RenderableContent } from '../templating/types';
+import { Link, RenderableContent, StringOrLink } from '../templating/types';
 
-export type GetLinkByTypeName = (typeName: string) => Link;
+export type GetRenderableContentByTypeName = (typeName: string) => StringOrLink;
 
-export const linkFromTypeNameGenerator: GetLinkByTypeName = ClassFileGeneratorHelper.getRenderableLinkByTypeName;
+export const linkFromTypeNameGenerator: GetRenderableContentByTypeName =
+  ClassFileGeneratorHelper.getRenderableLinkByTypeName;
 
 function defaultGetEmailByReference(email: string): Link {
   return {
@@ -14,22 +15,22 @@ function defaultGetEmailByReference(email: string): Link {
 
 export function replaceInlineReferences(
   text: string,
-  linkReplacer: GetLinkByTypeName = linkFromTypeNameGenerator,
-  emailReplacer: GetLinkByTypeName = defaultGetEmailByReference,
+  linkReplacer: GetRenderableContentByTypeName = linkFromTypeNameGenerator,
+  emailReplacer: GetRenderableContentByTypeName = defaultGetEmailByReference,
 ): RenderableContent[] {
   return replaceInlineEmails(replaceInlineLinks([text], linkReplacer), emailReplacer);
 }
 
 function replaceInlineLinks(
   renderableContents: RenderableContent[],
-  getLinkByTypeName: GetLinkByTypeName,
+  getLinkByTypeName: GetRenderableContentByTypeName,
 ): RenderableContent[] {
   return renderableContents.flatMap((renderableContent) => inlineLinkContent(renderableContent, getLinkByTypeName));
 }
 
 function inlineLinkContent(
   renderableContent: RenderableContent,
-  getLinkByTypeName: GetLinkByTypeName,
+  getLinkByTypeName: GetRenderableContentByTypeName,
 ): RenderableContent[] {
   if (typeof renderableContent !== 'string') {
     return [renderableContent];
@@ -45,14 +46,14 @@ function inlineLinkContent(
 
 export function replaceInlineEmails(
   renderableContents: RenderableContent[],
-  getLinkByTypeName: GetLinkByTypeName,
+  getLinkByTypeName: GetRenderableContentByTypeName,
 ): RenderableContent[] {
   return renderableContents.flatMap((renderableContent) => inlineEmailContent(renderableContent, getLinkByTypeName));
 }
 
 function inlineEmailContent(
   renderableContent: RenderableContent,
-  getLinkByTypeName: GetLinkByTypeName,
+  getLinkByTypeName: GetRenderableContentByTypeName,
 ): RenderableContent[] {
   if (typeof renderableContent !== 'string') {
     return [renderableContent];
@@ -81,7 +82,7 @@ function match(regex: string, text: string) {
   return matches;
 }
 
-function createRenderableContents(matches: RegExpExecArray[], text: string, linker: GetLinkByTypeName) {
+function createRenderableContents(matches: RegExpExecArray[], text: string, linker: GetRenderableContentByTypeName) {
   if (matches.length === 0) {
     return [text];
   }
@@ -89,8 +90,6 @@ function createRenderableContents(matches: RegExpExecArray[], text: string, link
   const result: RenderableContent[] = [];
   let lastIndex = 0;
   for (const match of matches) {
-    // split the string into the part before the match, then the match, then everything after the match
-    // using the index property of the match to get where to split it, and the length of the match to get the end of the match
     const index = match.index;
     const length = match[0].length;
 
