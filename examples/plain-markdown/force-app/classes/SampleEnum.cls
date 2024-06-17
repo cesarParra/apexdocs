@@ -7,7 +7,12 @@
  * @date 2022-01-01
  * @some-custom Test
  * @see ReferencedEnum
+ * @mermaid
+ * graph TD
+ *  A[SampleEnum] -->|references| B[ReferencedEnum]
+ *  B -->|referenced by| A
  */
+@NamespaceAccessible
 public enum SampleEnum {
     /**
      * @description This is value 1

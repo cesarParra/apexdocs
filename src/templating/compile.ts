@@ -26,13 +26,17 @@ function prepare(
   { renderableContentConverter, codeBlockConverter }: CompileOptions,
 ) {
   if (isEnumSource(source)) {
-    return prepareEnum(source, renderableContentConverter);
+    return prepareEnum(source, renderableContentConverter, codeBlockConverter);
   } else if (isInterfaceSource(source)) {
     return prepareInterface(source, renderableContentConverter, codeBlockConverter);
   }
 }
 
-function prepareEnum(source: EnumSource, renderableContentConverter: ConvertRenderableContentsToString) {
+function prepareEnum(
+  source: EnumSource,
+  renderableContentConverter: ConvertRenderableContentsToString,
+  codeBlockConverter: (language: string, lines: string[]) => string,
+) {
   return {
     ...source,
     values: source.values.map((value) => ({
@@ -40,6 +44,7 @@ function prepareEnum(source: EnumSource, renderableContentConverter: ConvertRend
       description: renderableContentConverter(value.description),
     })),
     description: renderableContentConverter(source.description),
+    mermaid: source.mermaid ? codeBlockConverter('mermaid', source.mermaid) : undefined,
   };
 }
 

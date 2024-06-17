@@ -406,6 +406,22 @@ describe('compile', () => {
       expect(result).toBe('An enum of things: More info');
     });
 
+    it('can have a mermaid block at the top level description', () => {
+      const template = '{{{mermaid}}}';
+
+      const enumSource: EnumSource = {
+        __type: 'enum',
+        name: 'MyEnum',
+        accessModifier: 'public',
+        mermaid: ['graph TD;', 'A-->B;', 'A-->C;'],
+        values: [],
+      };
+
+      const result = compile(template, enumSource);
+
+      expect(result).toBe('graph TD;\nA-->B;\nA-->C;');
+    });
+
     it('can reference enum values', () => {
       const template = '{{#each values}}{{value}}{{/each}}';
 

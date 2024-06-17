@@ -37,6 +37,7 @@ type BaseTypeSource = {
   date?: string;
   customTags?: CustomTag[];
   sees?: Link[];
+  mermaid?: CodeBlock;
 };
 
 type MethodParameterSource = {
@@ -67,7 +68,6 @@ export type InterfaceSource = BaseTypeSource & {
   __type: 'interface';
   annotations?: Annotation[];
   extends?: Link[];
-  mermaid?: CodeBlock;
   methods?: MethodSource[];
 };
 
