@@ -180,14 +180,29 @@ describe('compile', () => {
       expect(result).toBe('Example code block');
     });
 
-    it('can display methods', () => {
-      const template = '{{#each methods}}{{declaration}}{{/each}}';
+    it('can display method titles', () => {
+      const template = '{{#each methods}}{{title}}{{/each}}';
 
       const interfaceSource: InterfaceSource = {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
-        methods: [{ declaration: 'void myMethod()' }],
+        methods: [{ title: 'myMethod()', signature: 'void myMethod()' }],
+      };
+
+      const result = compile(template, interfaceSource);
+
+      expect(result).toBe('myMethod()');
+    });
+
+    it('can display method signatures', () => {
+      const template = '{{#each methods}}{{signature}}{{/each}}';
+
+      const interfaceSource: InterfaceSource = {
+        __type: 'interface',
+        name: 'MyInterface',
+        accessModifier: 'public',
+        methods: [{ title: 'myMethod()', signature: 'void myMethod()' }],
       };
 
       const result = compile(template, interfaceSource);
@@ -196,13 +211,13 @@ describe('compile', () => {
     });
 
     it('can display methods with a description', () => {
-      const template = '{{#each methods}}{{declaration}} - {{description}}{{/each}}';
+      const template = '{{#each methods}}{{signature}} - {{description}}{{/each}}';
 
       const interfaceSource: InterfaceSource = {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
-        methods: [{ declaration: 'void myMethod()', description: ['The method'] }],
+        methods: [{ title: 'myMethod()', signature: 'void myMethod()', description: ['The method'] }],
       };
 
       const result = compile(template, interfaceSource);
@@ -217,7 +232,7 @@ describe('compile', () => {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
-        methods: [{ declaration: 'void myMethod()', annotations: ['MyAnnotation'] }],
+        methods: [{ title: 'myMethod()', signature: 'void myMethod()', annotations: ['MyAnnotation'] }],
       };
 
       const result = compile(template, interfaceSource);
@@ -236,7 +251,7 @@ describe('compile', () => {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
-        methods: [{ declaration: 'void myMethod(String arg1, Integer arg2)', parameters }],
+        methods: [{ title: 'myMethod()', signature: 'void myMethod(String arg1, Integer arg2)', parameters }],
       };
 
       const result = compile(template, interfaceSource);
@@ -253,7 +268,8 @@ describe('compile', () => {
         accessModifier: 'public',
         methods: [
           {
-            declaration: 'String myMethod()',
+            title: 'myMethod()',
+            signature: 'String myMethod()',
             returnType: {
               type: 'String',
               description: ['The return value'],
@@ -276,7 +292,8 @@ describe('compile', () => {
         accessModifier: 'public',
         methods: [
           {
-            declaration: 'void myMethod()',
+            title: 'myMethod()',
+            signature: 'void myMethod()',
             throws: [{ type: 'IOException', description: ['An exception'] }],
           },
         ],
@@ -296,7 +313,8 @@ describe('compile', () => {
         accessModifier: 'public',
         methods: [
           {
-            declaration: 'void myMethod()',
+            title: 'myMethod()',
+            signature: 'void myMethod()',
             customTags: [{ name: 'CustomTag', value: ['My custom tag'] }],
           },
         ],
@@ -316,7 +334,8 @@ describe('compile', () => {
         accessModifier: 'public',
         methods: [
           {
-            declaration: 'void myMethod()',
+            title: 'myMethod()',
+            signature: 'void myMethod()',
             mermaid: ['graph TD;', 'A-->B;', 'A-->C;'],
           },
         ],
@@ -336,7 +355,8 @@ describe('compile', () => {
         accessModifier: 'public',
         methods: [
           {
-            declaration: 'void myMethod()',
+            title: 'myMethod()',
+            signature: 'void myMethod()',
             example: ['Example code block'],
           },
         ],
@@ -356,7 +376,8 @@ describe('compile', () => {
         accessModifier: 'public',
         methods: [
           {
-            declaration: 'void myMethod()',
+            title: 'myMethod()',
+            signature: 'void myMethod()',
             inherited: true,
           },
         ],
