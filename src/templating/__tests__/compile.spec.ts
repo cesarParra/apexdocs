@@ -155,6 +155,21 @@ describe('compile', () => {
       expect(result).toBe('graph TD;\nA-->B;\nA-->C;');
     });
 
+    it('can have an example block at the top level description', () => {
+      const template = '{{{example}}}';
+
+      const interfaceSource: InterfaceSource = {
+        __type: 'interface',
+        name: 'MyInterface',
+        accessModifier: 'public',
+        example: ['Example code block'],
+      };
+
+      const result = compile(template, interfaceSource);
+
+      expect(result).toBe('Example code block');
+    });
+
     it('can display methods', () => {
       const template = '{{#each methods}}{{declaration}}{{/each}}';
 
@@ -420,6 +435,22 @@ describe('compile', () => {
       const result = compile(template, enumSource);
 
       expect(result).toBe('graph TD;\nA-->B;\nA-->C;');
+    });
+
+    it('can have an example block at the top level description', () => {
+      const template = '{{{example}}}';
+
+      const enumSource: EnumSource = {
+        __type: 'enum',
+        name: 'MyEnum',
+        accessModifier: 'public',
+        example: ['Example code block'],
+        values: [],
+      };
+
+      const result = compile(template, enumSource);
+
+      expect(result).toBe('Example code block');
     });
 
     it('can reference enum values', () => {

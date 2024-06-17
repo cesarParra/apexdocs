@@ -28,16 +28,20 @@ type Annotation = string;
 
 type CodeBlock = string[];
 
-type BaseTypeSource = {
+type BaseDocAwareSource = {
+  description?: RenderableContent[];
+  customTags?: CustomTag[];
+  mermaid?: CodeBlock;
+  example?: CodeBlock;
+};
+
+type BaseTypeSource = BaseDocAwareSource & {
   name: string;
   accessModifier: string;
-  description?: RenderableContent[];
   group?: string;
   author?: string;
   date?: string;
-  customTags?: CustomTag[];
   sees?: Link[];
-  mermaid?: CodeBlock;
 };
 
 type MethodParameterSource = {
@@ -51,16 +55,12 @@ type TypeSource = {
   description?: RenderableContent[];
 };
 
-type MethodSource = {
+type MethodSource = BaseDocAwareSource & {
   declaration: string;
-  description?: RenderableContent[];
   annotations?: Annotation[];
   parameters?: MethodParameterSource[];
   returnType?: TypeSource;
   throws?: TypeSource[];
-  customTags?: CustomTag[];
-  mermaid?: CodeBlock;
-  example?: CodeBlock;
   inherited?: boolean;
 };
 

@@ -23,6 +23,7 @@ graph TD
  A[SampleEnum] --&gt;|references| B[ReferencedEnum]
  B --&gt;|referenced by| A
 ```
+
 ## VALUE1
 This is value 1
 ## VALUE2

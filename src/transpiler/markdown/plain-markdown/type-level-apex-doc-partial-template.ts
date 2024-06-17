@@ -32,4 +32,6 @@ Access: \`{{accessModifier}}\`
 {{/each}}
 
 {{{mermaid}}}
+
+{{{example}}}
 `.trim();

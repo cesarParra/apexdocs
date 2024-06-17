@@ -22,6 +22,7 @@ function baseAdapter(type: EnumMirror | InterfaceMirror) {
     customTags: extractCustomTags(type),
     sees: extractSeeAnnotations(type).map(linkFromTypeNameGenerator),
     mermaid: extractAnnotationBodyLines(type, 'mermaid'),
+    example: type.docComment?.exampleAnnotation?.bodyLines,
   };
 }
 

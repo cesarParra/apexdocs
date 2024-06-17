@@ -9,6 +9,9 @@
  *    A[SampleInterface] -->|extends| B[ParentInterface]
  *    B -->|extends| C[GrandParentInterface]
  *    C -->|extends| D[GreatGrandParentInterface]
+ * @example
+ * SampleInterface sampleInterface = new SampleInterface();
+ * sampleInterface.sampleMethod();
  */
 @NamespaceAccessible
 public interface SampleInterface extends ParentInterface {
