@@ -1,6 +1,9 @@
-# ns.ParentInterface interface
+# ParentInterface Interface
 
 Access: `public`
+
+## Namespace
+ns
 
 ## Methods
 ### `public void sampleParentMethod()`

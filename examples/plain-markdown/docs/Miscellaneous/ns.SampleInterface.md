@@ -1,6 +1,9 @@
-# ns.SampleInterface interface
+# SampleInterface Interface
 
 Access: `public`
+
+## Namespace
+ns
 
 `NAMESPACEACCESSIBLE`
 
