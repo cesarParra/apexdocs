@@ -1,6 +1,0 @@
-# SampleException
-
-**Inheritance**
-
-SampleException
-

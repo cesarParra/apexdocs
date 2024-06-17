@@ -1,25 +1,25 @@
 # Classes
 ## Miscellaneous
 
-### [ParentInterface](./Miscellaneous/ParentInterface.md)
+### [myNamespace.ParentInterface](./Miscellaneous/myNamespace.ParentInterface.md)
 
 
-### [ReferencedEnum](./Miscellaneous/ReferencedEnum.md)
+### [myNamespace.ReferencedEnum](./Miscellaneous/myNamespace.ReferencedEnum.md)
 
 
-### [SampleException](./Miscellaneous/SampleException.md)
+### [myNamespace.SampleException](./Miscellaneous/myNamespace.SampleException.md)
 
 
-### [SampleInterface](./Miscellaneous/SampleInterface.md)
+### [myNamespace.SampleInterface](./Miscellaneous/myNamespace.SampleInterface.md)
 
 This is a sample interface
 
 
 ## Sample Enums
 
-### [SampleEnum](./Sample-Enums/SampleEnum.md)
+### [myNamespace.SampleEnum](./Sample-Enums/myNamespace.SampleEnum.md)
 
-This is a sample enum. This references [ReferencedEnum](./Miscellaneous/ReferencedEnum.md).
+This is a sample enum. This references [myNamespace.ReferencedEnum](./Miscellaneous/myNamespace.ReferencedEnum.md).
 This description has several lines
 
 

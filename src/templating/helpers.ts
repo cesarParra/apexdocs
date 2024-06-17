@@ -1,3 +1,5 @@
+import { Settings } from '../settings';
+
 export const splitAndCapitalize = (text: string) => {
   const words = text.split(/[-_]+/);
   const capitalizedWords = [];
@@ -5,4 +7,9 @@ export const splitAndCapitalize = (text: string) => {
     capitalizedWords.push(word.charAt(0).toUpperCase() + word.slice(1));
   }
   return capitalizedWords.join(' ');
+};
+
+export const namespacedName = (name: string) => {
+  const namespace = Settings.getInstance().getNamespacePrefix();
+  return namespace ? `${namespace}${name}` : name;
 };

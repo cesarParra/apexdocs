@@ -1,5 +1,5 @@
 export const interfaceMarkdownTemplate = `
-# {{name}} interface
+# {{namespacedName name}} interface
 
 {{> typeLevelApexDocPartialTemplate}}
 
