@@ -301,6 +301,26 @@ describe('compile', () => {
 
       expect(result).toBe('graph TD;\nA-->B;\nA-->C;');
     });
+
+    it('can display example blocks in a method', () => {
+      const template = '{{#each methods}}{{{example}}}{{/each}}';
+
+      const interfaceSource: InterfaceSource = {
+        __type: 'interface',
+        name: 'MyInterface',
+        accessModifier: 'public',
+        methods: [
+          {
+            declaration: 'void myMethod()',
+            example: ['Example code block'],
+          },
+        ],
+      };
+
+      const result = compile(template, interfaceSource);
+
+      expect(result).toBe('Example code block');
+    });
   });
 
   describe('enum', () => {

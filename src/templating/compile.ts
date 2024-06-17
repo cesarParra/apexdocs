@@ -68,6 +68,7 @@ function prepareInterface(
         description: renderableContentConverter(param.description),
       })),
       mermaid: method.mermaid ? codeBlockConverter('mermaid', method.mermaid) : undefined,
+      example: method.example ? codeBlockConverter('apex', method.example) : undefined,
     })),
   };
 }

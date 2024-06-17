@@ -1,4 +1,5 @@
 # SampleEnum enum
+
 Access: `public`
 
 This is a sample enum. This references [ReferencedEnum](../Miscellaneous/ReferencedEnum.md).

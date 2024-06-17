@@ -50,6 +50,8 @@ export const interfaceMarkdownTemplate = `
 
 {{{mermaid}}}
 
+{{{example}}}
+
 {{#unless @last}}---{{/unless}}
 
 {{/each}}

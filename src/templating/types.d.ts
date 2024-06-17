@@ -26,7 +26,7 @@ type CustomTag = {
  */
 type Annotation = string;
 
-type Mermaid = string[];
+type CodeBlock = string[];
 
 type BaseTypeSource = {
   name: string;
@@ -58,14 +58,15 @@ type MethodSource = {
   returnType?: TypeSource;
   throws?: TypeSource[];
   customTags?: CustomTag[];
-  mermaid?: Mermaid;
+  mermaid?: CodeBlock;
+  example?: CodeBlock;
 };
 
 export type InterfaceSource = BaseTypeSource & {
   __type: 'interface';
   annotations?: Annotation[];
   extends?: Link[];
-  mermaid?: Mermaid;
+  mermaid?: CodeBlock;
   methods?: MethodSource[];
 };
 

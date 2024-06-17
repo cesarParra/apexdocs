@@ -70,6 +70,7 @@ function adaptMethod(method: MethodMirror) {
     }),
     customTags: extractCustomTags(method),
     mermaid: extractAnnotationBodyLines(method, 'mermaid'),
+    example: method.docComment?.exampleAnnotation?.bodyLines,
   };
 }
 

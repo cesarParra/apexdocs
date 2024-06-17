@@ -1,8 +1,6 @@
 # SampleInterface interface
-Access: `public`
 
-**Extends**
-[ParentInterface](./ParentInterface.md)
+Access: `public`
 
 `NAMESPACEACCESSIBLE`
 
@@ -22,6 +20,8 @@ graph TD
    B --&gt;|extends| C[GrandParentInterface]
    C --&gt;|extends| D[GreatGrandParentInterface]
 ```
+**Extends**
+[ParentInterface](./ParentInterface.md)
 
 ## Methods
 ### `public String sampleMethod()`
@@ -47,6 +47,11 @@ graph TD
   A[SampleInterface] --&gt;|extends| B[ParentInterface]
   B --&gt;|extends| C[GrandParentInterface]
   C --&gt;|extends| D[GreatGrandParentInterface]
+```
+
+```apex
+SampleInterface sampleInterface = new SampleInterface();
+sampleInterface.sampleMethod();
 ```
 
 ---
