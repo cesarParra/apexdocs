@@ -66,6 +66,7 @@ sampleInterface.sampleMethod();
 ### `public SampleEnum sampleMethodWithParams(String param1, Integer param2)`
 
 `NAMESPACEACCESSIBLE`
+`DEPRECATED`
 
 This is a sample method with parameters
 
