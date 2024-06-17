@@ -1,6 +1,5 @@
 export const enumMarkdownTemplate = `
 # {{name}} enum
-Access: \`{{accessModifier}}\`
 
 {{> typeLevelApexDocPartialTemplate}}
 

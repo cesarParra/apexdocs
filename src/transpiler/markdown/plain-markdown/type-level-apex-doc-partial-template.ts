@@ -1,4 +1,12 @@
 export const typeLevelApexDocPartialTemplate = `
+Access: \`{{accessModifier}}\`
+
+{{#if annotations}}
+{{#each annotations}}
+\`{{this}}\`
+{{/each}}
+{{/if}}
+
 {{description}}
 
 {{#if group}}
@@ -22,4 +30,6 @@ export const typeLevelApexDocPartialTemplate = `
 **See** [{{title}}]({{url}})
 
 {{/each}}
+
+{{{mermaid}}}
 `.trim();
