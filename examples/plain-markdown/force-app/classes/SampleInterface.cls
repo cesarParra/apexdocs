@@ -19,6 +19,11 @@ public interface SampleInterface extends ParentInterface {
      * @throws AnotherSampleException This is another sample exception
      * @custom-tag This is a custom tag
      * @another-custom-tag This is another custom tag
+     * @mermaid
+     * graph TD
+     *   A[SampleInterface] -->|extends| B[ParentInterface]
+     *   B -->|extends| C[GrandParentInterface]
+     *   C -->|extends| D[GreatGrandParentInterface]
      */
     String sampleMethod();
 

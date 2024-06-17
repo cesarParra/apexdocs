@@ -57,6 +57,8 @@ Access: \`{{accessModifier}}\`
 
 {{/each}}
 
+{{{mermaid}}}
+
 {{#unless @last}}---{{/unless}}
 
 {{/each}}

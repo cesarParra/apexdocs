@@ -51,6 +51,7 @@ export function interfaceTypeToInterfaceSource(interfaceType: InterfaceMirror): 
         };
       }),
       customTags: extractCustomTags(method),
+      mermaid: extractAnnotationBodyLines(method, 'mermaid'),
     })),
   };
 }

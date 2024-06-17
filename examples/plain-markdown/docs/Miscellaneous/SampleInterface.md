@@ -42,6 +42,13 @@ AnotherSampleException: This is another sample exception
 
 **Another Custom Tag** This is another custom tag
 
+```mermaid
+graph TD
+  A[SampleInterface] --&gt;|extends| B[ParentInterface]
+  B --&gt;|extends| C[GrandParentInterface]
+  C --&gt;|extends| D[GreatGrandParentInterface]
+```
+
 ---
 
 ### `public SampleEnum sampleMethodWithParams(String param1, Integer param2)`
