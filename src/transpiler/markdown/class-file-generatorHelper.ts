@@ -3,7 +3,7 @@ import { TypesRepository } from '../../model/types-repository';
 import { Settings } from '../../settings';
 import State from '../../service/state';
 import { TypeTranspilerFactory } from '../factory';
-import { Link } from '../../templating/types';
+import { Link, StringOrLink } from '../../templating/types';
 
 export default class ClassFileGeneratorHelper {
   public static getSanitizedGroup(classModel: Type) {
@@ -32,14 +32,11 @@ export default class ClassFileGeneratorHelper {
     return this.getFileLink(type);
   }
 
-  public static getRenderableLinkByTypeName(typeName: string): Link {
+  public static getRenderableLinkByTypeName(typeName: string): StringOrLink {
     const type = TypesRepository.getInstance().getFromScopedByName(typeName);
     if (!type) {
-      // If the type is not found, we return a Markdown hyperlink with whatever we received.
-      return {
-        title: typeName,
-        url: typeName,
-      };
+      // If the type is not found, we return the type name as a string.
+      return typeName;
     }
 
     const [fullClassName, fileLink] = ClassFileGeneratorHelper.getFileLinkTuple(type);
