@@ -4,7 +4,7 @@ Access: `public`
 
 `NAMESPACEACCESSIBLE`
 
-This is a sample enum. This references [ReferencedEnum](../Miscellaneous/ReferencedEnum.md).
+This is a sample enum. This references [ReferencedEnum](../Miscellaneous/ReferencedEnum.md) . 
 
 This description has several lines
 
