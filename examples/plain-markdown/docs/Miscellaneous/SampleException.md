@@ -1,0 +1,6 @@
+# SampleException
+
+**Inheritance**
+
+SampleException
+

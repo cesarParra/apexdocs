@@ -52,11 +52,11 @@ function adaptMethod(method: MethodMirror) {
     description: documentationLinesToRenderableContent(method.docComment?.descriptionLines),
     annotations: method.annotations.map((annotation) => annotation.type.toUpperCase()),
     returnType: {
-      type: method.typeReference.rawDeclaration,
+      type: linkFromTypeNameGenerator(method.typeReference.rawDeclaration),
       description: documentationLinesToRenderableContent(method.docComment?.returnAnnotation?.bodyLines),
     },
     throws: method.docComment?.throwsAnnotations.map((thrown) => ({
-      type: thrown.exceptionName,
+      type: linkFromTypeNameGenerator(thrown.exceptionName),
       description: documentationLinesToRenderableContent(thrown.bodyLines),
     })),
     parameters: method.parameters.map((param) => {

@@ -41,7 +41,7 @@ This is a sample method
 Some return value
 
 #### Throws
-SampleException: This is a sample exception
+[SampleException](./SampleException.md): This is a sample exception
 
 AnotherSampleException: This is another sample exception
 
@@ -79,7 +79,7 @@ Sometimes it won&#x27;t be possible to find a NonExistent link.
 | param2 | Integer | This is the second parameter |
 
 #### Returns
-**SampleEnum**
+**[SampleEnum](../Sample-Enums/SampleEnum.md)**
 
 Some return value
 

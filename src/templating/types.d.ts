@@ -53,7 +53,7 @@ type MethodParameterSource = {
 };
 
 type TypeSource = {
-  type: string;
+  type: StringOrLink;
   description?: RenderableContent[];
 };
 

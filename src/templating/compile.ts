@@ -71,11 +71,13 @@ function prepareInterface(
       ...method,
       description: renderableContentConverter(method.description),
       returnType: {
-        ...method.returnType,
+        ...method,
+        type: method.returnType?.type ? renderableContentConverter([method.returnType.type]) : undefined,
         description: renderableContentConverter(method.returnType?.description),
       },
       throws: method.throws?.map((thrown) => ({
         ...thrown,
+        type: renderableContentConverter([thrown.type]),
         description: renderableContentConverter(thrown.description),
       })),
       parameters: method.parameters?.map((param) => ({

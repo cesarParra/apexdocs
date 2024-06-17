@@ -7,6 +7,9 @@
 ### [ReferencedEnum](./Miscellaneous/ReferencedEnum.md)
 
 
+### [SampleException](./Miscellaneous/SampleException.md)
+
+
 ### [SampleInterface](./Miscellaneous/SampleInterface.md)
 
 This is a sample interface
