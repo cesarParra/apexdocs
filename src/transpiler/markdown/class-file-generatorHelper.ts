@@ -3,7 +3,7 @@ import { TypesRepository } from '../../model/types-repository';
 import { Settings } from '../../settings';
 import State from '../../service/state';
 import { TypeTranspilerFactory } from '../factory';
-import { Link, StringOrLink } from '../../templating/types';
+import { StringOrLink } from '../../templating/types';
 
 export default class ClassFileGeneratorHelper {
   public static getSanitizedGroup(classModel: Type) {
