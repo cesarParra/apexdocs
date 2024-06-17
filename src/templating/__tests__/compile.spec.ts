@@ -321,6 +321,26 @@ describe('compile', () => {
 
       expect(result).toBe('Example code block');
     });
+
+    it('can display if a method was inherited from a super interface', () => {
+      const template = '{{#each methods}}{{#if inherited}}Inherited{{/if}}{{/each}}';
+
+      const interfaceSource: InterfaceSource = {
+        __type: 'interface',
+        name: 'MyInterface',
+        accessModifier: 'public',
+        methods: [
+          {
+            declaration: 'void myMethod()',
+            inherited: true,
+          },
+        ],
+      };
+
+      const result = compile(template, interfaceSource);
+
+      expect(result).toBe('Inherited');
+    });
   });
 
   describe('enum', () => {

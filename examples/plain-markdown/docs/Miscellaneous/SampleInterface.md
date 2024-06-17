@@ -31,7 +31,9 @@ graph TD
 This is a sample method
 
 #### Returns
-String: Some return value
+**String**
+
+Some return value
 
 #### Throws
 SampleException: This is a sample exception
@@ -69,4 +71,15 @@ This is a sample method with parameters
 | param2 | Integer | This is the second parameter |
 
 #### Returns
-SampleEnum: Some return value
+**SampleEnum**
+
+Some return value
+
+---
+
+### `public void sampleParentMethod()`
+
+*Inherited*
+
+#### Returns
+**void**

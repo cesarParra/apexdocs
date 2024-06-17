@@ -1,1 +1,3 @@
-public interface ParentInterface {}
+public interface ParentInterface {
+    void sampleParentMethod();
+}

@@ -60,6 +60,7 @@ type MethodSource = {
   customTags?: CustomTag[];
   mermaid?: CodeBlock;
   example?: CodeBlock;
+  inherited?: boolean;
 };
 
 export type InterfaceSource = BaseTypeSource & {

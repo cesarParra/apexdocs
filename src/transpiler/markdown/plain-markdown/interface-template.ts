@@ -15,6 +15,10 @@ export const interfaceMarkdownTemplate = `
 {{#each methods}}
 ### \`{{declaration}}\`
 
+{{#if inherited}}
+*Inherited*
+{{/if}}
+
 {{#each annotations}}
 \`{{this}}\`
 {{/each}}
@@ -32,7 +36,9 @@ export const interfaceMarkdownTemplate = `
 
 {{#if returnType}}
 #### Returns
-{{returnType.type}}: {{returnType.description}}
+**{{returnType.type}}**
+
+{{returnType.description}}
 {{/if}}
 
 {{#if throws}}
