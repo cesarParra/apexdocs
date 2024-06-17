@@ -1,0 +1,6 @@
+# ns.SampleException
+
+**Inheritance**
+
+SampleException
+
