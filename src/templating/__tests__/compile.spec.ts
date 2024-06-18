@@ -102,6 +102,24 @@ describe('compile', () => {
 
       expect(result).toBe('with sharing class');
     });
+
+    it('can reference the implemented interfaces', () => {
+      const template = '{{#each implements}}{{title}}{{#unless @last}}, {{/unless}}{{/each}}';
+
+      const classSource: ClassSource = {
+        __type: 'class',
+        name: 'MyClass',
+        accessModifier: 'public',
+        implements: [
+          { title: 'MyInterface', url: 'https://example.com' },
+          { title: 'MyOtherInterface', url: 'https://example.com' },
+        ],
+      };
+
+      const result = compile(template, classSource);
+
+      expect(result).toBe('MyInterface, MyOtherInterface');
+    });
   });
 
   describe('interface', () => {

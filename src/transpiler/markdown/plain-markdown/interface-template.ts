@@ -6,7 +6,7 @@ export const interfaceMarkdownTemplate = `
 {{#if extends}}
 **Extends**
 {{#each extends}}
-[{{title}}]({{url}}){{#unless @last}}, {{/unless}}
+{{this}}{{#unless @last}}, {{/unless}}
 {{/each}}
 {{/if}}
 

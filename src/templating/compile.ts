@@ -74,6 +74,7 @@ function prepareInterface(
   return {
     ...source,
     ...prepareBase(source, renderableContentConverter, codeBlockConverter),
+    extends: source.extends?.map((ext) => renderableContentConverter([ext])),
     methods: source.methods?.map((method) => ({
       ...method,
       description: renderableContentConverter(method.description),
@@ -106,6 +107,7 @@ function prepareClass(
   return {
     ...source,
     ...prepareBase(source, renderableContentConverter, codeBlockConverter),
+    implements: source.implements?.map((impl) => renderableContentConverter([impl])),
   };
 }
 
