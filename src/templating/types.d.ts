@@ -73,6 +73,8 @@ export type ClassSource = BaseTypeSource & {
   extends?: StringOrLink;
   implements?: StringOrLink[];
   methods?: MethodSource[];
+  classModifier?: string;
+  // TODO: Sharing modifier
 };
 
 export type InterfaceSource = BaseTypeSource & {

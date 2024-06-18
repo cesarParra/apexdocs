@@ -50,6 +50,7 @@ export function classTypeToClassSource(classType: ClassMirror): ClassSource {
   return {
     __type: 'class',
     ...baseAdapter(classType),
+    classModifier: classType.classModifier,
   };
 }
 

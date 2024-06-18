@@ -72,6 +72,21 @@ describe('compile', () => {
 
       expect(result).toBe('MyClass class');
     });
+
+    it('can reference the class modifier', () => {
+      const template = '{{classModifier}} class';
+
+      const classSource: ClassSource = {
+        __type: 'class',
+        name: 'MyClass',
+        accessModifier: 'public',
+        classModifier: 'abstract',
+      };
+
+      const result = compile(template, classSource);
+
+      expect(result).toBe('abstract class');
+    });
   });
 
   describe('interface', () => {
