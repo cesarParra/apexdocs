@@ -1,5 +1,5 @@
 import Handlebars from 'handlebars';
-import { EnumSource, ConvertRenderableContentsToString, InterfaceSource } from './types';
+import { EnumSource, ConvertRenderableContentsToString, InterfaceSource, ClassSource } from './types';
 import { namespace, splitAndCapitalize } from './helpers';
 import { typeLevelApexDocPartialTemplate } from '../transpiler/markdown/plain-markdown/type-level-apex-doc-partial-template';
 
@@ -8,7 +8,7 @@ type CompileOptions = {
   codeBlockConverter: (language: string, lines: string[]) => string;
 };
 
-export function compile(template: string, source: EnumSource | InterfaceSource, options: CompileOptions) {
+export function compile(template: string, source: EnumSource | InterfaceSource | ClassSource, options: CompileOptions) {
   Handlebars.registerPartial('typeLevelApexDocPartialTemplate', typeLevelApexDocPartialTemplate);
   Handlebars.registerHelper('splitAndCapitalize', splitAndCapitalize);
 
@@ -23,18 +23,20 @@ export function compile(template: string, source: EnumSource | InterfaceSource, 
 }
 
 function prepare(
-  source: EnumSource | InterfaceSource,
+  source: EnumSource | InterfaceSource | ClassSource,
   { renderableContentConverter, codeBlockConverter }: CompileOptions,
 ) {
   if (isEnumSource(source)) {
     return prepareEnum(source, renderableContentConverter, codeBlockConverter);
   } else if (isInterfaceSource(source)) {
     return prepareInterface(source, renderableContentConverter, codeBlockConverter);
+  } else {
+    return prepareClass(source, renderableContentConverter, codeBlockConverter);
   }
 }
 
 function prepareBase(
-  source: EnumSource | InterfaceSource,
+  source: EnumSource | InterfaceSource | ClassSource,
   renderableContentConverter: ConvertRenderableContentsToString,
   codeBlockConverter: (language: string, lines: string[]) => string,
 ) {
@@ -96,10 +98,21 @@ function prepareInterface(
   };
 }
 
-function isEnumSource(source: EnumSource | InterfaceSource): source is EnumSource {
+function prepareClass(
+  source: ClassSource,
+  renderableContentConverter: ConvertRenderableContentsToString,
+  codeBlockConverter: (language: string, lines: string[]) => string,
+) {
+  return {
+    ...source,
+    ...prepareBase(source, renderableContentConverter, codeBlockConverter),
+  };
+}
+
+function isEnumSource(source: { __type: string }): source is EnumSource {
   return source.__type === 'enum';
 }
 
-function isInterfaceSource(source: EnumSource | InterfaceSource): source is InterfaceSource {
+function isInterfaceSource(source: { __type: string }): source is InterfaceSource {
   return source.__type === 'interface';
 }

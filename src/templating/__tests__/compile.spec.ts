@@ -1,5 +1,5 @@
 import { compile as testSubject } from '../compile';
-import { EnumSource, InterfaceSource, Link, RenderableContent } from '../types';
+import { ClassSource, EnumSource, InterfaceSource, Link, RenderableContent } from '../types';
 
 jest.mock('../../settings', () => {
   return {
@@ -33,7 +33,7 @@ function linesToCodeBlock(_: string, lines: string[]): string {
   return lines.join('\n');
 }
 
-function compile(template: string, source: EnumSource | InterfaceSource) {
+function compile(template: string, source: EnumSource | InterfaceSource | ClassSource) {
   return testSubject(template, source, {
     renderableContentConverter: renderableContentsToString,
     codeBlockConverter: linesToCodeBlock,
@@ -55,6 +55,22 @@ describe('compile', () => {
       const result = compile(template, enumSource);
 
       expect(result).toBe('My Enum');
+    });
+  });
+
+  describe('class', () => {
+    it('can reference the class name', () => {
+      const template = '{{name}} class';
+
+      const classSource: ClassSource = {
+        __type: 'class',
+        name: 'MyClass',
+        accessModifier: 'public',
+      };
+
+      const result = compile(template, classSource);
+
+      expect(result).toBe('MyClass class');
     });
   });
 

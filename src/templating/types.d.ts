@@ -67,6 +67,14 @@ type MethodSource = BaseDocAwareSource & {
   inherited?: boolean;
 };
 
+export type ClassSource = BaseTypeSource & {
+  __type: 'class';
+  annotations?: Annotation[];
+  extends?: StringOrLink;
+  implements?: StringOrLink[];
+  methods?: MethodSource[];
+};
+
 export type InterfaceSource = BaseTypeSource & {
   __type: 'interface';
   annotations?: Annotation[];
