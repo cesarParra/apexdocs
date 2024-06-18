@@ -1,5 +1,5 @@
-import { EnumMirror, InterfaceMirror, MethodMirror } from '@cparra/apex-reflection';
-import { EnumSource, InterfaceSource, MethodSource } from '../templating/types';
+import { ClassMirror, EnumMirror, InterfaceMirror, MethodMirror } from '@cparra/apex-reflection';
+import { ClassSource, EnumSource, InterfaceSource, MethodSource } from '../templating/types';
 import { linkFromTypeNameGenerator } from './references';
 import {
   documentationLinesToRenderableContent,
@@ -10,7 +10,7 @@ import {
 } from './apex-doc-adapters';
 import { MethodMirrorWithInheritance } from '../model/inheritance';
 
-function baseAdapter(type: EnumMirror | InterfaceMirror) {
+function baseAdapter(type: EnumMirror | InterfaceMirror | ClassMirror) {
   return {
     accessModifier: type.access_modifier,
     name: type.name,
@@ -43,6 +43,13 @@ export function interfaceTypeToInterfaceSource(interfaceType: InterfaceMirror): 
     ...baseAdapter(interfaceType),
     extends: interfaceType.extended_interfaces.map(linkFromTypeNameGenerator),
     methods: interfaceType.methods.map(adaptMethod),
+  };
+}
+
+export function classTypeToClassSource(classType: ClassMirror): ClassSource {
+  return {
+    __type: 'class',
+    ...baseAdapter(classType),
   };
 }
 

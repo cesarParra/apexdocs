@@ -15,6 +15,13 @@
 This is a sample interface
 
 
+## SampleGroup
+
+### [ns.SampleClass](./SampleGroup/ns.SampleClass.md)
+
+This is a sample class.
+
+
 ## Sample Enums
 
 ### [ns.SampleEnum](./Sample-Enums/ns.SampleEnum.md)

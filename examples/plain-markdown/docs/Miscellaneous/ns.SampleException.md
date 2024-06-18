@@ -1,6 +1,6 @@
-# ns.SampleException
+# SampleException Class
 
-**Inheritance**
+Access: `public`
 
-SampleException
-
+## Namespace
+ns
