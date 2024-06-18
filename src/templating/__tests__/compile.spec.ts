@@ -87,6 +87,21 @@ describe('compile', () => {
 
       expect(result).toBe('abstract class');
     });
+
+    it('can reference the sharing modifier', () => {
+      const template = '{{sharingModifier}} class';
+
+      const classSource: ClassSource = {
+        __type: 'class',
+        name: 'MyClass',
+        accessModifier: 'public',
+        sharingModifier: 'with sharing',
+      };
+
+      const result = compile(template, classSource);
+
+      expect(result).toBe('with sharing class');
+    });
   });
 
   describe('interface', () => {

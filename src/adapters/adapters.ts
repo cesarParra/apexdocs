@@ -51,6 +51,7 @@ export function classTypeToClassSource(classType: ClassMirror): ClassSource {
     __type: 'class',
     ...baseAdapter(classType),
     classModifier: classType.classModifier,
+    sharingModifier: classType.sharingModifier,
   };
 }
 
