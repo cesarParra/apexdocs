@@ -6,6 +6,11 @@ export const classMarkdownTemplate = `
 
 {{> typeLevelApexDocPartialTemplate}}
 
+{{#if extends}}
+**Extends**
+{{extends}}
+{{/if}}
+
 {{#if implements}}
 **Implements**
 {{#each implements}}

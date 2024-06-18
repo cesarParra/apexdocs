@@ -53,6 +53,7 @@ export function classTypeToClassSource(classType: ClassMirror): ClassSource {
     classModifier: classType.classModifier,
     sharingModifier: classType.sharingModifier,
     implements: classType.implemented_interfaces.map(linkFromTypeNameGenerator),
+    extends: classType.extended_class ? linkFromTypeNameGenerator(classType.extended_class) : undefined,
   };
 }
 

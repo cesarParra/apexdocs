@@ -1,6 +1,9 @@
 # Classes
 ## Miscellaneous
 
+### [ns.BaseClass](./Miscellaneous/ns.BaseClass.md)
+
+
 ### [ns.ParentInterface](./Miscellaneous/ns.ParentInterface.md)
 
 

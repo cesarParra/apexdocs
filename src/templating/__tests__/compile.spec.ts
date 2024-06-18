@@ -120,6 +120,21 @@ describe('compile', () => {
 
       expect(result).toBe('MyInterface, MyOtherInterface');
     });
+
+    it('can reference an extended class', () => {
+      const template = '{{extends}}';
+
+      const classSource: ClassSource = {
+        __type: 'class',
+        name: 'MyClass',
+        accessModifier: 'public',
+        extends: { title: 'MySuperClass', url: 'https://example.com' },
+      };
+
+      const result = compile(template, classSource);
+
+      expect(result).toBe('MySuperClass');
+    });
   });
 
   describe('interface', () => {

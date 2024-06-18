@@ -5,4 +5,4 @@
  * SampleClass sample = new SampleClass();
  * sample.doSomething();
  */
-public with sharing virtual class SampleClass implements SampleInterface, ParentInterface {}
+public with sharing virtual class SampleClass extends BaseClass implements SampleInterface, ParentInterface {}

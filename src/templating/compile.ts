@@ -108,6 +108,7 @@ function prepareClass(
     ...source,
     ...prepareBase(source, renderableContentConverter, codeBlockConverter),
     implements: source.implements?.map((impl) => renderableContentConverter([impl])),
+    extends: source.extends ? renderableContentConverter([source.extends]) : undefined,
   };
 }
 
