@@ -1,61 +1,11 @@
-import {
-  ClassMirror,
-  ConstructorMirror,
-  EnumMirror,
-  InterfaceMirror,
-  MethodMirror,
-  ParameterMirror,
-} from '@cparra/apex-reflection';
-import {
-  ClassSource,
-  ConstructorSource,
-  EnumSource,
-  InterfaceSource,
-  MethodSource,
-  FieldSource,
-} from '../templating/types';
+import { ConstructorMirror, MethodMirror, ParameterMirror, ThrowsAnnotation } from '@cparra/apex-reflection';
+import { ConstructorSource, MethodSource } from '../templating/types';
+import { MethodMirrorWithInheritance } from '../model/inheritance';
+import { adaptDescribable, adaptDocumentable } from './documentable';
 import { linkFromTypeNameGenerator } from './references';
-import { FieldMirrorWithInheritance, MethodMirrorWithInheritance } from '../model/inheritance';
-import { ThrowsAnnotation } from '@cparra/apex-reflection';
-import { adaptDocumentable, describableToRenderableContent } from './documentable';
 import { Documentable } from './types';
-import { baseTypeAdapter } from './apex-types';
 
-export function enumTypeToEnumSource(enumType: EnumMirror): EnumSource {
-  return {
-    __type: 'enum',
-    ...baseTypeAdapter(enumType),
-    values: enumType.values.map((value) => ({
-      value: value.name,
-      description: describableToRenderableContent(value.docComment?.descriptionLines),
-    })),
-  };
-}
-
-export function interfaceTypeToInterfaceSource(interfaceType: InterfaceMirror): InterfaceSource {
-  return {
-    __type: 'interface',
-    ...baseTypeAdapter(interfaceType),
-    extends: interfaceType.extended_interfaces.map(linkFromTypeNameGenerator),
-    methods: interfaceType.methods.map(adaptMethod),
-  };
-}
-
-export function classTypeToClassSource(classType: ClassMirror): ClassSource {
-  return {
-    __type: 'class',
-    ...baseTypeAdapter(classType),
-    classModifier: classType.classModifier,
-    sharingModifier: classType.sharingModifier,
-    implements: classType.implemented_interfaces.map(linkFromTypeNameGenerator),
-    extends: classType.extended_class ? linkFromTypeNameGenerator(classType.extended_class) : undefined,
-    methods: classType.methods.map(adaptMethod),
-    constructors: classType.constructors.map((constructor) => adaptConstructor(classType.name, constructor)),
-    fields: classType.fields.map((field) => adaptField(field as FieldMirrorWithInheritance)),
-  };
-}
-
-function adaptMethod(method: MethodMirror): MethodSource {
+export function adaptMethod(method: MethodMirror): MethodSource {
   function buildTitle(method: MethodMirrorWithInheritance): string {
     const { name, parameters } = method;
     const parametersString = parameters.map((param) => param.name).join(', ');
@@ -76,8 +26,8 @@ function adaptMethod(method: MethodMirror): MethodSource {
     title: buildTitle(method as MethodMirrorWithInheritance),
     signature: buildSignature(method as MethodMirrorWithInheritance),
     returnType: {
+      ...adaptDescribable(method.docComment?.returnAnnotation?.bodyLines),
       type: linkFromTypeNameGenerator(method.typeReference.rawDeclaration),
-      description: describableToRenderableContent(method.docComment?.returnAnnotation?.bodyLines),
     },
     throws: method.docComment?.throwsAnnotations.map((thrown) => mapThrows(thrown)),
     parameters: method.parameters.map((param) => mapParameters(method, param)),
@@ -85,7 +35,7 @@ function adaptMethod(method: MethodMirror): MethodSource {
   };
 }
 
-function adaptConstructor(typeName: string, constructor: ConstructorMirror): ConstructorSource {
+export function adaptConstructor(typeName: string, constructor: ConstructorMirror): ConstructorSource {
   function buildTitle(name: string, constructor: ConstructorMirror): string {
     const { parameters } = constructor;
     const parametersString = parameters.map((param) => param.name).join(', ');
@@ -109,30 +59,20 @@ function adaptConstructor(typeName: string, constructor: ConstructorMirror): Con
   };
 }
 
-function adaptField(field: FieldMirrorWithInheritance): FieldSource {
-  return {
-    ...adaptDocumentable(field),
-    name: field.name,
-    type: linkFromTypeNameGenerator(field.typeReference.rawDeclaration),
-    inherited: field.inherited,
-    accessModifier: field.access_modifier,
-  };
-}
-
 function mapParameters(documentable: Documentable, param: ParameterMirror) {
   const paramAnnotation = documentable.docComment?.paramAnnotations.find(
     (pa) => pa.paramName.toLowerCase() === param.name.toLowerCase(),
   );
   return {
+    ...adaptDescribable(paramAnnotation?.bodyLines),
     name: param.name,
     type: linkFromTypeNameGenerator(param.typeReference.rawDeclaration),
-    description: paramAnnotation ? describableToRenderableContent(paramAnnotation.bodyLines) : undefined,
   };
 }
 
 function mapThrows(thrown: ThrowsAnnotation) {
   return {
+    ...adaptDescribable(thrown.bodyLines),
     type: linkFromTypeNameGenerator(thrown.exceptionName),
-    description: describableToRenderableContent(thrown.bodyLines),
   };
 }

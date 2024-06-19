@@ -7,14 +7,14 @@ import ClassFileGeneratorHelper from '../class-file-generatorHelper';
 import { enumMarkdownTemplate } from './enum-template';
 import { compile } from '../../../templating/compile';
 import { ClassSource, EnumSource, InterfaceSource, Link, RenderableContent } from '../../../templating/types';
+import { interfaceMarkdownTemplate } from './interface-template';
+import { classMarkdownTemplate } from './class-template';
+import { isEmptyLine } from '../../../adapters/type-utils';
 import {
   classTypeToClassSource,
   enumTypeToEnumSource,
   interfaceTypeToInterfaceSource,
-} from '../../../adapters/adapters';
-import { interfaceMarkdownTemplate } from './interface-template';
-import { classMarkdownTemplate } from './class-template';
-import { isEmptyLine } from '../../../adapters/type-utils';
+} from '../../../adapters/apex-types';
 
 export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
   homeFileName(): string {
