@@ -1,1 +1,3 @@
-public abstract class BaseClass {}
+public abstract class BaseClass {
+    public SampleEnum sampleEnumFromBase;
+}

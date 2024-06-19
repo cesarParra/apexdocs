@@ -1,7 +1,11 @@
 # BaseClass Class
 `abstract`
 
-Access: `public`
-
 ## Namespace
 ns
+
+## Fields
+### `sampleEnumFromBase`
+
+#### Type
+[ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md)

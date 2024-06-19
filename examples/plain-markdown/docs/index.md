@@ -22,7 +22,8 @@ This is a sample interface
 
 ### [ns.SampleClass](./SampleGroup/ns.SampleClass.md)
 
-This is a sample class.
+aliquip ex sunt officia ullamco anim deserunt magna aliquip nisi eiusmod in sit officia veniam ex
+             deserunt ea officia exercitation laboris enim in duis quis enim eiusmod eu amet cupidatat.
 
 
 ## Sample Enums

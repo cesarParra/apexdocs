@@ -18,6 +18,10 @@ export const classMarkdownTemplate = `
 {{/each}}
 {{/if}}
 
+{{#if fields}}
+{{> fieldsPartialTemplate}}
+{{/if}}
+
 {{#if constructors}}
 {{> constructorsPartialTemplate}}
 {{/if}}

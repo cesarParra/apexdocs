@@ -7,11 +7,7 @@ export const methodsPartialTemplate = `
 *Inherited*
 {{/if}}
 
-{{#each annotations}}
-\`{{this}}\`
-{{/each}}
-
-{{description}}
+{{#> documentablePartialTemplate}}
 
 ### Signature
 \`\`\`apex
@@ -41,16 +37,9 @@ export const methodsPartialTemplate = `
 
 {{/each}}
 {{/if}}
-
-{{#each customTags}}
-**{{splitAndCapitalize name}}** {{value}}
-
-{{/each}}
-
-{{{mermaid}}}
-
-{{{example}}}
+{{/documentablePartialTemplate}}
 
 {{#unless @last}}---{{/unless}}
+
 {{/each}}
 `.trim();

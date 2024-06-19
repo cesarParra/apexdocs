@@ -30,7 +30,7 @@ type Annotation = string;
 
 type CodeBlock = string[];
 
-type BaseDocAwareSource = {
+type DocumentableSource = {
   annotations?: Annotation[];
   description?: RenderableContent[];
   customTags?: CustomTag[];
@@ -38,7 +38,7 @@ type BaseDocAwareSource = {
   example?: CodeBlock;
 };
 
-type BaseTypeSource = BaseDocAwareSource & {
+type BaseTypeSource = DocumentableSource & {
   name: string;
   accessModifier: string;
   group?: string;
@@ -58,19 +58,26 @@ type TypeSource = {
   description?: RenderableContent[];
 };
 
-type ConstructorSource = BaseDocAwareSource & {
+type ConstructorSource = DocumentableSource & {
   title: string;
   signature: string;
   parameters?: MethodParameterSource[];
   throws?: TypeSource[];
 };
 
-type MethodSource = BaseDocAwareSource & {
+type MethodSource = DocumentableSource & {
   title: string;
   signature: string;
   parameters?: MethodParameterSource[];
   returnType?: TypeSource;
   throws?: TypeSource[];
+  inherited?: boolean;
+};
+
+type FieldSource = DocumentableSource & {
+  name: string;
+  type: StringOrLink;
+  accessModifier: string;
   inherited?: boolean;
 };
 
@@ -82,6 +89,7 @@ export type ClassSource = BaseTypeSource & {
   methods?: MethodSource[];
   classModifier?: string;
   sharingModifier?: string;
+  fields?: FieldSource[];
 };
 
 export type InterfaceSource = BaseTypeSource & {

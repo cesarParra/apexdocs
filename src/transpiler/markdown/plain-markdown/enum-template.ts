@@ -3,8 +3,9 @@ export const enumMarkdownTemplate = `
 
 {{> typeLevelApexDocPartialTemplate}}
 
+## Enum Values
 {{#each values}}
-## {{value}}
+### {{value}}
 {{description}}
 {{/each}}
 `.trim();

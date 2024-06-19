@@ -9,13 +9,14 @@ import {
   ParameterMirror,
 } from '@cparra/apex-reflection';
 import {
-  BaseDocAwareSource,
+  DocumentableSource,
   BaseTypeSource,
   ClassSource,
   ConstructorSource,
   EnumSource,
   InterfaceSource,
   MethodSource,
+  FieldSource,
 } from '../templating/types';
 import { linkFromTypeNameGenerator } from './references';
 import {
@@ -25,15 +26,15 @@ import {
   extractCustomTags,
   extractSeeAnnotations,
 } from './apex-doc-adapters';
-import { MethodMirrorWithInheritance } from '../model/inheritance';
-import { ThrowsAnnotation } from '@cparra/apex-reflection/index';
+import { FieldMirrorWithInheritance, MethodMirrorWithInheritance } from '../model/inheritance';
+import { ThrowsAnnotation } from '@cparra/apex-reflection';
 
 type Documentable = {
   annotations: Annotation[];
   docComment?: DocComment;
 };
 
-function baseDocumentableAdapter(documentable: Documentable): BaseDocAwareSource {
+function baseDocumentableAdapter(documentable: Documentable): DocumentableSource {
   return {
     annotations: documentable.annotations.map((annotation) => annotation.type.toUpperCase()),
     description: documentationLinesToRenderableContent(documentable.docComment?.descriptionLines),
@@ -85,6 +86,7 @@ export function classTypeToClassSource(classType: ClassMirror): ClassSource {
     extends: classType.extended_class ? linkFromTypeNameGenerator(classType.extended_class) : undefined,
     methods: classType.methods.map(adaptMethod),
     constructors: classType.constructors.map((constructor) => adaptConstructor(classType.name, constructor)),
+    fields: classType.fields.map((field) => adaptField(field as FieldMirrorWithInheritance)),
   };
 }
 
@@ -139,6 +141,16 @@ function adaptConstructor(typeName: string, constructor: ConstructorMirror): Con
     signature: buildSignature(typeName, constructor),
     parameters: constructor.parameters.map((param) => mapParameters(constructor, param)),
     throws: constructor.docComment?.throwsAnnotations.map((thrown) => mapThrows(thrown)),
+  };
+}
+
+function adaptField(field: FieldMirrorWithInheritance): FieldSource {
+  return {
+    ...baseDocumentableAdapter(field),
+    name: field.name,
+    type: linkFromTypeNameGenerator(field.typeReference.rawDeclaration),
+    inherited: field.inherited,
+    accessModifier: field.access_modifier,
   };
 }
 

@@ -6,12 +6,14 @@ import {
   ClassSource,
   MethodSource,
   RenderableContent,
-  BaseDocAwareSource,
+  DocumentableSource,
 } from './types';
 import { namespace, splitAndCapitalize } from './helpers';
 import { typeLevelApexDocPartialTemplate } from '../transpiler/markdown/plain-markdown/type-level-apex-doc-partial-template';
 import { methodsPartialTemplate } from '../transpiler/markdown/plain-markdown/methods-partial-template';
 import { constructorsPartialTemplate } from '../transpiler/markdown/plain-markdown/constructors-partial-template';
+import { fieldsPartialTemplate } from '../transpiler/markdown/plain-markdown/fieldsPartialTemplate';
+import { documentablePartialTemplate } from '../transpiler/markdown/plain-markdown/documentable-partial-template';
 
 type CompileOptions = {
   renderableContentConverter: ConvertRenderableContentsToString;
@@ -20,8 +22,11 @@ type CompileOptions = {
 
 export function compile(template: string, source: EnumSource | InterfaceSource | ClassSource, options: CompileOptions) {
   Handlebars.registerPartial('typeLevelApexDocPartialTemplate', typeLevelApexDocPartialTemplate);
+  Handlebars.registerPartial('documentablePartialTemplate', documentablePartialTemplate);
   Handlebars.registerPartial('methodsPartialTemplate', methodsPartialTemplate);
   Handlebars.registerPartial('constructorsPartialTemplate', constructorsPartialTemplate);
+  Handlebars.registerPartial('fieldsPartialTemplate', fieldsPartialTemplate);
+
   Handlebars.registerHelper('splitAndCapitalize', splitAndCapitalize);
 
   const prepared = { ...prepare(source, options), namespace: namespace() };
@@ -47,8 +52,8 @@ function prepare(
   }
 }
 
-function prepareBase(
-  source: BaseDocAwareSource,
+function prepareDocumentable(
+  source: DocumentableSource,
   renderableContentConverter: ConvertRenderableContentsToString,
   codeBlockConverter: (language: string, lines: string[]) => string,
 ) {
@@ -70,10 +75,45 @@ function prepareEnum(
 ) {
   return {
     ...source,
-    ...prepareBase(source, renderableContentConverter, codeBlockConverter),
+    ...prepareDocumentable(source, renderableContentConverter, codeBlockConverter),
     values: source.values.map((value) => ({
       value: value.value,
       description: renderableContentConverter(value.description),
+    })),
+  };
+}
+
+function prepareInterface(
+  source: InterfaceSource,
+  renderableContentConverter: ConvertRenderableContentsToString,
+  codeBlockConverter: (language: string, lines: string[]) => string,
+) {
+  return {
+    ...source,
+    ...prepareDocumentable(source, renderableContentConverter, codeBlockConverter),
+    extends: source.extends?.map((ext) => renderableContentConverter([ext])),
+    methods: source.methods?.map((method) => mapMethod(method, renderableContentConverter, codeBlockConverter)),
+  };
+}
+
+function prepareClass(
+  source: ClassSource,
+  renderableContentConverter: ConvertRenderableContentsToString,
+  codeBlockConverter: (language: string, lines: string[]) => string,
+) {
+  return {
+    ...source,
+    ...prepareDocumentable(source, renderableContentConverter, codeBlockConverter),
+    implements: source.implements?.map((impl) => renderableContentConverter([impl])),
+    extends: source.extends ? renderableContentConverter([source.extends]) : undefined,
+    constructors: source.constructors?.map((constructor) =>
+      mapConstructor(constructor, renderableContentConverter, codeBlockConverter),
+    ),
+    methods: source.methods?.map((method) => mapMethod(method, renderableContentConverter, codeBlockConverter)),
+    fields: source.fields?.map((field) => ({
+      ...field,
+      ...prepareDocumentable(field, renderableContentConverter, codeBlockConverter),
+      type: renderableContentConverter([field.type]),
     })),
   };
 }
@@ -85,7 +125,7 @@ function mapMethod(
 ) {
   return {
     ...method,
-    ...prepareBase(method, renderableContentConverter, codeBlockConverter),
+    ...prepareDocumentable(method, renderableContentConverter, codeBlockConverter),
     returnType: {
       ...method,
       type: method.returnType?.type ? renderableContentConverter([method.returnType.type]) : undefined,
@@ -111,7 +151,7 @@ function mapConstructor(
 ) {
   return {
     ...constructor,
-    ...prepareBase(constructor, renderableContentConverter, codeBlockConverter),
+    ...prepareDocumentable(constructor, renderableContentConverter, codeBlockConverter),
     parameters: constructor.parameters?.map((param) => ({
       ...param,
       type: renderableContentConverter([param.type]),
@@ -122,36 +162,6 @@ function mapConstructor(
       type: renderableContentConverter([thrown.type]),
       description: renderableContentConverter(thrown.description),
     })),
-  };
-}
-
-function prepareInterface(
-  source: InterfaceSource,
-  renderableContentConverter: ConvertRenderableContentsToString,
-  codeBlockConverter: (language: string, lines: string[]) => string,
-) {
-  return {
-    ...source,
-    ...prepareBase(source, renderableContentConverter, codeBlockConverter),
-    extends: source.extends?.map((ext) => renderableContentConverter([ext])),
-    methods: source.methods?.map((method) => mapMethod(method, renderableContentConverter, codeBlockConverter)),
-  };
-}
-
-function prepareClass(
-  source: ClassSource,
-  renderableContentConverter: ConvertRenderableContentsToString,
-  codeBlockConverter: (language: string, lines: string[]) => string,
-) {
-  return {
-    ...source,
-    ...prepareBase(source, renderableContentConverter, codeBlockConverter),
-    implements: source.implements?.map((impl) => renderableContentConverter([impl])),
-    extends: source.extends ? renderableContentConverter([source.extends]) : undefined,
-    constructors: source.constructors?.map((constructor) =>
-      mapConstructor(constructor, renderableContentConverter, codeBlockConverter),
-    ),
-    methods: source.methods?.map((method) => mapMethod(method, renderableContentConverter, codeBlockConverter)),
   };
 }
 

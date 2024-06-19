@@ -1,10 +1,5 @@
 # SampleInterface Interface
 
-Access: `public`
-
-## Namespace
-ns
-
 `NAMESPACEACCESSIBLE`
 
 This is a sample interface
@@ -13,9 +8,14 @@ This is a sample interface
 
 **Date** 2020-01-01
 
+TODO: REFACTOR&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;WE WON'T WANT TO HANDLE URLS LIKE THIS SINCE THEY MIGHT NOT BE FOUND
 **See** [ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md)
 
+TODO: REFACTOR&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;WE WON'T WANT TO HANDLE URLS LIKE THIS SINCE THEY MIGHT NOT BE FOUND
 **See** [ns.ReferencedEnum](./ns.ReferencedEnum.md)
+
+## Namespace
+ns
 
 ```mermaid
 graph TD
@@ -24,10 +24,13 @@ graph TD
    C --&gt;|extends| D[GreatGrandParentInterface]
 ```
 
+TODO: This should be a different heading level when inside of a field, method or constructor
+## Example
 ```apex
 SampleInterface sampleInterface = new SampleInterface();
 sampleInterface.sampleMethod();
 ```
+
 **Extends**
 [ns.ParentInterface](./ns.ParentInterface.md)
 
@@ -37,6 +40,10 @@ sampleInterface.sampleMethod();
 `NAMESPACEACCESSIBLE`
 
 This is a sample method
+
+**Custom Tag** This is a custom tag
+
+**Another Custom Tag** This is another custom tag
 
 ### Signature
 ```apex
@@ -53,10 +60,6 @@ Some return value
 
 AnotherSampleException: This is another sample exception
 
-**Custom Tag** This is a custom tag
-
-**Another Custom Tag** This is another custom tag
-
 ```mermaid
 graph TD
   A[SampleInterface] --&gt;|extends| B[ParentInterface]
@@ -64,12 +67,15 @@ graph TD
   C --&gt;|extends| D[GreatGrandParentInterface]
 ```
 
+TODO: This should be a different heading level when inside of a field, method or constructor
+## Example
 ```apex
 SampleInterface sampleInterface = new SampleInterface();
 sampleInterface.sampleMethod();
 ```
 
 ---
+
 ### `sampleMethodWithParams(param1, param2, theEnum)`
 
 `NAMESPACEACCESSIBLE`
@@ -97,6 +103,7 @@ public SampleEnum sampleMethodWithParams(String param1, Integer param2, SampleEn
 Some return value
 
 ---
+
 ### `sampleParentMethod()`
 
 *Inherited*

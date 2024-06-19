@@ -3,11 +3,7 @@ export const constructorsPartialTemplate = `
 {{#each constructors}}
 ### \`{{title}}\`
 
-{{#each annotations}}
-\`{{this}}\`
-{{/each}}
-
-{{description}}
+{{#> documentablePartialTemplate}}
 
 ### Signature
 \`\`\`apex
@@ -31,14 +27,7 @@ export const constructorsPartialTemplate = `
 {{/each}}
 {{/if}}
 
-{{#each customTags}}
-**{{splitAndCapitalize name}}** {{value}}
-
-{{/each}}
-
-{{{mermaid}}}
-
-{{{example}}}
+{{/documentablePartialTemplate}}
 
 {{#unless @last}}---{{/unless}}
 {{/each}}

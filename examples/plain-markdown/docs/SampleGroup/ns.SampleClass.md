@@ -1,25 +1,45 @@
 # SampleClass Class
 `virtual`
 
-Access: `public`
+aliquip ex sunt officia ullamco anim deserunt magna aliquip nisi eiusmod in sit officia veniam ex 
+
+deserunt ea officia exercitation laboris enim in duis quis enim eiusmod eu amet cupidatat.
+
+**Group** SampleGroup
 
 ## Namespace
 ns
 
-This is a sample class.
-
-**Group** SampleGroup
-
+TODO: This should be a different heading level when inside of a field, method or constructor
+## Example
 ```apex
 SampleClass sample = new SampleClass();
 sample.doSomething();
 ```
+
 **Extends**
 [ns.BaseClass](../Miscellaneous/ns.BaseClass.md)
 
 **Implements**
 [ns.SampleInterface](../Miscellaneous/ns.SampleInterface.md), 
 [ns.ParentInterface](../Miscellaneous/ns.ParentInterface.md)
+
+## Fields
+### `name`
+
+This is a sample field.
+
+#### Type
+String
+
+---
+
+### `sampleEnumFromBase`
+
+*Inherited*
+
+#### Type
+[ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md)
 
 ## Constructors
 ### `SampleClass()`
@@ -47,6 +67,8 @@ public SampleClass(String name)
 ## Methods
 ### `sayHello()`
 
+`DEPRECATED`
+
 This is a sample method.
 
 ### Signature
@@ -58,3 +80,10 @@ public virtual String sayHello()
 **String**
 
 A string value.
+
+TODO: This should be a different heading level when inside of a field, method or constructor
+## Example
+```apex
+SampleClass sample = new SampleClass();
+sample.doSomething();
+```

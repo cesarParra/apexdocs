@@ -135,6 +135,68 @@ describe('compile', () => {
 
       expect(result).toBe('MySuperClass');
     });
+
+    describe('class fields', () => {
+      it('can reference the field name', () => {
+        const template = '{{#each fields}}{{name}}{{/each}}';
+
+        const classSource: ClassSource = {
+          __type: 'class',
+          name: 'MyClass',
+          accessModifier: 'public',
+          fields: [{ name: 'myField', type: 'String', accessModifier: 'public' }],
+        };
+
+        const result = compile(template, classSource);
+
+        expect(result).toBe('myField');
+      });
+
+      it('can reference the field type', () => {
+        const template = '{{#each fields}}{{type}}{{/each}}';
+
+        const classSource: ClassSource = {
+          __type: 'class',
+          name: 'MyClass',
+          accessModifier: 'public',
+          fields: [{ name: 'myField', type: 'String', accessModifier: 'public' }],
+        };
+
+        const result = compile(template, classSource);
+
+        expect(result).toBe('String');
+      });
+
+      it('can reference the field access modifier', () => {
+        const template = '{{#each fields}}{{accessModifier}}{{/each}}';
+
+        const classSource: ClassSource = {
+          __type: 'class',
+          name: 'MyClass',
+          accessModifier: 'public',
+          fields: [{ name: 'myField', type: 'String', accessModifier: 'public' }],
+        };
+
+        const result = compile(template, classSource);
+
+        expect(result).toBe('public');
+      });
+
+      it('can reference if it is inherited', () => {
+        const template = '{{#each fields}}{{#if inherited}}Inherited{{/if}}{{/each}}';
+
+        const classSource: ClassSource = {
+          __type: 'class',
+          name: 'MyClass',
+          accessModifier: 'public',
+          fields: [{ name: 'myField', type: 'String', accessModifier: 'public', inherited: true }],
+        };
+
+        const result = compile(template, classSource);
+
+        expect(result).toBe('Inherited');
+      });
+    });
   });
 
   describe('interface', () => {
