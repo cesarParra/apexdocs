@@ -5,10 +5,8 @@ import {
   InterfaceMirror,
   MethodMirror,
   ParameterMirror,
-  Type,
 } from '@cparra/apex-reflection';
 import {
-  BaseTypeSource,
   ClassSource,
   ConstructorSource,
   EnumSource,
@@ -21,32 +19,7 @@ import { FieldMirrorWithInheritance, MethodMirrorWithInheritance } from '../mode
 import { ThrowsAnnotation } from '@cparra/apex-reflection';
 import { adaptDocumentable, describableToRenderableContent } from './documentable';
 import { Documentable } from './types';
-
-function baseTypeAdapter(type: EnumMirror | InterfaceMirror | ClassMirror): BaseTypeSource {
-  function extractAnnotationBody(type: Type, annotationName: string): string | undefined {
-    return type.docComment?.annotations.find(
-      (currentAnnotation) => currentAnnotation.name.toLowerCase() === annotationName,
-    )?.body;
-  }
-
-  function extractSeeAnnotations(type: Type): string[] {
-    return (
-      type.docComment?.annotations
-        .filter((currentAnnotation) => currentAnnotation.name.toLowerCase() === 'see')
-        .map((currentAnnotation) => currentAnnotation.body) ?? []
-    );
-  }
-
-  return {
-    ...adaptDocumentable(type),
-    accessModifier: type.access_modifier,
-    name: type.name,
-    group: extractAnnotationBody(type, 'group'),
-    author: extractAnnotationBody(type, 'author'),
-    date: extractAnnotationBody(type, 'date'),
-    sees: extractSeeAnnotations(type).map(linkFromTypeNameGenerator),
-  };
-}
+import { baseTypeAdapter } from './apex-types';
 
 export function enumTypeToEnumSource(enumType: EnumMirror): EnumSource {
   return {
