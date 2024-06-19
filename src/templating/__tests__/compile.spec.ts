@@ -456,7 +456,7 @@ describe('compile', () => {
           {
             title: 'myMethod()',
             signature: 'void myMethod()',
-            customTags: [{ name: 'CustomTag', value: ['My custom tag'] }],
+            customTags: [{ name: 'CustomTag', description: ['My custom tag'] }],
           },
         ],
       };
@@ -714,7 +714,7 @@ describe('compile', () => {
         accessModifier: 'public',
         name: 'MyEnum',
         values: [],
-        customTags: [{ name: 'CustomTag', value: ['My custom tag'] }],
+        customTags: [{ name: 'CustomTag', description: ['My custom tag'] }],
       };
 
       const result = compile(template, enumSource);

@@ -63,7 +63,7 @@ function prepareDocumentable(
     example: source.example ? codeBlockConverter('apex', source.example) : undefined,
     customTags: source.customTags?.map((tag) => ({
       name: tag.name,
-      value: renderableContentConverter(tag.value),
+      value: renderableContentConverter(tag.description),
     })),
   };
 }

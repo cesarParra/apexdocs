@@ -1,6 +1,6 @@
 import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
 import { BaseTypeSource, ClassSource, EnumSource, InterfaceSource } from '../templating/types';
-import { adaptDescribable, adaptDocumentable } from './documentable';
+import { adaptDescribable, adaptDocumentable } from './documentables';
 import { linkFromTypeNameGenerator } from './references';
 import { FieldMirrorWithInheritance } from '../model/inheritance';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';

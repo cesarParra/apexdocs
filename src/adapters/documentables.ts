@@ -5,29 +5,28 @@ import { isEmptyLine } from './type-utils';
 
 // TODO: Unit tests
 export function adaptDescribable(describable: Describable): { description?: RenderableContent[] } {
+  function describableToRenderableContent(describable: Describable): RenderableContent[] | undefined {
+    if (!describable) {
+      return;
+    }
+
+    return (
+      describable
+        .map<RenderableContent[]>((line) => [
+          ...replaceInlineReferences(line),
+          {
+            type: 'empty-line',
+          },
+        ])
+        .flatMap((line) => line)
+        // If the last element is an empty line, remove it
+        .filter((line, index, lines) => !(isEmptyLine(line) && index === lines.length - 1))
+    );
+  }
+
   return {
     description: describableToRenderableContent(describable),
   };
-}
-
-// TODO: Unit tests
-export function describableToRenderableContent(describable: Describable): RenderableContent[] | undefined {
-  if (!describable) {
-    return;
-  }
-
-  return (
-    describable
-      .map<RenderableContent[]>((line) => [
-        ...replaceInlineReferences(line),
-        {
-          type: 'empty-line',
-        },
-      ])
-      .flatMap((line) => line)
-      // If the last element is an empty line, remove it
-      .filter((line, index, lines) => !(isEmptyLine(line) && index === lines.length - 1))
-  );
 }
 
 // TODO: Unit tests
@@ -39,8 +38,8 @@ export function adaptDocumentable(documentable: Documentable): DocumentableSourc
       type.docComment?.annotations
         .filter((currentAnnotation) => !baseTags.includes(currentAnnotation.name.toLowerCase()))
         .map<CustomTag>((currentAnnotation) => ({
+          ...adaptDescribable(currentAnnotation.bodyLines),
           name: currentAnnotation.name,
-          value: describableToRenderableContent(currentAnnotation.bodyLines)!,
         })) ?? []
     );
   }

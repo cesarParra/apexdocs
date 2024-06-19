@@ -6,7 +6,7 @@ export const documentablePartialTemplate = `
 {{description}}
 
 {{#each customTags}}
-**{{splitAndCapitalize name}}** {{value}}
+**{{splitAndCapitalize name}}** {{description}}
 
 {{/each}}
 

@@ -1,7 +1,7 @@
 import { ConstructorMirror, MethodMirror, ParameterMirror, ThrowsAnnotation } from '@cparra/apex-reflection';
 import { ConstructorSource, MethodSource } from '../templating/types';
 import { MethodMirrorWithInheritance } from '../model/inheritance';
-import { adaptDescribable, adaptDocumentable } from './documentable';
+import { adaptDescribable, adaptDocumentable } from './documentables';
 import { linkFromTypeNameGenerator } from './references';
 import { Documentable } from './types';
 

@@ -1,6 +1,6 @@
 import { FieldMirrorWithInheritance } from '../model/inheritance';
 import { FieldSource } from '../templating/types';
-import { adaptDocumentable } from './documentable';
+import { adaptDocumentable } from './documentables';
 import { linkFromTypeNameGenerator } from './references';
 
 export function adaptField(field: FieldMirrorWithInheritance): FieldSource {
