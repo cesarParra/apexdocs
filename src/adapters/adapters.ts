@@ -96,11 +96,12 @@ function adaptMethod(method: MethodMirror): MethodSource {
   }
 
   function buildSignature(method: MethodMirrorWithInheritance): string {
-    const { access_modifier, typeReference, name } = method;
+    const { access_modifier, typeReference, name, memberModifiers } = method;
     const parameters = method.parameters
       .map((param) => `${param.typeReference.rawDeclaration} ${param.name}`)
       .join(', ');
-    return `${access_modifier} ${typeReference.rawDeclaration} ${name}(${parameters})`;
+    const members = memberModifiers.length > 0 ? `${memberModifiers.join(' ')} ` : '';
+    return `${access_modifier} ${members}${typeReference.rawDeclaration} ${name}(${parameters})`;
   }
 
   return {

@@ -21,7 +21,7 @@ public with sharing virtual class SampleClass extends BaseClass implements Sampl
      * @description This is a sample method.
      * @return A string value.
      */
-    public String sayHello() {
+    public virtual String sayHello() {
         return 'Hello';
     }
 }
