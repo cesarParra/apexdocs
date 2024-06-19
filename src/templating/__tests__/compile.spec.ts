@@ -104,7 +104,7 @@ describe('compile', () => {
     });
 
     it('can reference the implemented interfaces', () => {
-      const template = '{{#each implements}}{{title}}{{#unless @last}}, {{/unless}}{{/each}}';
+      const template = '{{#each implements}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}';
 
       const classSource: ClassSource = {
         __type: 'class',
@@ -212,7 +212,7 @@ describe('compile', () => {
     });
 
     it('can reference the extended interfaces of an interface', () => {
-      const template = '{{#each extends}}{{title}}{{#unless @last}}, {{/unless}}{{/each}}';
+      const template = '{{#each extends}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}';
 
       const interfaceSource: InterfaceSource = {
         __type: 'interface',

@@ -31,6 +31,7 @@ type Annotation = string;
 type CodeBlock = string[];
 
 type BaseDocAwareSource = {
+  annotations?: Annotation[];
   description?: RenderableContent[];
   customTags?: CustomTag[];
   mermaid?: CodeBlock;
@@ -57,10 +58,16 @@ type TypeSource = {
   description?: RenderableContent[];
 };
 
+type ConstructorSource = BaseDocAwareSource & {
+  title: string;
+  signature: string;
+  parameters?: MethodParameterSource[];
+  throws?: TypeSource[];
+};
+
 type MethodSource = BaseDocAwareSource & {
   title: string;
   signature: string;
-  annotations?: Annotation[];
   parameters?: MethodParameterSource[];
   returnType?: TypeSource;
   throws?: TypeSource[];
@@ -69,9 +76,9 @@ type MethodSource = BaseDocAwareSource & {
 
 export type ClassSource = BaseTypeSource & {
   __type: 'class';
-  annotations?: Annotation[];
   extends?: StringOrLink;
   implements?: StringOrLink[];
+  constructors?: ConstructorSource[];
   methods?: MethodSource[];
   classModifier?: string;
   sharingModifier?: string;
@@ -79,7 +86,6 @@ export type ClassSource = BaseTypeSource & {
 
 export type InterfaceSource = BaseTypeSource & {
   __type: 'interface';
-  annotations?: Annotation[];
   extends?: StringOrLink[];
   methods?: MethodSource[];
 };

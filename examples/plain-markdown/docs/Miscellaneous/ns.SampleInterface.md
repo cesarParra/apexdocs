@@ -70,7 +70,6 @@ sampleInterface.sampleMethod();
 ```
 
 ---
-
 ### `sampleMethodWithParams(param1, param2, theEnum)`
 
 `NAMESPACEACCESSIBLE`
@@ -98,7 +97,6 @@ public SampleEnum sampleMethodWithParams(String param1, Integer param2, SampleEn
 Some return value
 
 ---
-
 ### `sampleParentMethod()`
 
 *Inherited*

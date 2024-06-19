@@ -17,4 +17,12 @@ export const classMarkdownTemplate = `
 {{this}}{{#unless @last}}, {{/unless}}
 {{/each}}
 {{/if}}
+
+{{#if constructors}}
+{{> constructorsPartialTemplate}}
+{{/if}}
+
+{{#if methods}}
+{{> methodsPartialTemplate}}
+{{/if}}
 `.trim();
