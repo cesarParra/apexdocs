@@ -1,15 +1,13 @@
 import {
-  Annotation,
   ClassMirror,
   ConstructorMirror,
-  DocComment,
   EnumMirror,
   InterfaceMirror,
   MethodMirror,
   ParameterMirror,
+  Type,
 } from '@cparra/apex-reflection';
 import {
-  DocumentableSource,
   BaseTypeSource,
   ClassSource,
   ConstructorSource,
@@ -19,34 +17,28 @@ import {
   FieldSource,
 } from '../templating/types';
 import { linkFromTypeNameGenerator } from './references';
-import {
-  documentationLinesToRenderableContent,
-  extractAnnotationBody,
-  extractAnnotationBodyLines,
-  extractCustomTags,
-  extractSeeAnnotations,
-} from './apex-doc-adapters';
 import { FieldMirrorWithInheritance, MethodMirrorWithInheritance } from '../model/inheritance';
 import { ThrowsAnnotation } from '@cparra/apex-reflection';
-
-type Documentable = {
-  annotations: Annotation[];
-  docComment?: DocComment;
-};
-
-function baseDocumentableAdapter(documentable: Documentable): DocumentableSource {
-  return {
-    annotations: documentable.annotations.map((annotation) => annotation.type.toUpperCase()),
-    description: documentationLinesToRenderableContent(documentable.docComment?.descriptionLines),
-    customTags: extractCustomTags(documentable),
-    mermaid: extractAnnotationBodyLines(documentable, 'mermaid'),
-    example: documentable.docComment?.exampleAnnotation?.bodyLines,
-  };
-}
+import { adaptDocumentable, describableToRenderableContent } from './documentable';
+import { Documentable } from './types';
 
 function baseTypeAdapter(type: EnumMirror | InterfaceMirror | ClassMirror): BaseTypeSource {
+  function extractAnnotationBody(type: Type, annotationName: string): string | undefined {
+    return type.docComment?.annotations.find(
+      (currentAnnotation) => currentAnnotation.name.toLowerCase() === annotationName,
+    )?.body;
+  }
+
+  function extractSeeAnnotations(type: Type): string[] {
+    return (
+      type.docComment?.annotations
+        .filter((currentAnnotation) => currentAnnotation.name.toLowerCase() === 'see')
+        .map((currentAnnotation) => currentAnnotation.body) ?? []
+    );
+  }
+
   return {
-    ...baseDocumentableAdapter(type),
+    ...adaptDocumentable(type),
     accessModifier: type.access_modifier,
     name: type.name,
     group: extractAnnotationBody(type, 'group'),
@@ -62,7 +54,7 @@ export function enumTypeToEnumSource(enumType: EnumMirror): EnumSource {
     ...baseTypeAdapter(enumType),
     values: enumType.values.map((value) => ({
       value: value.name,
-      description: documentationLinesToRenderableContent(value.docComment?.descriptionLines),
+      description: describableToRenderableContent(value.docComment?.descriptionLines),
     })),
   };
 }
@@ -107,12 +99,12 @@ function adaptMethod(method: MethodMirror): MethodSource {
   }
 
   return {
-    ...baseDocumentableAdapter(method),
+    ...adaptDocumentable(method),
     title: buildTitle(method as MethodMirrorWithInheritance),
     signature: buildSignature(method as MethodMirrorWithInheritance),
     returnType: {
       type: linkFromTypeNameGenerator(method.typeReference.rawDeclaration),
-      description: documentationLinesToRenderableContent(method.docComment?.returnAnnotation?.bodyLines),
+      description: describableToRenderableContent(method.docComment?.returnAnnotation?.bodyLines),
     },
     throws: method.docComment?.throwsAnnotations.map((thrown) => mapThrows(thrown)),
     parameters: method.parameters.map((param) => mapParameters(method, param)),
@@ -136,7 +128,7 @@ function adaptConstructor(typeName: string, constructor: ConstructorMirror): Con
   }
 
   return {
-    ...baseDocumentableAdapter(constructor),
+    ...adaptDocumentable(constructor),
     title: buildTitle(typeName, constructor),
     signature: buildSignature(typeName, constructor),
     parameters: constructor.parameters.map((param) => mapParameters(constructor, param)),
@@ -146,7 +138,7 @@ function adaptConstructor(typeName: string, constructor: ConstructorMirror): Con
 
 function adaptField(field: FieldMirrorWithInheritance): FieldSource {
   return {
-    ...baseDocumentableAdapter(field),
+    ...adaptDocumentable(field),
     name: field.name,
     type: linkFromTypeNameGenerator(field.typeReference.rawDeclaration),
     inherited: field.inherited,
@@ -161,13 +153,13 @@ function mapParameters(documentable: Documentable, param: ParameterMirror) {
   return {
     name: param.name,
     type: linkFromTypeNameGenerator(param.typeReference.rawDeclaration),
-    description: paramAnnotation ? documentationLinesToRenderableContent(paramAnnotation.bodyLines) : undefined,
+    description: paramAnnotation ? describableToRenderableContent(paramAnnotation.bodyLines) : undefined,
   };
 }
 
 function mapThrows(thrown: ThrowsAnnotation) {
   return {
     type: linkFromTypeNameGenerator(thrown.exceptionName),
-    description: documentationLinesToRenderableContent(thrown.bodyLines),
+    description: describableToRenderableContent(thrown.bodyLines),
   };
 }

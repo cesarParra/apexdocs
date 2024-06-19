@@ -13,8 +13,8 @@ import {
   interfaceTypeToInterfaceSource,
 } from '../../../adapters/adapters';
 import { interfaceMarkdownTemplate } from './interface-template';
-import { isEmptyLine } from '../../../adapters/apex-doc-adapters';
 import { classMarkdownTemplate } from './class-template';
+import { isEmptyLine } from '../../../adapters/type-utils';
 
 export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
   homeFileName(): string {
