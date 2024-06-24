@@ -8,10 +8,8 @@ This is a sample interface
 
 **Date** 2020-01-01
 
-TODO: REFACTOR&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;WE WON'T WANT TO HANDLE URLS LIKE THIS SINCE THEY MIGHT NOT BE FOUND
 **See** [ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md)
 
-TODO: REFACTOR&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;WE WON'T WANT TO HANDLE URLS LIKE THIS SINCE THEY MIGHT NOT BE FOUND
 **See** [ns.ReferencedEnum](./ns.ReferencedEnum.md)
 
 ## Namespace
@@ -24,7 +22,6 @@ graph TD
    C --&gt;|extends| D[GreatGrandParentInterface]
 ```
 
-TODO: This should be a different heading level when inside of a field, method or constructor
 ## Example
 ```apex
 SampleInterface sampleInterface = new SampleInterface();
@@ -41,9 +38,9 @@ sampleInterface.sampleMethod();
 
 This is a sample method
 
-**Custom Tag** This is a custom tag
+**Custom Tag** 
 
-**Another Custom Tag** This is another custom tag
+**Another Custom Tag** 
 
 ### Signature
 ```apex
@@ -67,8 +64,7 @@ graph TD
   C --&gt;|extends| D[GreatGrandParentInterface]
 ```
 
-TODO: This should be a different heading level when inside of a field, method or constructor
-## Example
+### Example
 ```apex
 SampleInterface sampleInterface = new SampleInterface();
 sampleInterface.sampleMethod();

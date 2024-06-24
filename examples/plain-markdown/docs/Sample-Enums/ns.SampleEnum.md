@@ -6,9 +6,7 @@ This is a sample enum. This references [ns.ReferencedEnum](../Miscellaneous/ns.R
 
 This description has several lines
 
-**Some Custom** Test. I can also have a [ns.ReferencedEnum](../Miscellaneous/ns.ReferencedEnum.md) here. 
-
-And it can be multiline.
+**Some Custom** 
 
 **Group** Sample Enums
 
@@ -16,7 +14,6 @@ And it can be multiline.
 
 **Date** 2022-01-01
 
-TODO: REFACTOR&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;WE WON'T WANT TO HANDLE URLS LIKE THIS SINCE THEY MIGHT NOT BE FOUND
 **See** [ns.ReferencedEnum](../Miscellaneous/ns.ReferencedEnum.md)
 
 ## Namespace

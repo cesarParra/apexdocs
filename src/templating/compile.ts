@@ -43,12 +43,26 @@ function prepare(
   source: EnumSource | InterfaceSource | ClassSource,
   { renderableContentConverter, codeBlockConverter }: CompileOptions,
 ) {
+  const base = {
+    ...source,
+    ...prepareDocumentable(source, renderableContentConverter, codeBlockConverter),
+    ...prepareBaseType(source, renderableContentConverter),
+  };
   if (isEnumSource(source)) {
-    return prepareEnum(source, renderableContentConverter, codeBlockConverter);
+    return {
+      ...base,
+      ...prepareEnum(source, renderableContentConverter),
+    };
   } else if (isInterfaceSource(source)) {
-    return prepareInterface(source, renderableContentConverter, codeBlockConverter);
+    return {
+      ...base,
+      ...prepareInterface(source, renderableContentConverter, codeBlockConverter),
+    };
   } else {
-    return prepareClass(source, renderableContentConverter, codeBlockConverter);
+    return {
+      ...base,
+      ...prepareClass(source, renderableContentConverter, codeBlockConverter),
+    };
   }
 }
 
@@ -68,14 +82,17 @@ function prepareDocumentable(
   };
 }
 
-function prepareEnum(
-  source: EnumSource,
+function prepareBaseType(
+  source: EnumSource | InterfaceSource | ClassSource,
   renderableContentConverter: ConvertRenderableContentsToString,
-  codeBlockConverter: (language: string, lines: string[]) => string,
 ) {
   return {
-    ...source,
-    ...prepareDocumentable(source, renderableContentConverter, codeBlockConverter),
+    sees: source.sees?.map((see) => renderableContentConverter([see])),
+  };
+}
+
+function prepareEnum(source: EnumSource, renderableContentConverter: ConvertRenderableContentsToString) {
+  return {
     values: source.values.map((value) => ({
       value: value.value,
       description: renderableContentConverter(value.description),
@@ -89,8 +106,6 @@ function prepareInterface(
   codeBlockConverter: (language: string, lines: string[]) => string,
 ) {
   return {
-    ...source,
-    ...prepareDocumentable(source, renderableContentConverter, codeBlockConverter),
     extends: source.extends?.map((ext) => renderableContentConverter([ext])),
     methods: source.methods?.map((method) => mapMethod(method, renderableContentConverter, codeBlockConverter)),
   };
@@ -102,8 +117,6 @@ function prepareClass(
   codeBlockConverter: (language: string, lines: string[]) => string,
 ) {
   return {
-    ...source,
-    ...prepareDocumentable(source, renderableContentConverter, codeBlockConverter),
     implements: source.implements?.map((impl) => renderableContentConverter([impl])),
     extends: source.extends ? renderableContentConverter([source.extends]) : undefined,
     constructors: source.constructors?.map((constructor) =>

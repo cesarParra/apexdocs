@@ -15,8 +15,7 @@ export const documentablePartialTemplate = `
 {{{mermaid}}}
 
 {{#if example}}
-TODO: This should be a different heading level when inside of a field, method or constructor
-## Example
+##{{#if isInner}}#{{/if}} Example
 {{{example}}}
 {{/if}}
 `.trim();

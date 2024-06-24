@@ -6,7 +6,6 @@ import { FieldMirrorWithInheritance } from '../model/inheritance';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptField } from './fields-and-properties';
 
-// TODO: Unit tests
 function baseTypeAdapter(type: EnumMirror | InterfaceMirror | ClassMirror): BaseTypeSource {
   function extractAnnotationBody(type: Type, annotationName: string): string | undefined {
     return type.docComment?.annotations.find(

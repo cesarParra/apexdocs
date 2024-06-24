@@ -7,7 +7,7 @@ export const methodsPartialTemplate = `
 *Inherited*
 {{/if}}
 
-{{#> documentablePartialTemplate}}
+{{#> documentablePartialTemplate isInner=true}}
 
 ### Signature
 \`\`\`apex

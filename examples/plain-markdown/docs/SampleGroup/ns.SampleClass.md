@@ -10,7 +10,6 @@ deserunt ea officia exercitation laboris enim in duis quis enim eiusmod eu amet 
 ## Namespace
 ns
 
-TODO: This should be a different heading level when inside of a field, method or constructor
 ## Example
 ```apex
 SampleClass sample = new SampleClass();
@@ -81,8 +80,7 @@ public virtual String sayHello()
 
 A string value.
 
-TODO: This should be a different heading level when inside of a field, method or constructor
-## Example
+### Example
 ```apex
 SampleClass sample = new SampleClass();
 sample.doSomething();

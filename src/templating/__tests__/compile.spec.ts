@@ -723,7 +723,7 @@ describe('compile', () => {
     });
 
     it('can reference see references', () => {
-      const template = '{{#each sees}}**See** [{{title}}]({{url}}){{/each}}';
+      const template = '{{#each sees}}**See** {{this}}{{/each}}';
 
       const enumSource: EnumSource = {
         __type: 'enum',
@@ -735,7 +735,7 @@ describe('compile', () => {
 
       const result = compile(template, enumSource);
 
-      expect(result).toBe('**See** [More info](https://example.com)');
+      expect(result).toBe('**See** More info');
     });
   });
 });

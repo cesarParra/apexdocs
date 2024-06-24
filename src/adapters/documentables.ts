@@ -3,7 +3,6 @@ import { Describable, Documentable } from './types';
 import { replaceInlineReferences } from './references';
 import { isEmptyLine } from './type-utils';
 
-// TODO: Unit tests
 export function adaptDescribable(describable: Describable): { description?: RenderableContent[] } {
   function describableToRenderableContent(describable: Describable): RenderableContent[] | undefined {
     if (!describable) {
@@ -29,7 +28,6 @@ export function adaptDescribable(describable: Describable): { description?: Rend
   };
 }
 
-// TODO: Unit tests
 export function adaptDocumentable(documentable: Documentable): DocumentableSource {
   function extractCustomTags(type: Documentable): CustomTag[] {
     const baseTags = ['description', 'group', 'author', 'date', 'see', 'example', 'mermaid', 'throws', 'exception'];

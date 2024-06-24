@@ -14,8 +14,7 @@ export const typeLevelApexDocPartialTemplate = `
 {{/if}}
 
 {{#each sees}}
-TODO: REFACTOR>>>>>>>>>>WE WON'T WANT TO HANDLE URLS LIKE THIS SINCE THEY MIGHT NOT BE FOUND
-**See** [{{title}}]({{url}})
+**See** {{this}}
 
 {{/each}}
 
