@@ -17,6 +17,9 @@ import {
 } from '../../../adapters/apex-types';
 import { MarkdownHomeFile } from '../../../model/markdown-home-file';
 import { MarkdownFile } from '../../../model/markdown-file';
+import Handlebars from 'handlebars';
+import fs from 'fs';
+import path from 'path';
 
 export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
   _fileContents: string[] = [];
@@ -47,7 +50,19 @@ export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
   onAfterProcess: (types: Type[]) => void = () => {
     if (Settings.getInstance().shouldOutputSingleFile()) {
       const file = new MarkdownFile(Settings.getInstance().getSingleFileName(), '');
-      file.addText(this._fileContents.join('\n\n---\n\n'));
+
+      let contents;
+      if (Settings.getInstance().getTemplateFilePath()) {
+        const filePath = path.resolve(Settings.getInstance().getTemplateFilePath()!);
+        const templateFileContents = fs.readFileSync(filePath, {
+          encoding: 'utf-8',
+        });
+        const handlebars = Handlebars.compile(templateFileContents);
+        contents = handlebars({ api_docs: this._fileContents.join('\n\n---\n\n') });
+      } else {
+        contents = this._fileContents.join('\n\n---\n\n');
+      }
+      file.addText(contents);
       this._fileContainer.pushFile(file);
     }
   };

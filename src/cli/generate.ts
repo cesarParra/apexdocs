@@ -128,6 +128,7 @@ result.then((config) => {
     frontMatterHeader: config?.config?.frontMatterHeader,
     singleFile: config?.config?.singleFile,
     fileName: config?.config?.fileName,
+    templateFilePath: config?.config?.templateFilePath,
   });
 
   try {

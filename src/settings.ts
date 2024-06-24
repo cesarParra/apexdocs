@@ -42,6 +42,7 @@ export interface SettingsConfig {
   frontMatterHeader?: (file: TargetType) => string[];
   singleFile?: boolean;
   fileName?: string;
+  templateFilePath?: string;
 }
 
 export class Settings {
@@ -153,5 +154,9 @@ export class Settings {
 
   public getSingleFileName(): string {
     return this.config.fileName ?? 'README';
+  }
+
+  public getTemplateFilePath(): string | undefined {
+    return this.config.templateFilePath;
   }
 }

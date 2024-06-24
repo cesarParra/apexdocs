@@ -17,6 +17,7 @@
     "scope": ["global", "public", "protected", "private", "namespaceaccessible"],
     "namespace": "ns",
     "singleFile": true,
+    "templateFilePath": "template.md",
     "fileName": "README",
     "targetDir": "."
   }
