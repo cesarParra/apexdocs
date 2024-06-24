@@ -15,8 +15,19 @@ import {
   enumTypeToEnumSource,
   interfaceTypeToInterfaceSource,
 } from '../../../adapters/apex-types';
+import { MarkdownHomeFile } from '../../../model/markdown-home-file';
+import { MarkdownFile } from '../../../model/markdown-file';
 
 export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
+  _fileContents: string[] = [];
+  onBeforeProcess = (types: Type[]) => {
+    if (Settings.getInstance().shouldOutputSingleFile()) {
+      return;
+    } else {
+      this._fileContainer.pushFile(new MarkdownHomeFile(this.homeFileName(), types));
+    }
+  };
+
   homeFileName(): string {
     return 'index';
   }
@@ -26,22 +37,32 @@ export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
   }
 
   onProcess(type: Type): void {
+    if (Settings.getInstance().shouldOutputSingleFile()) {
+      this._fileContents.push(this._generateOutputFile(type).body);
+    } else {
+      this._fileContainer.pushFile(this._generateOutputFile(type));
+    }
+  }
+
+  onAfterProcess: (types: Type[]) => void = () => {
+    if (Settings.getInstance().shouldOutputSingleFile()) {
+      const file = new MarkdownFile(Settings.getInstance().getSingleFileName(), '');
+      file.addText(this._fileContents.join('\n\n---\n\n'));
+      this._fileContainer.pushFile(file);
+    }
+  };
+
+  _generateOutputFile(type: Type): OutputFile {
     if (type.type_name === 'enum') {
-      this._fileContainer.pushFile(
-        new GenericFile<EnumMirror>(type as EnumMirror, enumTypeToEnumSource, enumMarkdownTemplate),
-      );
+      return new GenericFile<EnumMirror>(type as EnumMirror, enumTypeToEnumSource, enumMarkdownTemplate);
     } else if (type.type_name === 'interface') {
-      this._fileContainer.pushFile(
-        new GenericFile<InterfaceMirror>(
-          type as InterfaceMirror,
-          interfaceTypeToInterfaceSource,
-          interfaceMarkdownTemplate,
-        ),
+      return new GenericFile<InterfaceMirror>(
+        type as InterfaceMirror,
+        interfaceTypeToInterfaceSource,
+        interfaceMarkdownTemplate,
       );
     } else {
-      this._fileContainer.pushFile(
-        new GenericFile<ClassMirror>(type as ClassMirror, classTypeToClassSource, classMarkdownTemplate),
-      );
+      return new GenericFile<ClassMirror>(type as ClassMirror, classTypeToClassSource, classMarkdownTemplate);
     }
   }
 }

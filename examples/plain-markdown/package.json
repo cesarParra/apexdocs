@@ -1,7 +1,7 @@
 {
   "name": "plain-markdown",
   "scripts": {
-    "docs:clean": "rimraf docs",
+    "docs:clean": "rimraf ./README.md",
     "docs:build": "ts-node ../../src/cli/generate.ts",
     "docs:gen": "npm run docs:clean && npm run docs:build"
   },
@@ -15,6 +15,9 @@
     "sourceDir": "force-app",
     "targetGenerator": "plain-markdown",
     "scope": ["global", "public", "protected", "private", "namespaceaccessible"],
-    "namespace": "ns"
+    "namespace": "ns",
+    "singleFile": true,
+    "fileName": "README",
+    "targetDir": "."
   }
 }
