@@ -1,5 +1,5 @@
 import { compile as testSubject } from '../compile';
-import { ClassSource, EnumSource, InterfaceSource, Link, RenderableContent } from '../types';
+import { RenderableClass, RenderableEnum, RenderableInterface, Link, RenderableContent } from '../types';
 
 jest.mock('../../settings', () => {
   return {
@@ -33,7 +33,7 @@ function linesToCodeBlock(_: string, lines: string[]): string {
   return lines.join('\n');
 }
 
-function compile(template: string, source: EnumSource | InterfaceSource | ClassSource) {
+function compile(template: string, source: RenderableEnum | RenderableInterface | RenderableClass) {
   return testSubject(template, source, {
     renderableContentConverter: renderableContentsToString,
     codeBlockConverter: linesToCodeBlock,
@@ -45,7 +45,7 @@ describe('compile', () => {
     it('can split and capitalize text', () => {
       const template = '{{splitAndCapitalize name}}';
 
-      const enumSource: EnumSource = {
+      const enumSource: RenderableEnum = {
         __type: 'enum',
         accessModifier: 'public',
         name: 'my-enum',
@@ -62,7 +62,7 @@ describe('compile', () => {
     it('can reference the class name', () => {
       const template = '{{name}} class';
 
-      const classSource: ClassSource = {
+      const classSource: RenderableClass = {
         __type: 'class',
         name: 'MyClass',
         accessModifier: 'public',
@@ -76,7 +76,7 @@ describe('compile', () => {
     it('can reference the class modifier', () => {
       const template = '{{classModifier}} class';
 
-      const classSource: ClassSource = {
+      const classSource: RenderableClass = {
         __type: 'class',
         name: 'MyClass',
         accessModifier: 'public',
@@ -91,7 +91,7 @@ describe('compile', () => {
     it('can reference the sharing modifier', () => {
       const template = '{{sharingModifier}} class';
 
-      const classSource: ClassSource = {
+      const classSource: RenderableClass = {
         __type: 'class',
         name: 'MyClass',
         accessModifier: 'public',
@@ -106,7 +106,7 @@ describe('compile', () => {
     it('can reference the implemented interfaces', () => {
       const template = '{{#each implements}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}';
 
-      const classSource: ClassSource = {
+      const classSource: RenderableClass = {
         __type: 'class',
         name: 'MyClass',
         accessModifier: 'public',
@@ -124,7 +124,7 @@ describe('compile', () => {
     it('can reference an extended class', () => {
       const template = '{{extends}}';
 
-      const classSource: ClassSource = {
+      const classSource: RenderableClass = {
         __type: 'class',
         name: 'MyClass',
         accessModifier: 'public',
@@ -140,7 +140,7 @@ describe('compile', () => {
       it('can reference the field name', () => {
         const template = '{{#each fields}}{{name}}{{/each}}';
 
-        const classSource: ClassSource = {
+        const classSource: RenderableClass = {
           __type: 'class',
           name: 'MyClass',
           accessModifier: 'public',
@@ -155,7 +155,7 @@ describe('compile', () => {
       it('can reference the field type', () => {
         const template = '{{#each fields}}{{type}}{{/each}}';
 
-        const classSource: ClassSource = {
+        const classSource: RenderableClass = {
           __type: 'class',
           name: 'MyClass',
           accessModifier: 'public',
@@ -170,7 +170,7 @@ describe('compile', () => {
       it('can reference the field access modifier', () => {
         const template = '{{#each fields}}{{accessModifier}}{{/each}}';
 
-        const classSource: ClassSource = {
+        const classSource: RenderableClass = {
           __type: 'class',
           name: 'MyClass',
           accessModifier: 'public',
@@ -185,7 +185,7 @@ describe('compile', () => {
       it('can reference if it is inherited', () => {
         const template = '{{#each fields}}{{#if inherited}}Inherited{{/if}}{{/each}}';
 
-        const classSource: ClassSource = {
+        const classSource: RenderableClass = {
           __type: 'class',
           name: 'MyClass',
           accessModifier: 'public',
@@ -205,7 +205,7 @@ describe('compile', () => {
     it('can reference the interface name', () => {
       const template = '{{name}} interface';
 
-      const interfaceSource: InterfaceSource = {
+      const interfaceSource: RenderableInterface = {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
@@ -219,7 +219,7 @@ describe('compile', () => {
     it('can reference the access modifier', () => {
       const template = '{{accessModifier}} interface';
 
-      const interfaceSource: InterfaceSource = {
+      const interfaceSource: RenderableInterface = {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
@@ -233,7 +233,7 @@ describe('compile', () => {
     it('can reference the interface name with annotations', () => {
       const template = '{{name}} interface {{#each annotations}}{{this}} {{/each}}';
 
-      const interfaceSource: InterfaceSource = {
+      const interfaceSource: RenderableInterface = {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
@@ -248,7 +248,7 @@ describe('compile', () => {
     it('can reference the interface name with a description', () => {
       const template = '{{description}}';
 
-      const interfaceSource: InterfaceSource = {
+      const interfaceSource: RenderableInterface = {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
@@ -263,7 +263,7 @@ describe('compile', () => {
     it('can reference a description with links', () => {
       const template = '{{description}}';
 
-      const interfaceSource: InterfaceSource = {
+      const interfaceSource: RenderableInterface = {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
@@ -278,7 +278,7 @@ describe('compile', () => {
     it('can reference the extended interfaces of an interface', () => {
       const template = '{{#each extends}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}';
 
-      const interfaceSource: InterfaceSource = {
+      const interfaceSource: RenderableInterface = {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
@@ -296,7 +296,7 @@ describe('compile', () => {
     it('can have a mermaid block at the top level description', () => {
       const template = '{{{mermaid}}}';
 
-      const interfaceSource: InterfaceSource = {
+      const interfaceSource: RenderableInterface = {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
@@ -311,7 +311,7 @@ describe('compile', () => {
     it('can have an example block at the top level description', () => {
       const template = '{{{example}}}';
 
-      const interfaceSource: InterfaceSource = {
+      const interfaceSource: RenderableInterface = {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
@@ -326,7 +326,7 @@ describe('compile', () => {
     it('can display method titles', () => {
       const template = '{{#each methods}}{{title}}{{/each}}';
 
-      const interfaceSource: InterfaceSource = {
+      const interfaceSource: RenderableInterface = {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
@@ -341,7 +341,7 @@ describe('compile', () => {
     it('can display method signatures', () => {
       const template = '{{#each methods}}{{signature}}{{/each}}';
 
-      const interfaceSource: InterfaceSource = {
+      const interfaceSource: RenderableInterface = {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
@@ -356,7 +356,7 @@ describe('compile', () => {
     it('can display methods with a description', () => {
       const template = '{{#each methods}}{{signature}} - {{description}}{{/each}}';
 
-      const interfaceSource: InterfaceSource = {
+      const interfaceSource: RenderableInterface = {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
@@ -371,7 +371,7 @@ describe('compile', () => {
     it('can display annotations of a method', () => {
       const template = '{{#each methods}}{{#each annotations}}{{this}}{{/each}}{{/each}}';
 
-      const interfaceSource: InterfaceSource = {
+      const interfaceSource: RenderableInterface = {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
@@ -390,7 +390,7 @@ describe('compile', () => {
         { name: 'arg1', type: 'String', description: ['The first argument'] },
         { name: 'arg2', type: 'Integer' },
       ];
-      const interfaceSource: InterfaceSource = {
+      const interfaceSource: RenderableInterface = {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
@@ -405,7 +405,7 @@ describe('compile', () => {
     it('can display the return value of a method', () => {
       const template = '{{#each methods}}{{returnType.type}}{{/each}}';
 
-      const interfaceSource: InterfaceSource = {
+      const interfaceSource: RenderableInterface = {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
@@ -429,7 +429,7 @@ describe('compile', () => {
     it('can display the exceptions that a method throws', () => {
       const template = '{{#each methods}}{{#each throws}}{{type}}{{/each}}{{/each}}';
 
-      const interfaceSource: InterfaceSource = {
+      const interfaceSource: RenderableInterface = {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
@@ -450,7 +450,7 @@ describe('compile', () => {
     it('can display custom tags in a method', () => {
       const template = '{{#each methods}}{{#each customTags}}{{name}} - {{value}}{{/each}}{{/each}}';
 
-      const interfaceSource: InterfaceSource = {
+      const interfaceSource: RenderableInterface = {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
@@ -471,7 +471,7 @@ describe('compile', () => {
     it('can display mermaid blocks in a method', () => {
       const template = '{{#each methods}}{{{mermaid}}}{{/each}}';
 
-      const interfaceSource: InterfaceSource = {
+      const interfaceSource: RenderableInterface = {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
@@ -492,7 +492,7 @@ describe('compile', () => {
     it('can display example blocks in a method', () => {
       const template = '{{#each methods}}{{{example}}}{{/each}}';
 
-      const interfaceSource: InterfaceSource = {
+      const interfaceSource: RenderableInterface = {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
@@ -513,7 +513,7 @@ describe('compile', () => {
     it('can display if a method was inherited from a super interface', () => {
       const template = '{{#each methods}}{{#if inherited}}Inherited{{/if}}{{/each}}';
 
-      const interfaceSource: InterfaceSource = {
+      const interfaceSource: RenderableInterface = {
         __type: 'interface',
         name: 'MyInterface',
         accessModifier: 'public',
@@ -536,7 +536,7 @@ describe('compile', () => {
     it('can reference the enum name', () => {
       const template = '{{name}} enum';
 
-      const enumSource: EnumSource = {
+      const enumSource: RenderableEnum = {
         __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',
@@ -551,7 +551,7 @@ describe('compile', () => {
     it('can reference the access modifier', () => {
       const template = '{{accessModifier}} enum';
 
-      const enumSource: EnumSource = {
+      const enumSource: RenderableEnum = {
         __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',
@@ -566,7 +566,7 @@ describe('compile', () => {
     it('can reference the enum name with a description', () => {
       const template = '{{description}}';
 
-      const enumSource: EnumSource = {
+      const enumSource: RenderableEnum = {
         __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',
@@ -582,7 +582,7 @@ describe('compile', () => {
     it('can reference a description with links', () => {
       const template = '{{description}}';
 
-      const enumSource: EnumSource = {
+      const enumSource: RenderableEnum = {
         __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',
@@ -598,7 +598,7 @@ describe('compile', () => {
     it('can have a mermaid block at the top level description', () => {
       const template = '{{{mermaid}}}';
 
-      const enumSource: EnumSource = {
+      const enumSource: RenderableEnum = {
         __type: 'enum',
         name: 'MyEnum',
         accessModifier: 'public',
@@ -614,7 +614,7 @@ describe('compile', () => {
     it('can have an example block at the top level description', () => {
       const template = '{{{example}}}';
 
-      const enumSource: EnumSource = {
+      const enumSource: RenderableEnum = {
         __type: 'enum',
         name: 'MyEnum',
         accessModifier: 'public',
@@ -630,7 +630,7 @@ describe('compile', () => {
     it('can reference enum values', () => {
       const template = '{{#each values}}{{value}}{{/each}}';
 
-      const enumSource: EnumSource = {
+      const enumSource: RenderableEnum = {
         __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',
@@ -645,7 +645,7 @@ describe('compile', () => {
     it('can reference enum values with a description', () => {
       const template = '{{#each values}}{{value}} - {{description}}{{/each}}';
 
-      const enumSource: EnumSource = {
+      const enumSource: RenderableEnum = {
         __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',
@@ -663,7 +663,7 @@ describe('compile', () => {
     it('can reference a group reference', () => {
       const template = '** Group {{group}}';
 
-      const enumSource: EnumSource = {
+      const enumSource: RenderableEnum = {
         __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',
@@ -679,7 +679,7 @@ describe('compile', () => {
     it('can reference an author reference', () => {
       const template = '** Author {{author}}';
 
-      const enumSource: EnumSource = {
+      const enumSource: RenderableEnum = {
         __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',
@@ -695,7 +695,7 @@ describe('compile', () => {
     it('can reference a date reference', () => {
       const template = '** Date {{date}}';
 
-      const enumSource: EnumSource = {
+      const enumSource: RenderableEnum = {
         __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',
@@ -711,7 +711,7 @@ describe('compile', () => {
     it('can reference custom tags', () => {
       const template = '{{#each customTags}}**{{name}}** {{value}}{{/each}}';
 
-      const enumSource: EnumSource = {
+      const enumSource: RenderableEnum = {
         __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',
@@ -727,7 +727,7 @@ describe('compile', () => {
     it('can reference see references', () => {
       const template = '{{#each sees}}**See** {{this}}{{/each}}';
 
-      const enumSource: EnumSource = {
+      const enumSource: RenderableEnum = {
         __type: 'enum',
         accessModifier: 'public',
         name: 'MyEnum',

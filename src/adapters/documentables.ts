@@ -1,7 +1,8 @@
-import { CustomTag, DocumentableSource, RenderableContent } from '../templating/types';
+import { CustomTag, RenderableDocumentation, RenderableContent } from '../templating/types';
 import { Describable, Documentable } from './types';
-import { replaceInlineReferences } from './references';
+import { linkFromTypeNameGenerator, replaceInlineReferences } from './references';
 import { isEmptyLine } from './type-utils';
+import { Type } from '@cparra/apex-reflection';
 
 export function adaptDescribable(describable: Describable): { description?: RenderableContent[] } {
   function describableToRenderableContent(describable: Describable): RenderableContent[] | undefined {
@@ -28,7 +29,7 @@ export function adaptDescribable(describable: Describable): { description?: Rend
   };
 }
 
-export function adaptDocumentable(documentable: Documentable): DocumentableSource {
+export function adaptDocumentable(documentable: Documentable): RenderableDocumentation {
   function extractCustomTags(type: Documentable): CustomTag[] {
     const baseTags = ['description', 'group', 'author', 'date', 'see', 'example', 'mermaid', 'throws', 'exception'];
 
@@ -48,11 +49,29 @@ export function adaptDocumentable(documentable: Documentable): DocumentableSourc
     )?.bodyLines;
   }
 
+  function extractAnnotationBody(type: Documentable, annotationName: string): string | undefined {
+    return type.docComment?.annotations.find(
+      (currentAnnotation) => currentAnnotation.name.toLowerCase() === annotationName,
+    )?.body;
+  }
+
+  function extractSeeAnnotations(type: Documentable): string[] {
+    return (
+      type.docComment?.annotations
+        .filter((currentAnnotation) => currentAnnotation.name.toLowerCase() === 'see')
+        .map((currentAnnotation) => currentAnnotation.body) ?? []
+    );
+  }
+
   return {
     ...adaptDescribable(documentable.docComment?.descriptionLines),
     annotations: documentable.annotations.map((annotation) => annotation.type.toUpperCase()),
     customTags: extractCustomTags(documentable),
     mermaid: extractAnnotationBodyLines(documentable, 'mermaid'),
     example: documentable.docComment?.exampleAnnotation?.bodyLines,
+    group: extractAnnotationBody(documentable, 'group'),
+    author: extractAnnotationBody(documentable, 'author'),
+    date: extractAnnotationBody(documentable, 'date'),
+    sees: extractSeeAnnotations(documentable).map(linkFromTypeNameGenerator),
   };
 }

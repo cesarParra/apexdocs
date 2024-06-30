@@ -4,12 +4,27 @@
 ns
 
 ## Methods
-### `sampleParentMethod()`
+### ``
 
 #### Signature
 ```apex
-public void sampleParentMethod()
+
 ``` 
 
-#### Returns
-**void**
+---
+
+### ``
+
+#### Signature
+```apex
+
+``` 
+
+---
+
+### ``
+
+#### Signature
+```apex
+
+```

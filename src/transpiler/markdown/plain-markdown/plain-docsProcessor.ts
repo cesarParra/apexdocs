@@ -6,7 +6,14 @@ import { Settings } from '../../../settings';
 import ClassFileGeneratorHelper from '../class-file-generatorHelper';
 import { enumMarkdownTemplate } from './enum-template';
 import { compile } from '../../../templating/compile';
-import { ClassSource, EnumSource, InterfaceSource, Link, RenderableContent } from '../../../templating/types';
+import {
+  RenderableClass,
+  RenderableEnum,
+  RenderableInterface,
+  Link,
+  RenderableContent,
+  StringOrLink,
+} from '../../../templating/types';
 import { interfaceMarkdownTemplate } from './interface-template';
 import { classMarkdownTemplate } from './class-template';
 import { isEmptyLine } from '../../../adapters/type-utils';
@@ -83,23 +90,35 @@ export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
 }
 
 class GenericFile<T extends Type> extends OutputFile {
-  constructor(private type: T, toSource: (type: T) => EnumSource | InterfaceSource | ClassSource, template: string) {
+  constructor(
+    private type: T,
+    toSource: (type: T) => RenderableEnum | RenderableInterface | RenderableClass,
+    template: string,
+  ) {
     super(
       `${Settings.getInstance().getNamespacePrefix()}${type.name}`,
       ClassFileGeneratorHelper.getSanitizedGroup(type),
     );
 
     const source = toSource(type);
-    this.addText(
-      compile(template, source, {
-        renderableContentConverter: prepareDescription,
-        codeBlockConverter: convertCodeBlock,
-      }),
-    );
+    const contents = compile(template, source, {
+      renderableContentConverter: prepareDescription,
+      link: link,
+      codeBlockConverter: convertCodeBlock,
+    });
+    this.addText(contents);
   }
 
   fileExtension(): string {
     return '.md';
+  }
+}
+
+function link(source: StringOrLink): string {
+  if (typeof source === 'string') {
+    return source;
+  } else {
+    return `[${source.title}](${source.url})`;
   }
 }
 
@@ -125,10 +144,13 @@ function prepareDescription(description?: RenderableContent[]) {
   return description.reduce(reduceDescription, '').trim();
 }
 
-function convertCodeBlock(language: string, lines: string[]): string {
-  return `
+function convertCodeBlock(language: string, lines: string[]): Handlebars.SafeString {
+  console.log('lines', lines);
+  return new Handlebars.SafeString(
+    `
 \`\`\`${language}
 ${lines.join('\n')}
 \`\`\`
-  `.trim();
+  `.trim(),
+  );
 }

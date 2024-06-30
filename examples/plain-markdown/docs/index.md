@@ -30,7 +30,7 @@ aliquip ex sunt officia ullamco anim deserunt magna aliquip nisi eiusmod in sit 
 
 ### [ns.SampleEnum](./Sample-Enums/ns.SampleEnum.md)
 
-This is a sample enum. This references [ns.ReferencedEnum](./Miscellaneous/ns.ReferencedEnum.md).
+This is a sample enum. This references {@link ReferencedEnum}.
 This description has several lines
 
 

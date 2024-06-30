@@ -1,7 +1,7 @@
 export const interfaceMarkdownTemplate = `
 # {{name}} Interface
 
-{{> typeLevelApexDocPartialTemplate}}
+{{> typeDocumentation}}
 
 {{#if extends}}
 **Extends**

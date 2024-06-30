@@ -12,3 +12,7 @@ export const splitAndCapitalize = (text: string) => {
 export const namespace = () => {
   return Settings.getInstance().getNamespace();
 };
+
+export const heading = (level: number, text: string) => {
+  return `${'#'.repeat(level)} ${text}`;
+};

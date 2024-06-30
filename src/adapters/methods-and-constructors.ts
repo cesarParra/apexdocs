@@ -1,11 +1,11 @@
 import { ConstructorMirror, MethodMirror, ParameterMirror, ThrowsAnnotation } from '@cparra/apex-reflection';
-import { ConstructorSource, MethodSource } from '../templating/types';
+import { RenderableConstructor, RenderableMethod } from '../templating/types';
 import { MethodMirrorWithInheritance } from '../model/inheritance';
 import { adaptDescribable, adaptDocumentable } from './documentables';
 import { linkFromTypeNameGenerator } from './references';
 import { Documentable } from './types';
 
-export function adaptMethod(method: MethodMirror): MethodSource {
+export function adaptMethod(method: MethodMirror): RenderableMethod {
   function buildTitle(method: MethodMirrorWithInheritance): string {
     const { name, parameters } = method;
     const parametersString = parameters.map((param) => param.name).join(', ');
@@ -22,7 +22,7 @@ export function adaptMethod(method: MethodMirror): MethodSource {
   }
 
   return {
-    ...adaptDocumentable(method),
+    doc: adaptDocumentable(method),
     title: buildTitle(method as MethodMirrorWithInheritance),
     signature: buildSignature(method as MethodMirrorWithInheritance),
     returnType: {
@@ -35,7 +35,7 @@ export function adaptMethod(method: MethodMirror): MethodSource {
   };
 }
 
-export function adaptConstructor(typeName: string, constructor: ConstructorMirror): ConstructorSource {
+export function adaptConstructor(typeName: string, constructor: ConstructorMirror): RenderableConstructor {
   function buildTitle(name: string, constructor: ConstructorMirror): string {
     const { parameters } = constructor;
     const parametersString = parameters.map((param) => param.name).join(', ');
@@ -51,7 +51,7 @@ export function adaptConstructor(typeName: string, constructor: ConstructorMirro
   }
 
   return {
-    ...adaptDocumentable(constructor),
+    doc: adaptDocumentable(constructor),
     title: buildTitle(typeName, constructor),
     signature: buildSignature(typeName, constructor),
     parameters: constructor.parameters.map((param) => mapParameters(constructor, param)),

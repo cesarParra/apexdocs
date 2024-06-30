@@ -1,9 +1,11 @@
 import { FieldMirrorWithInheritance, PropertyMirrorWithInheritance } from '../model/inheritance';
-import { FieldSource } from '../templating/types';
+import { RenderableField } from '../templating/types';
 import { adaptDocumentable } from './documentables';
 import { linkFromTypeNameGenerator } from './references';
 
-export function adaptFieldOrProperty(field: FieldMirrorWithInheritance | PropertyMirrorWithInheritance): FieldSource {
+export function adaptFieldOrProperty(
+  field: FieldMirrorWithInheritance | PropertyMirrorWithInheritance,
+): RenderableField {
   function buildSignature() {
     const { access_modifier, name } = field;
     const memberModifiers = field.memberModifiers.join(' ');
@@ -15,7 +17,7 @@ export function adaptFieldOrProperty(field: FieldMirrorWithInheritance | Propert
   }
 
   return {
-    ...adaptDocumentable(field),
+    doc: adaptDocumentable(field),
     name: field.name,
     type: linkFromTypeNameGenerator(field.typeReference.rawDeclaration),
     inherited: field.inherited,

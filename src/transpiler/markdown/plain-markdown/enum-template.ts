@@ -1,11 +1,12 @@
 export const enumMarkdownTemplate = `
-# {{name}} Enum
+{{ heading headingLevel heading }}
 
-{{> typeLevelApexDocPartialTemplate}}
+{{> typeDocumentation doc }}
 
-## Enum Values
-{{#each values}}
-### {{value}}
-{{description}}
+{{ heading values.headingLevel values.heading }}
+| Value | Description |
+|-------|-------------|
+{{#each values.values}}
+| {{value}} | {{description}} |
 {{/each}}
 `.trim();

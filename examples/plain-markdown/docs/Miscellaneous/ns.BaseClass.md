@@ -5,12 +5,115 @@
 ns
 
 ## Fields
-### `sampleEnumFromBase`
+### ``
 
 #### Signature
 ```apex
-public sampleEnumFromBase
+
 ``` 
 
 #### Type
-[ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md)
+
+---
+
+### ``
+
+#### Signature
+```apex
+
+``` 
+
+#### Type
+
+---
+
+### ``
+
+#### Signature
+```apex
+
+``` 
+
+#### Type
+
+## Properties
+### ``
+
+#### Signature
+```apex
+
+``` 
+
+#### Type
+
+---
+
+### ``
+
+#### Signature
+```apex
+
+``` 
+
+#### Type
+
+---
+
+### ``
+
+#### Signature
+```apex
+
+``` 
+
+#### Type
+
+## Constructors
+### ``
+
+### Signature
+```apex
+
+``` 
+
+---
+### ``
+
+### Signature
+```apex
+
+``` 
+
+---
+### ``
+
+### Signature
+```apex
+
+``` 
+
+## Methods
+### ``
+
+#### Signature
+```apex
+
+``` 
+
+---
+
+### ``
+
+#### Signature
+```apex
+
+``` 
+
+---
+
+### ``
+
+#### Signature
+```apex
+
+```

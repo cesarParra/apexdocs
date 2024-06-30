@@ -1,6 +1,7 @@
 import xss = require('xss');
 import { Settings } from '../settings';
 
+// TODO: Remove xssFilter from the list of dependencies
 const xssFilter = new xss.FilterXSS({
   whiteList: { br: [], p: [], ul: [], li: [], code: [], pre: [] },
 });
@@ -17,9 +18,9 @@ export abstract class OutputFile {
   }
 
   addText(text: string, encodeHtml = true) {
-    const shouldEncode = encodeHtml && Settings.getInstance().sanitizeHtml;
-    const textToAdd = shouldEncode ? xssFilter.process(text) : text;
-    this._contents += textToAdd;
+    //const shouldEncode = encodeHtml && Settings.getInstance().sanitizeHtml;
+    //const textToAdd = shouldEncode ? xssFilter.process(text) : text;
+    this._contents += text;
     this.addBlankLine();
   }
 

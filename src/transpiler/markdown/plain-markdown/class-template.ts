@@ -4,7 +4,7 @@ export const classMarkdownTemplate = `
 \`{{classModifier}}\`
 {{/if}}
 
-{{> typeLevelApexDocPartialTemplate}}
+{{> typeDocumentation}}
 
 {{#if extends}}
 **Extends**

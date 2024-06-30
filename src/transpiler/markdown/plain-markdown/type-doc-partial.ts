@@ -1,4 +1,4 @@
-export const typeLevelApexDocPartialTemplate = `
+export const typeDocPartial = `
 {{#> documentablePartialTemplate}}
 
 {{#if group}}
@@ -14,7 +14,7 @@ export const typeLevelApexDocPartialTemplate = `
 {{/if}}
 
 {{#each sees}}
-**See** {{this}}
+**See** {{link this}}
 
 {{/each}}
 

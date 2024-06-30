@@ -30,24 +30,29 @@ type Annotation = string;
 
 type CodeBlock = string[];
 
-type DocumentableSource = {
+type RenderableDocumentation = {
   annotations?: Annotation[];
   description?: RenderableContent[];
   customTags?: CustomTag[];
   mermaid?: CodeBlock;
   example?: CodeBlock;
-};
-
-type BaseTypeSource = DocumentableSource & {
-  name: string;
-  accessModifier: string;
   group?: string;
   author?: string;
   date?: string;
   sees?: StringOrLink[];
 };
 
-type MethodParameterSource = {
+type RenderableType = {
+  headingLevel: number;
+  heading: string;
+  name: string;
+  meta: {
+    accessModifier: string;
+  };
+  doc: RenderableDocumentation;
+};
+
+type RenderableMethodParameter = {
   name: string;
   type: StringOrLink;
   description?: RenderableContent[];
@@ -58,49 +63,58 @@ type TypeSource = {
   description?: RenderableContent[];
 };
 
-type ConstructorSource = DocumentableSource & {
+type RenderableConstructor = {
   title: string;
   signature: string;
-  parameters?: MethodParameterSource[];
+  parameters?: RenderableMethodParameter[];
   throws?: TypeSource[];
+  doc: RenderableDocumentation;
 };
 
-type MethodSource = DocumentableSource & {
+type RenderableMethod = {
   title: string;
   signature: string;
-  parameters?: MethodParameterSource[];
+  parameters?: RenderableMethodParameter[];
   returnType?: TypeSource;
   throws?: TypeSource[];
   inherited?: boolean;
+  doc: RenderableDocumentation;
 };
 
-type FieldSource = DocumentableSource & {
+type RenderableField = {
   name: string;
   type: StringOrLink;
   accessModifier: string;
   inherited?: boolean;
   signature: string;
+  doc: RenderableDocumentation;
 };
 
-export type ClassSource = BaseTypeSource & {
+type RenderableSection<T> = {
+  headingLevel: number;
+  heading: string;
+  values: T[];
+};
+
+export type RenderableClass = RenderableType & {
   __type: 'class';
   extends?: StringOrLink;
   implements?: StringOrLink[];
-  constructors?: ConstructorSource[];
-  methods?: MethodSource[];
   classModifier?: string;
   sharingModifier?: string;
-  fields?: FieldSource[];
-  properties?: FieldSource[];
+  constructors?: RenderableSection<RenderableConstructor>;
+  methods?: RenderableSection<RenderableMethod>;
+  fields?: RenderableSection<RenderableField>;
+  properties?: RenderableSection<RenderableField>;
 };
 
-export type InterfaceSource = BaseTypeSource & {
+export type RenderableInterface = RenderableType & {
   __type: 'interface';
   extends?: StringOrLink[];
-  methods?: MethodSource[];
+  methods?: RenderableSection<RenderableMethod>;
 };
 
-export type EnumSource = BaseTypeSource & {
+export type RenderableEnum = RenderableType & {
   __type: 'enum';
-  values: EnumValue[];
+  values: RenderableSection<EnumValue>;
 };
