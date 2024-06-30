@@ -112,7 +112,7 @@ sample.doSomething();
 ### SomeInnerClass Class
 
 #### Fields
-### `someInnerField`
+##### `someInnerField`
 
 ###### Signature
 ```apex

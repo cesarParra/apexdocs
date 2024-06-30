@@ -84,7 +84,8 @@ type RenderableMethod = {
 };
 
 type RenderableField = {
-  name: string;
+  headingLevel: number;
+  heading: string;
   type: RenderableSection<StringOrLink>;
   accessModifier: string;
   inherited?: boolean;

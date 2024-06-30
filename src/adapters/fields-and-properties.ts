@@ -19,7 +19,8 @@ export function adaptFieldOrProperty(
 
   return {
     doc: adaptDocumentable(field, baseHeadingLevel + 1),
-    name: field.name,
+    headingLevel: baseHeadingLevel,
+    heading: field.name,
     type: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Type',

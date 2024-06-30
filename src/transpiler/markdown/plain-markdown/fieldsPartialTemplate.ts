@@ -1,7 +1,7 @@
 export const fieldsPartialTemplate = `
 {{ heading headingLevel heading }}
 {{#each value}}
-### \`\{{name}}\`
+{{{ heading headingLevel (inlineCode heading) }}}
 
 {{#if inherited}}
 *Inherited*
