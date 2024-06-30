@@ -35,7 +35,7 @@ export function enumTypeToEnumSource(enumType: EnumMirror): RenderableEnum {
     values: {
       headingLevel: 2,
       heading: 'Values',
-      values: enumType.values.map((value) => ({
+      value: enumType.values.map((value) => ({
         ...adaptDescribable(value.docComment?.descriptionLines),
         value: value.name,
       })),
@@ -51,7 +51,7 @@ export function interfaceTypeToInterfaceSource(interfaceType: InterfaceMirror): 
     methods: {
       headingLevel: 2,
       heading: 'Methods',
-      values: interfaceType.methods.map(adaptMethod),
+      value: interfaceType.methods.map(adaptMethod),
     },
   };
 }
@@ -67,22 +67,22 @@ export function classTypeToClassSource(classType: ClassMirror): RenderableClass 
     methods: {
       headingLevel: 2,
       heading: 'Methods',
-      values: classType.methods.map(adaptMethod),
+      value: classType.methods.map(adaptMethod),
     },
     constructors: {
       headingLevel: 2,
       heading: 'Constructors',
-      values: classType.constructors.map((constructor) => adaptConstructor(classType.name, constructor)),
+      value: classType.constructors.map((constructor) => adaptConstructor(classType.name, constructor)),
     },
     fields: {
       headingLevel: 2,
       heading: 'Fields',
-      values: classType.fields.map((field) => adaptFieldOrProperty(field as FieldMirrorWithInheritance)),
+      value: classType.fields.map((field) => adaptFieldOrProperty(field as FieldMirrorWithInheritance)),
     },
     properties: {
       headingLevel: 2,
       heading: 'Properties',
-      values: classType.properties.map((property) => adaptFieldOrProperty(property as PropertyMirrorWithInheritance)),
+      value: classType.properties.map((property) => adaptFieldOrProperty(property as PropertyMirrorWithInheritance)),
     },
   };
 }

@@ -34,8 +34,8 @@ type RenderableDocumentation = {
   annotations?: Annotation[];
   description?: RenderableContent[];
   customTags?: CustomTag[];
-  mermaid?: CodeBlock;
-  example?: CodeBlock;
+  mermaid: RenderableSection<CodeBlock | undefined>;
+  example: RenderableSection<CodeBlock | undefined>;
   group?: string;
   author?: string;
   date?: string;
@@ -72,13 +72,14 @@ type RenderableConstructor = {
 };
 
 type RenderableMethod = {
-  title: string;
-  signature: string;
-  parameters?: RenderableMethodParameter[];
-  returnType?: TypeSource;
-  throws?: TypeSource[];
-  inherited?: boolean;
   doc: RenderableDocumentation;
+  headingLevel: number;
+  heading: string;
+  signature: RenderableSection<CodeBlock>;
+  parameters: RenderableSection<RenderableMethodParameter[] | undefined>;
+  returnType: RenderableSection<TypeSource>;
+  throws: RenderableSection<TypeSource[] | undefined>;
+  inherited?: boolean;
 };
 
 type RenderableField = {
@@ -93,7 +94,7 @@ type RenderableField = {
 type RenderableSection<T> = {
   headingLevel: number;
   heading: string;
-  values: T[];
+  value: T;
 };
 
 export type RenderableClass = RenderableType & {
@@ -102,19 +103,19 @@ export type RenderableClass = RenderableType & {
   implements?: StringOrLink[];
   classModifier?: string;
   sharingModifier?: string;
-  constructors?: RenderableSection<RenderableConstructor>;
-  methods?: RenderableSection<RenderableMethod>;
-  fields?: RenderableSection<RenderableField>;
-  properties?: RenderableSection<RenderableField>;
+  constructors?: RenderableSection<RenderableConstructor[]>;
+  methods?: RenderableSection<RenderableMethod[]>;
+  fields?: RenderableSection<RenderableField[]>;
+  properties?: RenderableSection<RenderableField[]>;
 };
 
 export type RenderableInterface = RenderableType & {
   __type: 'interface';
   extends?: StringOrLink[];
-  methods?: RenderableSection<RenderableMethod>;
+  methods?: RenderableSection<RenderableMethod[]>;
 };
 
 export type RenderableEnum = RenderableType & {
   __type: 'enum';
-  values: RenderableSection<EnumValue>;
+  values: RenderableSection<EnumValue[]>;
 };

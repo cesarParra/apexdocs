@@ -12,12 +12,13 @@ export const documentablePartialTemplate = `
 
 {{> @partial-block}}
 
-{{#if mermaid}}
-{{code "mermaid" mermaid}}
+{{#if mermaid.value}}
+{{ heading mermaid.headingLevel mermaid.heading }}
+{{code "mermaid" mermaid.value}}
 {{/if}}
 
-{{#if example}}
-{{ heading3 ../../headingLevel "Example" }}
-{{code "apex" example}}
+{{#if example.value}}
+{{ heading example.headingLevel example.heading }}
+{{code "apex" example.value}}
 {{/if}}
 `.trim();

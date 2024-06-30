@@ -22,15 +22,32 @@ export function adaptMethod(method: MethodMirror): RenderableMethod {
   }
 
   return {
+    headingLevel: 3,
     doc: adaptDocumentable(method),
-    title: buildTitle(method as MethodMirrorWithInheritance),
-    signature: buildSignature(method as MethodMirrorWithInheritance),
-    returnType: {
-      ...adaptDescribable(method.docComment?.returnAnnotation?.bodyLines),
-      type: linkFromTypeNameGenerator(method.typeReference.rawDeclaration),
+    heading: buildTitle(method as MethodMirrorWithInheritance),
+    signature: {
+      headingLevel: 4,
+      heading: 'Signature',
+      value: [buildSignature(method as MethodMirrorWithInheritance)],
     },
-    throws: method.docComment?.throwsAnnotations.map((thrown) => mapThrows(thrown)),
-    parameters: method.parameters.map((param) => mapParameters(method, param)),
+    returnType: {
+      headingLevel: 4,
+      heading: 'Return Type',
+      value: {
+        ...adaptDescribable(method.docComment?.returnAnnotation?.bodyLines),
+        type: linkFromTypeNameGenerator(method.typeReference.rawDeclaration),
+      },
+    },
+    throws: {
+      headingLevel: 4,
+      heading: 'Throws',
+      value: method.docComment?.throwsAnnotations.map((thrown) => mapThrows(thrown)),
+    },
+    parameters: {
+      headingLevel: 4,
+      heading: 'Parameters',
+      value: method.parameters.map((param) => mapParameters(method, param)),
+    },
     inherited: (method as MethodMirrorWithInheritance).inherited,
   };
 }

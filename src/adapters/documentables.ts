@@ -2,7 +2,6 @@ import { CustomTag, RenderableDocumentation, RenderableContent } from '../templa
 import { Describable, Documentable } from './types';
 import { linkFromTypeNameGenerator, replaceInlineReferences } from './references';
 import { isEmptyLine } from './type-utils';
-import { Type } from '@cparra/apex-reflection';
 
 export function adaptDescribable(describable: Describable): { description?: RenderableContent[] } {
   function describableToRenderableContent(describable: Describable): RenderableContent[] | undefined {
@@ -67,8 +66,16 @@ export function adaptDocumentable(documentable: Documentable): RenderableDocumen
     ...adaptDescribable(documentable.docComment?.descriptionLines),
     annotations: documentable.annotations.map((annotation) => annotation.type.toUpperCase()),
     customTags: extractCustomTags(documentable),
-    mermaid: extractAnnotationBodyLines(documentable, 'mermaid'),
-    example: documentable.docComment?.exampleAnnotation?.bodyLines,
+    mermaid: {
+      headingLevel: 2,
+      heading: 'Mermaid',
+      value: extractAnnotationBodyLines(documentable, 'mermaid'),
+    },
+    example: {
+      headingLevel: 2,
+      heading: 'Example',
+      value: documentable.docComment?.exampleAnnotation?.bodyLines,
+    },
     group: extractAnnotationBody(documentable, 'group'),
     author: extractAnnotationBody(documentable, 'author'),
     date: extractAnnotationBody(documentable, 'date'),

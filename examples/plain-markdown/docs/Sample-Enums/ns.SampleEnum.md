@@ -18,6 +18,7 @@ And it can be multiline.
 
 **See** [ns.ReferencedEnum](../Miscellaneous/ns.ReferencedEnum.md)
 
+## Mermaid
 ```mermaid
 graph TD
  A[SampleEnum] -->|references| B[ReferencedEnum]
