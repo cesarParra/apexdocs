@@ -12,6 +12,8 @@ public with sharing virtual class SampleClass extends BaseClass implements Sampl
      */
     private final String name;
 
+    public String someProperty { get; private set; }
+
     /**
      * @description This is a sample constructor.
      */

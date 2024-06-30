@@ -1,5 +1,5 @@
 export const fieldsPartialTemplate = `
-## Fields
+## {{title}}
 {{#each fields}}
 ### \`\{{name}}\`
 
@@ -7,7 +7,12 @@ export const fieldsPartialTemplate = `
 *Inherited*
 {{/if}}
 
-{{#> documentablePartialTemplate}}
+{{#> documentablePartialTemplate isInner=true}}
+
+#### Signature
+\`\`\`apex
+{{signature}}
+\`\`\` 
 
 #### Type
 {{type}}

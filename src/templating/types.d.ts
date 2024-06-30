@@ -79,6 +79,7 @@ type FieldSource = DocumentableSource & {
   type: StringOrLink;
   accessModifier: string;
   inherited?: boolean;
+  signature: string;
 };
 
 export type ClassSource = BaseTypeSource & {
@@ -90,6 +91,7 @@ export type ClassSource = BaseTypeSource & {
   classModifier?: string;
   sharingModifier?: string;
   fields?: FieldSource[];
+  properties?: FieldSource[];
 };
 
 export type InterfaceSource = BaseTypeSource & {

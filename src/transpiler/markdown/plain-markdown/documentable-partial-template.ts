@@ -15,7 +15,7 @@ export const documentablePartialTemplate = `
 {{{mermaid}}}
 
 {{#if example}}
-##{{#if isInner}}#{{/if}} Example
+##{{#if isInner}}##{{/if}} Example
 {{{example}}}
 {{/if}}
 `.trim();

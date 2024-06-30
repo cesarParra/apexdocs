@@ -15,10 +15,6 @@
     "sourceDir": "force-app",
     "targetGenerator": "plain-markdown",
     "scope": ["global", "public", "protected", "private", "namespaceaccessible"],
-    "namespace": "ns",
-    "singleFile": true,
-    "templateFilePath": "template.md",
-    "fileName": "README",
-    "targetDir": "."
+    "namespace": "ns"
   }
 }

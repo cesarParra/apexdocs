@@ -9,13 +9,13 @@ export const methodsPartialTemplate = `
 
 {{#> documentablePartialTemplate isInner=true}}
 
-### Signature
+#### Signature
 \`\`\`apex
 {{signature}}
 \`\`\` 
 
 {{#if parameters}}
-### Parameters
+#### Parameters
 | Name | Type | Description |
 |------|------|-------------|
 {{#each parameters}}
@@ -24,14 +24,14 @@ export const methodsPartialTemplate = `
 {{/if}}
 
 {{#if returnType}}
-### Returns
+#### Returns
 **{{returnType.type}}**
 
 {{returnType.description}}
 {{/if}}
 
 {{#if throws}}
-### Throws
+#### Throws
 {{#each throws}}
 {{this.type}}: {{this.description}}
 

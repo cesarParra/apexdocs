@@ -19,7 +19,11 @@ export const classMarkdownTemplate = `
 {{/if}}
 
 {{#if fields}}
-{{> fieldsPartialTemplate}}
+{{> fieldsPartialTemplate title="Fields" fields=fields}}
+{{/if}}
+
+{{#if properties}}
+{{> fieldsPartialTemplate title="Properties" fields=properties}}
 {{/if}}
 
 {{#if constructors}}

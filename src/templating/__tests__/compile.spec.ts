@@ -144,7 +144,7 @@ describe('compile', () => {
           __type: 'class',
           name: 'MyClass',
           accessModifier: 'public',
-          fields: [{ name: 'myField', type: 'String', accessModifier: 'public' }],
+          fields: [{ name: 'myField', type: 'String', accessModifier: 'public', signature: 'String myField' }],
         };
 
         const result = compile(template, classSource);
@@ -159,7 +159,7 @@ describe('compile', () => {
           __type: 'class',
           name: 'MyClass',
           accessModifier: 'public',
-          fields: [{ name: 'myField', type: 'String', accessModifier: 'public' }],
+          fields: [{ name: 'myField', type: 'String', accessModifier: 'public', signature: 'String myField' }],
         };
 
         const result = compile(template, classSource);
@@ -174,7 +174,7 @@ describe('compile', () => {
           __type: 'class',
           name: 'MyClass',
           accessModifier: 'public',
-          fields: [{ name: 'myField', type: 'String', accessModifier: 'public' }],
+          fields: [{ name: 'myField', type: 'String', accessModifier: 'public', signature: 'String myField' }],
         };
 
         const result = compile(template, classSource);
@@ -189,7 +189,9 @@ describe('compile', () => {
           __type: 'class',
           name: 'MyClass',
           accessModifier: 'public',
-          fields: [{ name: 'myField', type: 'String', accessModifier: 'public', inherited: true }],
+          fields: [
+            { name: 'myField', type: 'String', accessModifier: 'public', inherited: true, signature: 'String myField' },
+          ],
         };
 
         const result = compile(template, classSource);

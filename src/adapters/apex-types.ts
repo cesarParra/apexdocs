@@ -2,9 +2,9 @@ import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-ref
 import { BaseTypeSource, ClassSource, EnumSource, InterfaceSource } from '../templating/types';
 import { adaptDescribable, adaptDocumentable } from './documentables';
 import { linkFromTypeNameGenerator } from './references';
-import { FieldMirrorWithInheritance } from '../model/inheritance';
+import { FieldMirrorWithInheritance, PropertyMirrorWithInheritance } from '../model/inheritance';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
-import { adaptField } from './fields-and-properties';
+import { adaptFieldOrProperty } from './fields-and-properties';
 
 function baseTypeAdapter(type: EnumMirror | InterfaceMirror | ClassMirror): BaseTypeSource {
   function extractAnnotationBody(type: Type, annotationName: string): string | undefined {
@@ -62,6 +62,7 @@ export function classTypeToClassSource(classType: ClassMirror): ClassSource {
     extends: classType.extended_class ? linkFromTypeNameGenerator(classType.extended_class) : undefined,
     methods: classType.methods.map(adaptMethod),
     constructors: classType.constructors.map((constructor) => adaptConstructor(classType.name, constructor)),
-    fields: classType.fields.map((field) => adaptField(field as FieldMirrorWithInheritance)),
+    fields: classType.fields.map((field) => adaptFieldOrProperty(field as FieldMirrorWithInheritance)),
+    properties: classType.properties.map((property) => adaptFieldOrProperty(property as PropertyMirrorWithInheritance)),
   };
 }
