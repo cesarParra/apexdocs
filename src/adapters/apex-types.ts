@@ -6,7 +6,7 @@ import { FieldMirrorWithInheritance, PropertyMirrorWithInheritance } from '../mo
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
 
-function baseTypeAdapter(type: EnumMirror | InterfaceMirror | ClassMirror): RenderableType {
+function baseTypeAdapter(type: EnumMirror | InterfaceMirror | ClassMirror, baseHeadingLevel: number): RenderableType {
   function getHeading(type: Type): string {
     const suffixMap = {
       class: 'Class',
@@ -18,9 +18,9 @@ function baseTypeAdapter(type: EnumMirror | InterfaceMirror | ClassMirror): Rend
   }
 
   return {
-    headingLevel: 1,
+    headingLevel: baseHeadingLevel,
     heading: getHeading(type),
-    doc: adaptDocumentable(type, 2),
+    doc: adaptDocumentable(type, baseHeadingLevel + 1),
     name: type.name,
     meta: {
       accessModifier: type.access_modifier,
@@ -31,7 +31,7 @@ function baseTypeAdapter(type: EnumMirror | InterfaceMirror | ClassMirror): Rend
 export function enumTypeToEnumSource(enumType: EnumMirror): RenderableEnum {
   return {
     __type: 'enum',
-    ...baseTypeAdapter(enumType),
+    ...baseTypeAdapter(enumType, 1),
     values: {
       headingLevel: 2,
       heading: 'Values',
@@ -46,43 +46,54 @@ export function enumTypeToEnumSource(enumType: EnumMirror): RenderableEnum {
 export function interfaceTypeToInterfaceSource(interfaceType: InterfaceMirror): RenderableInterface {
   return {
     __type: 'interface',
-    ...baseTypeAdapter(interfaceType),
+    ...baseTypeAdapter(interfaceType, 1),
     extends: interfaceType.extended_interfaces.map(linkFromTypeNameGenerator),
     methods: {
       headingLevel: 2,
       heading: 'Methods',
-      value: interfaceType.methods.map(adaptMethod),
+      value: interfaceType.methods.map((method) => adaptMethod(method, 3)),
     },
   };
 }
 
-export function classTypeToClassSource(classType: ClassMirror): RenderableClass {
+export function classTypeToClassSource(classType: ClassMirror, baseHeadingLevel: number = 1): RenderableClass {
   return {
     __type: 'class',
-    ...baseTypeAdapter(classType),
+    ...baseTypeAdapter(classType, baseHeadingLevel),
     classModifier: classType.classModifier,
     sharingModifier: classType.sharingModifier,
     implements: classType.implemented_interfaces.map(linkFromTypeNameGenerator),
     extends: classType.extended_class ? linkFromTypeNameGenerator(classType.extended_class) : undefined,
     methods: {
-      headingLevel: 2,
+      headingLevel: baseHeadingLevel + 1,
       heading: 'Methods',
-      value: classType.methods.map(adaptMethod),
+      value: classType.methods.map((method) => adaptMethod(method, baseHeadingLevel + 2)),
     },
     constructors: {
-      headingLevel: 2,
+      headingLevel: baseHeadingLevel + 1,
       heading: 'Constructors',
-      value: classType.constructors.map((constructor) => adaptConstructor(classType.name, constructor)),
+      value: classType.constructors.map((constructor) =>
+        adaptConstructor(classType.name, constructor, baseHeadingLevel + 2),
+      ),
     },
     fields: {
-      headingLevel: 2,
+      headingLevel: baseHeadingLevel + 1,
       heading: 'Fields',
-      value: classType.fields.map((field) => adaptFieldOrProperty(field as FieldMirrorWithInheritance)),
+      value: classType.fields.map((field) =>
+        adaptFieldOrProperty(field as FieldMirrorWithInheritance, baseHeadingLevel + 2),
+      ),
     },
     properties: {
-      headingLevel: 2,
+      headingLevel: baseHeadingLevel + 1,
       heading: 'Properties',
-      value: classType.properties.map((property) => adaptFieldOrProperty(property as PropertyMirrorWithInheritance)),
+      value: classType.properties.map((property) =>
+        adaptFieldOrProperty(property as PropertyMirrorWithInheritance, baseHeadingLevel + 2),
+      ),
+    },
+    innerClasses: {
+      headingLevel: baseHeadingLevel + 1,
+      heading: 'Inner Classes',
+      value: classType.classes.map((innerClass) => classTypeToClassSource(innerClass, baseHeadingLevel + 2)),
     },
   };
 }

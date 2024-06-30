@@ -5,6 +5,7 @@ import { linkFromTypeNameGenerator } from './references';
 
 export function adaptFieldOrProperty(
   field: FieldMirrorWithInheritance | PropertyMirrorWithInheritance,
+  baseHeadingLevel: number,
 ): RenderableField {
   function buildSignature() {
     const { access_modifier, name } = field;
@@ -17,17 +18,17 @@ export function adaptFieldOrProperty(
   }
 
   return {
-    doc: adaptDocumentable(field, 4),
+    doc: adaptDocumentable(field, baseHeadingLevel + 1),
     name: field.name,
     type: {
-      headingLevel: 5,
+      headingLevel: baseHeadingLevel + 1,
       heading: 'Type',
       value: linkFromTypeNameGenerator(field.typeReference.rawDeclaration),
     },
     inherited: field.inherited,
     accessModifier: field.access_modifier,
     signature: {
-      headingLevel: 5,
+      headingLevel: baseHeadingLevel + 1,
       heading: 'Signature',
       value: [buildSignature()],
     },

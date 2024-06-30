@@ -12,6 +12,7 @@ import { methodsPartialTemplate } from '../transpiler/markdown/plain-markdown/me
 import { constructorsPartialTemplate } from '../transpiler/markdown/plain-markdown/constructors-partial-template';
 import { fieldsPartialTemplate } from '../transpiler/markdown/plain-markdown/fieldsPartialTemplate';
 import { documentablePartialTemplate } from '../transpiler/markdown/plain-markdown/documentable-partial-template';
+import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/class-template';
 
 type CompileOptions = {
   renderableContentConverter: ConvertRenderableContentsToString;
@@ -29,6 +30,7 @@ export function compile(
   Handlebars.registerPartial('methodsPartialTemplate', methodsPartialTemplate);
   Handlebars.registerPartial('constructorsPartialTemplate', constructorsPartialTemplate);
   Handlebars.registerPartial('fieldsPartialTemplate', fieldsPartialTemplate);
+  Handlebars.registerPartial('classTemplate', classMarkdownTemplate);
 
   Handlebars.registerHelper('link', options.link);
   Handlebars.registerHelper('code', options.codeBlockConverter);

@@ -34,4 +34,12 @@ public with sharing virtual class SampleClass extends BaseClass implements Sampl
     public virtual String sayHello() {
         return 'Hello';
     }
+
+    public class SomeInnerClass {
+        public String someInnerField;
+
+        public void doSomething() {
+            System.debug('Doing something');
+        }
+    }
 }

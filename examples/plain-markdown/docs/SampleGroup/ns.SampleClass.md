@@ -28,12 +28,12 @@ sample.doSomething();
 
 This is a sample field.
 
-##### Signature
+#### Signature
 ```apex
 private name
 ```
 
-##### Type
+#### Type
 String
 
 ---
@@ -42,23 +42,23 @@ String
 
 *Inherited*
 
-##### Signature
+#### Signature
 ```apex
 public sampleEnumFromBase
 ```
 
-##### Type
+#### Type
 [ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md)
 
 ## Properties
 ### `someProperty`
 
-##### Signature
+#### Signature
 ```apex
 public someProperty
 ```
 
-##### Type
+#### Type
 String
 
 ## Constructors
@@ -66,7 +66,7 @@ String
 
 This is a sample constructor.
 
-##### Signature
+#### Signature
 ```apex
 public SampleClass()
 ```
@@ -75,10 +75,15 @@ public SampleClass()
 
 ### `SampleClass(name)`
 
-##### Signature
+#### Signature
 ```apex
 public SampleClass(String name)
 ```
+
+#### Parameters
+| Name | Type | Description |
+|------|------|-------------|
+| name | String |  |
 
 ## Methods
 ### `sayHello()`
@@ -102,3 +107,28 @@ A string value.
 SampleClass sample = new SampleClass();
 sample.doSomething();
 ```
+
+## Inner Classes
+### SomeInnerClass Class
+
+#### Fields
+### `someInnerField`
+
+###### Signature
+```apex
+public someInnerField
+```
+
+###### Type
+String
+
+#### Methods
+##### `doSomething()`
+
+###### Signature
+```apex
+public void doSomething()
+```
+
+###### Return Type
+**void**

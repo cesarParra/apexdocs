@@ -7,16 +7,10 @@ ns
 ## Fields
 ### `sampleEnumFromBase`
 
-##### Signature
+#### Signature
 ```apex
 public sampleEnumFromBase
 ```
 
-##### Type
+#### Type
 [ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md)
-
-## Properties
-
-## Constructors
-
-## Methods

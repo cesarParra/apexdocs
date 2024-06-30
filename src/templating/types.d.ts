@@ -67,8 +67,8 @@ type RenderableConstructor = {
   headingLevel: number;
   heading: string;
   signature: RenderableSection<CodeBlock>;
-  parameters?: RenderableMethodParameter[];
-  throws?: TypeSource[];
+  parameters?: RenderableSection<RenderableMethodParameter[] | undefined>;
+  throws?: RenderableSection<TypeSource[] | undefined>;
   doc: RenderableDocumentation;
 };
 
@@ -104,16 +104,17 @@ export type RenderableClass = RenderableType & {
   implements?: StringOrLink[];
   classModifier?: string;
   sharingModifier?: string;
-  constructors?: RenderableSection<RenderableConstructor[]>;
-  methods?: RenderableSection<RenderableMethod[]>;
-  fields?: RenderableSection<RenderableField[]>;
-  properties?: RenderableSection<RenderableField[]>;
+  constructors: RenderableSection<RenderableConstructor[]>;
+  methods: RenderableSection<RenderableMethod[]>;
+  fields: RenderableSection<RenderableField[]>;
+  properties: RenderableSection<RenderableField[]>;
+  innerClasses: RenderableSection<RenderableClass[]>;
 };
 
 export type RenderableInterface = RenderableType & {
   __type: 'interface';
   extends?: StringOrLink[];
-  methods?: RenderableSection<RenderableMethod[]>;
+  methods: RenderableSection<RenderableMethod[]>;
 };
 
 export type RenderableEnum = RenderableType & {

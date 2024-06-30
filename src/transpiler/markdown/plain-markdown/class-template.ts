@@ -22,15 +22,22 @@ export const classMarkdownTemplate = `
 {{> fieldsPartialTemplate fields}}
 {{/if}}
 
-{{#if properties}}
+{{#if properties.value}}
 {{> fieldsPartialTemplate properties}}
 {{/if}}
 
-{{#if constructors}}
+{{#if constructors.value}}
 {{> constructorsPartialTemplate constructors}}
 {{/if}}
 
-{{#if methods}}
+{{#if methods.value}}
 {{> methodsPartialTemplate methods}}
+{{/if}}
+
+{{#if innerClasses.value}}
+{{ heading innerClasses.headingLevel innerClasses.heading }}
+{{#each innerClasses.value}}
+{{> classTemplate this}}
+{{/each}}
 {{/if}}
 `.trim();

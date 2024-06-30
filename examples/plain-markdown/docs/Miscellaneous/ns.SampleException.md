@@ -5,9 +5,3 @@ ns
 
 **Extends**
 Exception
-
-## Properties
-
-## Constructors
-
-## Methods
