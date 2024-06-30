@@ -69,8 +69,13 @@ export function adaptConstructor(typeName: string, constructor: ConstructorMirro
 
   return {
     doc: adaptDocumentable(constructor, 4),
-    title: buildTitle(typeName, constructor),
-    signature: buildSignature(typeName, constructor),
+    headingLevel: 3,
+    heading: buildTitle(typeName, constructor),
+    signature: {
+      headingLevel: 5,
+      heading: 'Signature',
+      value: [buildSignature(typeName, constructor)],
+    },
     parameters: constructor.parameters.map((param) => mapParameters(constructor, param)),
     throws: constructor.docComment?.throwsAnnotations.map((thrown) => mapThrows(thrown)),
   };

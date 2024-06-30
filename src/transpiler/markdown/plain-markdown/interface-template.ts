@@ -1,5 +1,5 @@
 export const interfaceMarkdownTemplate = `
-# {{name}} Interface
+{{ heading headingLevel heading }}
 
 {{> typeDocumentation }}
 

@@ -19,9 +19,17 @@ export function adaptFieldOrProperty(
   return {
     doc: adaptDocumentable(field, 4),
     name: field.name,
-    type: linkFromTypeNameGenerator(field.typeReference.rawDeclaration),
+    type: {
+      headingLevel: 5,
+      heading: 'Type',
+      value: linkFromTypeNameGenerator(field.typeReference.rawDeclaration),
+    },
     inherited: field.inherited,
     accessModifier: field.access_modifier,
-    signature: buildSignature(),
+    signature: {
+      headingLevel: 5,
+      heading: 'Signature',
+      value: [buildSignature()],
+    },
   };
 }

@@ -1,5 +1,5 @@
 export const classMarkdownTemplate = `
-# {{name}} Class
+{{ heading headingLevel heading }}
 {{#if classModifier}}
 \`{{classModifier}}\`
 {{/if}}
@@ -8,29 +8,29 @@ export const classMarkdownTemplate = `
 
 {{#if extends}}
 **Extends**
-{{extends}}
+{{link extends}}
 {{/if}}
 
 {{#if implements}}
 **Implements**
 {{#each implements}}
-{{this}}{{#unless @last}}, {{/unless}}
+{{link this}}{{#unless @last}}, {{/unless}}
 {{/each}}
 {{/if}}
 
-{{#if fields}}
-{{> fieldsPartialTemplate title="Fields" fields=fields}}
+{{#if fields.value}}
+{{> fieldsPartialTemplate fields}}
 {{/if}}
 
 {{#if properties}}
-{{> fieldsPartialTemplate title="Properties" fields=properties}}
+{{> fieldsPartialTemplate properties}}
 {{/if}}
 
 {{#if constructors}}
-{{> constructorsPartialTemplate}}
+{{> constructorsPartialTemplate constructors}}
 {{/if}}
 
 {{#if methods}}
-{{> methodsPartialTemplate}}
+{{> methodsPartialTemplate methods}}
 {{/if}}
 `.trim();

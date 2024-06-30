@@ -64,8 +64,9 @@ type TypeSource = {
 };
 
 type RenderableConstructor = {
-  title: string;
-  signature: string;
+  headingLevel: number;
+  heading: string;
+  signature: RenderableSection<CodeBlock>;
   parameters?: RenderableMethodParameter[];
   throws?: TypeSource[];
   doc: RenderableDocumentation;
@@ -84,10 +85,10 @@ type RenderableMethod = {
 
 type RenderableField = {
   name: string;
-  type: StringOrLink;
+  type: RenderableSection<StringOrLink>;
   accessModifier: string;
   inherited?: boolean;
-  signature: string;
+  signature: RenderableSection<CodeBlock>;
   doc: RenderableDocumentation;
 };
 

@@ -1,21 +1,19 @@
 export const fieldsPartialTemplate = `
-## {{title}}
-{{#each fields}}
+{{ heading headingLevel heading }}
+{{#each value}}
 ### \`\{{name}}\`
 
 {{#if inherited}}
 *Inherited*
 {{/if}}
 
-{{#> documentablePartialTemplate isInner=true}}
+{{#> documentablePartialTemplate }}
 
-#### Signature
-\`\`\`apex
-{{signature}}
-\`\`\` 
+{{ heading signature.headingLevel signature.heading }}
+{{ code "apex" signature.value }}
 
-#### Type
-{{type}}
+{{ heading type.headingLevel type.heading }}
+{{link type.value}}
 
 {{/documentablePartialTemplate}}
 

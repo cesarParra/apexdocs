@@ -17,98 +17,88 @@ sample.doSomething();
 ```
 
 **Extends**
-[object Object]
+[ns.BaseClass](../Miscellaneous/ns.BaseClass.md)
 
 **Implements**
-[object Object], 
-[object Object]
+[ns.SampleInterface](../Miscellaneous/ns.SampleInterface.md), 
+[ns.ParentInterface](../Miscellaneous/ns.ParentInterface.md)
 
 ## Fields
-### ``
+### `name`
 
-#### Signature
+This is a sample field.
+
+##### Signature
 ```apex
+private name
+```
 
-``` 
-
-#### Type
+##### Type
+String
 
 ---
 
-### ``
+### `sampleEnumFromBase`
 
-#### Signature
+*Inherited*
+
+##### Signature
 ```apex
+public sampleEnumFromBase
+```
 
-``` 
-
-#### Type
-
----
-
-### ``
-
-#### Signature
-```apex
-
-``` 
-
-#### Type
+##### Type
+[ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md)
 
 ## Properties
-### ``
+### `someProperty`
 
-#### Signature
+##### Signature
 ```apex
+public someProperty
+```
 
-``` 
-
-#### Type
-
----
-
-### ``
-
-#### Signature
-```apex
-
-``` 
-
-#### Type
-
----
-
-### ``
-
-#### Signature
-```apex
-
-``` 
-
-#### Type
+##### Type
+String
 
 ## Constructors
-### ``
+### `SampleClass()`
 
-### Signature
+This is a sample constructor.
+
+##### Signature
 ```apex
-
-``` 
+public SampleClass()
+```
 
 ---
-### ``
 
-### Signature
+### `SampleClass(name)`
+
+##### Signature
 ```apex
+public SampleClass(String name)
+```
 
-``` 
+## Methods
+### `sayHello()`
 
----
-### ``
+`DEPRECATED`
 
-### Signature
+This is a sample method.
+
+#### Signature
 ```apex
+public virtual String sayHello()
+```
 
-``` 
+#### Return Type
+**String**
 
-# SampleClass Class
+A string value.
+
+#### Example
+```apex
+SampleClass sample = new SampleClass();
+sample.doSomething();
+```

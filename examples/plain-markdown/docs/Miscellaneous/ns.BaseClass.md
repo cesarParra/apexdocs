@@ -5,91 +5,18 @@
 ns
 
 ## Fields
-### ``
+### `sampleEnumFromBase`
 
-#### Signature
+##### Signature
 ```apex
+public sampleEnumFromBase
+```
 
-``` 
-
-#### Type
-
----
-
-### ``
-
-#### Signature
-```apex
-
-``` 
-
-#### Type
-
----
-
-### ``
-
-#### Signature
-```apex
-
-``` 
-
-#### Type
+##### Type
+[ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md)
 
 ## Properties
-### ``
-
-#### Signature
-```apex
-
-``` 
-
-#### Type
-
----
-
-### ``
-
-#### Signature
-```apex
-
-``` 
-
-#### Type
-
----
-
-### ``
-
-#### Signature
-```apex
-
-``` 
-
-#### Type
 
 ## Constructors
-### ``
 
-### Signature
-```apex
-
-``` 
-
----
-### ``
-
-### Signature
-```apex
-
-``` 
-
----
-### ``
-
-### Signature
-```apex
-
-``` 
-
-# BaseClass Class
+## Methods
