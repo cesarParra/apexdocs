@@ -1,16 +1,16 @@
 export const interfaceMarkdownTemplate = `
 # {{name}} Interface
 
-{{> typeDocumentation}}
+{{> typeDocumentation doc}}
 
 {{#if extends}}
 **Extends**
 {{#each extends}}
-{{this}}{{#unless @last}}, {{/unless}}
+{{link this}}{{#unless @last}}, {{/unless}}
 {{/each}}
 {{/if}}
 
 {{#if methods}}
-{{> methodsPartialTemplate}}
+{{> methodsPartialTemplate methods}}
 {{/if}}
 `.trim();

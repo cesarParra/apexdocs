@@ -94,28 +94,4 @@ Exception
 
 ``` 
 
-## Methods
-### ``
-
-#### Signature
-```apex
-
-``` 
-
----
-
-### ``
-
-#### Signature
-```apex
-
-``` 
-
----
-
-### ``
-
-#### Signature
-```apex
-
-```
+# SampleException Class

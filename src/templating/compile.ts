@@ -6,7 +6,7 @@ import {
   RenderableClass,
   StringOrLink,
 } from './types';
-import { heading, namespace, splitAndCapitalize } from './helpers';
+import { heading, heading2, heading3, inlineCode, namespace, splitAndCapitalize } from './helpers';
 import { typeDocPartial } from '../transpiler/markdown/plain-markdown/type-doc-partial';
 import { methodsPartialTemplate } from '../transpiler/markdown/plain-markdown/methods-partial-template';
 import { constructorsPartialTemplate } from '../transpiler/markdown/plain-markdown/constructors-partial-template';
@@ -34,6 +34,9 @@ export function compile(
   Handlebars.registerHelper('code', options.codeBlockConverter);
   Handlebars.registerHelper('withLinks', options.renderableContentConverter);
   Handlebars.registerHelper('heading', heading);
+  Handlebars.registerHelper('heading2', heading2);
+  Handlebars.registerHelper('heading3', heading3);
+  Handlebars.registerHelper('inlineCode', inlineCode);
   Handlebars.registerHelper('splitAndCapitalize', splitAndCapitalize);
 
   const prepared = { ...source, namespace: namespace() };

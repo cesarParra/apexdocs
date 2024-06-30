@@ -99,28 +99,4 @@ ns
 
 ``` 
 
-## Methods
-### ``
-
-#### Signature
-```apex
-
-``` 
-
----
-
-### ``
-
-#### Signature
-```apex
-
-``` 
-
----
-
-### ``
-
-#### Signature
-```apex
-
-```
+# SampleClass Class

@@ -17,7 +17,7 @@ export const documentablePartialTemplate = `
 {{/if}}
 
 {{#if example}}
-##{{#if isInner}}##{{/if}} Example
+{{ heading3 ../../headingLevel "Example" }}
 {{code "apex" example}}
 {{/if}}
 `.trim();

@@ -1,3 +1,4 @@
+import Handlebars from 'handlebars';
 import { Settings } from '../settings';
 
 export const splitAndCapitalize = (text: string) => {
@@ -15,4 +16,16 @@ export const namespace = () => {
 
 export const heading = (level: number, text: string) => {
   return `${'#'.repeat(level)} ${text}`;
+};
+
+export const heading2 = (currentLevel: number, text: string) => {
+  return heading(currentLevel + 1, text);
+};
+
+export const heading3 = (currentLevel: number, text: string) => {
+  return heading(currentLevel + 2, text);
+};
+
+export const inlineCode = (text: string) => {
+  return new Handlebars.SafeString(`\`${text}\``);
 };

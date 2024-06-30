@@ -1,30 +1,12 @@
 # ParentInterface Interface
 
-## Namespace
-ns
-
 ## Methods
-### ``
+### `sampleParentMethod()`
 
-#### Signature
+ Signature
 ```apex
-
+public void sampleParentMethod()
 ``` 
 
----
-
-### ``
-
-#### Signature
-```apex
-
-``` 
-
----
-
-### ``
-
-#### Signature
-```apex
-
-```
+#### Return Type
+**void**
