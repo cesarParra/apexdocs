@@ -23,7 +23,7 @@ export function adaptMethod(method: MethodMirror): RenderableMethod {
 
   return {
     headingLevel: 3,
-    doc: adaptDocumentable(method),
+    doc: adaptDocumentable(method, 4),
     heading: buildTitle(method as MethodMirrorWithInheritance),
     signature: {
       headingLevel: 4,
@@ -68,7 +68,7 @@ export function adaptConstructor(typeName: string, constructor: ConstructorMirro
   }
 
   return {
-    doc: adaptDocumentable(constructor),
+    doc: adaptDocumentable(constructor, 4),
     title: buildTitle(typeName, constructor),
     signature: buildSignature(typeName, constructor),
     parameters: constructor.parameters.map((param) => mapParameters(constructor, param)),

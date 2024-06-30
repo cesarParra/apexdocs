@@ -17,7 +17,7 @@ export function adaptFieldOrProperty(
   }
 
   return {
-    doc: adaptDocumentable(field),
+    doc: adaptDocumentable(field, 4),
     name: field.name,
     type: linkFromTypeNameGenerator(field.typeReference.rawDeclaration),
     inherited: field.inherited,

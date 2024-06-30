@@ -1,19 +1,19 @@
 export const typeDocPartial = `
 {{#> documentablePartialTemplate}}
 
-{{#if group}}
-**Group** {{group}}
+{{#if doc.group}}
+**Group** {{doc.group}}
 {{/if}}
 
-{{#if author}}
-**Author** {{author}}
+{{#if doc.author}}
+**Author** {{doc.author}}
 {{/if}}
 
-{{#if date}}
-**Date** {{date}}
+{{#if doc.date}}
+**Date** {{doc.date}}
 {{/if}}
 
-{{#each sees}}
+{{#each doc.sees}}
 **See** {{link this}}
 
 {{/each}}

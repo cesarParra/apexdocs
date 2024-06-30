@@ -28,7 +28,7 @@ export function adaptDescribable(describable: Describable): { description?: Rend
   };
 }
 
-export function adaptDocumentable(documentable: Documentable): RenderableDocumentation {
+export function adaptDocumentable(documentable: Documentable, subHeadingLevel: number): RenderableDocumentation {
   function extractCustomTags(type: Documentable): CustomTag[] {
     const baseTags = ['description', 'group', 'author', 'date', 'see', 'example', 'mermaid', 'throws', 'exception'];
 
@@ -67,12 +67,12 @@ export function adaptDocumentable(documentable: Documentable): RenderableDocumen
     annotations: documentable.annotations.map((annotation) => annotation.type.toUpperCase()),
     customTags: extractCustomTags(documentable),
     mermaid: {
-      headingLevel: 2,
-      heading: 'Mermaid',
+      headingLevel: subHeadingLevel,
+      heading: 'Diagram',
       value: extractAnnotationBodyLines(documentable, 'mermaid'),
     },
     example: {
-      headingLevel: 2,
+      headingLevel: subHeadingLevel,
       heading: 'Example',
       value: documentable.docComment?.exampleAnnotation?.bodyLines,
     },

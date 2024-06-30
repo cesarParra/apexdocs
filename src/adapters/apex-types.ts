@@ -20,7 +20,7 @@ function baseTypeAdapter(type: EnumMirror | InterfaceMirror | ClassMirror): Rend
   return {
     headingLevel: 1,
     heading: getHeading(type),
-    doc: adaptDocumentable(type),
+    doc: adaptDocumentable(type, 2),
     name: type.name,
     meta: {
       accessModifier: type.access_modifier,

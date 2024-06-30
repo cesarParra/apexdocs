@@ -1,6 +1,6 @@
 export const methodsPartialTemplate = `
 {{ heading headingLevel heading }}
-{{#each values}}
+{{#each value}}
 {{{ heading headingLevel (inlineCode heading) }}}
 
 {{#if inherited}}

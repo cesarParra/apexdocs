@@ -1,7 +1,7 @@
 export const interfaceMarkdownTemplate = `
 # {{name}} Interface
 
-{{> typeDocumentation doc}}
+{{> typeDocumentation }}
 
 {{#if extends}}
 **Extends**
