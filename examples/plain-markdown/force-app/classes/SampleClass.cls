@@ -42,4 +42,14 @@ public with sharing virtual class SampleClass extends BaseClass implements Sampl
             System.debug('Doing something');
         }
     }
+
+    /**
+     * @description This enum is used for foo and bar.
+     */
+    public enum SomeEnum {
+        /** @description This is a test. */
+        TEST_1,
+        TEST_2,
+        TEST_3
+    }
 }

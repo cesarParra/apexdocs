@@ -108,7 +108,7 @@ SampleClass sample = new SampleClass();
 sample.doSomething();
 ```
 
-## Inner Classes
+## Classes
 ### SomeInnerClass Class
 
 #### Fields
@@ -132,3 +132,15 @@ public void doSomething()
 
 ###### Return Type
 **void**
+
+## Enums
+### SomeEnum Enum
+
+This enum is used for foo and bar.
+
+#### Values
+| Value | Description |
+|-------|-------------|
+| TEST_1 | This is a test. |
+| TEST_2 |  |
+| TEST_3 |  |

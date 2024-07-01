@@ -40,4 +40,11 @@ export const classMarkdownTemplate = `
 {{> classTemplate this}}
 {{/each}}
 {{/if}}
+
+{{#if innerEnums.value}}
+{{ heading innerEnums.headingLevel innerEnums.heading }}
+{{#each innerEnums.value}}
+{{> enumTemplate this}}
+{{/each}}
+{{/if}}
 `.trim();

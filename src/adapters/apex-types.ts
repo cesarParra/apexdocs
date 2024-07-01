@@ -28,12 +28,12 @@ function baseTypeAdapter(type: EnumMirror | InterfaceMirror | ClassMirror, baseH
   };
 }
 
-export function enumTypeToEnumSource(enumType: EnumMirror): RenderableEnum {
+export function enumTypeToEnumSource(enumType: EnumMirror, baseHeadingLevel: number = 1): RenderableEnum {
   return {
     __type: 'enum',
-    ...baseTypeAdapter(enumType, 1),
+    ...baseTypeAdapter(enumType, baseHeadingLevel),
     values: {
-      headingLevel: 2,
+      headingLevel: baseHeadingLevel + 1,
       heading: 'Values',
       value: enumType.values.map((value) => ({
         ...adaptDescribable(value.docComment?.descriptionLines),
@@ -92,8 +92,13 @@ export function classTypeToClassSource(classType: ClassMirror, baseHeadingLevel:
     },
     innerClasses: {
       headingLevel: baseHeadingLevel + 1,
-      heading: 'Inner Classes',
+      heading: 'Classes',
       value: classType.classes.map((innerClass) => classTypeToClassSource(innerClass, baseHeadingLevel + 2)),
+    },
+    innerEnums: {
+      headingLevel: baseHeadingLevel + 1,
+      heading: 'Enums',
+      value: classType.enums.map((innerEnum) => enumTypeToEnumSource(innerEnum, baseHeadingLevel + 2)),
     },
   };
 }
