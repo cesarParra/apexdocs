@@ -43,15 +43,18 @@ export function enumTypeToEnumSource(enumType: EnumMirror, baseHeadingLevel: num
   };
 }
 
-export function interfaceTypeToInterfaceSource(interfaceType: InterfaceMirror): RenderableInterface {
+export function interfaceTypeToInterfaceSource(
+  interfaceType: InterfaceMirror,
+  baseHeadingLevel: number = 1,
+): RenderableInterface {
   return {
     __type: 'interface',
-    ...baseTypeAdapter(interfaceType, 1),
+    ...baseTypeAdapter(interfaceType, baseHeadingLevel),
     extends: interfaceType.extended_interfaces.map(linkFromTypeNameGenerator),
     methods: {
-      headingLevel: 2,
+      headingLevel: baseHeadingLevel + 1,
       heading: 'Methods',
-      value: interfaceType.methods.map((method) => adaptMethod(method, 3)),
+      value: interfaceType.methods.map((method) => adaptMethod(method, baseHeadingLevel + 2)),
     },
   };
 }
@@ -99,6 +102,13 @@ export function classTypeToClassSource(classType: ClassMirror, baseHeadingLevel:
       headingLevel: baseHeadingLevel + 1,
       heading: 'Enums',
       value: classType.enums.map((innerEnum) => enumTypeToEnumSource(innerEnum, baseHeadingLevel + 2)),
+    },
+    innerInterfaces: {
+      headingLevel: baseHeadingLevel + 1,
+      heading: 'Interfaces',
+      value: classType.interfaces.map((innerInterface) =>
+        interfaceTypeToInterfaceSource(innerInterface, baseHeadingLevel + 2),
+      ),
     },
   };
 }

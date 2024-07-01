@@ -111,6 +111,7 @@ export type RenderableClass = RenderableType & {
   properties: RenderableSection<RenderableField[]>;
   innerClasses: RenderableSection<RenderableClass[]>;
   innerEnums: RenderableSection<RenderableEnum[]>;
+  innerInterfaces: RenderableSection<RenderableInterface[]>;
 };
 
 export type RenderableInterface = RenderableType & {

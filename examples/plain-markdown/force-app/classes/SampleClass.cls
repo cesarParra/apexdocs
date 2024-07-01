@@ -52,4 +52,8 @@ public with sharing virtual class SampleClass extends BaseClass implements Sampl
         TEST_2,
         TEST_3
     }
+
+    public interface SomeInterface {
+        void doSomething();
+    }
 }

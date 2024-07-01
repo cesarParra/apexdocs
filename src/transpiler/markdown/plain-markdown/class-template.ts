@@ -47,4 +47,11 @@ export const classMarkdownTemplate = `
 {{> enumTemplate this}}
 {{/each}}
 {{/if}}
+
+{{#if innerInterfaces.value}}
+{{ heading innerInterfaces.headingLevel innerInterfaces.heading }}
+{{#each innerInterfaces.value}}
+{{> interfaceTemplate this}}
+{{/each}}
+{{/if}}
 `.trim();

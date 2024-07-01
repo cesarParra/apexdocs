@@ -144,3 +144,17 @@ This enum is used for foo and bar.
 | TEST_1 | This is a test. |
 | TEST_2 |  |
 | TEST_3 |  |
+
+## Interfaces
+### SomeInterface Interface
+
+#### Methods
+##### `doSomething()`
+
+###### Signature
+```apex
+public void doSomething()
+```
+
+###### Return Type
+**void**

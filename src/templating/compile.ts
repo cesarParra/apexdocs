@@ -14,6 +14,7 @@ import { fieldsPartialTemplate } from '../transpiler/markdown/plain-markdown/fie
 import { documentablePartialTemplate } from '../transpiler/markdown/plain-markdown/documentable-partial-template';
 import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/class-template';
 import { enumMarkdownTemplate } from '../transpiler/markdown/plain-markdown/enum-template';
+import { interfaceMarkdownTemplate } from '../transpiler/markdown/plain-markdown/interface-template';
 
 type CompileOptions = {
   renderableContentConverter: ConvertRenderableContentsToString;
@@ -33,6 +34,7 @@ export function compile(
   Handlebars.registerPartial('fieldsPartialTemplate', fieldsPartialTemplate);
   Handlebars.registerPartial('classTemplate', classMarkdownTemplate);
   Handlebars.registerPartial('enumTemplate', enumMarkdownTemplate);
+  Handlebars.registerPartial('interfaceTemplate', interfaceMarkdownTemplate);
 
   Handlebars.registerHelper('link', options.link);
   Handlebars.registerHelper('code', options.codeBlockConverter);
