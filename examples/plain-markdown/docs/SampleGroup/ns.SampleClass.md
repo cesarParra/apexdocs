@@ -7,6 +7,9 @@ deserunt ea officia exercitation laboris enim in duis quis enim eiusmod eu amet 
 
 **Group** SampleGroup
 
+## Namespace
+ns
+
 ## Example
 ```apex
 SampleClass sample = new SampleClass();

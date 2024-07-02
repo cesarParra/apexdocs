@@ -32,7 +32,7 @@ class GenericFile extends OutputFile {
       ClassFileGeneratorHelper.getSanitizedGroup(type),
     );
 
-    this.addText(documentType(type));
+    this.addText(documentType(type, Settings.getInstance().getNamespace()));
   }
 
   fileExtension(): string {

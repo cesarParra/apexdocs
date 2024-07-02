@@ -28,15 +28,22 @@ function baseTypeAdapter(type: EnumMirror | InterfaceMirror | ClassMirror, baseH
   };
 }
 
-export function typeToRenderableType(type: Type): Renderable {
-  switch (type.type_name) {
-    case 'enum':
-      return enumTypeToEnumSource(type as EnumMirror);
-    case 'interface':
-      return interfaceTypeToInterfaceSource(type as InterfaceMirror);
-    case 'class':
-      return classTypeToClassSource(type as ClassMirror);
+export function typeToRenderableType(type: Type, namespace?: string): Renderable {
+  function getRenderable() {
+    switch (type.type_name) {
+      case 'enum':
+        return enumTypeToEnumSource(type as EnumMirror);
+      case 'interface':
+        return interfaceTypeToInterfaceSource(type as InterfaceMirror);
+      case 'class':
+        return classTypeToClassSource(type as ClassMirror);
+    }
   }
+
+  return {
+    ...getRenderable(),
+    namespace,
+  };
 }
 
 export function enumTypeToEnumSource(enumType: EnumMirror, baseHeadingLevel: number = 1): RenderableEnum {

@@ -43,6 +43,7 @@ type RenderableDocumentation = {
 };
 
 type RenderableType = {
+  namespace?: string;
   headingLevel: number;
   heading: string;
   name: string;

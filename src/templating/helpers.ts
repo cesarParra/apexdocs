@@ -1,5 +1,4 @@
 import Handlebars from 'handlebars';
-import { Settings } from '../settings';
 
 export const splitAndCapitalize = (text: string) => {
   const words = text.split(/[-_]+/);
@@ -8,10 +7,6 @@ export const splitAndCapitalize = (text: string) => {
     capitalizedWords.push(word.charAt(0).toUpperCase() + word.slice(1));
   }
   return capitalizedWords.join(' ');
-};
-
-export const namespace = () => {
-  return Settings.getInstance().getNamespace();
 };
 
 export const heading = (level: number, text: string) => {

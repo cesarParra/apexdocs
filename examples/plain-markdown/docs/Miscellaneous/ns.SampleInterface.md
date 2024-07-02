@@ -12,6 +12,9 @@ This is a sample interface
 
 **See** [ns.ReferencedEnum](./ns.ReferencedEnum.md)
 
+## Namespace
+ns
+
 ## Diagram
 ```mermaid
 graph TD

@@ -1,5 +1,8 @@
 # ParentInterface Interface
 
+## Namespace
+ns
+
 ## Methods
 ### `sampleParentMethod()`
 
