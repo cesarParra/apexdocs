@@ -1,7 +1,5 @@
 # ParentInterface Interface
 
-Access: `public`
-
 ## Namespace
 ns
 

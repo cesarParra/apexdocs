@@ -1,5 +1,5 @@
 import { DocComment, FieldMirror } from '@cparra/apex-reflection';
-import { ReferencedType } from '@cparra/apex-reflection/index';
+import { ReferencedType } from '@cparra/apex-reflection';
 
 type MemberModifier = 'static' | 'webservice' | 'final' | 'override' | 'testmethod' | 'transient';
 

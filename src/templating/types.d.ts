@@ -20,7 +20,7 @@ type EnumValue = {
 
 type CustomTag = {
   name: string;
-  value: RenderableContent[];
+  description?: RenderableContent[];
 };
 
 /**
@@ -30,14 +30,15 @@ type Annotation = string;
 
 type CodeBlock = string[];
 
-type BaseDocAwareSource = {
+type DocumentableSource = {
+  annotations?: Annotation[];
   description?: RenderableContent[];
   customTags?: CustomTag[];
   mermaid?: CodeBlock;
   example?: CodeBlock;
 };
 
-type BaseTypeSource = BaseDocAwareSource & {
+type BaseTypeSource = DocumentableSource & {
   name: string;
   accessModifier: string;
   group?: string;
@@ -57,19 +58,42 @@ type TypeSource = {
   description?: RenderableContent[];
 };
 
-type MethodSource = BaseDocAwareSource & {
+type ConstructorSource = DocumentableSource & {
   title: string;
   signature: string;
-  annotations?: Annotation[];
+  parameters?: MethodParameterSource[];
+  throws?: TypeSource[];
+};
+
+type MethodSource = DocumentableSource & {
+  title: string;
+  signature: string;
   parameters?: MethodParameterSource[];
   returnType?: TypeSource;
   throws?: TypeSource[];
   inherited?: boolean;
 };
 
+type FieldSource = DocumentableSource & {
+  name: string;
+  type: StringOrLink;
+  accessModifier: string;
+  inherited?: boolean;
+};
+
+export type ClassSource = BaseTypeSource & {
+  __type: 'class';
+  extends?: StringOrLink;
+  implements?: StringOrLink[];
+  constructors?: ConstructorSource[];
+  methods?: MethodSource[];
+  classModifier?: string;
+  sharingModifier?: string;
+  fields?: FieldSource[];
+};
+
 export type InterfaceSource = BaseTypeSource & {
   __type: 'interface';
-  annotations?: Annotation[];
   extends?: StringOrLink[];
   methods?: MethodSource[];
 };

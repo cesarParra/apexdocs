@@ -1,6 +1,7 @@
-# ns.SampleException
+# SampleException Class
 
-**Inheritance**
+## Namespace
+ns
 
-SampleException
-
+**Extends**
+Exception

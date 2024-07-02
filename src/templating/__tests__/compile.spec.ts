@@ -1,5 +1,5 @@
 import { compile as testSubject } from '../compile';
-import { EnumSource, InterfaceSource, Link, RenderableContent } from '../types';
+import { ClassSource, EnumSource, InterfaceSource, Link, RenderableContent } from '../types';
 
 jest.mock('../../settings', () => {
   return {
@@ -33,7 +33,7 @@ function linesToCodeBlock(_: string, lines: string[]): string {
   return lines.join('\n');
 }
 
-function compile(template: string, source: EnumSource | InterfaceSource) {
+function compile(template: string, source: EnumSource | InterfaceSource | ClassSource) {
   return testSubject(template, source, {
     renderableContentConverter: renderableContentsToString,
     codeBlockConverter: linesToCodeBlock,
@@ -55,6 +55,147 @@ describe('compile', () => {
       const result = compile(template, enumSource);
 
       expect(result).toBe('My Enum');
+    });
+  });
+
+  describe('class', () => {
+    it('can reference the class name', () => {
+      const template = '{{name}} class';
+
+      const classSource: ClassSource = {
+        __type: 'class',
+        name: 'MyClass',
+        accessModifier: 'public',
+      };
+
+      const result = compile(template, classSource);
+
+      expect(result).toBe('MyClass class');
+    });
+
+    it('can reference the class modifier', () => {
+      const template = '{{classModifier}} class';
+
+      const classSource: ClassSource = {
+        __type: 'class',
+        name: 'MyClass',
+        accessModifier: 'public',
+        classModifier: 'abstract',
+      };
+
+      const result = compile(template, classSource);
+
+      expect(result).toBe('abstract class');
+    });
+
+    it('can reference the sharing modifier', () => {
+      const template = '{{sharingModifier}} class';
+
+      const classSource: ClassSource = {
+        __type: 'class',
+        name: 'MyClass',
+        accessModifier: 'public',
+        sharingModifier: 'with sharing',
+      };
+
+      const result = compile(template, classSource);
+
+      expect(result).toBe('with sharing class');
+    });
+
+    it('can reference the implemented interfaces', () => {
+      const template = '{{#each implements}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}';
+
+      const classSource: ClassSource = {
+        __type: 'class',
+        name: 'MyClass',
+        accessModifier: 'public',
+        implements: [
+          { title: 'MyInterface', url: 'https://example.com' },
+          { title: 'MyOtherInterface', url: 'https://example.com' },
+        ],
+      };
+
+      const result = compile(template, classSource);
+
+      expect(result).toBe('MyInterface, MyOtherInterface');
+    });
+
+    it('can reference an extended class', () => {
+      const template = '{{extends}}';
+
+      const classSource: ClassSource = {
+        __type: 'class',
+        name: 'MyClass',
+        accessModifier: 'public',
+        extends: { title: 'MySuperClass', url: 'https://example.com' },
+      };
+
+      const result = compile(template, classSource);
+
+      expect(result).toBe('MySuperClass');
+    });
+
+    describe('class fields', () => {
+      it('can reference the field name', () => {
+        const template = '{{#each fields}}{{name}}{{/each}}';
+
+        const classSource: ClassSource = {
+          __type: 'class',
+          name: 'MyClass',
+          accessModifier: 'public',
+          fields: [{ name: 'myField', type: 'String', accessModifier: 'public' }],
+        };
+
+        const result = compile(template, classSource);
+
+        expect(result).toBe('myField');
+      });
+
+      it('can reference the field type', () => {
+        const template = '{{#each fields}}{{type}}{{/each}}';
+
+        const classSource: ClassSource = {
+          __type: 'class',
+          name: 'MyClass',
+          accessModifier: 'public',
+          fields: [{ name: 'myField', type: 'String', accessModifier: 'public' }],
+        };
+
+        const result = compile(template, classSource);
+
+        expect(result).toBe('String');
+      });
+
+      it('can reference the field access modifier', () => {
+        const template = '{{#each fields}}{{accessModifier}}{{/each}}';
+
+        const classSource: ClassSource = {
+          __type: 'class',
+          name: 'MyClass',
+          accessModifier: 'public',
+          fields: [{ name: 'myField', type: 'String', accessModifier: 'public' }],
+        };
+
+        const result = compile(template, classSource);
+
+        expect(result).toBe('public');
+      });
+
+      it('can reference if it is inherited', () => {
+        const template = '{{#each fields}}{{#if inherited}}Inherited{{/if}}{{/each}}';
+
+        const classSource: ClassSource = {
+          __type: 'class',
+          name: 'MyClass',
+          accessModifier: 'public',
+          fields: [{ name: 'myField', type: 'String', accessModifier: 'public', inherited: true }],
+        };
+
+        const result = compile(template, classSource);
+
+        expect(result).toBe('Inherited');
+      });
     });
   });
 
@@ -133,7 +274,7 @@ describe('compile', () => {
     });
 
     it('can reference the extended interfaces of an interface', () => {
-      const template = '{{#each extends}}{{title}}{{#unless @last}}, {{/unless}}{{/each}}';
+      const template = '{{#each extends}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}';
 
       const interfaceSource: InterfaceSource = {
         __type: 'interface',
@@ -315,7 +456,7 @@ describe('compile', () => {
           {
             title: 'myMethod()',
             signature: 'void myMethod()',
-            customTags: [{ name: 'CustomTag', value: ['My custom tag'] }],
+            customTags: [{ name: 'CustomTag', description: ['My custom tag'] }],
           },
         ],
       };
@@ -573,7 +714,7 @@ describe('compile', () => {
         accessModifier: 'public',
         name: 'MyEnum',
         values: [],
-        customTags: [{ name: 'CustomTag', value: ['My custom tag'] }],
+        customTags: [{ name: 'CustomTag', description: ['My custom tag'] }],
       };
 
       const result = compile(template, enumSource);
@@ -582,7 +723,7 @@ describe('compile', () => {
     });
 
     it('can reference see references', () => {
-      const template = '{{#each sees}}**See** [{{title}}]({{url}}){{/each}}';
+      const template = '{{#each sees}}**See** {{this}}{{/each}}';
 
       const enumSource: EnumSource = {
         __type: 'enum',
@@ -594,7 +735,7 @@ describe('compile', () => {
 
       const result = compile(template, enumSource);
 
-      expect(result).toBe('**See** [More info](https://example.com)');
+      expect(result).toBe('**See** More info');
     });
   });
 });

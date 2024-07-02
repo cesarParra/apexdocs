@@ -1,18 +1,5 @@
 export const typeLevelApexDocPartialTemplate = `
-Access: \`{{accessModifier}}\`
-
-{{#if namespace}}
-## Namespace
-{{namespace}}
-{{/if}}
-
-{{#if annotations}}
-{{#each annotations}}
-\`{{this}}\`
-{{/each}}
-{{/if}}
-
-{{description}}
+{{#> documentablePartialTemplate}}
 
 {{#if group}}
 **Group** {{group}}
@@ -26,17 +13,15 @@ Access: \`{{accessModifier}}\`
 **Date** {{date}}
 {{/if}}
 
-{{#each customTags}}
-**{{splitAndCapitalize name}}** {{value}}
-
-{{/each}}
-
 {{#each sees}}
-**See** [{{title}}]({{url}})
+**See** {{this}}
 
 {{/each}}
 
-{{{mermaid}}}
+{{#if namespace}}
+## Namespace
+{{namespace}}
+{{/if}}
 
-{{{example}}}
+{{/documentablePartialTemplate}}
 `.trim();

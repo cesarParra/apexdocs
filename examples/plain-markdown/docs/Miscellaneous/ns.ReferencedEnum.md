@@ -1,6 +1,6 @@
 # ReferencedEnum Enum
 
-Access: `public`
-
 ## Namespace
 ns
+
+## Enum Values

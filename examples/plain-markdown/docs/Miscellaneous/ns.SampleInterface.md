@@ -1,10 +1,5 @@
 # SampleInterface Interface
 
-Access: `public`
-
-## Namespace
-ns
-
 `NAMESPACEACCESSIBLE`
 
 This is a sample interface
@@ -17,6 +12,9 @@ This is a sample interface
 
 **See** [ns.ReferencedEnum](./ns.ReferencedEnum.md)
 
+## Namespace
+ns
+
 ```mermaid
 graph TD
    A[SampleInterface] --&gt;|extends| B[ParentInterface]
@@ -24,10 +22,12 @@ graph TD
    C --&gt;|extends| D[GreatGrandParentInterface]
 ```
 
+## Example
 ```apex
 SampleInterface sampleInterface = new SampleInterface();
 sampleInterface.sampleMethod();
 ```
+
 **Extends**
 [ns.ParentInterface](./ns.ParentInterface.md)
 
@@ -37,6 +37,10 @@ sampleInterface.sampleMethod();
 `NAMESPACEACCESSIBLE`
 
 This is a sample method
+
+**Custom Tag** 
+
+**Another Custom Tag** 
 
 ### Signature
 ```apex
@@ -53,10 +57,6 @@ Some return value
 
 AnotherSampleException: This is another sample exception
 
-**Custom Tag** This is a custom tag
-
-**Another Custom Tag** This is another custom tag
-
 ```mermaid
 graph TD
   A[SampleInterface] --&gt;|extends| B[ParentInterface]
@@ -64,6 +64,7 @@ graph TD
   C --&gt;|extends| D[GreatGrandParentInterface]
 ```
 
+### Example
 ```apex
 SampleInterface sampleInterface = new SampleInterface();
 sampleInterface.sampleMethod();

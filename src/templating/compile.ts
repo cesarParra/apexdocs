@@ -1,15 +1,32 @@
 import Handlebars from 'handlebars';
-import { EnumSource, ConvertRenderableContentsToString, InterfaceSource } from './types';
+import {
+  EnumSource,
+  ConvertRenderableContentsToString,
+  InterfaceSource,
+  ClassSource,
+  MethodSource,
+  RenderableContent,
+  DocumentableSource,
+} from './types';
 import { namespace, splitAndCapitalize } from './helpers';
 import { typeLevelApexDocPartialTemplate } from '../transpiler/markdown/plain-markdown/type-level-apex-doc-partial-template';
+import { methodsPartialTemplate } from '../transpiler/markdown/plain-markdown/methods-partial-template';
+import { constructorsPartialTemplate } from '../transpiler/markdown/plain-markdown/constructors-partial-template';
+import { fieldsPartialTemplate } from '../transpiler/markdown/plain-markdown/fieldsPartialTemplate';
+import { documentablePartialTemplate } from '../transpiler/markdown/plain-markdown/documentable-partial-template';
 
 type CompileOptions = {
   renderableContentConverter: ConvertRenderableContentsToString;
   codeBlockConverter: (language: string, lines: string[]) => string;
 };
 
-export function compile(template: string, source: EnumSource | InterfaceSource, options: CompileOptions) {
+export function compile(template: string, source: EnumSource | InterfaceSource | ClassSource, options: CompileOptions) {
   Handlebars.registerPartial('typeLevelApexDocPartialTemplate', typeLevelApexDocPartialTemplate);
+  Handlebars.registerPartial('documentablePartialTemplate', documentablePartialTemplate);
+  Handlebars.registerPartial('methodsPartialTemplate', methodsPartialTemplate);
+  Handlebars.registerPartial('constructorsPartialTemplate', constructorsPartialTemplate);
+  Handlebars.registerPartial('fieldsPartialTemplate', fieldsPartialTemplate);
+
   Handlebars.registerHelper('splitAndCapitalize', splitAndCapitalize);
 
   const prepared = { ...prepare(source, options), namespace: namespace() };
@@ -23,18 +40,34 @@ export function compile(template: string, source: EnumSource | InterfaceSource, 
 }
 
 function prepare(
-  source: EnumSource | InterfaceSource,
+  source: EnumSource | InterfaceSource | ClassSource,
   { renderableContentConverter, codeBlockConverter }: CompileOptions,
 ) {
+  const base = {
+    ...source,
+    ...prepareDocumentable(source, renderableContentConverter, codeBlockConverter),
+    ...prepareBaseType(source, renderableContentConverter),
+  };
   if (isEnumSource(source)) {
-    return prepareEnum(source, renderableContentConverter, codeBlockConverter);
+    return {
+      ...base,
+      ...prepareEnum(source, renderableContentConverter),
+    };
   } else if (isInterfaceSource(source)) {
-    return prepareInterface(source, renderableContentConverter, codeBlockConverter);
+    return {
+      ...base,
+      ...prepareInterface(source, renderableContentConverter, codeBlockConverter),
+    };
+  } else {
+    return {
+      ...base,
+      ...prepareClass(source, renderableContentConverter, codeBlockConverter),
+    };
   }
 }
 
-function prepareBase(
-  source: EnumSource | InterfaceSource,
+function prepareDocumentable(
+  source: DocumentableSource,
   renderableContentConverter: ConvertRenderableContentsToString,
   codeBlockConverter: (language: string, lines: string[]) => string,
 ) {
@@ -44,19 +77,22 @@ function prepareBase(
     example: source.example ? codeBlockConverter('apex', source.example) : undefined,
     customTags: source.customTags?.map((tag) => ({
       name: tag.name,
-      value: renderableContentConverter(tag.value),
+      value: renderableContentConverter(tag.description),
     })),
   };
 }
 
-function prepareEnum(
-  source: EnumSource,
+function prepareBaseType(
+  source: EnumSource | InterfaceSource | ClassSource,
   renderableContentConverter: ConvertRenderableContentsToString,
-  codeBlockConverter: (language: string, lines: string[]) => string,
 ) {
   return {
-    ...source,
-    ...prepareBase(source, renderableContentConverter, codeBlockConverter),
+    sees: source.sees?.map((see) => renderableContentConverter([see])),
+  };
+}
+
+function prepareEnum(source: EnumSource, renderableContentConverter: ConvertRenderableContentsToString) {
+  return {
     values: source.values.map((value) => ({
       value: value.value,
       description: renderableContentConverter(value.description),
@@ -70,36 +106,82 @@ function prepareInterface(
   codeBlockConverter: (language: string, lines: string[]) => string,
 ) {
   return {
-    ...source,
-    ...prepareBase(source, renderableContentConverter, codeBlockConverter),
-    methods: source.methods?.map((method) => ({
-      ...method,
-      description: renderableContentConverter(method.description),
-      returnType: {
-        ...method,
-        type: method.returnType?.type ? renderableContentConverter([method.returnType.type]) : undefined,
-        description: renderableContentConverter(method.returnType?.description),
-      },
-      throws: method.throws?.map((thrown) => ({
-        ...thrown,
-        type: renderableContentConverter([thrown.type]),
-        description: renderableContentConverter(thrown.description),
-      })),
-      parameters: method.parameters?.map((param) => ({
-        ...param,
-        type: renderableContentConverter([param.type]),
-        description: renderableContentConverter(param.description),
-      })),
-      mermaid: method.mermaid ? codeBlockConverter('mermaid', method.mermaid) : undefined,
-      example: method.example ? codeBlockConverter('apex', method.example) : undefined,
+    extends: source.extends?.map((ext) => renderableContentConverter([ext])),
+    methods: source.methods?.map((method) => mapMethod(method, renderableContentConverter, codeBlockConverter)),
+  };
+}
+
+function prepareClass(
+  source: ClassSource,
+  renderableContentConverter: ConvertRenderableContentsToString,
+  codeBlockConverter: (language: string, lines: string[]) => string,
+) {
+  return {
+    implements: source.implements?.map((impl) => renderableContentConverter([impl])),
+    extends: source.extends ? renderableContentConverter([source.extends]) : undefined,
+    constructors: source.constructors?.map((constructor) =>
+      mapConstructor(constructor, renderableContentConverter, codeBlockConverter),
+    ),
+    methods: source.methods?.map((method) => mapMethod(method, renderableContentConverter, codeBlockConverter)),
+    fields: source.fields?.map((field) => ({
+      ...field,
+      ...prepareDocumentable(field, renderableContentConverter, codeBlockConverter),
+      type: renderableContentConverter([field.type]),
     })),
   };
 }
 
-function isEnumSource(source: EnumSource | InterfaceSource): source is EnumSource {
+function mapMethod(
+  method: MethodSource,
+  renderableContentConverter: (content?: RenderableContent[]) => string,
+  codeBlockConverter: (language: string, lines: string[]) => string,
+) {
+  return {
+    ...method,
+    ...prepareDocumentable(method, renderableContentConverter, codeBlockConverter),
+    returnType: {
+      ...method,
+      type: method.returnType?.type ? renderableContentConverter([method.returnType.type]) : undefined,
+      description: renderableContentConverter(method.returnType?.description),
+    },
+    throws: method.throws?.map((thrown) => ({
+      ...thrown,
+      type: renderableContentConverter([thrown.type]),
+      description: renderableContentConverter(thrown.description),
+    })),
+    parameters: method.parameters?.map((param) => ({
+      ...param,
+      type: renderableContentConverter([param.type]),
+      description: renderableContentConverter(param.description),
+    })),
+  };
+}
+
+function mapConstructor(
+  constructor: MethodSource,
+  renderableContentConverter: (content?: RenderableContent[]) => string,
+  codeBlockConverter: (language: string, lines: string[]) => string,
+) {
+  return {
+    ...constructor,
+    ...prepareDocumentable(constructor, renderableContentConverter, codeBlockConverter),
+    parameters: constructor.parameters?.map((param) => ({
+      ...param,
+      type: renderableContentConverter([param.type]),
+      description: renderableContentConverter(param.description),
+    })),
+    throws: constructor.throws?.map((thrown) => ({
+      ...thrown,
+      type: renderableContentConverter([thrown.type]),
+      description: renderableContentConverter(thrown.description),
+    })),
+  };
+}
+
+function isEnumSource(source: { __type: string }): source is EnumSource {
   return source.__type === 'enum';
 }
 
-function isInterfaceSource(source: EnumSource | InterfaceSource): source is InterfaceSource {
+function isInterfaceSource(source: { __type: string }): source is InterfaceSource {
   return source.__type === 'interface';
 }

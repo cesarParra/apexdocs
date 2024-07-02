@@ -1,16 +1,20 @@
 import { MarkdownTranspilerBase } from '../markdown-transpiler-base';
 import { LinkingStrategy } from '../../processor-type-transpiler';
-import { EnumMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
+import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
 import { OutputFile } from '../../../model/outputFile';
 import { Settings } from '../../../settings';
 import ClassFileGeneratorHelper from '../class-file-generatorHelper';
 import { enumMarkdownTemplate } from './enum-template';
 import { compile } from '../../../templating/compile';
-import { EnumSource, InterfaceSource, Link, RenderableContent } from '../../../templating/types';
-import { MarkdownTypeFile } from '../../../model/markdown-type-file';
-import { enumTypeToEnumSource, interfaceTypeToInterfaceSource } from '../../../adapters/adapters';
+import { ClassSource, EnumSource, InterfaceSource, Link, RenderableContent } from '../../../templating/types';
 import { interfaceMarkdownTemplate } from './interface-template';
-import { isEmptyLine } from '../../../adapters/apex-doc-adapters';
+import { classMarkdownTemplate } from './class-template';
+import { isEmptyLine } from '../../../adapters/type-utils';
+import {
+  classTypeToClassSource,
+  enumTypeToEnumSource,
+  interfaceTypeToInterfaceSource,
+} from '../../../adapters/apex-types';
 
 export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
   homeFileName(): string {
@@ -35,13 +39,15 @@ export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
         ),
       );
     } else {
-      this._fileContainer.pushFile(new MarkdownTypeFile(type));
+      this._fileContainer.pushFile(
+        new GenericFile<ClassMirror>(type as ClassMirror, classTypeToClassSource, classMarkdownTemplate),
+      );
     }
   }
 }
 
 class GenericFile<T extends Type> extends OutputFile {
-  constructor(private type: T, toSource: (type: T) => EnumSource | InterfaceSource, template: string) {
+  constructor(private type: T, toSource: (type: T) => EnumSource | InterfaceSource | ClassSource, template: string) {
     super(
       `${Settings.getInstance().getNamespacePrefix()}${type.name}`,
       ClassFileGeneratorHelper.getSanitizedGroup(type),
