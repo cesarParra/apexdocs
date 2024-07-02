@@ -126,9 +126,6 @@ result.then((config) => {
     onAfterProcess: config?.config?.onAfterProcess,
     onBeforeFileWrite: config?.config?.onBeforeFileWrite,
     frontMatterHeader: config?.config?.frontMatterHeader,
-    singleFile: config?.config?.singleFile,
-    fileName: config?.config?.fileName,
-    templateFilePath: config?.config?.templateFilePath,
   });
 
   try {

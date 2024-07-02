@@ -53,7 +53,7 @@ export type DocOutput = {
   group: O.Option<string>;
 };
 
-const documentType = flow(typeToRenderableType, resolveTemplate, compile);
+export const documentType = flow(typeToRenderableType, resolveTemplate, compile);
 
 export function generateDocs(input: string): E.Either<string, DocOutput> {
   const result = doReflect(input);
@@ -65,7 +65,7 @@ export function generateDocs(input: string): E.Either<string, DocOutput> {
         format: 'markdown',
         typeName: type.name,
         type: type.type_name,
-        group: O.none, // TODO: Get from the reflection output
+        group: O.fromNullable(type.group),
       }),
   )(result);
 }

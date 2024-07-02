@@ -18,9 +18,6 @@ And it can be multiline.
 
 **See** [ns.ReferencedEnum](../Miscellaneous/ns.ReferencedEnum.md)
 
-## Namespace
-ns
-
 ## Diagram
 ```mermaid
 graph TD

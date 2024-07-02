@@ -11,7 +11,7 @@ export function resolveLinksInContent(description?: RenderableContent[]): string
       return acc + '\n\n';
     }
 
-    return acc + link(curr) + ' ';
+    return acc + link(curr).trim() + ' ';
   }
 
   return description.reduce(reduceDescription, '').trim();

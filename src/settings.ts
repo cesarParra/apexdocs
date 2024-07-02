@@ -40,9 +40,6 @@ export interface SettingsConfig {
   onAfterProcess?: (files: TargetFile[]) => void;
   onBeforeFileWrite?: (file: TargetFile) => TargetFile;
   frontMatterHeader?: (file: TargetType) => string[];
-  singleFile?: boolean;
-  fileName?: string;
-  templateFilePath?: string;
 }
 
 export class Settings {
@@ -146,17 +143,5 @@ export class Settings {
       return this.config.frontMatterHeader(file);
     }
     return [];
-  }
-
-  public shouldOutputSingleFile(): boolean {
-    return this.config.singleFile ?? false;
-  }
-
-  public getSingleFileName(): string {
-    return this.config.fileName ?? 'README';
-  }
-
-  public getTemplateFilePath(): string | undefined {
-    return this.config.templateFilePath;
   }
 }

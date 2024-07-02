@@ -1,9 +1,6 @@
 # BaseClass Class
 `abstract`
 
-## Namespace
-ns
-
 ## Fields
 ### `sampleEnumFromBase`
 
