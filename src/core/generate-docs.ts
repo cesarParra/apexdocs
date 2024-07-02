@@ -1,5 +1,5 @@
 import { reflect, Type } from '@cparra/apex-reflection';
-import { typeTpRenderableType } from '../adapters/apex-types';
+import { typeToRenderableType } from '../adapters/apex-types';
 import { Renderable, RenderableEnum } from '../templating/types';
 import Handlebars from 'handlebars';
 import { typeDocPartial } from '../transpiler/markdown/plain-markdown/type-doc-partial';
@@ -14,6 +14,7 @@ import { heading, heading2, heading3, inlineCode, splitAndCapitalize } from '../
 import { link, resolveLinksInContent } from './markdown-helpers/resolve-links';
 import { convertCodeBlock } from './markdown-helpers/convert-code-block';
 import * as E from 'fp-ts/Either';
+import * as O from 'fp-ts/Option';
 import { flow } from 'fp-ts/function';
 
 function doReflect(input: string): E.Either<string, Type> {
@@ -44,7 +45,30 @@ function getTemplate(renderable: Renderable): string {
   }
 }
 
-export const generateDocs = flow(doReflect, E.map(typeTpRenderableType), E.map(resolveTemplate), E.map(compile));
+export type DocOutput = {
+  docContents: string;
+  format: 'markdown';
+  typeName: string;
+  type: 'class' | 'interface' | 'enum';
+  group: O.Option<string>;
+};
+
+const documentType = flow(typeToRenderableType, resolveTemplate, compile);
+
+export function generateDocs(input: string): E.Either<string, DocOutput> {
+  const result = doReflect(input);
+  return E.match<string, Type, E.Either<string, DocOutput>>(
+    (error) => E.left(error),
+    (type) =>
+      E.right({
+        docContents: documentType(type),
+        format: 'markdown',
+        typeName: type.name,
+        type: type.type_name,
+        group: O.none, // TODO: Get from the reflection output
+      }),
+  )(result);
+}
 
 function compile(request: CompilationRequest): string {
   Handlebars.registerPartial('typeDocumentation', typeDocPartial);

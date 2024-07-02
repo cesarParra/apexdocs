@@ -1,4 +1,4 @@
-import { generateDocs } from '../../core/generate-docs';
+import { DocOutput, generateDocs } from '../../core/generate-docs';
 import * as E from 'fp-ts/Either';
 
 describe('Generates enum documentation', () => {
@@ -13,9 +13,9 @@ describe('Generates enum documentation', () => {
     const output = `# MyEnum Enum`;
 
     const result = generateDocs(input);
-    E.match(
+    E.match<string, DocOutput, void>(
       (error) => fail(error),
-      (data) => expect(data).toContain(output),
+      (data) => expect(data.docContents).toContain(output),
     )(result);
   });
 });

@@ -28,7 +28,7 @@ function baseTypeAdapter(type: EnumMirror | InterfaceMirror | ClassMirror, baseH
   };
 }
 
-export function typeTpRenderableType(type: Type): Renderable {
+export function typeToRenderableType(type: Type): Renderable {
   switch (type.type_name) {
     case 'enum':
       return enumTypeToEnumSource(type as EnumMirror);
