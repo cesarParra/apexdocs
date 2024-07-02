@@ -1,5 +1,5 @@
 import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
-import { RenderableType, RenderableClass, RenderableEnum, RenderableInterface } from '../templating/types';
+import { RenderableType, RenderableClass, RenderableEnum, RenderableInterface, Renderable } from '../templating/types';
 import { adaptDescribable, adaptDocumentable } from './documentables';
 import { linkFromTypeNameGenerator } from './references';
 import { FieldMirrorWithInheritance, PropertyMirrorWithInheritance } from '../model/inheritance';
@@ -26,6 +26,17 @@ function baseTypeAdapter(type: EnumMirror | InterfaceMirror | ClassMirror, baseH
       accessModifier: type.access_modifier,
     },
   };
+}
+
+export function typeTpRenderableType(type: Type): Renderable {
+  switch (type.type_name) {
+    case 'enum':
+      return enumTypeToEnumSource(type as EnumMirror);
+    case 'interface':
+      return interfaceTypeToInterfaceSource(type as InterfaceMirror);
+    case 'class':
+      return classTypeToClassSource(type as ClassMirror);
+  }
 }
 
 export function enumTypeToEnumSource(enumType: EnumMirror, baseHeadingLevel: number = 1): RenderableEnum {

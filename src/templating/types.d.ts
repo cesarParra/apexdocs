@@ -124,3 +124,5 @@ export type RenderableEnum = RenderableType & {
   __type: 'enum';
   values: RenderableSection<EnumValue[]>;
 };
+
+export type Renderable = RenderableClass | RenderableInterface | RenderableEnum;

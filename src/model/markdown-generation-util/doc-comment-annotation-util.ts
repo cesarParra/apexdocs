@@ -15,7 +15,7 @@ export function addMermaid(markdownFile: MarkdownFile, docCommentAware: DocComme
   markdownFile.addBlankLine();
   markdownFile.startCodeBlock('mermaid');
   mermaid.bodyLines.forEach((line) => {
-    markdownFile.addText(line, false);
+    markdownFile.addText(line);
   });
   markdownFile.endCodeBlock();
   markdownFile.addBlankLine();

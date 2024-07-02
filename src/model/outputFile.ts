@@ -1,11 +1,3 @@
-import xss = require('xss');
-import { Settings } from '../settings';
-
-// TODO: Remove xssFilter from the list of dependencies
-const xssFilter = new xss.FilterXSS({
-  whiteList: { br: [], p: [], ul: [], li: [], code: [], pre: [] },
-});
-
 export abstract class OutputFile {
   _contents = '';
 
@@ -17,9 +9,7 @@ export abstract class OutputFile {
     return this._contents;
   }
 
-  addText(text: string, encodeHtml = true) {
-    //const shouldEncode = encodeHtml && Settings.getInstance().sanitizeHtml;
-    //const textToAdd = shouldEncode ? xssFilter.process(text) : text;
+  addText(text: string) {
     this._contents += text;
     this.addBlankLine();
   }

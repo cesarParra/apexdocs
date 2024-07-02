@@ -18,13 +18,13 @@ export class MarkdownFile extends OutputFile {
     this.addBlankLine();
   }
 
-  public addText(text: string, encodeHtml = true) {
+  public addText(text: string) {
     //super.addText(this._replaceInlineReferences(text), encodeHtml);
     super.addText(text);
   }
 
-  public addLink(text: string, encodeHtml = true) {
-    this.addText(`\{@link ${text}\}`, encodeHtml);
+  public addLink(text: string) {
+    this.addText(`\{@link ${text}\}`);
   }
 
   startCodeBlock(language = 'apex') {

@@ -70,10 +70,10 @@
     "chalk": "^4.1.2",
     "cosmiconfig": "^9.0.0",
     "fast-xml-parser": "^4.4.0",
+    "fp-ts": "^2.16.7",
     "handlebars": "^4.7.8",
     "js-yaml": "^4.1.0",
     "log-update": "4.0.0",
-    "xss": "^1.0.11",
     "yargs": "^16.0.3"
   }
 }

@@ -6,17 +6,9 @@ import { Settings } from '../../../settings';
 import ClassFileGeneratorHelper from '../class-file-generatorHelper';
 import { enumMarkdownTemplate } from './enum-template';
 import { compile } from '../../../templating/compile';
-import {
-  RenderableClass,
-  RenderableEnum,
-  RenderableInterface,
-  Link,
-  RenderableContent,
-  StringOrLink,
-} from '../../../templating/types';
+import { RenderableClass, RenderableEnum, RenderableInterface } from '../../../templating/types';
 import { interfaceMarkdownTemplate } from './interface-template';
 import { classMarkdownTemplate } from './class-template';
-import { isEmptyLine } from '../../../adapters/type-utils';
 import {
   classTypeToClassSource,
   enumTypeToEnumSource,
@@ -27,6 +19,8 @@ import { MarkdownFile } from '../../../model/markdown-file';
 import Handlebars from 'handlebars';
 import fs from 'fs';
 import path from 'path';
+import { link, resolveLinksInContent } from '../../../core/markdown-helpers/resolve-links';
+import { convertCodeBlock } from '../../../core/markdown-helpers/convert-code-block';
 
 export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
   _fileContents: string[] = [];
@@ -102,7 +96,7 @@ class GenericFile<T extends Type> extends OutputFile {
 
     const source = toSource(type);
     const contents = compile(template, source, {
-      renderableContentConverter: prepareDescription,
+      renderableContentConverter: resolveLinksInContent,
       link: link,
       codeBlockConverter: convertCodeBlock,
     });
@@ -112,45 +106,4 @@ class GenericFile<T extends Type> extends OutputFile {
   fileExtension(): string {
     return '.md';
   }
-}
-
-function link(source: StringOrLink): string {
-  if (typeof source === 'string') {
-    return source;
-  } else {
-    return `[${source.title}](${source.url})`;
-  }
-}
-
-function prepareDescription(description?: RenderableContent[]) {
-  if (!description) {
-    return '';
-  }
-
-  function reduceDescription(acc: string, curr: RenderableContent) {
-    if (typeof curr === 'string') {
-      return acc + curr.trim() + ' ';
-    } else if (isEmptyLine(curr)) {
-      return acc + '\n\n';
-    } else {
-      return acc + linkToMarkdown(curr) + ' ';
-    }
-  }
-
-  function linkToMarkdown(link: Link) {
-    return `[${link.title}](${link.url})`;
-  }
-
-  return description.reduce(reduceDescription, '').trim();
-}
-
-function convertCodeBlock(language: string, lines: string[]): Handlebars.SafeString {
-  console.log('lines', lines);
-  return new Handlebars.SafeString(
-    `
-\`\`\`${language}
-${lines.join('\n')}
-\`\`\`
-  `.trim(),
-  );
 }
