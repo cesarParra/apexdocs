@@ -9,6 +9,20 @@ import * as O from 'fp-ts/Option';
 import { flow, pipe } from 'fp-ts/function';
 import { CompilationRequest, Template } from './template';
 
+export const documentType = flow(typeToRenderableType, resolveTemplate, compile);
+
+export type DocOutput = {
+  docContents: string;
+  format: 'markdown';
+  typeName: string;
+  type: 'class' | 'interface' | 'enum';
+  group: O.Option<string>;
+};
+
+export function generateDocs(input: string): E.Either<string, DocOutput> {
+  return pipe(input, doReflect, E.map(toDocOutput));
+}
+
 function doReflect(input: string): E.Either<string, Type> {
   const result = reflect(input);
   return result.error ? E.left(result.error.message) : E.right(result.typeMirror!);
@@ -36,21 +50,7 @@ function compile(request: CompilationRequest): string {
   return Template.getInstance().compile(request);
 }
 
-export const documentType = flow(typeToRenderableType, resolveTemplate, compile);
-
-export type DocOutput = {
-  docContents: string;
-  format: 'markdown';
-  typeName: string;
-  type: 'class' | 'interface' | 'enum';
-  group: O.Option<string>;
-};
-
-export function generateDocs(input: string): E.Either<string, DocOutput> {
-  return pipe(input, doReflect, E.map(_gen));
-}
-
-function _gen(type: Type): DocOutput {
+function toDocOutput(type: Type): DocOutput {
   return pipe(typeToRenderableType(type), resolveTemplate, compile, (docContents) => buildDocOutput(type, docContents));
 }
 
