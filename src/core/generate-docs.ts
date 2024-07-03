@@ -1,4 +1,4 @@
-import { reflect, Type } from '@cparra/apex-reflection';
+import { DocComment, reflect, Type } from '@cparra/apex-reflection';
 import { typeToRenderableType } from '../adapters/apex-types';
 import { Renderable, RenderableEnum } from '../templating/types';
 import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/class-template';
@@ -6,7 +6,7 @@ import { enumMarkdownTemplate } from '../transpiler/markdown/plain-markdown/enum
 import { interfaceMarkdownTemplate } from '../transpiler/markdown/plain-markdown/interface-template';
 import * as E from 'fp-ts/Either';
 import * as O from 'fp-ts/Option';
-import { flow } from 'fp-ts/function';
+import { flow, pipe } from 'fp-ts/function';
 import { CompilationRequest, Template } from './template';
 
 function doReflect(input: string): E.Either<string, Type> {
@@ -47,16 +47,23 @@ export type DocOutput = {
 };
 
 export function generateDocs(input: string): E.Either<string, DocOutput> {
-  const result = doReflect(input);
-  return E.match<string, Type, E.Either<string, DocOutput>>(
-    (error) => E.left(error),
-    (type) =>
-      E.right({
-        docContents: documentType(type),
-        format: 'markdown',
-        typeName: type.name,
-        type: type.type_name,
-        group: O.fromNullable(type.group),
-      }),
-  )(result);
+  return pipe(input, doReflect, E.map(_gen));
+}
+
+function _gen(type: Type): DocOutput {
+  return pipe(typeToRenderableType(type), resolveTemplate, compile, (docContents) => buildDocOutput(type, docContents));
+}
+
+function buildDocOutput(type: Type, docContents: string): DocOutput {
+  return {
+    docContents,
+    format: 'markdown',
+    typeName: type.name,
+    type: type.type_name,
+    group: O.fromNullable(extractDocCommentGroup(type.docComment)),
+  };
+}
+
+function extractDocCommentGroup(document?: DocComment): string | undefined {
+  return document?.annotations.find((a) => a.name === 'group')?.body;
 }
