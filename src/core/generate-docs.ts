@@ -12,7 +12,7 @@ import Manifest from '../model/manifest';
 
 export const documentType = flow(typeToRenderableType, resolveTemplate, compile);
 
-type DocumentationBundle = {
+export type DocumentationBundle = {
   format: 'markdown';
   docs: DocOutput[];
 };
@@ -61,6 +61,12 @@ function filterTypesOutOfScope(types: Type[], scope: string[]): Type[] {
   return new Manifest(types).filteredByAccessModifierAndAnnotations(scope);
 }
 
+function checkForReflectionErrors(reflectionResult: E.Either<string, Type>[]) {
+  return pipe(reflectionResult, reduceReflectionResultIntoSingleEither, ({ errors, types }) =>
+    errors.length ? E.left(errors) : E.right(types),
+  );
+}
+
 function reduceReflectionResultIntoSingleEither(results: E.Either<string, Type>[]): {
   errors: string[];
   types: Type[];
@@ -74,12 +80,6 @@ function reduceReflectionResultIntoSingleEither(results: E.Either<string, Type>[
       errors: [],
       types: [],
     },
-  );
-}
-
-function checkForReflectionErrors(reflectionResult: E.Either<string, Type>[]) {
-  return pipe(reflectionResult, reduceReflectionResultIntoSingleEither, ({ errors, types }) =>
-    errors.length ? E.left(errors) : E.right(types),
   );
 }
 

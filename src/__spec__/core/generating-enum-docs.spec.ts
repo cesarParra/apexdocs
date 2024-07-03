@@ -1,6 +1,15 @@
-import { generateDocs } from '../../core/generate-docs';
+import { DocumentationBundle, generateDocs } from '../../core/generate-docs';
 import * as E from 'fp-ts/Either';
 import * as O from 'fp-ts/Option';
+
+expect.extend({
+  documentationBundleHasLength(received: E.Either<string[], DocumentationBundle>, length: number) {
+    return {
+      pass: E.isRight(received) && received.right.docs.length === length,
+      message: () => `Expected documentation bundle to have length ${length}`,
+    };
+  },
+});
 
 function assertEither<T, U>(result: E.Either<T, U>, assertion: (data: U) => void): void {
   E.match<T, U, void>(
@@ -23,18 +32,19 @@ describe('Generates enum documentation', () => {
       assertEither(result, (data) => expect(data.format).toBe('markdown'));
     });
 
-    // it('returns the name of the enum', () => {
-    //   const input = `
-    //  public enum MyEnum {
-    //     VALUE1,
-    //     VALUE2
-    //   }
-    // `;
-    //
-    //   const result = generateDocs(input);
-    //   assertEither(result, (data) => expect(data.typeName).toBe('MyEnum'));
-    // });
-    //
+    it('returns the name of the enum', () => {
+      const input = `
+     public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+    `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data.docs[0].typeName).toBe('MyEnum'));
+    });
+
     // it('returns the type as enum', () => {
     //   const input = `
     //  public enum MyEnum {
