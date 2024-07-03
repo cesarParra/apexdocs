@@ -25,6 +25,7 @@ export function generateDocs(input: string): E.Either<string, DocOutput> {
 
 function doReflect(input: string): E.Either<string, Type> {
   const result = reflect(input);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return result.error ? E.left(result.error.message) : E.right(result.typeMirror!);
 }
 

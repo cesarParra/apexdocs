@@ -1,4 +1,4 @@
-import { DocOutput, generateDocs } from '../../core/generate-docs';
+import { generateDocs } from '../../core/generate-docs';
 import * as E from 'fp-ts/Either';
 import * as O from 'fp-ts/Option';
 
@@ -87,10 +87,36 @@ describe('Generates enum documentation', () => {
       const output = `# MyEnum Enum`;
 
       const result = generateDocs(input);
-      E.match<string, DocOutput, void>(
-        (error) => fail(error),
-        (data) => expect(data.docContents).toContain(output),
-      )(result);
+      assertEither(result, (data) => expect(data.docContents).toContain(output));
+    });
+
+    it('displays type level annotations', () => {
+      const input = `
+     @NamespaceAccessible
+     public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+    `;
+
+      const result = generateDocs(input);
+      assertEither(result, (data) => expect(data.docContents).toContain('NAMESPACEACCESSIBLE'));
     });
   });
 });
+
+// TODO: annotations
+// TODO: description
+// TODO: Custom tags
+// TODO: Doc group
+// TODO: Author
+// TODO: Date
+// TODO: Sees with links
+// TODO: Sees without links
+// TODO: Namespace when one is present
+// TODO: Namespace when one is not present
+// TODO: Mermaid
+// TODO: Example
+// TODO: Heading for values
+// TODO: Table for values
+// TODO: Taking into account links
