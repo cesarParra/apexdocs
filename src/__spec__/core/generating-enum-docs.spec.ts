@@ -102,11 +102,25 @@ describe('Generates enum documentation', () => {
       const result = generateDocs(input);
       assertEither(result, (data) => expect(data.docContents).toContain('NAMESPACEACCESSIBLE'));
     });
+
+    it('displays the description', () => {
+      const input = `
+     /**
+      * This is a description
+      */
+     public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+    `;
+
+      const result = generateDocs(input);
+      assertEither(result, (data) => expect(data.docContents).toContain('This is a description'));
+    });
   });
 });
 
-// TODO: annotations
-// TODO: description
+// TODO: description with links
 // TODO: Custom tags
 // TODO: Doc group
 // TODO: Author
