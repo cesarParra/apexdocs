@@ -38,7 +38,7 @@ export function adaptMethod(
       headingLevel: baseHeadingLevel + 1,
       heading: 'Return Type',
       value: {
-        ...adaptDescribable(method.docComment?.returnAnnotation?.bodyLines),
+        ...adaptDescribable(method.docComment?.returnAnnotation?.bodyLines, linkGenerator),
         type: linkFromTypeNameGenerator(method.typeReference.rawDeclaration),
       },
     },
@@ -103,7 +103,7 @@ function mapParameters(documentable: Documentable, param: ParameterMirror) {
     (pa) => pa.paramName.toLowerCase() === param.name.toLowerCase(),
   );
   return {
-    ...adaptDescribable(paramAnnotation?.bodyLines),
+    ...adaptDescribable(paramAnnotation?.bodyLines, linkFromTypeNameGenerator),
     name: param.name,
     type: linkFromTypeNameGenerator(param.typeReference.rawDeclaration),
   };
@@ -111,7 +111,7 @@ function mapParameters(documentable: Documentable, param: ParameterMirror) {
 
 function mapThrows(thrown: ThrowsAnnotation) {
   return {
-    ...adaptDescribable(thrown.bodyLines),
+    ...adaptDescribable(thrown.bodyLines, linkFromTypeNameGenerator),
     type: linkFromTypeNameGenerator(thrown.exceptionName),
   };
 }

@@ -208,6 +208,38 @@ describe('Generates enum documentation', () => {
       assertEither(result, (data) => expect(data).firstDocContains('2021-01-01'));
     });
 
+    it('displays descriptions', () => {
+      const input = `
+      /**
+        * @description This is a description
+        */
+      public enum MyEnum {}
+      `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('Description'));
+      assertEither(result, (data) => expect(data).firstDocContains('This is a description'));
+    });
+
+    it('displays descriptions with links', () => {
+      const input1 = `
+      /**
+        * @description This is a description with a {@link EnumRef} reference
+        */
+      public enum MyEnum {}
+      `;
+
+      const input2 = 'public enum EnumRef {}';
+
+      const result = generateDocs([input1, input2]);
+      expect(result).documentationBundleHasLength(2);
+      assertEither(result, (data) => expect(data).firstDocContains('Description'));
+      assertEither(result, (data) =>
+        expect(data).firstDocContains('This is a description with a [EnumRef](./EnumRef.md) reference'),
+      );
+    });
+
     it('displays sees with accurately resolved links', () => {
       const input1 = `
       /**
@@ -223,11 +255,23 @@ describe('Generates enum documentation', () => {
       assertEither(result, (data) => expect(data).firstDocContains('See'));
       assertEither(result, (data) => expect(data).firstDocContains('[EnumRef](./EnumRef.md)'));
     });
+
+    it('displays sees without links when the reference is not found', () => {
+      const input = `
+      /**
+        * @see EnumRef
+        */
+      public enum MyEnum {}
+      `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('See'));
+      assertEither(result, (data) => expect(data).firstDocContains('EnumRef'));
+    });
   });
 });
 
-// TODO: Sees with links
-// TODO: Sees without links
 // TODO: description without links
 // TODO: description with links
 // TODO: description with emails

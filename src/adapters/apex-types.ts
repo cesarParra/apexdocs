@@ -66,7 +66,7 @@ export function enumTypeToEnumSource(
       headingLevel: baseHeadingLevel + 1,
       heading: 'Values',
       value: enumType.values.map((value) => ({
-        ...adaptDescribable(value.docComment?.descriptionLines),
+        ...adaptDescribable(value.docComment?.descriptionLines, linkGenerator),
         value: value.name,
       })),
     },

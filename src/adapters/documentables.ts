@@ -3,7 +3,12 @@ import { Describable, Documentable } from './types';
 import { GetRenderableContentByTypeName, replaceInlineReferences } from './references';
 import { isEmptyLine } from './type-utils';
 
-export function adaptDescribable(describable: Describable): { description?: RenderableContent[] } {
+export function adaptDescribable(
+  describable: Describable,
+  linkGenerator: GetRenderableContentByTypeName,
+): {
+  description?: RenderableContent[];
+} {
   function describableToRenderableContent(describable: Describable): RenderableContent[] | undefined {
     if (!describable) {
       return;
@@ -12,7 +17,7 @@ export function adaptDescribable(describable: Describable): { description?: Rend
     return (
       describable
         .map<RenderableContent[]>((line) => [
-          ...replaceInlineReferences(line),
+          ...replaceInlineReferences(line, linkGenerator),
           {
             type: 'empty-line',
           },
@@ -40,7 +45,7 @@ export function adaptDocumentable(
       type.docComment?.annotations
         .filter((currentAnnotation) => !baseTags.includes(currentAnnotation.name.toLowerCase()))
         .map<CustomTag>((currentAnnotation) => ({
-          ...adaptDescribable(currentAnnotation.bodyLines),
+          ...adaptDescribable(currentAnnotation.bodyLines, linkGenerator),
           name: currentAnnotation.name,
         })) ?? []
     );
@@ -67,7 +72,7 @@ export function adaptDocumentable(
   }
 
   return {
-    ...adaptDescribable(documentable.docComment?.descriptionLines),
+    ...adaptDescribable(documentable.docComment?.descriptionLines, linkGenerator),
     annotations: documentable.annotations.map((annotation) => annotation.type.toUpperCase()),
     customTags: extractCustomTags(documentable),
     mermaid: {
