@@ -66,11 +66,14 @@ type ReferenceGuideReference = {
 };
 
 type RenderableBundle = {
-  references: ReferenceGuideReference[];
+  // References are grouped by their defined @group annotation
+  references: {
+    [key: string]: ReferenceGuideReference[];
+  };
   renderables: Renderable[];
 };
 
-function typesToRenderableBundle(types: Type[], config: DocumentationConfig): RenderableBundle {
+function typesToRenderableBundle(types: Type[], config: DocumentationConfig) {
   return types.reduce<RenderableBundle>(
     (acc, type) => {
       const renderable = typeToRenderableType(
@@ -83,17 +86,24 @@ function typesToRenderableBundle(types: Type[], config: DocumentationConfig): Re
       acc.renderables.push(renderable);
 
       const descriptionLines = type.docComment?.descriptionLines;
-      acc.references.push({
+      const reference = {
         title: getLinkFromRoot(config, type),
         description: adaptDescribable(descriptionLines, (referenceName) => {
           const type = findType(types, referenceName);
           return type ? getLinkFromRoot(config, type) : referenceName;
         }).description,
-      });
+      };
+
+      const group = getTypeGroup(type, config);
+      if (!acc.references[group]) {
+        acc.references[group] = [];
+      }
+      acc.references[group].push(reference);
+
       return acc;
     },
     {
-      references: [],
+      references: {},
       renderables: [],
     },
   );
@@ -103,7 +113,10 @@ function renderableToOutputDoc(renderable: Renderable): DocOutput {
   return pipe(renderable, resolveApexTypeTemplate, compile, (docContents) => buildDocOutput(renderable, docContents));
 }
 
-function referencesToReferenceGuide(references: ReferenceGuideReference[], template: string): string {
+function referencesToReferenceGuide(
+  references: { [key: string]: ReferenceGuideReference[] },
+  template: string,
+): string {
   return pipe(references, (references) =>
     compile({
       template: template,
@@ -222,7 +235,7 @@ function getLinkFromRoot(config: DocumentationConfig, type?: Type): StringOrLink
 }
 
 function getDirectoryRoot(typeBeingDocumented: Type, referencedType: Type, config: DocumentationConfig) {
-  if (getClassGroup(typeBeingDocumented, config) === getClassGroup(referencedType, config)) {
+  if (getTypeGroup(typeBeingDocumented, config) === getTypeGroup(referencedType, config)) {
     // If the types the same groups then we simply link directly to that file
     return './';
   } else {
@@ -231,13 +244,11 @@ function getDirectoryRoot(typeBeingDocumented: Type, referencedType: Type, confi
   }
 }
 
-function getClassGroup(classModel: Type, config: DocumentationConfig): string {
-  const groupAnnotation = classModel.docComment?.annotations.find(
-    (annotation) => annotation.name.toLowerCase() === 'group',
-  );
+function getTypeGroup(type: Type, config: DocumentationConfig): string {
+  const groupAnnotation = type.docComment?.annotations.find((annotation) => annotation.name.toLowerCase() === 'group');
   return groupAnnotation?.body ?? config.defaultGroupName;
 }
 
 function getSanitizedGroup(classModel: Type, config: DocumentationConfig) {
-  return getClassGroup(classModel, config).replace(/ /g, '-').replace('.', '');
+  return getTypeGroup(classModel, config).replace(/ /g, '-').replace('.', '');
 }

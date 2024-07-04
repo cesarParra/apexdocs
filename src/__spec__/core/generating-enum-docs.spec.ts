@@ -119,8 +119,38 @@ describe('Generates enum documentation', () => {
 
       const result = generateDocs([input1, input2]);
       expect(result).documentationBundleHasLength(2);
+
       assertEither(result, (data) => expect(data.referenceGuide).toContain('[MyEnum](./Miscellaneous/MyEnum.md)'));
       assertEither(result, (data) => expect(data.referenceGuide).toContain('[MyClass](./Miscellaneous/MyClass.md)'));
+    });
+
+    it('groups things under Miscellaneous if no group is provided', () => {
+      const input = `
+      public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+      `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data.referenceGuide).toContain('## Miscellaneous'));
+    });
+
+    it('group things under the provided group', () => {
+      const input = `
+      /**
+        * @group MyGroup
+        */
+      public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+      `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data.referenceGuide).toContain('## MyGroup'));
     });
 
     it('returns a reference guide with descriptions', () => {
