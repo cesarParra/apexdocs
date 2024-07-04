@@ -98,6 +98,40 @@ describe('Generates enum documentation', () => {
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data.docs[0].group).toEqual(O.some('MyGroup')));
     });
+
+    it('does not return enums out of scope', () => {
+      const input1 = `
+     global enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+    `;
+
+      const input2 = `
+      public enum MyEnum {
+          VALUE1,
+          VALUE2
+        }
+      `;
+
+      const result = generateDocs([input1, input2], { scope: ['global'] });
+      expect(result).documentationBundleHasLength(1);
+    });
+
+    it('does not return enums that have an @ignore in the docs', () => {
+      const input = `
+      /**
+        * @ignore
+        */
+      public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+      `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(0);
+    });
   });
 
   describe('documentation content', () => {
@@ -358,14 +392,20 @@ describe('Generates enum documentation', () => {
       assertEither(result, (data) => expect(data).firstDocContains('```apex'));
       assertEither(result, (data) => expect(data).firstDocContains('public class MyClass'));
     });
+
+    it('displays values', () => {
+      const input = `
+      public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+      `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('## Values'));
+      assertEither(result, (data) => expect(data).firstDocContains('VALUE1'));
+      assertEither(result, (data) => expect(data).firstDocContains('VALUE2'));
+    });
   });
 });
-
-// TODO: Heading for values
-// TODO: Table for values
-// TODO: Taking into account links
-// TODO: Ability to have this: https://github.com/cesarParra/apexdocs/blob/adff32a3a085305ae119b3ad11ef6157ecdcd32f/src/model/markdown-generation-util/type-declaration-util.ts#L75
-
-// TODO: scoping works
-// TODO: @ignore works
-// TODO: Linking logic should be tested as its own thing
