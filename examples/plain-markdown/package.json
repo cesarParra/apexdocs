@@ -1,7 +1,7 @@
 {
   "name": "plain-markdown",
   "scripts": {
-    "docs:clean": "rimraf ./README.md",
+    "docs:clean": "rimraf docs",
     "docs:build": "ts-node ../../src/cli/generate.ts",
     "docs:gen": "npm run docs:clean && npm run docs:build"
   },
