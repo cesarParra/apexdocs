@@ -2,7 +2,7 @@
   "name": "plain-markdown",
   "scripts": {
     "docs:clean": "rimraf docs",
-    "docs:build": "ts-node ../../src/cli/generate.ts",
+    "docs:build": "node ../../dist/cli/generate.js",
     "docs:gen": "npm run docs:clean && npm run docs:build"
   },
   "devDependencies": {
