@@ -104,6 +104,26 @@ describe('Generates enum documentation', () => {
     });
   });
 
+  describe('documentation reference guide', () => {
+    it('returns a reference guide with links to all other files', () => {
+      const input1 = `
+      public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+      `;
+
+      const input2 = `
+      public class MyClass {}
+      `;
+
+      const result = generateDocs([input1, input2]);
+      expect(result).documentationBundleHasLength(2);
+      assertEither(result, (data) => expect(data.referenceGuide).toContain('[MyEnum](./MyEnum.md)'));
+      assertEither(result, (data) => expect(data.referenceGuide).toContain('[MyClass](./MyClass.md)'));
+    });
+  });
+
   describe('documentation content', () => {
     it('generates a heading with the enum name', () => {
       const input = `

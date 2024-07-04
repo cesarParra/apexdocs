@@ -8,6 +8,7 @@ import * as E from 'fp-ts/Either';
 import { flow, pipe } from 'fp-ts/function';
 import { CompilationRequest, Template } from './template';
 import Manifest from '../model/manifest';
+import { referenceGuideTemplate } from './templates/reference-guide';
 
 export const documentType = flow(typeToRenderableType, resolveApexTypeTemplate, compile);
 
@@ -36,7 +37,7 @@ const configDefaults: DocumentationConfig = {
   scope: ['public'],
   outputDir: 'docs',
   defaultGroupName: 'Miscellaneous',
-  referenceGuideTemplate: '',
+  referenceGuideTemplate: referenceGuideTemplate,
 };
 
 export function generateDocs(
@@ -50,8 +51,11 @@ export function generateDocs(
     checkForReflectionErrors,
     E.map((types) => filterTypesOutOfScope(types, configWithDefaults.scope)),
     E.map((types) => typesToRenderableBundle(types, configWithDefaults)),
-    E.map(({ renderables }) => renderables.map(renderableToOutputDoc)),
-    E.map((docs) => ({ format: 'markdown', referenceGuide: 'TODO', docs })),
+    E.map(({ references, renderables }) => ({
+      referenceGuide: referencesToReferenceGuide(references, configWithDefaults.referenceGuideTemplate),
+      docs: renderables.map(renderableToOutputDoc),
+    })),
+    E.map(({ referenceGuide, docs }) => ({ format: 'markdown', referenceGuide: referenceGuide, docs })),
   );
 }
 
@@ -97,8 +101,13 @@ function renderableToOutputDoc(renderable: Renderable): DocOutput {
   return pipe(renderable, resolveApexTypeTemplate, compile, (docContents) => buildDocOutput(renderable, docContents));
 }
 
-function referencesToReferenceGuide(references: ReferenceGuideReference[]): string {
-  return pipe(references);
+function referencesToReferenceGuide(references: ReferenceGuideReference[], template: string): string {
+  return pipe(references, (references) =>
+    compile({
+      template: template,
+      source: references,
+    }),
+  );
 }
 
 function filterTypesOutOfScope(types: Type[], scope: string[]): Type[] {
