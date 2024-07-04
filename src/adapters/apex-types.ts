@@ -60,7 +60,7 @@ export function enumTypeToEnumSource(
   baseHeadingLevel: number = 1,
 ): RenderableEnum {
   return {
-    __type: 'enum',
+    type: 'enum',
     ...baseTypeAdapter(enumType, linkGenerator, baseHeadingLevel),
     values: {
       headingLevel: baseHeadingLevel + 1,
@@ -79,7 +79,7 @@ export function interfaceTypeToInterfaceSource(
   baseHeadingLevel: number = 1,
 ): RenderableInterface {
   return {
-    __type: 'interface',
+    type: 'interface',
     ...baseTypeAdapter(interfaceType, linkGenerator, baseHeadingLevel),
     extends: interfaceType.extended_interfaces.map(linkFromTypeNameGenerator),
     methods: {
@@ -96,7 +96,7 @@ export function classTypeToClassSource(
   baseHeadingLevel: number = 1,
 ): RenderableClass {
   return {
-    __type: 'class',
+    type: 'class',
     ...baseTypeAdapter(classType, linkGenerator, baseHeadingLevel),
     classModifier: classType.classModifier,
     sharingModifier: classType.sharingModifier,

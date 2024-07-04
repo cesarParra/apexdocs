@@ -10,11 +10,10 @@ import { interfaceMarkdownTemplate } from '../transpiler/markdown/plain-markdown
 import { link, resolveLinksInContent } from './markdown-helpers/resolve-links';
 import { convertCodeBlock } from './markdown-helpers/convert-code-block';
 import { heading, heading2, heading3, inlineCode, splitAndCapitalize } from '../templating/helpers';
-import { Renderable } from '../templating/types';
 
 export type CompilationRequest = {
   template: string;
-  source: Renderable;
+  source: unknown;
 };
 
 export class Template {

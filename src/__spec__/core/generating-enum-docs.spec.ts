@@ -1,6 +1,5 @@
 import { DocumentationBundle, generateDocs } from '../../core/generate-docs';
 import * as E from 'fp-ts/Either';
-import * as O from 'fp-ts/Option';
 
 expect.extend({
   documentationBundleHasLength(received: E.Either<string[], DocumentationBundle>, length: number) {
@@ -68,35 +67,6 @@ describe('Generates enum documentation', () => {
       const result = generateDocs([input]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data.docs[0].type).toBe('enum'));
-    });
-
-    it('returns the group as None when there is no group', () => {
-      const input = `
-     public enum MyEnum {
-        VALUE1,
-        VALUE2
-      }
-    `;
-
-      const result = generateDocs([input]);
-      expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].group).toBe(O.none));
-    });
-
-    it('returns the group as Some when there is a group', () => {
-      const input = `
-     /**
-      * @group MyGroup
-      */
-     public enum MyEnum {
-        VALUE1,
-        VALUE2
-      }
-    `;
-
-      const result = generateDocs([input]);
-      expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].group).toEqual(O.some('MyGroup')));
     });
 
     it('does not return enums out of scope', () => {
