@@ -15,6 +15,12 @@ expect.extend({
       message: () => `Expected documentation to contain ${content}. Got ${doc.docs[0].docContents}`,
     };
   },
+  firstDocContainsNot(doc: DocumentationBundle, content: string) {
+    return {
+      pass: !doc.docs[0].docContents.includes(content),
+      message: () => `Expected documentation to not contain ${content}. Got ${doc.docs[0].docContents}`,
+    };
+  },
 });
 
 function assertEither<T, U>(result: E.Either<T, U>, assertion: (data: U) => void): void {
@@ -287,11 +293,30 @@ describe('Generates enum documentation', () => {
       assertEither(result, (data) => expect(data).firstDocContains('See'));
       assertEither(result, (data) => expect(data).firstDocContains('EnumRef'));
     });
+
+    it('displays the namespace if present in the config', () => {
+      const input = `
+      public enum MyEnum {}
+      `;
+
+      const result = generateDocs([input], { namespace: 'MyNamespace' });
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('## Namespace'));
+      assertEither(result, (data) => expect(data).firstDocContains('MyNamespace'));
+    });
+
+    it('does not display the namespace if not present in the config', () => {
+      const input = `
+      public enum MyEnum {}
+      `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContainsNot('## Namespace'));
+    });
   });
 });
 
-// TODO: Namespace when one is present
-// TODO: Namespace when one is not present
 // TODO: Mermaid
 // TODO: Example
 // TODO: Heading for values
