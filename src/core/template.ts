@@ -7,9 +7,8 @@ import { fieldsPartialTemplate } from '../transpiler/markdown/plain-markdown/fie
 import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/class-template';
 import { enumMarkdownTemplate } from '../transpiler/markdown/plain-markdown/enum-template';
 import { interfaceMarkdownTemplate } from '../transpiler/markdown/plain-markdown/interface-template';
-import { link, resolveLinksInContent } from './markdown-helpers/resolve-links';
-import { convertCodeBlock } from './markdown-helpers/convert-code-block';
-import { heading, heading2, heading3, inlineCode, splitAndCapitalize } from '../templating/helpers';
+import { RenderableContent, StringOrLink } from './renderable/types';
+import { isEmptyLine } from '../adapters/type-utils';
 
 export type CompilationRequest = {
   template: string;
@@ -33,8 +32,6 @@ export class Template {
     Handlebars.registerHelper('code', convertCodeBlock);
     Handlebars.registerHelper('withLinks', resolveLinksInContent);
     Handlebars.registerHelper('heading', heading);
-    Handlebars.registerHelper('heading2', heading2);
-    Handlebars.registerHelper('heading3', heading3);
     Handlebars.registerHelper('inlineCode', inlineCode);
     Handlebars.registerHelper('splitAndCapitalize', splitAndCapitalize);
   }
@@ -56,3 +53,54 @@ export class Template {
     );
   }
 }
+
+const splitAndCapitalize = (text: string) => {
+  const words = text.split(/[-_]+/);
+  const capitalizedWords = [];
+  for (const word of words) {
+    capitalizedWords.push(word.charAt(0).toUpperCase() + word.slice(1));
+  }
+  return capitalizedWords.join(' ');
+};
+
+const heading = (level: number, text: string) => {
+  return `${'#'.repeat(level)} ${text}`;
+};
+
+const inlineCode = (text: string) => {
+  return new Handlebars.SafeString(`\`${text}\``);
+};
+
+const convertCodeBlock = (language: string, lines: string[]): Handlebars.SafeString => {
+  return new Handlebars.SafeString(
+    `
+\`\`\`${language}
+${lines.join('\n')}
+\`\`\`
+  `.trim(),
+  );
+};
+
+const resolveLinksInContent = (description?: RenderableContent[]): string => {
+  if (!description) {
+    return '';
+  }
+
+  function reduceDescription(acc: string, curr: RenderableContent) {
+    if (isEmptyLine(curr)) {
+      return acc + '\n\n';
+    }
+
+    return acc + link(curr).trim() + ' ';
+  }
+
+  return description.reduce(reduceDescription, '').trim();
+};
+
+const link = (source: StringOrLink): string => {
+  if (typeof source === 'string') {
+    return source;
+  } else {
+    return `[${source.title}](${source.url})`;
+  }
+};

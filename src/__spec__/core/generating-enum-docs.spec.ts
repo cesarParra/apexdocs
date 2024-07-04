@@ -167,7 +167,7 @@ describe('Generates enum documentation', () => {
 
       const result = generateDocs([input1, input2]);
       expect(result).documentationBundleHasLength(2);
-      assertEither(result, (data) => expect(data.referenceGuide).toContain('with a [MyClass](./MyClass.md)'));
+      assertEither(result, (data) => expect(data.referenceGuide).toContain('with a [MyClass](./Group2/MyClass.md)'));
     });
   });
 

@@ -11,8 +11,6 @@ export type StringOrLink = string | Link;
 
 export type RenderableContent = StringOrLink | EmptyLine;
 
-export type ConvertRenderableContentsToString = (content?: RenderableContent[]) => string;
-
 type EnumValue = {
   value: string;
   description?: RenderableContent[];

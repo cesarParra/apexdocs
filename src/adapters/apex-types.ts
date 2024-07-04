@@ -1,5 +1,11 @@
 import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
-import { RenderableType, RenderableClass, RenderableEnum, RenderableInterface, Renderable } from '../templating/types';
+import {
+  RenderableType,
+  RenderableClass,
+  RenderableEnum,
+  RenderableInterface,
+  Renderable,
+} from '../core/renderable/types';
 import { adaptDescribable, adaptDocumentable } from './documentables';
 import { GetRenderableContentByTypeName, linkFromTypeNameGenerator } from './references';
 import { FieldMirrorWithInheritance, PropertyMirrorWithInheritance } from '../model/inheritance';

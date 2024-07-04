@@ -1,6 +1,6 @@
 import { reflect as mirrorReflection, Type } from '@cparra/apex-reflection';
 import { typeToRenderableType } from '../adapters/apex-types';
-import { Renderable, RenderableContent, RenderableEnum, StringOrLink } from '../templating/types';
+import { Renderable, RenderableContent, RenderableEnum, StringOrLink } from './renderable/types';
 import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/class-template';
 import { enumMarkdownTemplate } from '../transpiler/markdown/plain-markdown/enum-template';
 import { interfaceMarkdownTemplate } from '../transpiler/markdown/plain-markdown/interface-template';
@@ -15,7 +15,7 @@ export const documentType = flow(typeToRenderableType, resolveApexTypeTemplate, 
 
 export type DocumentationBundle = {
   format: 'markdown';
-  referenceGuide: string; // Output file with links to all other files
+  referenceGuide: string; // Output file with links to all other files (e.g. index/table of contents)
   docs: DocOutput[];
 };
 
@@ -87,7 +87,7 @@ function typesToRenderableBundle(types: Type[], config: DocumentationConfig): Re
         title: getLinkFromRoot(config, type),
         description: adaptDescribable(descriptionLines, (referenceName) => {
           const type = findType(types, referenceName);
-          return type ? linkFromTypeNameGenerator(type, types, referenceName, config) : referenceName;
+          return type ? getLinkFromRoot(config, type) : referenceName;
         }).description,
       });
       return acc;
@@ -99,7 +99,6 @@ function typesToRenderableBundle(types: Type[], config: DocumentationConfig): Re
   );
 }
 
-// TODO: This can be a flow instead of using pipe
 function renderableToOutputDoc(renderable: Renderable): DocOutput {
   return pipe(renderable, resolveApexTypeTemplate, compile, (docContents) => buildDocOutput(renderable, docContents));
 }
@@ -153,7 +152,6 @@ function resolveApexTypeTemplate(renderable: Renderable): CompilationRequest {
 }
 
 function getTemplate(renderable: Renderable): string {
-  // TODO: Maybe we can use that one library from the video to do this cleaner
   switch (renderable.type) {
     case 'enum':
       return enumMarkdownTemplate;

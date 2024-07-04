@@ -1,5 +1,5 @@
 import ClassFileGeneratorHelper from '../transpiler/markdown/class-file-generatorHelper';
-import { Link, RenderableContent, StringOrLink } from '../templating/types';
+import { Link, RenderableContent, StringOrLink } from '../core/renderable/types';
 
 export type GetRenderableContentByTypeName = (typeName: string) => StringOrLink;
 
