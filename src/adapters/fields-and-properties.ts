@@ -1,5 +1,5 @@
 import { FieldMirrorWithInheritance, PropertyMirrorWithInheritance } from '../model/inheritance';
-import { RenderableField } from '../templating/types';
+import { RenderableField } from '../core/renderable/types';
 import { adaptDocumentable } from './documentables';
 import { GetRenderableContentByTypeName, linkFromTypeNameGenerator } from './references';
 

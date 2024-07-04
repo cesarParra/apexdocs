@@ -1,6 +1,5 @@
 import { DocumentationBundle, generateDocs } from '../../core/generate-docs';
 import * as E from 'fp-ts/Either';
-import * as O from 'fp-ts/Option';
 
 expect.extend({
   documentationBundleHasLength(received: E.Either<string[], DocumentationBundle>, length: number) {
@@ -70,35 +69,6 @@ describe('Generates enum documentation', () => {
       assertEither(result, (data) => expect(data.docs[0].type).toBe('enum'));
     });
 
-    it('returns the group as None when there is no group', () => {
-      const input = `
-     public enum MyEnum {
-        VALUE1,
-        VALUE2
-      }
-    `;
-
-      const result = generateDocs([input]);
-      expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].group).toBe(O.none));
-    });
-
-    it('returns the group as Some when there is a group', () => {
-      const input = `
-     /**
-      * @group MyGroup
-      */
-     public enum MyEnum {
-        VALUE1,
-        VALUE2
-      }
-    `;
-
-      const result = generateDocs([input]);
-      expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].group).toEqual(O.some('MyGroup')));
-    });
-
     it('does not return enums out of scope', () => {
       const input1 = `
      global enum MyEnum {
@@ -131,6 +101,73 @@ describe('Generates enum documentation', () => {
 
       const result = generateDocs([input]);
       expect(result).documentationBundleHasLength(0);
+    });
+  });
+
+  describe('documentation reference guide', () => {
+    it('returns a reference guide with links to all other files', () => {
+      const input1 = `
+      public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+      `;
+
+      const input2 = `
+      public class MyClass {}
+      `;
+
+      const result = generateDocs([input1, input2]);
+      expect(result).documentationBundleHasLength(2);
+      assertEither(result, (data) => expect(data.referenceGuide).toContain('[MyEnum](./Miscellaneous/MyEnum.md)'));
+      assertEither(result, (data) => expect(data.referenceGuide).toContain('[MyClass](./Miscellaneous/MyClass.md)'));
+    });
+
+    it('returns a reference guide with descriptions', () => {
+      const input1 = `
+      /**
+        * @description This is a description
+        */
+      public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+      `;
+
+      const input2 = `
+      /**
+        * @description This is a description
+        */
+      public class MyClass {}
+      `;
+
+      const result = generateDocs([input1, input2]);
+      expect(result).documentationBundleHasLength(2);
+      assertEither(result, (data) => expect(data.referenceGuide).toContain('This is a description'));
+    });
+
+    it('returns a reference guide with descriptions with links to all other files', () => {
+      const input1 = `
+      /**
+        * @description This is a description with a {@link MyClass}
+        * @group Group1
+        */
+      public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+      `;
+
+      const input2 = `
+      /**
+        * @group Group2
+        */
+      public class MyClass {}
+      `;
+
+      const result = generateDocs([input1, input2]);
+      expect(result).documentationBundleHasLength(2);
+      assertEither(result, (data) => expect(data.referenceGuide).toContain('with a [MyClass](./Group2/MyClass.md)'));
     });
   });
 

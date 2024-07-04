@@ -1,2 +1,3 @@
-// TODO: Get rid of this
-export * from './service/manifest-factory';
+import * as reflection from '@cparra/apex-reflection';
+
+export { reflection };

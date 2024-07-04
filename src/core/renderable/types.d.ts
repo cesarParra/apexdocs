@@ -11,8 +11,6 @@ export type StringOrLink = string | Link;
 
 export type RenderableContent = StringOrLink | EmptyLine;
 
-export type ConvertRenderableContentsToString = (content?: RenderableContent[]) => string;
-
 type EnumValue = {
   value: string;
   description?: RenderableContent[];
@@ -101,7 +99,7 @@ type RenderableSection<T> = {
 };
 
 export type RenderableClass = RenderableType & {
-  __type: 'class';
+  type: 'class';
   extends?: StringOrLink;
   implements?: StringOrLink[];
   classModifier?: string;
@@ -116,13 +114,13 @@ export type RenderableClass = RenderableType & {
 };
 
 export type RenderableInterface = RenderableType & {
-  __type: 'interface';
+  type: 'interface';
   extends?: StringOrLink[];
   methods: RenderableSection<RenderableMethod[]>;
 };
 
 export type RenderableEnum = RenderableType & {
-  __type: 'enum';
+  type: 'enum';
   values: RenderableSection<EnumValue[]>;
 };
 

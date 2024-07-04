@@ -1,19 +1,21 @@
-import { DocComment, reflect as mirrorReflection, Type } from '@cparra/apex-reflection';
+import { reflect as mirrorReflection, Type } from '@cparra/apex-reflection';
 import { typeToRenderableType } from '../adapters/apex-types';
-import { Renderable, RenderableEnum, StringOrLink } from '../templating/types';
+import { Renderable, RenderableContent, RenderableEnum, StringOrLink } from './renderable/types';
 import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/class-template';
 import { enumMarkdownTemplate } from '../transpiler/markdown/plain-markdown/enum-template';
 import { interfaceMarkdownTemplate } from '../transpiler/markdown/plain-markdown/interface-template';
 import * as E from 'fp-ts/Either';
-import * as O from 'fp-ts/Option';
 import { flow, pipe } from 'fp-ts/function';
 import { CompilationRequest, Template } from './template';
 import Manifest from '../model/manifest';
+import { referenceGuideTemplate } from './templates/reference-guide';
+import { adaptDescribable } from '../adapters/documentables';
 
-export const documentType = flow(typeToRenderableType, resolveTemplate, compile);
+export const documentType = flow(typeToRenderableType, resolveApexTypeTemplate, compile);
 
 export type DocumentationBundle = {
   format: 'markdown';
+  referenceGuide: string; // Output file with links to all other files (e.g. index/table of contents)
   docs: DocOutput[];
 };
 
@@ -23,19 +25,20 @@ type DocumentationConfig = {
   namespace?: string;
   sortMembersAlphabetically?: boolean;
   defaultGroupName: string;
+  referenceGuideTemplate: string;
 };
 
 type DocOutput = {
   docContents: string;
   typeName: string;
   type: 'class' | 'interface' | 'enum';
-  group: O.Option<string>;
 };
 
 const configDefaults: DocumentationConfig = {
   scope: ['public'],
   outputDir: 'docs',
   defaultGroupName: 'Miscellaneous',
+  referenceGuideTemplate: referenceGuideTemplate,
 };
 
 export function generateDocs(
@@ -48,23 +51,64 @@ export function generateDocs(
     (input) => input.map(reflectSourceBody),
     checkForReflectionErrors,
     E.map((types) => filterTypesOutOfScope(types, configWithDefaults.scope)),
-    E.map((types) => types.map((type) => typeToDocOutput(types, type, configWithDefaults))),
-    E.map((docs) => ({ format: 'markdown', docs })),
+    E.map((types) => typesToRenderableBundle(types, configWithDefaults)),
+    E.map(({ references, renderables }) => ({
+      referenceGuide: referencesToReferenceGuide(references, configWithDefaults.referenceGuideTemplate),
+      docs: renderables.map(renderableToOutputDoc),
+    })),
+    E.map(({ referenceGuide, docs }) => ({ format: 'markdown', referenceGuide: referenceGuide, docs })),
   );
 }
 
-function typeToDocOutput(repository: Type[], type: Type, config: DocumentationConfig): DocOutput {
-  return pipe(
-    typeToRenderableType(
-      type,
-      (referenceName) => {
-        return linkFromTypeNameGenerator(type, repository, referenceName, config);
-      },
-      config.namespace,
-    ),
-    resolveTemplate,
-    compile,
-    (docContents) => buildDocOutput(type, docContents),
+type ReferenceGuideReference = {
+  title: StringOrLink;
+  description: RenderableContent[] | undefined;
+};
+
+type RenderableBundle = {
+  references: ReferenceGuideReference[];
+  renderables: Renderable[];
+};
+
+function typesToRenderableBundle(types: Type[], config: DocumentationConfig): RenderableBundle {
+  return types.reduce<RenderableBundle>(
+    (acc, type) => {
+      const renderable = typeToRenderableType(
+        type,
+        (referenceName) => {
+          return linkFromTypeNameGenerator(type, types, referenceName, config);
+        },
+        config.namespace,
+      );
+      acc.renderables.push(renderable);
+
+      const descriptionLines = type.docComment?.descriptionLines;
+      acc.references.push({
+        title: getLinkFromRoot(config, type),
+        description: adaptDescribable(descriptionLines, (referenceName) => {
+          const type = findType(types, referenceName);
+          return type ? getLinkFromRoot(config, type) : referenceName;
+        }).description,
+      });
+      return acc;
+    },
+    {
+      references: [],
+      renderables: [],
+    },
+  );
+}
+
+function renderableToOutputDoc(renderable: Renderable): DocOutput {
+  return pipe(renderable, resolveApexTypeTemplate, compile, (docContents) => buildDocOutput(renderable, docContents));
+}
+
+function referencesToReferenceGuide(references: ReferenceGuideReference[], template: string): string {
+  return pipe(references, (references) =>
+    compile({
+      template: template,
+      source: references,
+    }),
   );
 }
 
@@ -100,7 +144,7 @@ function reflectSourceBody(input: string): E.Either<string, Type> {
   return result.error ? E.left(result.error.message) : E.right(result.typeMirror!);
 }
 
-function resolveTemplate(renderable: Renderable): CompilationRequest {
+function resolveApexTypeTemplate(renderable: Renderable): CompilationRequest {
   return {
     template: getTemplate(renderable),
     source: renderable as RenderableEnum,
@@ -108,7 +152,7 @@ function resolveTemplate(renderable: Renderable): CompilationRequest {
 }
 
 function getTemplate(renderable: Renderable): string {
-  switch (renderable.__type) {
+  switch (renderable.type) {
     case 'enum':
       return enumMarkdownTemplate;
     case 'interface':
@@ -122,17 +166,16 @@ function compile(request: CompilationRequest): string {
   return Template.getInstance().compile(request);
 }
 
-function buildDocOutput(type: Type, docContents: string): DocOutput {
+function buildDocOutput(renderable: Renderable, docContents: string): DocOutput {
   return {
     docContents,
-    typeName: type.name,
-    type: type.type_name,
-    group: O.fromNullable(extractDocCommentGroup(type.docComment)),
+    typeName: renderable.name,
+    type: renderable.type,
   };
 }
 
-function extractDocCommentGroup(document?: DocComment): string | undefined {
-  return document?.annotations.find((a) => a.name === 'group')?.body;
+function findType(repository: Type[], referenceName: string) {
+  return repository.find((currentType: Type) => currentType.name.toLowerCase() === referenceName.toLowerCase());
 }
 
 function linkFromTypeNameGenerator(
@@ -141,7 +184,7 @@ function linkFromTypeNameGenerator(
   referenceName: string,
   config: DocumentationConfig,
 ): StringOrLink {
-  const type = repository.find((currentType: Type) => currentType.name.toLowerCase() === referenceName.toLowerCase());
+  const type = findType(repository, referenceName);
   if (!type) {
     // If the type is not found, we return the type name as a string.
     return referenceName;
@@ -159,15 +202,23 @@ function getFileLinkTuple(
   referencedType: Type,
   config: DocumentationConfig,
 ): [string, string] {
-  function namespacePrefix() {
-    return config.namespace ? `${config.namespace}.` : '';
-  }
-
+  const namespacePrefix = config.namespace ? `${config.namespace}.` : '';
   const directoryRoot = `${getDirectoryRoot(typeBeingDocumented, referencedType, config)}`;
   // TODO: Instead of adding a "." to the name when there is a namespace, maybe we want to create a folder for everything
   // within that namespace and put the files in there.
-  const fullClassName = `${namespacePrefix()}${referencedType.name}`;
+  const fullClassName = `${namespacePrefix}${referencedType.name}`;
   return [fullClassName, `${directoryRoot}${fullClassName}.md`];
+}
+
+function getLinkFromRoot(config: DocumentationConfig, type?: Type): StringOrLink {
+  if (!type) {
+    return '';
+  }
+  const namespacePrefix = config.namespace ? `${config.namespace}./` : '';
+  return {
+    title: `${namespacePrefix}${type.name}`,
+    url: `./${namespacePrefix}${getSanitizedGroup(type, config)}/${type.name}.md`,
+  };
 }
 
 function getDirectoryRoot(typeBeingDocumented: Type, referencedType: Type, config: DocumentationConfig) {

@@ -1,5 +1,5 @@
 import { ConstructorMirror, MethodMirror, ParameterMirror, ThrowsAnnotation } from '@cparra/apex-reflection';
-import { RenderableConstructor, RenderableMethod } from '../templating/types';
+import { RenderableConstructor, RenderableMethod } from '../core/renderable/types';
 import { MethodMirrorWithInheritance } from '../model/inheritance';
 import { adaptDescribable, adaptDocumentable } from './documentables';
 import { GetRenderableContentByTypeName, linkFromTypeNameGenerator } from './references';

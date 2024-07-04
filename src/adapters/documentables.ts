@@ -1,4 +1,4 @@
-import { CustomTag, RenderableDocumentation, RenderableContent } from '../templating/types';
+import { CustomTag, RenderableDocumentation, RenderableContent } from '../core/renderable/types';
 import { Describable, Documentable } from './types';
 import { GetRenderableContentByTypeName, replaceInlineReferences } from './references';
 import { isEmptyLine } from './type-utils';
