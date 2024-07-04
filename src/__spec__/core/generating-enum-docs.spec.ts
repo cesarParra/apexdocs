@@ -119,8 +119,55 @@ describe('Generates enum documentation', () => {
 
       const result = generateDocs([input1, input2]);
       expect(result).documentationBundleHasLength(2);
-      assertEither(result, (data) => expect(data.referenceGuide).toContain('[MyEnum](./MyEnum.md)'));
-      assertEither(result, (data) => expect(data.referenceGuide).toContain('[MyClass](./MyClass.md)'));
+      assertEither(result, (data) => expect(data.referenceGuide).toContain('[MyEnum](./Miscellaneous/MyEnum.md)'));
+      assertEither(result, (data) => expect(data.referenceGuide).toContain('[MyClass](./Miscellaneous/MyClass.md)'));
+    });
+
+    it('returns a reference guide with descriptions', () => {
+      const input1 = `
+      /**
+        * @description This is a description
+        */
+      public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+      `;
+
+      const input2 = `
+      /**
+        * @description This is a description
+        */
+      public class MyClass {}
+      `;
+
+      const result = generateDocs([input1, input2]);
+      expect(result).documentationBundleHasLength(2);
+      assertEither(result, (data) => expect(data.referenceGuide).toContain('This is a description'));
+    });
+
+    it('returns a reference guide with descriptions with links to all other files', () => {
+      const input1 = `
+      /**
+        * @description This is a description with a {@link MyClass}
+        * @group Group1
+        */
+      public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+      `;
+
+      const input2 = `
+      /**
+        * @group Group2
+        */
+      public class MyClass {}
+      `;
+
+      const result = generateDocs([input1, input2]);
+      expect(result).documentationBundleHasLength(2);
+      assertEither(result, (data) => expect(data.referenceGuide).toContain('with a [MyClass](./MyClass.md)'));
     });
   });
 

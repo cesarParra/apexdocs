@@ -4,9 +4,7 @@ export const referenceGuideTemplate = `
 {{#each this}}
 ## {{link title}}
 
-{{#each description}}
-{{withLinks this}}
-{{/each}}
+{{withLinks description}}
 
 {{/each}}
 `.trim();

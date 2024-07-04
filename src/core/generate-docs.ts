@@ -1,6 +1,6 @@
 import { reflect as mirrorReflection, Type } from '@cparra/apex-reflection';
 import { typeToRenderableType } from '../adapters/apex-types';
-import { Link, Renderable, RenderableContent, RenderableEnum, StringOrLink } from '../templating/types';
+import { Renderable, RenderableContent, RenderableEnum, StringOrLink } from '../templating/types';
 import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/class-template';
 import { enumMarkdownTemplate } from '../transpiler/markdown/plain-markdown/enum-template';
 import { interfaceMarkdownTemplate } from '../transpiler/markdown/plain-markdown/interface-template';
@@ -9,6 +9,7 @@ import { flow, pipe } from 'fp-ts/function';
 import { CompilationRequest, Template } from './template';
 import Manifest from '../model/manifest';
 import { referenceGuideTemplate } from './templates/reference-guide';
+import { adaptDescribable } from '../adapters/documentables';
 
 export const documentType = flow(typeToRenderableType, resolveApexTypeTemplate, compile);
 
@@ -60,8 +61,8 @@ export function generateDocs(
 }
 
 type ReferenceGuideReference = {
-  title: Link;
-  description: RenderableContent[];
+  title: StringOrLink;
+  description: RenderableContent[] | undefined;
 };
 
 type RenderableBundle = {
@@ -80,12 +81,14 @@ function typesToRenderableBundle(types: Type[], config: DocumentationConfig): Re
         config.namespace,
       );
       acc.renderables.push(renderable);
+
+      const descriptionLines = type.docComment?.descriptionLines;
       acc.references.push({
-        title: {
-          title: renderable.name,
-          url: getLinkFromRoot(config, type),
-        },
-        description: renderable.doc.description ?? [], // TODO: We do not want to use the renderable description, since we need links from the root.
+        title: getLinkFromRoot(config, type),
+        description: adaptDescribable(descriptionLines, (referenceName) => {
+          const type = findType(types, referenceName);
+          return type ? linkFromTypeNameGenerator(type, types, referenceName, config) : referenceName;
+        }).description,
       });
       return acc;
     },
@@ -173,13 +176,17 @@ function buildDocOutput(renderable: Renderable, docContents: string): DocOutput 
   };
 }
 
+function findType(repository: Type[], referenceName: string) {
+  return repository.find((currentType: Type) => currentType.name.toLowerCase() === referenceName.toLowerCase());
+}
+
 function linkFromTypeNameGenerator(
   typeBeingDocumented: Type,
   repository: Type[],
   referenceName: string,
   config: DocumentationConfig,
 ): StringOrLink {
-  const type = repository.find((currentType: Type) => currentType.name.toLowerCase() === referenceName.toLowerCase());
+  const type = findType(repository, referenceName);
   if (!type) {
     // If the type is not found, we return the type name as a string.
     return referenceName;
@@ -197,20 +204,23 @@ function getFileLinkTuple(
   referencedType: Type,
   config: DocumentationConfig,
 ): [string, string] {
-  function namespacePrefix() {
-    return config.namespace ? `${config.namespace}.` : '';
-  }
-
+  const namespacePrefix = config.namespace ? `${config.namespace}.` : '';
   const directoryRoot = `${getDirectoryRoot(typeBeingDocumented, referencedType, config)}`;
   // TODO: Instead of adding a "." to the name when there is a namespace, maybe we want to create a folder for everything
   // within that namespace and put the files in there.
-  const fullClassName = `${namespacePrefix()}${referencedType.name}`;
+  const fullClassName = `${namespacePrefix}${referencedType.name}`;
   return [fullClassName, `${directoryRoot}${fullClassName}.md`];
 }
 
-function getLinkFromRoot(config: DocumentationConfig, type: Type): string {
-  const namespacePrefix = config.namespace ? `${config.namespace}.` : '';
-  return `./${namespacePrefix}${type.name}.md`;
+function getLinkFromRoot(config: DocumentationConfig, type?: Type): StringOrLink {
+  if (!type) {
+    return '';
+  }
+  const namespacePrefix = config.namespace ? `${config.namespace}./` : '';
+  return {
+    title: `${namespacePrefix}${type.name}`,
+    url: `./${namespacePrefix}${getSanitizedGroup(type, config)}/${type.name}.md`,
+  };
 }
 
 function getDirectoryRoot(typeBeingDocumented: Type, referencedType: Type, config: DocumentationConfig) {
