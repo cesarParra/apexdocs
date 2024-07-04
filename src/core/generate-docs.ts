@@ -53,7 +53,7 @@ export function generateDocs(
     E.map((types) => filterTypesOutOfScope(types, configWithDefaults.scope)),
     E.map((types) => typesToRenderableBundle(types, configWithDefaults)),
     E.map(({ references, renderables }) => ({
-      referenceGuide: referencesToReferenceGuide(references, configWithDefaults.referenceGuideTemplate),
+      referenceGuide: pipe(referencesToReferenceGuide(references, configWithDefaults.referenceGuideTemplate)),
       docs: renderables.map(renderableToOutputDoc),
     })),
     E.map(({ referenceGuide, docs }) => ({ format: 'markdown', referenceGuide: referenceGuide, docs })),
@@ -66,11 +66,14 @@ type ReferenceGuideReference = {
 };
 
 type RenderableBundle = {
-  references: ReferenceGuideReference[];
+  // References are grouped by their defined @group annotation
+  references: {
+    [key: string]: ReferenceGuideReference[];
+  };
   renderables: Renderable[];
 };
 
-function typesToRenderableBundle(types: Type[], config: DocumentationConfig): RenderableBundle {
+function typesToRenderableBundle(types: Type[], config: DocumentationConfig) {
   return types.reduce<RenderableBundle>(
     (acc, type) => {
       const renderable = typeToRenderableType(
@@ -83,17 +86,24 @@ function typesToRenderableBundle(types: Type[], config: DocumentationConfig): Re
       acc.renderables.push(renderable);
 
       const descriptionLines = type.docComment?.descriptionLines;
-      acc.references.push({
+      const reference = {
         title: getLinkFromRoot(config, type),
         description: adaptDescribable(descriptionLines, (referenceName) => {
           const type = findType(types, referenceName);
           return type ? getLinkFromRoot(config, type) : referenceName;
         }).description,
-      });
+      };
+
+      const group = getTypeGroup(type, config);
+      if (!acc.references[group]) {
+        acc.references[group] = [];
+      }
+      acc.references[group].push(reference);
+
       return acc;
     },
     {
-      references: [],
+      references: {},
       renderables: [],
     },
   );
@@ -103,13 +113,27 @@ function renderableToOutputDoc(renderable: Renderable): DocOutput {
   return pipe(renderable, resolveApexTypeTemplate, compile, (docContents) => buildDocOutput(renderable, docContents));
 }
 
-function referencesToReferenceGuide(references: ReferenceGuideReference[], template: string): string {
-  return pipe(references, (references) =>
+function referencesToReferenceGuide(
+  references: { [key: string]: ReferenceGuideReference[] },
+  template: string,
+): string {
+  return pipe(references, alphabetizeReferences, (references) =>
     compile({
       template: template,
       source: references,
     }),
   );
+}
+
+function alphabetizeReferences(references: { [key: string]: ReferenceGuideReference[] }): {
+  [key: string]: ReferenceGuideReference[];
+} {
+  return Object.keys(references)
+    .sort((a, b) => a.localeCompare(b))
+    .reduce<{ [key: string]: ReferenceGuideReference[] }>((acc, key) => {
+      acc[key] = references[key].sort((a, b) => a.title.toString().localeCompare(b.title.toString()));
+      return acc;
+    }, {});
 }
 
 function filterTypesOutOfScope(types: Type[], scope: string[]): Type[] {
@@ -222,7 +246,7 @@ function getLinkFromRoot(config: DocumentationConfig, type?: Type): StringOrLink
 }
 
 function getDirectoryRoot(typeBeingDocumented: Type, referencedType: Type, config: DocumentationConfig) {
-  if (getClassGroup(typeBeingDocumented, config) === getClassGroup(referencedType, config)) {
+  if (getTypeGroup(typeBeingDocumented, config) === getTypeGroup(referencedType, config)) {
     // If the types the same groups then we simply link directly to that file
     return './';
   } else {
@@ -231,13 +255,11 @@ function getDirectoryRoot(typeBeingDocumented: Type, referencedType: Type, confi
   }
 }
 
-function getClassGroup(classModel: Type, config: DocumentationConfig): string {
-  const groupAnnotation = classModel.docComment?.annotations.find(
-    (annotation) => annotation.name.toLowerCase() === 'group',
-  );
+function getTypeGroup(type: Type, config: DocumentationConfig): string {
+  const groupAnnotation = type.docComment?.annotations.find((annotation) => annotation.name.toLowerCase() === 'group');
   return groupAnnotation?.body ?? config.defaultGroupName;
 }
 
 function getSanitizedGroup(classModel: Type, config: DocumentationConfig) {
-  return getClassGroup(classModel, config).replace(/ /g, '-').replace('.', '');
+  return getTypeGroup(classModel, config).replace(/ /g, '-').replace('.', '');
 }

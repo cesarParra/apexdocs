@@ -2,9 +2,13 @@ export const referenceGuideTemplate = `
 # Apex Reference Guide
 
 {{#each this}}
-## {{link title}}
+## {{@key}}
+
+{{#each this}}
+### {{link title}}
 
 {{withLinks description}}
 
+{{/each}}
 {{/each}}
 `.trim();

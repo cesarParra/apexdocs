@@ -16,7 +16,7 @@
   },
   "types": "lib/index.d.ts",
   "scripts": {
-    "test": "jest --coverage",
+    "test": "jest",
     "build": "rimraf ./lib && npm run lint && tsc --declaration",
     "lint": "eslint \"./src/**/*.{js,ts}\" --quiet --fix",
     "prepare": "npm run build",

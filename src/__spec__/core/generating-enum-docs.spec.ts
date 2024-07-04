@@ -1,5 +1,6 @@
 import { DocumentationBundle, generateDocs } from '../../core/generate-docs';
 import * as E from 'fp-ts/Either';
+import { pipe } from 'fp-ts/function';
 
 expect.extend({
   documentationBundleHasLength(received: E.Either<string[], DocumentationBundle>, length: number) {
@@ -119,8 +120,96 @@ describe('Generates enum documentation', () => {
 
       const result = generateDocs([input1, input2]);
       expect(result).documentationBundleHasLength(2);
+
       assertEither(result, (data) => expect(data.referenceGuide).toContain('[MyEnum](./Miscellaneous/MyEnum.md)'));
       assertEither(result, (data) => expect(data.referenceGuide).toContain('[MyClass](./Miscellaneous/MyClass.md)'));
+    });
+
+    it('groups things under Miscellaneous if no group is provided', () => {
+      const input = `
+      public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+      `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data.referenceGuide).toContain('## Miscellaneous'));
+    });
+
+    it('group things under the provided group', () => {
+      const input = `
+      /**
+        * @group MyGroup
+        */
+      public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+      `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data.referenceGuide).toContain('## MyGroup'));
+    });
+
+    it('displays groups in alphabetical order', () => {
+      const input1 = `
+      /**
+        * @group ZGroup
+        */
+      public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+      `;
+
+      const input2 = `
+      /**
+        * @group AGroup
+        */
+      public class MyClass {}
+      `;
+
+      const result = generateDocs([input1, input2]);
+      expect(result).documentationBundleHasLength(2);
+      pipe(
+        result,
+        E.map((data) => ({
+          aGroupIndex: data.referenceGuide.indexOf('## AGroup'),
+          zGroupIndex: data.referenceGuide.indexOf('## ZGroup'),
+        })),
+        E.match(
+          () => fail('Expected data'),
+          (data) => expect(data.aGroupIndex).toBeLessThan(data.zGroupIndex),
+        ),
+      );
+    });
+
+    it('displays references within groups in alphabetical order', () => {
+      const input1 = `
+      /**
+        * @group Group1
+        */
+      public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+      `;
+
+      const input2 = `
+      /**
+        * @group Group1
+        */
+      public class MyClass {}
+      `;
+
+      const result = generateDocs([input1, input2]);
+      expect(result).documentationBundleHasLength(2);
+      assertEither(result, (data) => expect(data.referenceGuide).toContain('## Group1'));
+      assertEither(result, (data) => expect(data.referenceGuide).toContain('MyClass'));
+      assertEither(result, (data) => expect(data.referenceGuide).toContain('MyEnum'));
     });
 
     it('returns a reference guide with descriptions', () => {
