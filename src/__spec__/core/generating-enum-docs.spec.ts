@@ -314,11 +314,53 @@ describe('Generates enum documentation', () => {
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContainsNot('## Namespace'));
     });
+
+    it('displays a mermaid diagram', () => {
+      const input = `
+      /**
+        * @mermaid
+        * graph TD
+        *   A[Square Rect] -- Link text --> B((Circle))
+        *   A --> C(Round Rect)
+        *   B --> D{Rhombus}
+        *   C --> D
+        */
+      public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+      `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('```mermaid'));
+      assertEither(result, (data) => expect(data).firstDocContains('graph TD'));
+    });
+
+    it('displays an example code block', () => {
+      const input = `
+      /**
+        * @example
+        * public class MyClass {
+        *   public void myMethod() {
+        *     System.debug('Hello, World!');
+        *   }
+        * }
+        */
+      public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+      `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('```apex'));
+      assertEither(result, (data) => expect(data).firstDocContains('public class MyClass'));
+    });
   });
 });
 
-// TODO: Mermaid
-// TODO: Example
 // TODO: Heading for values
 // TODO: Table for values
 // TODO: Taking into account links
