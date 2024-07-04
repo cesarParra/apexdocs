@@ -1,10 +1,11 @@
 import { FieldMirrorWithInheritance, PropertyMirrorWithInheritance } from '../model/inheritance';
 import { RenderableField } from '../templating/types';
 import { adaptDocumentable } from './documentables';
-import { linkFromTypeNameGenerator } from './references';
+import { GetRenderableContentByTypeName, linkFromTypeNameGenerator } from './references';
 
 export function adaptFieldOrProperty(
   field: FieldMirrorWithInheritance | PropertyMirrorWithInheritance,
+  linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number,
 ): RenderableField {
   function buildSignature() {
@@ -18,7 +19,7 @@ export function adaptFieldOrProperty(
   }
 
   return {
-    doc: adaptDocumentable(field, baseHeadingLevel + 1),
+    doc: adaptDocumentable(field, linkGenerator, baseHeadingLevel + 1),
     headingLevel: baseHeadingLevel,
     heading: field.name,
     type: {

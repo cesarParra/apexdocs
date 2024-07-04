@@ -1,6 +1,6 @@
 import { DocComment, reflect as mirrorReflection, Type } from '@cparra/apex-reflection';
 import { typeToRenderableType } from '../adapters/apex-types';
-import { Renderable, RenderableEnum } from '../templating/types';
+import { Renderable, RenderableEnum, StringOrLink } from '../templating/types';
 import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/class-template';
 import { enumMarkdownTemplate } from '../transpiler/markdown/plain-markdown/enum-template';
 import { interfaceMarkdownTemplate } from '../transpiler/markdown/plain-markdown/interface-template';
@@ -22,6 +22,7 @@ type DocumentationConfig = {
   outputDir: string;
   namespace?: string;
   sortMembersAlphabetically?: boolean;
+  defaultGroupName: string;
 };
 
 type DocOutput = {
@@ -34,6 +35,7 @@ type DocOutput = {
 const configDefaults: DocumentationConfig = {
   scope: ['public'],
   outputDir: 'docs',
+  defaultGroupName: 'Miscellaneous',
 };
 
 export function generateDocs(
@@ -46,14 +48,23 @@ export function generateDocs(
     (input) => input.map(reflectSourceBody),
     checkForReflectionErrors,
     E.map((types) => filterTypesOutOfScope(types, configWithDefaults.scope)),
-    E.map((types) => types.map((type) => typeToDocOutput(type, configWithDefaults))),
+    E.map((types) => types.map((type) => typeToDocOutput(types, type, configWithDefaults))),
     E.map((docs) => ({ format: 'markdown', docs })),
   );
 }
 
-function typeToDocOutput(type: Type, config: DocumentationConfig): DocOutput {
-  return pipe(typeToRenderableType(type, config.namespace), resolveTemplate, compile, (docContents) =>
-    buildDocOutput(type, docContents),
+function typeToDocOutput(repository: Type[], type: Type, config: DocumentationConfig): DocOutput {
+  return pipe(
+    typeToRenderableType(
+      type,
+      (referenceName) => {
+        return linkFromTypeNameGenerator(type, repository, referenceName, config);
+      },
+      config.namespace,
+    ),
+    resolveTemplate,
+    compile,
+    (docContents) => buildDocOutput(type, docContents),
   );
 }
 
@@ -122,4 +133,60 @@ function buildDocOutput(type: Type, docContents: string): DocOutput {
 
 function extractDocCommentGroup(document?: DocComment): string | undefined {
   return document?.annotations.find((a) => a.name === 'group')?.body;
+}
+
+function linkFromTypeNameGenerator(
+  typeBeingDocumented: Type,
+  repository: Type[],
+  referenceName: string,
+  config: DocumentationConfig,
+): StringOrLink {
+  const type = repository.find((currentType: Type) => currentType.name.toLowerCase() === referenceName.toLowerCase());
+  if (!type) {
+    // If the type is not found, we return the type name as a string.
+    return referenceName;
+  }
+
+  const [fullClassName, fileLink] = getFileLinkTuple(typeBeingDocumented, type, config);
+  return {
+    title: fullClassName,
+    url: fileLink,
+  };
+}
+
+function getFileLinkTuple(
+  typeBeingDocumented: Type,
+  referencedType: Type,
+  config: DocumentationConfig,
+): [string, string] {
+  function namespacePrefix() {
+    return config.namespace ? `${config.namespace}.` : '';
+  }
+
+  const directoryRoot = `${getDirectoryRoot(typeBeingDocumented, referencedType, config)}`;
+  // TODO: Instead of adding a "." to the name when there is a namespace, maybe we want to create a folder for everything
+  // within that namespace and put the files in there.
+  const fullClassName = `${namespacePrefix()}${referencedType.name}`;
+  return [fullClassName, `${directoryRoot}${fullClassName}.md`];
+}
+
+function getDirectoryRoot(typeBeingDocumented: Type, referencedType: Type, config: DocumentationConfig) {
+  if (getClassGroup(typeBeingDocumented, config) === getClassGroup(referencedType, config)) {
+    // If the types the same groups then we simply link directly to that file
+    return './';
+  } else {
+    // If the types have different groups, then we have to go up a directory
+    return `../${getSanitizedGroup(referencedType, config)}/`;
+  }
+}
+
+function getClassGroup(classModel: Type, config: DocumentationConfig): string {
+  const groupAnnotation = classModel.docComment?.annotations.find(
+    (annotation) => annotation.name.toLowerCase() === 'group',
+  );
+  return groupAnnotation?.body ?? config.defaultGroupName;
+}
+
+function getSanitizedGroup(classModel: Type, config: DocumentationConfig) {
+  return getClassGroup(classModel, config).replace(/ /g, '-').replace('.', '');
 }

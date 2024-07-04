@@ -1,12 +1,16 @@
 import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
 import { RenderableType, RenderableClass, RenderableEnum, RenderableInterface, Renderable } from '../templating/types';
 import { adaptDescribable, adaptDocumentable } from './documentables';
-import { linkFromTypeNameGenerator } from './references';
+import { GetRenderableContentByTypeName, linkFromTypeNameGenerator } from './references';
 import { FieldMirrorWithInheritance, PropertyMirrorWithInheritance } from '../model/inheritance';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
 
-function baseTypeAdapter(type: EnumMirror | InterfaceMirror | ClassMirror, baseHeadingLevel: number): RenderableType {
+function baseTypeAdapter(
+  type: EnumMirror | InterfaceMirror | ClassMirror,
+  linkGenerator: GetRenderableContentByTypeName,
+  baseHeadingLevel: number,
+): RenderableType {
   function getHeading(type: Type): string {
     const suffixMap = {
       class: 'Class',
@@ -20,7 +24,7 @@ function baseTypeAdapter(type: EnumMirror | InterfaceMirror | ClassMirror, baseH
   return {
     headingLevel: baseHeadingLevel,
     heading: getHeading(type),
-    doc: adaptDocumentable(type, baseHeadingLevel + 1),
+    doc: adaptDocumentable(type, linkGenerator, baseHeadingLevel + 1),
     name: type.name,
     meta: {
       accessModifier: type.access_modifier,
@@ -28,15 +32,19 @@ function baseTypeAdapter(type: EnumMirror | InterfaceMirror | ClassMirror, baseH
   };
 }
 
-export function typeToRenderableType(type: Type, namespace?: string): Renderable {
+export function typeToRenderableType(
+  type: Type,
+  linkGenerator: GetRenderableContentByTypeName,
+  namespace?: string,
+): Renderable {
   function getRenderable() {
     switch (type.type_name) {
       case 'enum':
-        return enumTypeToEnumSource(type as EnumMirror);
+        return enumTypeToEnumSource(type as EnumMirror, linkGenerator);
       case 'interface':
-        return interfaceTypeToInterfaceSource(type as InterfaceMirror);
+        return interfaceTypeToInterfaceSource(type as InterfaceMirror, linkGenerator);
       case 'class':
-        return classTypeToClassSource(type as ClassMirror);
+        return classTypeToClassSource(type as ClassMirror, linkGenerator);
     }
   }
 
@@ -46,10 +54,14 @@ export function typeToRenderableType(type: Type, namespace?: string): Renderable
   };
 }
 
-export function enumTypeToEnumSource(enumType: EnumMirror, baseHeadingLevel: number = 1): RenderableEnum {
+export function enumTypeToEnumSource(
+  enumType: EnumMirror,
+  linkGenerator: GetRenderableContentByTypeName,
+  baseHeadingLevel: number = 1,
+): RenderableEnum {
   return {
     __type: 'enum',
-    ...baseTypeAdapter(enumType, baseHeadingLevel),
+    ...baseTypeAdapter(enumType, linkGenerator, baseHeadingLevel),
     values: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Values',
@@ -63,24 +75,29 @@ export function enumTypeToEnumSource(enumType: EnumMirror, baseHeadingLevel: num
 
 export function interfaceTypeToInterfaceSource(
   interfaceType: InterfaceMirror,
+  linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number = 1,
 ): RenderableInterface {
   return {
     __type: 'interface',
-    ...baseTypeAdapter(interfaceType, baseHeadingLevel),
+    ...baseTypeAdapter(interfaceType, linkGenerator, baseHeadingLevel),
     extends: interfaceType.extended_interfaces.map(linkFromTypeNameGenerator),
     methods: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Methods',
-      value: interfaceType.methods.map((method) => adaptMethod(method, baseHeadingLevel + 2)),
+      value: interfaceType.methods.map((method) => adaptMethod(method, linkGenerator, baseHeadingLevel + 2)),
     },
   };
 }
 
-export function classTypeToClassSource(classType: ClassMirror, baseHeadingLevel: number = 1): RenderableClass {
+export function classTypeToClassSource(
+  classType: ClassMirror,
+  linkGenerator: GetRenderableContentByTypeName,
+  baseHeadingLevel: number = 1,
+): RenderableClass {
   return {
     __type: 'class',
-    ...baseTypeAdapter(classType, baseHeadingLevel),
+    ...baseTypeAdapter(classType, linkGenerator, baseHeadingLevel),
     classModifier: classType.classModifier,
     sharingModifier: classType.sharingModifier,
     implements: classType.implemented_interfaces.map(linkFromTypeNameGenerator),
@@ -88,44 +105,46 @@ export function classTypeToClassSource(classType: ClassMirror, baseHeadingLevel:
     methods: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Methods',
-      value: classType.methods.map((method) => adaptMethod(method, baseHeadingLevel + 2)),
+      value: classType.methods.map((method) => adaptMethod(method, linkGenerator, baseHeadingLevel + 2)),
     },
     constructors: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Constructors',
       value: classType.constructors.map((constructor) =>
-        adaptConstructor(classType.name, constructor, baseHeadingLevel + 2),
+        adaptConstructor(classType.name, constructor, linkGenerator, baseHeadingLevel + 2),
       ),
     },
     fields: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Fields',
       value: classType.fields.map((field) =>
-        adaptFieldOrProperty(field as FieldMirrorWithInheritance, baseHeadingLevel + 2),
+        adaptFieldOrProperty(field as FieldMirrorWithInheritance, linkGenerator, baseHeadingLevel + 2),
       ),
     },
     properties: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Properties',
       value: classType.properties.map((property) =>
-        adaptFieldOrProperty(property as PropertyMirrorWithInheritance, baseHeadingLevel + 2),
+        adaptFieldOrProperty(property as PropertyMirrorWithInheritance, linkGenerator, baseHeadingLevel + 2),
       ),
     },
     innerClasses: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Classes',
-      value: classType.classes.map((innerClass) => classTypeToClassSource(innerClass, baseHeadingLevel + 2)),
+      value: classType.classes.map((innerClass) =>
+        classTypeToClassSource(innerClass, linkGenerator, baseHeadingLevel + 2),
+      ),
     },
     innerEnums: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Enums',
-      value: classType.enums.map((innerEnum) => enumTypeToEnumSource(innerEnum, baseHeadingLevel + 2)),
+      value: classType.enums.map((innerEnum) => enumTypeToEnumSource(innerEnum, linkGenerator, baseHeadingLevel + 2)),
     },
     innerInterfaces: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Interfaces',
       value: classType.interfaces.map((innerInterface) =>
-        interfaceTypeToInterfaceSource(innerInterface, baseHeadingLevel + 2),
+        interfaceTypeToInterfaceSource(innerInterface, linkGenerator, baseHeadingLevel + 2),
       ),
     },
   };

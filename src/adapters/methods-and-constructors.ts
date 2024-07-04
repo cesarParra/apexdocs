@@ -2,10 +2,14 @@ import { ConstructorMirror, MethodMirror, ParameterMirror, ThrowsAnnotation } fr
 import { RenderableConstructor, RenderableMethod } from '../templating/types';
 import { MethodMirrorWithInheritance } from '../model/inheritance';
 import { adaptDescribable, adaptDocumentable } from './documentables';
-import { linkFromTypeNameGenerator } from './references';
+import { GetRenderableContentByTypeName, linkFromTypeNameGenerator } from './references';
 import { Documentable } from './types';
 
-export function adaptMethod(method: MethodMirror, baseHeadingLevel: number): RenderableMethod {
+export function adaptMethod(
+  method: MethodMirror,
+  linkGenerator: GetRenderableContentByTypeName,
+  baseHeadingLevel: number,
+): RenderableMethod {
   function buildTitle(method: MethodMirrorWithInheritance): string {
     const { name, parameters } = method;
     const parametersString = parameters.map((param) => param.name).join(', ');
@@ -23,7 +27,7 @@ export function adaptMethod(method: MethodMirror, baseHeadingLevel: number): Ren
 
   return {
     headingLevel: baseHeadingLevel,
-    doc: adaptDocumentable(method, baseHeadingLevel + 1),
+    doc: adaptDocumentable(method, linkGenerator, baseHeadingLevel + 1),
     heading: buildTitle(method as MethodMirrorWithInheritance),
     signature: {
       headingLevel: baseHeadingLevel + 1,
@@ -55,6 +59,7 @@ export function adaptMethod(method: MethodMirror, baseHeadingLevel: number): Ren
 export function adaptConstructor(
   typeName: string,
   constructor: ConstructorMirror,
+  linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number,
 ): RenderableConstructor {
   function buildTitle(name: string, constructor: ConstructorMirror): string {
@@ -72,7 +77,7 @@ export function adaptConstructor(
   }
 
   return {
-    doc: adaptDocumentable(constructor, baseHeadingLevel + 1),
+    doc: adaptDocumentable(constructor, linkGenerator, baseHeadingLevel + 1),
     headingLevel: baseHeadingLevel,
     heading: buildTitle(typeName, constructor),
     signature: {

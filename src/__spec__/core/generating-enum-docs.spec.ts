@@ -207,11 +207,30 @@ describe('Generates enum documentation', () => {
       assertEither(result, (data) => expect(data).firstDocContains('Date'));
       assertEither(result, (data) => expect(data).firstDocContains('2021-01-01'));
     });
+
+    it('displays sees with accurately resolved links', () => {
+      const input1 = `
+      /**
+        * @see EnumRef
+        */
+      public enum MyEnum {}
+      `;
+
+      const input2 = 'public enum EnumRef {}';
+
+      const result = generateDocs([input1, input2]);
+      expect(result).documentationBundleHasLength(2);
+      assertEither(result, (data) => expect(data).firstDocContains('See'));
+      assertEither(result, (data) => expect(data).firstDocContains('[EnumRef](./EnumRef.md)'));
+    });
   });
 });
 
 // TODO: Sees with links
 // TODO: Sees without links
+// TODO: description without links
+// TODO: description with links
+// TODO: description with emails
 // TODO: Namespace when one is present
 // TODO: Namespace when one is not present
 // TODO: Mermaid
@@ -219,7 +238,8 @@ describe('Generates enum documentation', () => {
 // TODO: Heading for values
 // TODO: Table for values
 // TODO: Taking into account links
+// TODO: Ability to have this: https://github.com/cesarParra/apexdocs/blob/adff32a3a085305ae119b3ad11ef6157ecdcd32f/src/model/markdown-generation-util/type-declaration-util.ts#L75
 
 // TODO: scoping works
 // TODO: @ignore works
-// TODO: description with links
+// TODO: Linking logic should be tested as its own thing

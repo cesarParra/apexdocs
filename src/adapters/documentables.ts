@@ -1,6 +1,6 @@
 import { CustomTag, RenderableDocumentation, RenderableContent } from '../templating/types';
 import { Describable, Documentable } from './types';
-import { linkFromTypeNameGenerator, replaceInlineReferences } from './references';
+import { GetRenderableContentByTypeName, replaceInlineReferences } from './references';
 import { isEmptyLine } from './type-utils';
 
 export function adaptDescribable(describable: Describable): { description?: RenderableContent[] } {
@@ -28,7 +28,11 @@ export function adaptDescribable(describable: Describable): { description?: Rend
   };
 }
 
-export function adaptDocumentable(documentable: Documentable, subHeadingLevel: number): RenderableDocumentation {
+export function adaptDocumentable(
+  documentable: Documentable,
+  linkGenerator: GetRenderableContentByTypeName,
+  subHeadingLevel: number,
+): RenderableDocumentation {
   function extractCustomTags(type: Documentable): CustomTag[] {
     const baseTags = ['description', 'group', 'author', 'date', 'see', 'example', 'mermaid', 'throws', 'exception'];
 
@@ -79,6 +83,6 @@ export function adaptDocumentable(documentable: Documentable, subHeadingLevel: n
     group: extractAnnotationBody(documentable, 'group'),
     author: extractAnnotationBody(documentable, 'author'),
     date: extractAnnotationBody(documentable, 'date'),
-    sees: extractSeeAnnotations(documentable).map(linkFromTypeNameGenerator),
+    sees: extractSeeAnnotations(documentable).map(linkGenerator),
   };
 }

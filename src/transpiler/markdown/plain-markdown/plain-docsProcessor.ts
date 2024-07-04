@@ -6,6 +6,7 @@ import { Settings } from '../../../settings';
 import ClassFileGeneratorHelper from '../class-file-generatorHelper';
 import { MarkdownHomeFile } from '../../../model/markdown-home-file';
 import { documentType } from '../../../core/generate-docs';
+import { linkFromTypeNameGenerator } from '../../../adapters/references';
 
 export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
   onBeforeProcess = (types: Type[]) => {
@@ -32,7 +33,7 @@ class GenericFile extends OutputFile {
       ClassFileGeneratorHelper.getSanitizedGroup(type),
     );
 
-    this.addText(documentType(type, Settings.getInstance().getNamespace()));
+    this.addText(documentType(type, linkFromTypeNameGenerator, Settings.getInstance().getNamespace()));
   }
 
   fileExtension(): string {
