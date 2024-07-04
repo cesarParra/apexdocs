@@ -1,5 +1,6 @@
 import { DocumentationBundle, generateDocs } from '../../core/generate-docs';
 import * as E from 'fp-ts/Either';
+import { pipe } from 'fp-ts/function';
 
 expect.extend({
   documentationBundleHasLength(received: E.Either<string[], DocumentationBundle>, length: number) {
@@ -173,17 +174,17 @@ describe('Generates enum documentation', () => {
 
       const result = generateDocs([input1, input2]);
       expect(result).documentationBundleHasLength(2);
-      assertEither(result, (data) => expect(data.referenceGuide).toContain('## AGroup'));
-      const aGroupPosition = E.match<string[], DocumentationBundle, number>(
-        () => -1,
-        (data) => data.referenceGuide.indexOf('## AGroup'),
-      )(result);
-      assertEither(result, (data) => expect(data.referenceGuide).toContain('## ZGroup'));
-      const zGroupPosition = E.match<string[], DocumentationBundle, number>(
-        () => -1,
-        (data) => data.referenceGuide.indexOf('## ZGroup'),
-      )(result);
-      expect(aGroupPosition).toBeLessThan(zGroupPosition);
+      pipe(
+        result,
+        E.map((data) => ({
+          aGroupIndex: data.referenceGuide.indexOf('## AGroup'),
+          zGroupIndex: data.referenceGuide.indexOf('## ZGroup'),
+        })),
+        E.match(
+          () => fail('Expected data'),
+          (data) => expect(data.aGroupIndex).toBeLessThan(data.zGroupIndex),
+        ),
+      );
     });
 
     it('displays references within groups in alphabetical order', () => {
