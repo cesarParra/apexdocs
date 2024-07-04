@@ -53,7 +53,7 @@ export function generateDocs(
     E.map((types) => filterTypesOutOfScope(types, configWithDefaults.scope)),
     E.map((types) => typesToRenderableBundle(types, configWithDefaults)),
     E.map(({ references, renderables }) => ({
-      referenceGuide: referencesToReferenceGuide(references, configWithDefaults.referenceGuideTemplate),
+      referenceGuide: pipe(referencesToReferenceGuide(references, configWithDefaults.referenceGuideTemplate)),
       docs: renderables.map(renderableToOutputDoc),
     })),
     E.map(({ referenceGuide, docs }) => ({ format: 'markdown', referenceGuide: referenceGuide, docs })),
@@ -117,12 +117,23 @@ function referencesToReferenceGuide(
   references: { [key: string]: ReferenceGuideReference[] },
   template: string,
 ): string {
-  return pipe(references, (references) =>
+  return pipe(references, alphabetizeReferences, (references) =>
     compile({
       template: template,
       source: references,
     }),
   );
+}
+
+function alphabetizeReferences(references: { [key: string]: ReferenceGuideReference[] }): {
+  [key: string]: ReferenceGuideReference[];
+} {
+  return Object.keys(references)
+    .sort((a, b) => a.localeCompare(b))
+    .reduce<{ [key: string]: ReferenceGuideReference[] }>((acc, key) => {
+      acc[key] = references[key].sort((a, b) => a.title.toString().localeCompare(b.title.toString()));
+      return acc;
+    }, {});
 }
 
 function filterTypesOutOfScope(types: Type[], scope: string[]): Type[] {
