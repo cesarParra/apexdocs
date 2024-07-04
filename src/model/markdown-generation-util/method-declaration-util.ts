@@ -153,7 +153,7 @@ function addExample(markdownFile: MarkdownFile, docCommentAware: DocCommentAware
   markdownFile.addTitle('Example', startingHeadingLevel + 3);
   markdownFile.startCodeBlock();
   docCommentAware.docComment?.exampleAnnotation.bodyLines.forEach((line) => {
-    markdownFile.addText(line, false);
+    markdownFile.addText(line);
   });
   markdownFile.endCodeBlock();
   markdownFile.addBlankLine();

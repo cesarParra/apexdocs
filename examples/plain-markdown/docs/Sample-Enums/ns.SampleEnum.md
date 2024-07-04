@@ -6,7 +6,9 @@ This is a sample enum. This references [ns.ReferencedEnum](../Miscellaneous/ns.R
 
 This description has several lines
 
-**Some Custom** 
+**Some Custom** Test. I can also have a [ns.ReferencedEnum](../Miscellaneous/ns.ReferencedEnum.md) here. 
+
+And it can be multiline.
 
 **Group** Sample Enums
 
@@ -19,16 +21,16 @@ This description has several lines
 ## Namespace
 ns
 
+## Diagram
 ```mermaid
 graph TD
- A[SampleEnum] --&gt;|references| B[ReferencedEnum]
- B --&gt;|referenced by| A
+ A[SampleEnum] -->|references| B[ReferencedEnum]
+ B -->|referenced by| A
 ```
 
-## Enum Values
-### VALUE1
-This is value 1
-### VALUE2
-This is value 2
-### VALUE3
-This is value 3
+## Values
+| Value | Description |
+|-------|-------------|
+| VALUE1 | This is value 1 |
+| VALUE2 | This is value 2 |
+| VALUE3 | This is value 3 |

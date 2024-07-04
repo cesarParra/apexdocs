@@ -1,39 +1,37 @@
 export const methodsPartialTemplate = `
-## Methods
-{{#each methods}}
-### \`{{title}}\`
+{{ heading headingLevel heading }}
+{{#each value}}
+{{{ heading headingLevel (inlineCode heading) }}}
 
 {{#if inherited}}
 *Inherited*
 {{/if}}
 
-{{#> documentablePartialTemplate isInner=true}}
+{{#> documentablePartialTemplate}}
 
-### Signature
-\`\`\`apex
-{{signature}}
-\`\`\` 
+{{ heading signature.headingLevel signature.heading }}
+{{ code "apex" signature.value }}
 
-{{#if parameters}}
-### Parameters
+{{#if parameters.value}}
+{{ heading parameters.headingLevel parameters.heading }}
 | Name | Type | Description |
 |------|------|-------------|
-{{#each parameters}}
-| {{name}} | {{type}} | {{description}} |
+{{#each parameters.value}}
+| {{name}} | {{link type}} | {{withLinks description}} |
 {{/each}}
 {{/if}}
 
-{{#if returnType}}
-### Returns
-**{{returnType.type}}**
+{{ heading returnType.headingLevel returnType.heading }}
+**{{link returnType.value.type}}**
 
-{{returnType.description}}
+{{#if returnType.value.description}}
+{{returnType.value.description}}
 {{/if}}
 
-{{#if throws}}
-### Throws
-{{#each throws}}
-{{this.type}}: {{this.description}}
+{{#if throws.value}}
+{{ heading throws.headingLevel throws.heading }}
+{{#each throws.value}}
+{{link this.type}}: {{this.description}}
 
 {{/each}}
 {{/if}}

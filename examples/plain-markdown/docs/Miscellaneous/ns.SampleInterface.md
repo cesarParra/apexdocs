@@ -15,11 +15,12 @@ This is a sample interface
 ## Namespace
 ns
 
+## Diagram
 ```mermaid
 graph TD
-   A[SampleInterface] --&gt;|extends| B[ParentInterface]
-   B --&gt;|extends| C[GrandParentInterface]
-   C --&gt;|extends| D[GreatGrandParentInterface]
+   A[SampleInterface] -->|extends| B[ParentInterface]
+   B -->|extends| C[GrandParentInterface]
+   C -->|extends| D[GreatGrandParentInterface]
 ```
 
 ## Example
@@ -38,33 +39,34 @@ sampleInterface.sampleMethod();
 
 This is a sample method
 
-**Custom Tag** 
+**Custom Tag** This is a custom tag
 
-**Another Custom Tag** 
+**Another Custom Tag** This is another custom tag
 
-### Signature
+#### Signature
 ```apex
 public String sampleMethod()
-``` 
+```
 
-### Returns
+#### Return Type
 **String**
 
 Some return value
 
-### Throws
+#### Throws
 [ns.SampleException](./ns.SampleException.md): This is a sample exception
 
 AnotherSampleException: This is another sample exception
 
+#### Diagram
 ```mermaid
 graph TD
-  A[SampleInterface] --&gt;|extends| B[ParentInterface]
-  B --&gt;|extends| C[GrandParentInterface]
-  C --&gt;|extends| D[GreatGrandParentInterface]
+  A[SampleInterface] -->|extends| B[ParentInterface]
+  B -->|extends| C[GrandParentInterface]
+  C -->|extends| D[GreatGrandParentInterface]
 ```
 
-### Example
+#### Example
 ```apex
 SampleInterface sampleInterface = new SampleInterface();
 sampleInterface.sampleMethod();
@@ -81,19 +83,19 @@ This is a sample method with parameters
 
 Sometimes it won&#x27;t be possible to find a NonExistent link.
 
-### Signature
+#### Signature
 ```apex
 public SampleEnum sampleMethodWithParams(String param1, Integer param2, SampleEnum theEnum)
-``` 
+```
 
-### Parameters
+#### Parameters
 | Name | Type | Description |
 |------|------|-------------|
 | param1 | String | This is the first parameter |
 | param2 | Integer | This is the second parameter |
 | theEnum | [ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md) | This is an enum parameter |
 
-### Returns
+#### Return Type
 **[ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md)**
 
 Some return value
@@ -104,10 +106,10 @@ Some return value
 
 *Inherited*
 
-### Signature
+#### Signature
 ```apex
 public void sampleParentMethod()
-``` 
+```
 
-### Returns
+#### Return Type
 **void**

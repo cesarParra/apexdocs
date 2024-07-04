@@ -1,21 +1,24 @@
 export const documentablePartialTemplate = `
-{{#each annotations}}
+{{#each doc.annotations}}
 \`{{this}}\`
 {{/each}}
 
-{{description}}
+{{withLinks doc.description}}
 
-{{#each customTags}}
-**{{splitAndCapitalize name}}** {{description}}
+{{#each doc.customTags}}
+**{{splitAndCapitalize name}}** {{withLinks description}}
 
 {{/each}}
 
 {{> @partial-block}}
 
-{{{mermaid}}}
+{{#if doc.mermaid.value}}
+{{ heading doc.mermaid.headingLevel doc.mermaid.heading }}
+{{code "mermaid" doc.mermaid.value}}
+{{/if}}
 
-{{#if example}}
-##{{#if isInner}}#{{/if}} Example
-{{{example}}}
+{{#if doc.example.value}}
+{{ heading doc.example.headingLevel doc.example.heading }}
+{{code "apex" doc.example.value}}
 {{/if}}
 `.trim();

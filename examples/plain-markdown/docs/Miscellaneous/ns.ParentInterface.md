@@ -6,10 +6,10 @@ ns
 ## Methods
 ### `sampleParentMethod()`
 
-### Signature
+#### Signature
 ```apex
 public void sampleParentMethod()
-``` 
+```
 
-### Returns
+#### Return Type
 **void**

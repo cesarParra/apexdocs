@@ -34,7 +34,6 @@
       <option name="SPACE_BEFORE_FUNCTION_LEFT_PARENTH" value="false" />
       <option name="USE_DOUBLE_QUOTES" value="false" />
       <option name="FORCE_QUOTE_STYlE" value="true" />
-      <option name="ENFORCE_TRAILING_COMMA" value="WhenMultiline" />
       <option name="SPACES_WITHIN_OBJECT_LITERAL_BRACES" value="true" />
       <option name="SPACES_WITHIN_IMPORTS" value="true" />
     </TypeScriptCodeStyleSettings>
@@ -66,6 +65,7 @@
       </indentOptions>
     </codeStyleSettings>
     <codeStyleSettings language="TypeScript">
+      <option name="RIGHT_MARGIN" value="120" />
       <option name="KEEP_SIMPLE_BLOCKS_IN_ONE_LINE" value="true" />
       <option name="KEEP_SIMPLE_METHODS_IN_ONE_LINE" value="true" />
       <option name="SOFT_MARGINS" value="120" />

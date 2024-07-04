@@ -28,6 +28,11 @@ sample.doSomething();
 
 This is a sample field.
 
+#### Signature
+```apex
+private name
+```
+
 #### Type
 String
 
@@ -37,28 +42,45 @@ String
 
 *Inherited*
 
+#### Signature
+```apex
+public sampleEnumFromBase
+```
+
 #### Type
 [ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md)
+
+## Properties
+### `someProperty`
+
+#### Signature
+```apex
+public someProperty
+```
+
+#### Type
+String
 
 ## Constructors
 ### `SampleClass()`
 
 This is a sample constructor.
 
-### Signature
+#### Signature
 ```apex
 public SampleClass()
-``` 
+```
 
 ---
+
 ### `SampleClass(name)`
 
-### Signature
+#### Signature
 ```apex
 public SampleClass(String name)
-``` 
+```
 
-### Parameters
+#### Parameters
 | Name | Type | Description |
 |------|------|-------------|
 | name | String |  |
@@ -70,18 +92,69 @@ public SampleClass(String name)
 
 This is a sample method.
 
-### Signature
+#### Signature
 ```apex
 public virtual String sayHello()
-``` 
+```
 
-### Returns
+#### Return Type
 **String**
 
 A string value.
 
-### Example
+#### Example
 ```apex
 SampleClass sample = new SampleClass();
 sample.doSomething();
 ```
+
+## Classes
+### SomeInnerClass Class
+
+#### Fields
+##### `someInnerField`
+
+###### Signature
+```apex
+public someInnerField
+```
+
+###### Type
+String
+
+#### Methods
+##### `doSomething()`
+
+###### Signature
+```apex
+public void doSomething()
+```
+
+###### Return Type
+**void**
+
+## Enums
+### SomeEnum Enum
+
+This enum is used for foo and bar.
+
+#### Values
+| Value | Description |
+|-------|-------------|
+| TEST_1 | This is a test. |
+| TEST_2 |  |
+| TEST_3 |  |
+
+## Interfaces
+### SomeInterface Interface
+
+#### Methods
+##### `doSomething()`
+
+###### Signature
+```apex
+public void doSomething()
+```
+
+###### Return Type
+**void**

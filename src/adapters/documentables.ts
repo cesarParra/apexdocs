@@ -1,9 +1,14 @@
-import { CustomTag, DocumentableSource, RenderableContent } from '../templating/types';
+import { CustomTag, RenderableDocumentation, RenderableContent } from '../templating/types';
 import { Describable, Documentable } from './types';
-import { replaceInlineReferences } from './references';
+import { GetRenderableContentByTypeName, replaceInlineReferences } from './references';
 import { isEmptyLine } from './type-utils';
 
-export function adaptDescribable(describable: Describable): { description?: RenderableContent[] } {
+export function adaptDescribable(
+  describable: Describable,
+  linkGenerator: GetRenderableContentByTypeName,
+): {
+  description?: RenderableContent[];
+} {
   function describableToRenderableContent(describable: Describable): RenderableContent[] | undefined {
     if (!describable) {
       return;
@@ -12,7 +17,7 @@ export function adaptDescribable(describable: Describable): { description?: Rend
     return (
       describable
         .map<RenderableContent[]>((line) => [
-          ...replaceInlineReferences(line),
+          ...replaceInlineReferences(line, linkGenerator),
           {
             type: 'empty-line',
           },
@@ -28,7 +33,11 @@ export function adaptDescribable(describable: Describable): { description?: Rend
   };
 }
 
-export function adaptDocumentable(documentable: Documentable): DocumentableSource {
+export function adaptDocumentable(
+  documentable: Documentable,
+  linkGenerator: GetRenderableContentByTypeName,
+  subHeadingLevel: number,
+): RenderableDocumentation {
   function extractCustomTags(type: Documentable): CustomTag[] {
     const baseTags = ['description', 'group', 'author', 'date', 'see', 'example', 'mermaid', 'throws', 'exception'];
 
@@ -36,7 +45,7 @@ export function adaptDocumentable(documentable: Documentable): DocumentableSourc
       type.docComment?.annotations
         .filter((currentAnnotation) => !baseTags.includes(currentAnnotation.name.toLowerCase()))
         .map<CustomTag>((currentAnnotation) => ({
-          ...adaptDescribable(currentAnnotation.bodyLines),
+          ...adaptDescribable(currentAnnotation.bodyLines, linkGenerator),
           name: currentAnnotation.name,
         })) ?? []
     );
@@ -48,11 +57,37 @@ export function adaptDocumentable(documentable: Documentable): DocumentableSourc
     )?.bodyLines;
   }
 
+  function extractAnnotationBody(type: Documentable, annotationName: string): string | undefined {
+    return type.docComment?.annotations.find(
+      (currentAnnotation) => currentAnnotation.name.toLowerCase() === annotationName,
+    )?.body;
+  }
+
+  function extractSeeAnnotations(type: Documentable): string[] {
+    return (
+      type.docComment?.annotations
+        .filter((currentAnnotation) => currentAnnotation.name.toLowerCase() === 'see')
+        .map((currentAnnotation) => currentAnnotation.body) ?? []
+    );
+  }
+
   return {
-    ...adaptDescribable(documentable.docComment?.descriptionLines),
+    ...adaptDescribable(documentable.docComment?.descriptionLines, linkGenerator),
     annotations: documentable.annotations.map((annotation) => annotation.type.toUpperCase()),
     customTags: extractCustomTags(documentable),
-    mermaid: extractAnnotationBodyLines(documentable, 'mermaid'),
-    example: documentable.docComment?.exampleAnnotation?.bodyLines,
+    mermaid: {
+      headingLevel: subHeadingLevel,
+      heading: 'Diagram',
+      value: extractAnnotationBodyLines(documentable, 'mermaid'),
+    },
+    example: {
+      headingLevel: subHeadingLevel,
+      heading: 'Example',
+      value: documentable.docComment?.exampleAnnotation?.bodyLines,
+    },
+    group: extractAnnotationBody(documentable, 'group'),
+    author: extractAnnotationBody(documentable, 'author'),
+    date: extractAnnotationBody(documentable, 'date'),
+    sees: extractSeeAnnotations(documentable).map(linkGenerator),
   };
 }

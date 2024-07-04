@@ -3,4 +3,6 @@
 ## Namespace
 ns
 
-## Enum Values
+## Values
+| Value | Description |
+|-------|-------------|

@@ -30,24 +30,30 @@ type Annotation = string;
 
 type CodeBlock = string[];
 
-type DocumentableSource = {
+type RenderableDocumentation = {
   annotations?: Annotation[];
   description?: RenderableContent[];
   customTags?: CustomTag[];
-  mermaid?: CodeBlock;
-  example?: CodeBlock;
-};
-
-type BaseTypeSource = DocumentableSource & {
-  name: string;
-  accessModifier: string;
+  mermaid: RenderableSection<CodeBlock | undefined>;
+  example: RenderableSection<CodeBlock | undefined>;
   group?: string;
   author?: string;
   date?: string;
   sees?: StringOrLink[];
 };
 
-type MethodParameterSource = {
+type RenderableType = {
+  namespace?: string;
+  headingLevel: number;
+  heading: string;
+  name: string;
+  meta: {
+    accessModifier: string;
+  };
+  doc: RenderableDocumentation;
+};
+
+type RenderableMethodParameter = {
   name: string;
   type: StringOrLink;
   description?: RenderableContent[];
@@ -58,47 +64,66 @@ type TypeSource = {
   description?: RenderableContent[];
 };
 
-type ConstructorSource = DocumentableSource & {
-  title: string;
-  signature: string;
-  parameters?: MethodParameterSource[];
-  throws?: TypeSource[];
+type RenderableConstructor = {
+  headingLevel: number;
+  heading: string;
+  signature: RenderableSection<CodeBlock>;
+  parameters?: RenderableSection<RenderableMethodParameter[] | undefined>;
+  throws?: RenderableSection<TypeSource[] | undefined>;
+  doc: RenderableDocumentation;
 };
 
-type MethodSource = DocumentableSource & {
-  title: string;
-  signature: string;
-  parameters?: MethodParameterSource[];
-  returnType?: TypeSource;
-  throws?: TypeSource[];
+type RenderableMethod = {
+  doc: RenderableDocumentation;
+  headingLevel: number;
+  heading: string;
+  signature: RenderableSection<CodeBlock>;
+  parameters: RenderableSection<RenderableMethodParameter[] | undefined>;
+  returnType: RenderableSection<TypeSource>;
+  throws: RenderableSection<TypeSource[] | undefined>;
   inherited?: boolean;
 };
 
-type FieldSource = DocumentableSource & {
-  name: string;
-  type: StringOrLink;
+type RenderableField = {
+  headingLevel: number;
+  heading: string;
+  type: RenderableSection<StringOrLink>;
   accessModifier: string;
   inherited?: boolean;
+  signature: RenderableSection<CodeBlock>;
+  doc: RenderableDocumentation;
 };
 
-export type ClassSource = BaseTypeSource & {
+type RenderableSection<T> = {
+  headingLevel: number;
+  heading: string;
+  value: T;
+};
+
+export type RenderableClass = RenderableType & {
   __type: 'class';
   extends?: StringOrLink;
   implements?: StringOrLink[];
-  constructors?: ConstructorSource[];
-  methods?: MethodSource[];
   classModifier?: string;
   sharingModifier?: string;
-  fields?: FieldSource[];
+  constructors: RenderableSection<RenderableConstructor[]>;
+  methods: RenderableSection<RenderableMethod[]>;
+  fields: RenderableSection<RenderableField[]>;
+  properties: RenderableSection<RenderableField[]>;
+  innerClasses: RenderableSection<RenderableClass[]>;
+  innerEnums: RenderableSection<RenderableEnum[]>;
+  innerInterfaces: RenderableSection<RenderableInterface[]>;
 };
 
-export type InterfaceSource = BaseTypeSource & {
+export type RenderableInterface = RenderableType & {
   __type: 'interface';
   extends?: StringOrLink[];
-  methods?: MethodSource[];
+  methods: RenderableSection<RenderableMethod[]>;
 };
 
-export type EnumSource = BaseTypeSource & {
+export type RenderableEnum = RenderableType & {
   __type: 'enum';
-  values: EnumValue[];
+  values: RenderableSection<EnumValue[]>;
 };
+
+export type Renderable = RenderableClass | RenderableInterface | RenderableEnum;

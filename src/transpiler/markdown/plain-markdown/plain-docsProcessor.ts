@@ -1,22 +1,18 @@
 import { MarkdownTranspilerBase } from '../markdown-transpiler-base';
 import { LinkingStrategy } from '../../processor-type-transpiler';
-import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
+import { Type } from '@cparra/apex-reflection';
 import { OutputFile } from '../../../model/outputFile';
 import { Settings } from '../../../settings';
 import ClassFileGeneratorHelper from '../class-file-generatorHelper';
-import { enumMarkdownTemplate } from './enum-template';
-import { compile } from '../../../templating/compile';
-import { ClassSource, EnumSource, InterfaceSource, Link, RenderableContent } from '../../../templating/types';
-import { interfaceMarkdownTemplate } from './interface-template';
-import { classMarkdownTemplate } from './class-template';
-import { isEmptyLine } from '../../../adapters/type-utils';
-import {
-  classTypeToClassSource,
-  enumTypeToEnumSource,
-  interfaceTypeToInterfaceSource,
-} from '../../../adapters/apex-types';
+import { MarkdownHomeFile } from '../../../model/markdown-home-file';
+import { documentType } from '../../../core/generate-docs';
+import { linkFromTypeNameGenerator } from '../../../adapters/references';
 
 export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
+  onBeforeProcess = (types: Type[]) => {
+    this._fileContainer.pushFile(new MarkdownHomeFile(this.homeFileName(), types));
+  };
+
   homeFileName(): string {
     return 'index';
   }
@@ -26,73 +22,21 @@ export class PlainMarkdownDocsProcessor extends MarkdownTranspilerBase {
   }
 
   onProcess(type: Type): void {
-    if (type.type_name === 'enum') {
-      this._fileContainer.pushFile(
-        new GenericFile<EnumMirror>(type as EnumMirror, enumTypeToEnumSource, enumMarkdownTemplate),
-      );
-    } else if (type.type_name === 'interface') {
-      this._fileContainer.pushFile(
-        new GenericFile<InterfaceMirror>(
-          type as InterfaceMirror,
-          interfaceTypeToInterfaceSource,
-          interfaceMarkdownTemplate,
-        ),
-      );
-    } else {
-      this._fileContainer.pushFile(
-        new GenericFile<ClassMirror>(type as ClassMirror, classTypeToClassSource, classMarkdownTemplate),
-      );
-    }
+    this._fileContainer.pushFile(new GenericFile(type));
   }
 }
 
-class GenericFile<T extends Type> extends OutputFile {
-  constructor(private type: T, toSource: (type: T) => EnumSource | InterfaceSource | ClassSource, template: string) {
+class GenericFile extends OutputFile {
+  constructor(private type: Type) {
     super(
       `${Settings.getInstance().getNamespacePrefix()}${type.name}`,
       ClassFileGeneratorHelper.getSanitizedGroup(type),
     );
 
-    const source = toSource(type);
-    this.addText(
-      compile(template, source, {
-        renderableContentConverter: prepareDescription,
-        codeBlockConverter: convertCodeBlock,
-      }),
-    );
+    this.addText(documentType(type, linkFromTypeNameGenerator, Settings.getInstance().getNamespace()));
   }
 
   fileExtension(): string {
     return '.md';
   }
-}
-
-function prepareDescription(description?: RenderableContent[]) {
-  if (!description) {
-    return '';
-  }
-
-  function reduceDescription(acc: string, curr: RenderableContent) {
-    if (typeof curr === 'string') {
-      return acc + curr.trim() + ' ';
-    } else if (isEmptyLine(curr)) {
-      return acc + '\n\n';
-    } else {
-      return acc + linkToMarkdown(curr) + ' ';
-    }
-  }
-
-  function linkToMarkdown(link: Link) {
-    return `[${link.title}](${link.url})`;
-  }
-
-  return description.reduce(reduceDescription, '').trim();
-}
-
-function convertCodeBlock(language: string, lines: string[]): string {
-  return `
-\`\`\`${language}
-${lines.join('\n')}
-\`\`\`
-  `.trim();
 }

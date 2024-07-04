@@ -12,6 +12,8 @@ public with sharing virtual class SampleClass extends BaseClass implements Sampl
      */
     private final String name;
 
+    public String someProperty { get; private set; }
+
     /**
      * @description This is a sample constructor.
      */
@@ -31,5 +33,27 @@ public with sharing virtual class SampleClass extends BaseClass implements Sampl
     @Deprecated
     public virtual String sayHello() {
         return 'Hello';
+    }
+
+    public class SomeInnerClass {
+        public String someInnerField;
+
+        public void doSomething() {
+            System.debug('Doing something');
+        }
+    }
+
+    /**
+     * @description This enum is used for foo and bar.
+     */
+    public enum SomeEnum {
+        /** @description This is a test. */
+        TEST_1,
+        TEST_2,
+        TEST_3
+    }
+
+    public interface SomeInterface {
+        void doSomething();
     }
 }

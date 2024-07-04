@@ -1,32 +1,57 @@
 export const classMarkdownTemplate = `
-# {{name}} Class
+{{ heading headingLevel heading }}
 {{#if classModifier}}
 \`{{classModifier}}\`
 {{/if}}
 
-{{> typeLevelApexDocPartialTemplate}}
+{{> typeDocumentation}}
 
 {{#if extends}}
 **Extends**
-{{extends}}
+{{link extends}}
 {{/if}}
 
 {{#if implements}}
 **Implements**
 {{#each implements}}
-{{this}}{{#unless @last}}, {{/unless}}
+{{link this}}{{#unless @last}}, {{/unless}}
 {{/each}}
 {{/if}}
 
-{{#if fields}}
-{{> fieldsPartialTemplate}}
+{{#if fields.value}}
+{{> fieldsPartialTemplate fields}}
 {{/if}}
 
-{{#if constructors}}
-{{> constructorsPartialTemplate}}
+{{#if properties.value}}
+{{> fieldsPartialTemplate properties}}
 {{/if}}
 
-{{#if methods}}
-{{> methodsPartialTemplate}}
+{{#if constructors.value}}
+{{> constructorsPartialTemplate constructors}}
+{{/if}}
+
+{{#if methods.value}}
+{{> methodsPartialTemplate methods}}
+{{/if}}
+
+{{#if innerClasses.value}}
+{{ heading innerClasses.headingLevel innerClasses.heading }}
+{{#each innerClasses.value}}
+{{> classTemplate this}}
+{{/each}}
+{{/if}}
+
+{{#if innerEnums.value}}
+{{ heading innerEnums.headingLevel innerEnums.heading }}
+{{#each innerEnums.value}}
+{{> enumTemplate this}}
+{{/each}}
+{{/if}}
+
+{{#if innerInterfaces.value}}
+{{ heading innerInterfaces.headingLevel innerInterfaces.heading }}
+{{#each innerInterfaces.value}}
+{{> interfaceTemplate this}}
+{{/each}}
 {{/if}}
 `.trim();

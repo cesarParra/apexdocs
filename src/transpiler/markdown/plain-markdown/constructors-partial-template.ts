@@ -1,35 +1,32 @@
 export const constructorsPartialTemplate = `
-## Constructors
-{{#each constructors}}
-### \`{{title}}\`
+{{ heading headingLevel heading }}
+{{#each value}}
+{{{ heading headingLevel (inlineCode heading) }}}
 
 {{#> documentablePartialTemplate}}
 
-### Signature
-\`\`\`apex
-{{signature}}
-\`\`\` 
+{{ heading signature.headingLevel signature.heading }}
+{{ code "apex" signature.value }}
 
-{{#if parameters}}
-### Parameters
+{{#if parameters.value}}
+{{ heading parameters.headingLevel parameters.heading }}
 | Name | Type | Description |
 |------|------|-------------|
-{{#each parameters}}
+{{#each parameters.value}}
 | {{name}} | {{type}} | {{description}} |
 {{/each}}
 {{/if}}
 
-{{#if throws}}
-### Throws
-{{#each throws}}
-{{this.type}}: {{this.description}}
+{{#if throws.value}}
+{{ heading throws.headingLevel throws.heading }}
+{{#each throws.value}}
+{{link this.type}}: {{this.description}}
 
 {{/each}}
 {{/if}}
-
 {{/documentablePartialTemplate}}
 
 {{#unless @last}}---{{/unless}}
-{{/each}}
 
+{{/each}}
 `.trim();

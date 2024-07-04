@@ -1,14 +1,38 @@
-import { FieldMirrorWithInheritance } from '../model/inheritance';
-import { FieldSource } from '../templating/types';
+import { FieldMirrorWithInheritance, PropertyMirrorWithInheritance } from '../model/inheritance';
+import { RenderableField } from '../templating/types';
 import { adaptDocumentable } from './documentables';
-import { linkFromTypeNameGenerator } from './references';
+import { GetRenderableContentByTypeName, linkFromTypeNameGenerator } from './references';
 
-export function adaptField(field: FieldMirrorWithInheritance): FieldSource {
+export function adaptFieldOrProperty(
+  field: FieldMirrorWithInheritance | PropertyMirrorWithInheritance,
+  linkGenerator: GetRenderableContentByTypeName,
+  baseHeadingLevel: number,
+): RenderableField {
+  function buildSignature() {
+    const { access_modifier, name } = field;
+    const memberModifiers = field.memberModifiers.join(' ');
+    return (
+      `${access_modifier} ${memberModifiers} ${name}`
+        // remove double spaces
+        .replace(/ {2}/g, ' ')
+    );
+  }
+
   return {
-    ...adaptDocumentable(field),
-    name: field.name,
-    type: linkFromTypeNameGenerator(field.typeReference.rawDeclaration),
+    doc: adaptDocumentable(field, linkGenerator, baseHeadingLevel + 1),
+    headingLevel: baseHeadingLevel,
+    heading: field.name,
+    type: {
+      headingLevel: baseHeadingLevel + 1,
+      heading: 'Type',
+      value: linkFromTypeNameGenerator(field.typeReference.rawDeclaration),
+    },
     inherited: field.inherited,
     accessModifier: field.access_modifier,
+    signature: {
+      headingLevel: baseHeadingLevel + 1,
+      heading: 'Signature',
+      value: [buildSignature()],
+    },
   };
 }
