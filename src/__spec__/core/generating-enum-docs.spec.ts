@@ -9,6 +9,12 @@ expect.extend({
       message: () => `Expected documentation bundle to have length ${length}`,
     };
   },
+  firstDocContains(doc: DocumentationBundle, content: string) {
+    return {
+      pass: doc.docs[0].docContents.includes(content),
+      message: () => `Expected documentation to contain ${content}. Got ${doc.docs[0].docContents}`,
+    };
+  },
 });
 
 function assertEither<T, U>(result: E.Either<T, U>, assertion: (data: U) => void): void {
@@ -87,6 +93,7 @@ describe('Generates enum documentation', () => {
       assertEither(result, (data) => expect(data.docs[0].group).toEqual(O.some('MyGroup')));
     });
   });
+
   describe('documentation content', () => {
     it('generates a heading with the enum name', () => {
       const input = `
@@ -100,7 +107,7 @@ describe('Generates enum documentation', () => {
 
       const result = generateDocs([input]);
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].docContents).toContain(output));
+      assertEither(result, (data) => expect(data).firstDocContains(output));
     });
 
     it('displays type level annotations', () => {
@@ -114,7 +121,7 @@ describe('Generates enum documentation', () => {
 
       const result = generateDocs([input]);
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].docContents).toContain('NAMESPACEACCESSIBLE'));
+      assertEither(result, (data) => expect(data).firstDocContains('NAMESPACEACCESSIBLE'));
     });
 
     it('displays the description', () => {
@@ -130,15 +137,28 @@ describe('Generates enum documentation', () => {
 
       const result = generateDocs([input]);
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].docContents).toContain('This is a description'));
+      assertEither(result, (data) => expect(data).firstDocContains('This is a description'));
+    });
+
+    it('display custom documentation tags', () => {
+      const input = `
+     /**
+      * @custom-tag My Value
+      */
+     public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+    `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('Custom Tag'));
+      assertEither(result, (data) => expect(data).firstDocContains('My Value'));
     });
   });
 });
 
-// TODO: scoping works
-// TODO: @ignore works
-// TODO: description with links
-// TODO: Custom tags
 // TODO: Doc group
 // TODO: Author
 // TODO: Date
@@ -151,3 +171,7 @@ describe('Generates enum documentation', () => {
 // TODO: Heading for values
 // TODO: Table for values
 // TODO: Taking into account links
+
+// TODO: scoping works
+// TODO: @ignore works
+// TODO: description with links
