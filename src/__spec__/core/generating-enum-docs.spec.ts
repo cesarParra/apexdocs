@@ -240,6 +240,24 @@ describe('Generates enum documentation', () => {
       );
     });
 
+    it('displays descriptions with emails', () => {
+      const input = `
+      /**
+        * @description This is a description with an {@email test@testerson.com} email
+        */
+      public enum MyEnum {}
+      `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('Description'));
+      assertEither(result, (data) =>
+        expect(data).firstDocContains(
+          'This is a description with an [test@testerson.com](mailto:test@testerson.com) email',
+        ),
+      );
+    });
+
     it('displays sees with accurately resolved links', () => {
       const input1 = `
       /**
@@ -272,9 +290,6 @@ describe('Generates enum documentation', () => {
   });
 });
 
-// TODO: description without links
-// TODO: description with links
-// TODO: description with emails
 // TODO: Namespace when one is present
 // TODO: Namespace when one is not present
 // TODO: Mermaid
