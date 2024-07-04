@@ -156,12 +156,60 @@ describe('Generates enum documentation', () => {
       assertEither(result, (data) => expect(data).firstDocContains('Custom Tag'));
       assertEither(result, (data) => expect(data).firstDocContains('My Value'));
     });
+
+    it('displays the group', () => {
+      const input = `
+     /**
+      * @group MyGroup
+      */
+     public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+    `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('Group'));
+      assertEither(result, (data) => expect(data).firstDocContains('MyGroup'));
+    });
+
+    it('displays the author', () => {
+      const input = `
+     /**
+      * @author John Doe
+      */
+     public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+    `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('Author'));
+      assertEither(result, (data) => expect(data).firstDocContains('John Doe'));
+    });
+
+    it('displays the date', () => {
+      const input = `
+     /**
+      * @date 2021-01-01
+      */
+     public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+    `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('Date'));
+      assertEither(result, (data) => expect(data).firstDocContains('2021-01-01'));
+    });
   });
 });
 
-// TODO: Doc group
-// TODO: Author
-// TODO: Date
 // TODO: Sees with links
 // TODO: Sees without links
 // TODO: Namespace when one is present
