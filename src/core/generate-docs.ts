@@ -24,7 +24,7 @@ type DocumentationConfig = {
   sortMembersAlphabetically?: boolean;
 };
 
-export type DocOutput = {
+type DocOutput = {
   docContents: string;
   typeName: string;
   type: 'class' | 'interface' | 'enum';

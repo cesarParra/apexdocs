@@ -45,88 +45,94 @@ describe('Generates enum documentation', () => {
       assertEither(result, (data) => expect(data.docs[0].typeName).toBe('MyEnum'));
     });
 
-    // it('returns the type as enum', () => {
-    //   const input = `
-    //  public enum MyEnum {
-    //     VALUE1,
-    //     VALUE2
-    //   }
-    // `;
-    //
-    //   const result = generateDocs(input);
-    //   assertEither(result, (data) => expect(data.type).toBe('enum'));
-    // });
-    //
-    // it('returns the group as None when there is no group', () => {
-    //   const input = `
-    //  public enum MyEnum {
-    //     VALUE1,
-    //     VALUE2
-    //   }
-    // `;
-    //
-    //   const result = generateDocs(input);
-    //   assertEither(result, (data) => expect(data.group).toBe(O.none));
-    // });
-    //
-    // it('returns the group as Some when there is a group', () => {
-    //   const input = `
-    //  /**
-    //   * @group MyGroup
-    //   */
-    //  public enum MyEnum {
-    //     VALUE1,
-    //     VALUE2
-    //   }
-    // `;
-    //
-    //   const result = generateDocs(input);
-    //   assertEither(result, (data) => expect(data.group).toEqual(O.some('MyGroup')));
-    // });
+    it('returns the type as enum', () => {
+      const input = `
+     public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+    `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data.docs[0].type).toBe('enum'));
+    });
+
+    it('returns the group as None when there is no group', () => {
+      const input = `
+     public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+    `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data.docs[0].group).toBe(O.none));
+    });
+
+    it('returns the group as Some when there is a group', () => {
+      const input = `
+     /**
+      * @group MyGroup
+      */
+     public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+    `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data.docs[0].group).toEqual(O.some('MyGroup')));
+    });
   });
-  // describe('documentation content', () => {
-  //   it('generates a heading with the enum name', () => {
-  //     const input = `
-  //    public enum MyEnum {
-  //       VALUE1,
-  //       VALUE2
-  //     }
-  //   `;
-  //
-  //     const output = `# MyEnum Enum`;
-  //
-  //     const result = generateDocs(input);
-  //     assertEither(result, (data) => expect(data.docContents).toContain(output));
-  //   });
-  //
-  //   it('displays type level annotations', () => {
-  //     const input = `
-  //    @NamespaceAccessible
-  //    public enum MyEnum {
-  //       VALUE1,
-  //       VALUE2
-  //     }
-  //   `;
-  //
-  //     const result = generateDocs(input);
-  //     assertEither(result, (data) => expect(data.docContents).toContain('NAMESPACEACCESSIBLE'));
-  //   });
-  //
-  //   it('displays the description', () => {
-  //     const input = `
-  //    /**
-  //     * This is a description
-  //     */
-  //    public enum MyEnum {
-  //       VALUE1,
-  //       VALUE2
-  //     }
-  //   `;
-  //
-  //     const result = generateDocs(input);
-  //     assertEither(result, (data) => expect(data.docContents).toContain('This is a description'));
-  //   });
-  // });
+  describe('documentation content', () => {
+    it('generates a heading with the enum name', () => {
+      const input = `
+     public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+    `;
+
+      const output = `# MyEnum Enum`;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data.docs[0].docContents).toContain(output));
+    });
+
+    it('displays type level annotations', () => {
+      const input = `
+     @NamespaceAccessible
+     public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+    `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data.docs[0].docContents).toContain('NAMESPACEACCESSIBLE'));
+    });
+
+    it('displays the description', () => {
+      const input = `
+     /**
+      * This is a description
+      */
+     public enum MyEnum {
+        VALUE1,
+        VALUE2
+      }
+    `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data.docs[0].docContents).toContain('This is a description'));
+    });
+  });
 });
 
 // TODO: scoping works
