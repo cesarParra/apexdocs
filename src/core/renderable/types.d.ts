@@ -92,11 +92,13 @@ type RenderableField = {
   doc: RenderableDocumentation;
 };
 
-type RenderableSection<T> = {
+export type RenderableSection<T> = {
   headingLevel: number;
   heading: string;
   value: T;
 };
+
+export type GroupedRenderableField = RenderableSection<RenderableField[]> & { groupDescription: string | undefined };
 
 export type RenderableClass = RenderableType & {
   type: 'class';
@@ -106,7 +108,7 @@ export type RenderableClass = RenderableType & {
   sharingModifier?: string;
   constructors: RenderableSection<RenderableConstructor[]>;
   methods: RenderableSection<RenderableMethod[]>;
-  fields: RenderableSection<RenderableField[]>;
+  fields: RenderableSection<RenderableField[] | GroupedRenderableField[]> & { isGrouped: boolean };
   properties: RenderableSection<RenderableField[]>;
   innerClasses: RenderableSection<RenderableClass[]>;
   innerEnums: RenderableSection<RenderableEnum[]>;

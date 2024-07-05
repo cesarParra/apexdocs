@@ -24,30 +24,30 @@ sample.doSomething();
 [ns.ParentInterface](../Miscellaneous/ns.ParentInterface.md)
 
 ## Fields
-### `name`
+### Group Name
+#### `name`
 
 This is a sample field.
 
-#### Signature
+##### Signature
 ```apex
 private name
 ```
 
-#### Type
+##### Type
 String
 
----
-
-### `sampleEnumFromBase`
+### Other
+#### `sampleEnumFromBase`
 
 *Inherited*
 
-#### Signature
+##### Signature
 ```apex
 public sampleEnumFromBase
 ```
 
-#### Type
+##### Type
 [ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md)
 
 ## Properties

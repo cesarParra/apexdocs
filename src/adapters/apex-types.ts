@@ -5,6 +5,9 @@ import {
   RenderableEnum,
   RenderableInterface,
   Renderable,
+  RenderableSection,
+  RenderableField,
+  GroupedRenderableField,
 } from '../core/renderable/types';
 import { adaptDescribable, adaptDocumentable } from './documentables';
 import { GetRenderableContentByTypeName, linkFromTypeNameGenerator } from './references';
@@ -120,13 +123,11 @@ export function classTypeToClassSource(
         adaptConstructor(classType.name, constructor, linkGenerator, baseHeadingLevel + 2),
       ),
     },
-    fields: {
-      headingLevel: baseHeadingLevel + 1,
-      heading: 'Fields',
-      value: classType.fields.map((field) =>
-        adaptFieldOrProperty(field as FieldMirrorWithInheritance, linkGenerator, baseHeadingLevel + 2),
-      ),
-    },
+    fields: adaptFields(
+      classType.fields as FieldMirrorWithInheritance[],
+      linkFromTypeNameGenerator,
+      baseHeadingLevel + 1,
+    ),
     properties: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Properties',
@@ -153,5 +154,66 @@ export function classTypeToClassSource(
         interfaceTypeToInterfaceSource(innerInterface, linkGenerator, baseHeadingLevel + 2),
       ),
     },
+  };
+}
+
+function anyFieldHasGroup(field: FieldMirrorWithInheritance[]): boolean {
+  return field.some((field) => field.group);
+}
+
+function groupFieldsByGroupName(fields: FieldMirrorWithInheritance[]): Record<string, FieldMirrorWithInheritance[]> {
+  return fields.reduce((acc, field) => {
+    const groupName = field.group ?? 'Other';
+    acc[groupName] = acc[groupName] ?? [];
+    acc[groupName].push(field);
+    return acc;
+  }, {} as Record<string, FieldMirrorWithInheritance[]>);
+}
+
+function adaptFields(
+  fields: FieldMirrorWithInheritance[],
+  linkFromTypeNameGenerator: GetRenderableContentByTypeName,
+  headingLevel: number,
+): RenderableSection<RenderableField[] | GroupedRenderableField[]> & { isGrouped: boolean } {
+  return {
+    headingLevel,
+    heading: 'Fields',
+    isGrouped: anyFieldHasGroup(fields),
+    value: anyFieldHasGroup(fields)
+      ? toGroupedFields(fields, linkFromTypeNameGenerator, headingLevel + 1)
+      : toFlatFields(fields, linkFromTypeNameGenerator, headingLevel + 1),
+  };
+}
+
+function toFlatFields(
+  fields: FieldMirrorWithInheritance[],
+  linkGenerator: GetRenderableContentByTypeName,
+  baseHeadingLevel: number,
+): RenderableField[] {
+  return fields.map((field) => adaptFieldOrProperty(field, linkGenerator, baseHeadingLevel));
+}
+
+function toGroupedFields(
+  fields: FieldMirrorWithInheritance[],
+  linkGenerator: GetRenderableContentByTypeName,
+  baseHeadingLevel: number,
+): GroupedRenderableField[] {
+  const groupedFields = groupFieldsByGroupName(fields);
+  return Object.entries(groupedFields).map(([groupName, fields]) =>
+    singleGroup(baseHeadingLevel, groupName, fields, linkGenerator),
+  );
+}
+
+function singleGroup(
+  headingLevel: number,
+  groupName: string,
+  fields: FieldMirrorWithInheritance[],
+  linkGenerator: GetRenderableContentByTypeName,
+): GroupedRenderableField {
+  return {
+    headingLevel: headingLevel,
+    heading: groupName,
+    groupDescription: fields[0].groupDescription, // All fields in the group have the same description
+    value: toFlatFields(fields, linkGenerator, headingLevel + 1),
   };
 }

@@ -7,12 +7,13 @@
  * sample.doSomething();
  */
 public with sharing virtual class SampleClass extends BaseClass implements SampleInterface, ParentInterface {
+    // @start-group Group Name
     /**
      * @description This is a sample field.
      */
     private final String name;
-
     public String someProperty { get; private set; }
+    // @end-group
 
     /**
      * @description This is a sample constructor.
