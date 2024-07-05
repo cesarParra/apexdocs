@@ -39,7 +39,11 @@ export const classMarkdownTemplate = `
 {{/if}}
 
 {{#if methods.value}}
+{{#if methods.isGrouped}}
+{{> groupedMembersPartialTemplate methods subTemplate="methodsPartialTemplate"}}
+{{else}}
 {{> methodsPartialTemplate methods}}
+{{/if}}
 {{/if}}
 
 {{#if innerClasses.value}}

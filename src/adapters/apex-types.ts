@@ -110,11 +110,7 @@ export function classTypeToClassSource(
     sharingModifier: classType.sharingModifier,
     implements: classType.implemented_interfaces.map(linkFromTypeNameGenerator),
     extends: classType.extended_class ? linkFromTypeNameGenerator(classType.extended_class) : undefined,
-    methods: {
-      headingLevel: baseHeadingLevel + 1,
-      heading: 'Methods',
-      value: classType.methods.map((method) => adaptMethod(method, linkGenerator, baseHeadingLevel + 2)),
-    },
+    methods: adaptMembers('Methods', classType.methods, adaptMethod, linkFromTypeNameGenerator, baseHeadingLevel + 1),
     constructors: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Constructors',

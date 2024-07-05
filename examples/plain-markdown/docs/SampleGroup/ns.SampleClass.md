@@ -87,23 +87,24 @@ public SampleClass(String name)
 | name | String |  |
 
 ## Methods
-### `sayHello()`
+### Another Group
+#### `sayHello()`
 
 `DEPRECATED`
 
 This is a sample method.
 
-#### Signature
+##### Signature
 ```apex
 public virtual String sayHello()
 ```
 
-#### Return Type
+##### Return Type
 **String**
 
 A string value.
 
-#### Example
+##### Example
 ```apex
 SampleClass sample = new SampleClass();
 sample.doSomething();

@@ -24,6 +24,8 @@ public with sharing virtual class SampleClass extends BaseClass implements Sampl
         this.name = name;
     }
 
+    // @start-group Another Group
+
     /**
      * @description This is a sample method.
      * @return A string value.
@@ -35,6 +37,8 @@ public with sharing virtual class SampleClass extends BaseClass implements Sampl
     public virtual String sayHello() {
         return 'Hello';
     }
+
+    // @end-group
 
     public class SomeInnerClass {
         public String someInnerField;
