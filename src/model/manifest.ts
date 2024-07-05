@@ -26,8 +26,18 @@ export default class Manifest {
     const typesToReturn: Type[] = [];
     for (const filteredType of filteredTypes) {
       const currentType = filteredType as Type;
-      if (currentType.type_name !== 'class') {
+      if (currentType.type_name === 'enum') {
+        // Ignoring enum values is not supported.
         typesToReturn.push(currentType);
+        continue;
+      }
+
+      if (currentType.type_name === 'interface') {
+        const currentInterface = currentType as InterfaceMirror;
+        typesToReturn.push({
+          ...currentType,
+          methods: this.filterAccessibleModifier(currentInterface.methods, modifiers),
+        } as InterfaceMirror);
         continue;
       }
 

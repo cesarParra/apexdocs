@@ -1,36 +1,13 @@
-import { DocumentationBundle, generateDocs } from '../../core/generate-docs';
+import { generateDocs } from '../../core/generate-docs';
 import * as E from 'fp-ts/Either';
 import { pipe } from 'fp-ts/function';
-
-expect.extend({
-  documentationBundleHasLength(received: E.Either<string[], DocumentationBundle>, length: number) {
-    return {
-      pass: E.isRight(received) && received.right.docs.length === length,
-      message: () => `Expected documentation bundle to have length ${length}`,
-    };
-  },
-  firstDocContains(doc: DocumentationBundle, content: string) {
-    return {
-      pass: doc.docs[0].docContents.includes(content),
-      message: () => `Expected documentation to contain ${content}. Got ${doc.docs[0].docContents}`,
-    };
-  },
-  firstDocContainsNot(doc: DocumentationBundle, content: string) {
-    return {
-      pass: !doc.docs[0].docContents.includes(content),
-      message: () => `Expected documentation to not contain ${content}. Got ${doc.docs[0].docContents}`,
-    };
-  },
-});
-
-function assertEither<T, U>(result: E.Either<T, U>, assertion: (data: U) => void): void {
-  E.match<T, U, void>(
-    (error) => fail(error),
-    (data) => assertion(data),
-  )(result);
-}
+import { assertEither, extendExpect } from './expect-extensions';
 
 describe('Generates enum documentation', () => {
+  beforeAll(() => {
+    extendExpect();
+  });
+
   describe('documentation output', () => {
     it('always returns markdown as the format', () => {
       const input = `
