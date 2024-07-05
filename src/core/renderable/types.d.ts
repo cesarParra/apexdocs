@@ -98,7 +98,7 @@ export type RenderableSection<T> = {
   value: T;
 };
 
-export type GroupedRenderableField = RenderableSection<RenderableField[]> & { groupDescription: string | undefined };
+export type GroupedMember<T> = RenderableSection<T[]> & { groupDescription: string | undefined };
 
 export type RenderableClass = RenderableType & {
   type: 'class';
@@ -108,8 +108,8 @@ export type RenderableClass = RenderableType & {
   sharingModifier?: string;
   constructors: RenderableSection<RenderableConstructor[]>;
   methods: RenderableSection<RenderableMethod[]>;
-  fields: RenderableSection<RenderableField[] | GroupedRenderableField[]> & { isGrouped: boolean };
-  properties: RenderableSection<RenderableField[] | GroupedRenderableField[]> & { isGrouped: boolean };
+  fields: RenderableSection<RenderableField[] | GroupedMember<RenderableField>[]> & { isGrouped: boolean };
+  properties: RenderableSection<RenderableField[] | GroupedMember<RenderableField>[]> & { isGrouped: boolean };
   innerClasses: RenderableSection<RenderableClass[]>;
   innerEnums: RenderableSection<RenderableEnum[]>;
   innerInterfaces: RenderableSection<RenderableInterface[]>;

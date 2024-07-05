@@ -6,8 +6,7 @@ import {
   RenderableInterface,
   Renderable,
   RenderableSection,
-  RenderableField,
-  GroupedRenderableField,
+  GroupedMember,
 } from '../core/renderable/types';
 import { adaptDescribable, adaptDocumentable } from './documentables';
 import { GetRenderableContentByTypeName, linkFromTypeNameGenerator } from './references';
@@ -123,15 +122,17 @@ export function classTypeToClassSource(
         adaptConstructor(classType.name, constructor, linkGenerator, baseHeadingLevel + 2),
       ),
     },
-    fields: adaptFieldsOrProperties(
+    fields: adaptMembers(
       'Fields',
       classType.fields as FieldMirrorWithInheritance[],
+      adaptFieldOrProperty,
       linkFromTypeNameGenerator,
       baseHeadingLevel + 1,
     ),
-    properties: adaptFieldsOrProperties(
+    properties: adaptMembers(
       'Properties',
       classType.properties as PropertyMirrorWithInheritance[],
+      adaptFieldOrProperty,
       linkFromTypeNameGenerator,
       baseHeadingLevel + 1,
     ),
@@ -157,66 +158,70 @@ export function classTypeToClassSource(
   };
 }
 
-type FieldOrProperty = FieldMirrorWithInheritance | PropertyMirrorWithInheritance;
+type Groupable = { group?: string; groupDescription?: string };
 
-function anyFieldHasGroup(field: FieldOrProperty[]): boolean {
-  return field.some((field) => field.group);
+function adaptMembers<T extends Groupable, K>(
+  heading: string,
+  fields: T[],
+  adapter: (member: T, linkGenerator: GetRenderableContentByTypeName, baseHeadingLevel: number) => K,
+  linkFromTypeNameGenerator: GetRenderableContentByTypeName,
+  headingLevel: number,
+): RenderableSection<K[] | GroupedMember<K>[]> & { isGrouped: boolean } {
+  return {
+    headingLevel,
+    heading,
+    isGrouped: hasGroup(fields),
+    value: hasGroup(fields)
+      ? toGroupedFields(fields, adapter, linkFromTypeNameGenerator, headingLevel + 1)
+      : toFlat(fields, adapter, linkFromTypeNameGenerator, headingLevel + 1),
+  };
 }
 
-function groupFieldsByGroupName(fields: FieldOrProperty[]): Record<string, FieldOrProperty[]> {
-  return fields.reduce((acc, field) => {
+function hasGroup(members: Groupable[]): boolean {
+  return members.some((member) => member.group);
+}
+
+function toFlat<T extends Groupable, K>(
+  members: T[],
+  adapter: (member: T, linkGenerator: GetRenderableContentByTypeName, baseHeadingLevel: number) => K,
+  linkGenerator: GetRenderableContentByTypeName,
+  baseHeadingLevel: number,
+): K[] {
+  return members.map((member) => adapter(member, linkGenerator, baseHeadingLevel));
+}
+
+function toGroupedFields<T extends Groupable, K>(
+  fields: T[],
+  adapter: (member: T, linkGenerator: GetRenderableContentByTypeName, baseHeadingLevel: number) => K,
+  linkGenerator: GetRenderableContentByTypeName,
+  baseHeadingLevel: number,
+): GroupedMember<K>[] {
+  const groupedFields = groupByGroupName(fields);
+  return Object.entries(groupedFields).map(([groupName, fields]) =>
+    singleGroup(baseHeadingLevel, groupName, adapter, fields, linkGenerator),
+  );
+}
+
+function groupByGroupName<T extends Groupable>(members: T[]): Record<string, T[]> {
+  return members.reduce((acc, field) => {
     const groupName = field.group ?? 'Other';
     acc[groupName] = acc[groupName] ?? [];
     acc[groupName].push(field);
     return acc;
-  }, {} as Record<string, FieldMirrorWithInheritance[]>);
+  }, {} as Record<string, T[]>);
 }
 
-function adaptFieldsOrProperties(
-  heading: string,
-  fields: FieldOrProperty[],
-  linkFromTypeNameGenerator: GetRenderableContentByTypeName,
-  headingLevel: number,
-): RenderableSection<RenderableField[] | GroupedRenderableField[]> & { isGrouped: boolean } {
-  return {
-    headingLevel,
-    heading,
-    isGrouped: anyFieldHasGroup(fields),
-    value: anyFieldHasGroup(fields)
-      ? toGroupedFields(fields, linkFromTypeNameGenerator, headingLevel + 1)
-      : toFlatFields(fields, linkFromTypeNameGenerator, headingLevel + 1),
-  };
-}
-
-function toFlatFields(
-  fields: FieldOrProperty[],
-  linkGenerator: GetRenderableContentByTypeName,
-  baseHeadingLevel: number,
-): RenderableField[] {
-  return fields.map((field) => adaptFieldOrProperty(field, linkGenerator, baseHeadingLevel));
-}
-
-function toGroupedFields(
-  fields: FieldOrProperty[],
-  linkGenerator: GetRenderableContentByTypeName,
-  baseHeadingLevel: number,
-): GroupedRenderableField[] {
-  const groupedFields = groupFieldsByGroupName(fields);
-  return Object.entries(groupedFields).map(([groupName, fields]) =>
-    singleGroup(baseHeadingLevel, groupName, fields, linkGenerator),
-  );
-}
-
-function singleGroup(
+function singleGroup<T extends Groupable, K>(
   headingLevel: number,
   groupName: string,
-  fields: FieldOrProperty[],
+  adapter: (member: T, linkGenerator: GetRenderableContentByTypeName, baseHeadingLevel: number) => K,
+  fields: T[],
   linkGenerator: GetRenderableContentByTypeName,
-): GroupedRenderableField {
+): GroupedMember<K> {
   return {
     headingLevel: headingLevel,
     heading: groupName,
     groupDescription: fields[0].groupDescription, // All fields in the group have the same description
-    value: toFlatFields(fields, linkGenerator, headingLevel + 1),
+    value: toFlat(fields, adapter, linkGenerator, headingLevel + 1),
   };
 }
