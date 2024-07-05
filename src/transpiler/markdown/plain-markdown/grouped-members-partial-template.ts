@@ -1,6 +1,6 @@
 export const groupedMembersPartialTemplate = `
 {{ heading headingLevel heading }}
 {{#each value}}
-{{> fieldsPartialTemplate this}}
+{{> (lookup .. "subTemplate") this}}
 {{/each}}
 `.trim();
