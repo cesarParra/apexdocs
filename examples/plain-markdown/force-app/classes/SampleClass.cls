@@ -20,11 +20,19 @@ public with sharing virtual class SampleClass extends BaseClass implements Sampl
      */
     public SampleClass() {}
 
+    // @start-group Other Constructors
     public SampleClass(String name) {
         this.name = name;
     }
+    // @end-group
 
-    // @start-group Another Group
+    // @start-group Available Methods
+    public void doSomething() {
+        System.debug('Doing something');
+    }
+    // @end-group
+
+    // @start-group Deprecated Methods
 
     /**
      * @description This is a sample method.

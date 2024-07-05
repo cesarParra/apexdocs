@@ -63,31 +63,42 @@ public someProperty
 String
 
 ## Constructors
-### `SampleClass()`
+### Other
+#### `SampleClass()`
 
 This is a sample constructor.
 
-#### Signature
+##### Signature
 ```apex
 public SampleClass()
 ```
 
----
+### Other Constructors
+#### `SampleClass(name)`
 
-### `SampleClass(name)`
-
-#### Signature
+##### Signature
 ```apex
 public SampleClass(String name)
 ```
 
-#### Parameters
+##### Parameters
 | Name | Type | Description |
 |------|------|-------------|
 | name | String |  |
 
 ## Methods
-### Another Group
+### Available Methods
+#### `doSomething()`
+
+##### Signature
+```apex
+public void doSomething()
+```
+
+##### Return Type
+**void**
+
+### Deprecated Methods
 #### `sayHello()`
 
 `DEPRECATED`

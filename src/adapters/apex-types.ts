@@ -111,13 +111,14 @@ export function classTypeToClassSource(
     implements: classType.implemented_interfaces.map(linkFromTypeNameGenerator),
     extends: classType.extended_class ? linkFromTypeNameGenerator(classType.extended_class) : undefined,
     methods: adaptMembers('Methods', classType.methods, adaptMethod, linkFromTypeNameGenerator, baseHeadingLevel + 1),
-    constructors: {
-      headingLevel: baseHeadingLevel + 1,
-      heading: 'Constructors',
-      value: classType.constructors.map((constructor) =>
-        adaptConstructor(classType.name, constructor, linkGenerator, baseHeadingLevel + 2),
-      ),
-    },
+    constructors: adaptMembers(
+      'Constructors',
+      classType.constructors,
+      (constructor, linkGenerator, baseHeadingLevel) =>
+        adaptConstructor(classType.name, constructor, linkGenerator, baseHeadingLevel),
+      linkFromTypeNameGenerator,
+      baseHeadingLevel + 1,
+    ),
     fields: adaptMembers(
       'Fields',
       classType.fields as FieldMirrorWithInheritance[],

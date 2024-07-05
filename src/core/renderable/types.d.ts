@@ -106,7 +106,9 @@ export type RenderableClass = RenderableType & {
   implements?: StringOrLink[];
   classModifier?: string;
   sharingModifier?: string;
-  constructors: RenderableSection<RenderableConstructor[]>;
+  constructors: RenderableSection<RenderableConstructor[] | GroupedMember<RenderableConstructor>[]> & {
+    isGrouped: boolean;
+  };
   methods: RenderableSection<RenderableMethod[] | GroupedMember<RenderableMethod>[]> & { isGrouped: boolean };
   fields: RenderableSection<RenderableField[] | GroupedMember<RenderableField>[]> & { isGrouped: boolean };
   properties: RenderableSection<RenderableField[] | GroupedMember<RenderableField>[]> & { isGrouped: boolean };
