@@ -159,7 +159,7 @@ type Groupable = { group?: string; groupDescription?: string };
 
 function adaptMembers<T extends Groupable, K>(
   heading: string,
-  fields: T[],
+  members: T[],
   adapter: (member: T, linkGenerator: GetRenderableContentByTypeName, baseHeadingLevel: number) => K,
   linkFromTypeNameGenerator: GetRenderableContentByTypeName,
   headingLevel: number,
@@ -167,10 +167,10 @@ function adaptMembers<T extends Groupable, K>(
   return {
     headingLevel,
     heading,
-    isGrouped: hasGroup(fields),
-    value: hasGroup(fields)
-      ? toGroupedFields(fields, adapter, linkFromTypeNameGenerator, headingLevel + 1)
-      : toFlat(fields, adapter, linkFromTypeNameGenerator, headingLevel + 1),
+    isGrouped: hasGroup(members),
+    value: hasGroup(members)
+      ? toGroupedMembers(members, adapter, linkFromTypeNameGenerator, headingLevel + 1)
+      : toFlat(members, adapter, linkFromTypeNameGenerator, headingLevel + 1),
   };
 }
 
@@ -187,23 +187,23 @@ function toFlat<T extends Groupable, K>(
   return members.map((member) => adapter(member, linkGenerator, baseHeadingLevel));
 }
 
-function toGroupedFields<T extends Groupable, K>(
-  fields: T[],
+function toGroupedMembers<T extends Groupable, K>(
+  members: T[],
   adapter: (member: T, linkGenerator: GetRenderableContentByTypeName, baseHeadingLevel: number) => K,
   linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number,
 ): GroupedMember<K>[] {
-  const groupedFields = groupByGroupName(fields);
-  return Object.entries(groupedFields).map(([groupName, fields]) =>
-    singleGroup(baseHeadingLevel, groupName, adapter, fields, linkGenerator),
+  const groupedMembers = groupByGroupName(members);
+  return Object.entries(groupedMembers).map(([groupName, members]) =>
+    singleGroup(baseHeadingLevel, groupName, adapter, members, linkGenerator),
   );
 }
 
 function groupByGroupName<T extends Groupable>(members: T[]): Record<string, T[]> {
-  return members.reduce((acc, field) => {
-    const groupName = field.group ?? 'Other';
+  return members.reduce((acc, member) => {
+    const groupName = member.group ?? 'Other';
     acc[groupName] = acc[groupName] ?? [];
-    acc[groupName].push(field);
+    acc[groupName].push(member);
     return acc;
   }, {} as Record<string, T[]>);
 }
@@ -212,13 +212,13 @@ function singleGroup<T extends Groupable, K>(
   headingLevel: number,
   groupName: string,
   adapter: (member: T, linkGenerator: GetRenderableContentByTypeName, baseHeadingLevel: number) => K,
-  fields: T[],
+  members: T[],
   linkGenerator: GetRenderableContentByTypeName,
 ): GroupedMember<K> {
   return {
     headingLevel: headingLevel,
     heading: groupName,
-    groupDescription: fields[0].groupDescription, // All fields in the group have the same description
-    value: toFlat(fields, adapter, linkGenerator, headingLevel + 1),
+    groupDescription: members[0].groupDescription, // All fields in the group have the same description
+    value: toFlat(members, adapter, linkGenerator, headingLevel + 1),
   };
 }
