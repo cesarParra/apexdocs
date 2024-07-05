@@ -5,6 +5,8 @@ import {
   RenderableEnum,
   RenderableInterface,
   Renderable,
+  RenderableSection,
+  GroupedMember,
 } from '../core/renderable/types';
 import { adaptDescribable, adaptDocumentable } from './documentables';
 import { GetRenderableContentByTypeName, linkFromTypeNameGenerator } from './references';
@@ -108,32 +110,29 @@ export function classTypeToClassSource(
     sharingModifier: classType.sharingModifier,
     implements: classType.implemented_interfaces.map(linkFromTypeNameGenerator),
     extends: classType.extended_class ? linkFromTypeNameGenerator(classType.extended_class) : undefined,
-    methods: {
-      headingLevel: baseHeadingLevel + 1,
-      heading: 'Methods',
-      value: classType.methods.map((method) => adaptMethod(method, linkGenerator, baseHeadingLevel + 2)),
-    },
-    constructors: {
-      headingLevel: baseHeadingLevel + 1,
-      heading: 'Constructors',
-      value: classType.constructors.map((constructor) =>
-        adaptConstructor(classType.name, constructor, linkGenerator, baseHeadingLevel + 2),
-      ),
-    },
-    fields: {
-      headingLevel: baseHeadingLevel + 1,
-      heading: 'Fields',
-      value: classType.fields.map((field) =>
-        adaptFieldOrProperty(field as FieldMirrorWithInheritance, linkGenerator, baseHeadingLevel + 2),
-      ),
-    },
-    properties: {
-      headingLevel: baseHeadingLevel + 1,
-      heading: 'Properties',
-      value: classType.properties.map((property) =>
-        adaptFieldOrProperty(property as PropertyMirrorWithInheritance, linkGenerator, baseHeadingLevel + 2),
-      ),
-    },
+    methods: adaptMembers('Methods', classType.methods, adaptMethod, linkFromTypeNameGenerator, baseHeadingLevel + 1),
+    constructors: adaptMembers(
+      'Constructors',
+      classType.constructors,
+      (constructor, linkGenerator, baseHeadingLevel) =>
+        adaptConstructor(classType.name, constructor, linkGenerator, baseHeadingLevel),
+      linkFromTypeNameGenerator,
+      baseHeadingLevel + 1,
+    ),
+    fields: adaptMembers(
+      'Fields',
+      classType.fields as FieldMirrorWithInheritance[],
+      adaptFieldOrProperty,
+      linkFromTypeNameGenerator,
+      baseHeadingLevel + 1,
+    ),
+    properties: adaptMembers(
+      'Properties',
+      classType.properties as PropertyMirrorWithInheritance[],
+      adaptFieldOrProperty,
+      linkFromTypeNameGenerator,
+      baseHeadingLevel + 1,
+    ),
     innerClasses: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Classes',
@@ -153,5 +152,73 @@ export function classTypeToClassSource(
         interfaceTypeToInterfaceSource(innerInterface, linkGenerator, baseHeadingLevel + 2),
       ),
     },
+  };
+}
+
+type Groupable = { group?: string; groupDescription?: string };
+
+function adaptMembers<T extends Groupable, K>(
+  heading: string,
+  members: T[],
+  adapter: (member: T, linkGenerator: GetRenderableContentByTypeName, baseHeadingLevel: number) => K,
+  linkFromTypeNameGenerator: GetRenderableContentByTypeName,
+  headingLevel: number,
+): RenderableSection<K[] | GroupedMember<K>[]> & { isGrouped: boolean } {
+  return {
+    headingLevel,
+    heading,
+    isGrouped: hasGroup(members),
+    value: hasGroup(members)
+      ? toGroupedMembers(members, adapter, linkFromTypeNameGenerator, headingLevel + 1)
+      : toFlat(members, adapter, linkFromTypeNameGenerator, headingLevel + 1),
+  };
+}
+
+function hasGroup(members: Groupable[]): boolean {
+  return members.some((member) => member.group);
+}
+
+function toFlat<T extends Groupable, K>(
+  members: T[],
+  adapter: (member: T, linkGenerator: GetRenderableContentByTypeName, baseHeadingLevel: number) => K,
+  linkGenerator: GetRenderableContentByTypeName,
+  baseHeadingLevel: number,
+): K[] {
+  return members.map((member) => adapter(member, linkGenerator, baseHeadingLevel));
+}
+
+function toGroupedMembers<T extends Groupable, K>(
+  members: T[],
+  adapter: (member: T, linkGenerator: GetRenderableContentByTypeName, baseHeadingLevel: number) => K,
+  linkGenerator: GetRenderableContentByTypeName,
+  baseHeadingLevel: number,
+): GroupedMember<K>[] {
+  const groupedMembers = groupByGroupName(members);
+  return Object.entries(groupedMembers).map(([groupName, members]) =>
+    singleGroup(baseHeadingLevel, groupName, adapter, members, linkGenerator),
+  );
+}
+
+function groupByGroupName<T extends Groupable>(members: T[]): Record<string, T[]> {
+  return members.reduce((acc, member) => {
+    const groupName = member.group ?? 'Other';
+    acc[groupName] = acc[groupName] ?? [];
+    acc[groupName].push(member);
+    return acc;
+  }, {} as Record<string, T[]>);
+}
+
+function singleGroup<T extends Groupable, K>(
+  headingLevel: number,
+  groupName: string,
+  adapter: (member: T, linkGenerator: GetRenderableContentByTypeName, baseHeadingLevel: number) => K,
+  members: T[],
+  linkGenerator: GetRenderableContentByTypeName,
+): GroupedMember<K> {
+  return {
+    headingLevel: headingLevel,
+    heading: groupName,
+    groupDescription: members[0].groupDescription, // All fields in the group have the same description
+    value: toFlat(members, adapter, linkGenerator, headingLevel + 1),
   };
 }

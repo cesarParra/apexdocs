@@ -92,11 +92,13 @@ type RenderableField = {
   doc: RenderableDocumentation;
 };
 
-type RenderableSection<T> = {
+export type RenderableSection<T> = {
   headingLevel: number;
   heading: string;
   value: T;
 };
+
+export type GroupedMember<T> = RenderableSection<T[]> & { groupDescription: string | undefined };
 
 export type RenderableClass = RenderableType & {
   type: 'class';
@@ -104,10 +106,12 @@ export type RenderableClass = RenderableType & {
   implements?: StringOrLink[];
   classModifier?: string;
   sharingModifier?: string;
-  constructors: RenderableSection<RenderableConstructor[]>;
-  methods: RenderableSection<RenderableMethod[]>;
-  fields: RenderableSection<RenderableField[]>;
-  properties: RenderableSection<RenderableField[]>;
+  constructors: RenderableSection<RenderableConstructor[] | GroupedMember<RenderableConstructor>[]> & {
+    isGrouped: boolean;
+  };
+  methods: RenderableSection<RenderableMethod[] | GroupedMember<RenderableMethod>[]> & { isGrouped: boolean };
+  fields: RenderableSection<RenderableField[] | GroupedMember<RenderableField>[]> & { isGrouped: boolean };
+  properties: RenderableSection<RenderableField[] | GroupedMember<RenderableField>[]> & { isGrouped: boolean };
   innerClasses: RenderableSection<RenderableClass[]>;
   innerEnums: RenderableSection<RenderableEnum[]>;
   innerInterfaces: RenderableSection<RenderableInterface[]>;

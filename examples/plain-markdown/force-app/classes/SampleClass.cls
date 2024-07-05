@@ -7,21 +7,32 @@
  * sample.doSomething();
  */
 public with sharing virtual class SampleClass extends BaseClass implements SampleInterface, ParentInterface {
+    // @start-group Group Name
     /**
      * @description This is a sample field.
      */
     private final String name;
-
     public String someProperty { get; private set; }
+    // @end-group
 
     /**
      * @description This is a sample constructor.
      */
     public SampleClass() {}
 
+    // @start-group Other Constructors
     public SampleClass(String name) {
         this.name = name;
     }
+    // @end-group
+
+    // @start-group Available Methods
+    public void doSomething() {
+        System.debug('Doing something');
+    }
+    // @end-group
+
+    // @start-group Deprecated Methods
 
     /**
      * @description This is a sample method.
@@ -34,6 +45,8 @@ public with sharing virtual class SampleClass extends BaseClass implements Sampl
     public virtual String sayHello() {
         return 'Hello';
     }
+
+    // @end-group
 
     public class SomeInnerClass {
         public String someInnerField;

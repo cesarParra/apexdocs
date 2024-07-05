@@ -24,85 +24,98 @@ sample.doSomething();
 [ns.ParentInterface](../Miscellaneous/ns.ParentInterface.md)
 
 ## Fields
-### `name`
+### Group Name
+#### `name`
 
 This is a sample field.
 
-#### Signature
+##### Signature
 ```apex
 private name
 ```
 
-#### Type
+##### Type
 String
 
----
-
-### `sampleEnumFromBase`
+### Other
+#### `sampleEnumFromBase`
 
 *Inherited*
 
-#### Signature
+##### Signature
 ```apex
 public sampleEnumFromBase
 ```
 
-#### Type
+##### Type
 [ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md)
 
 ## Properties
-### `someProperty`
+### Group Name
+#### `someProperty`
 
-#### Signature
+##### Signature
 ```apex
 public someProperty
 ```
 
-#### Type
+##### Type
 String
 
 ## Constructors
-### `SampleClass()`
+### Other
+#### `SampleClass()`
 
 This is a sample constructor.
 
-#### Signature
+##### Signature
 ```apex
 public SampleClass()
 ```
 
----
+### Other Constructors
+#### `SampleClass(name)`
 
-### `SampleClass(name)`
-
-#### Signature
+##### Signature
 ```apex
 public SampleClass(String name)
 ```
 
-#### Parameters
+##### Parameters
 | Name | Type | Description |
 |------|------|-------------|
 | name | String |  |
 
 ## Methods
-### `sayHello()`
+### Available Methods
+#### `doSomething()`
+
+##### Signature
+```apex
+public void doSomething()
+```
+
+##### Return Type
+**void**
+
+### Deprecated Methods
+#### `sayHello()`
 
 `DEPRECATED`
 
 This is a sample method.
 
-#### Signature
+##### Signature
 ```apex
 public virtual String sayHello()
 ```
 
-#### Return Type
+##### Return Type
 **String**
 
 A string value.
 
-#### Example
+##### Example
 ```apex
 SampleClass sample = new SampleClass();
 sample.doSomething();

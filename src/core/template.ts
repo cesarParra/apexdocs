@@ -9,6 +9,7 @@ import { enumMarkdownTemplate } from '../transpiler/markdown/plain-markdown/enum
 import { interfaceMarkdownTemplate } from '../transpiler/markdown/plain-markdown/interface-template';
 import { RenderableContent, StringOrLink } from './renderable/types';
 import { isEmptyLine } from '../adapters/type-utils';
+import { groupedMembersPartialTemplate } from '../transpiler/markdown/plain-markdown/grouped-members-partial-template';
 
 export type CompilationRequest = {
   template: string;
@@ -23,6 +24,7 @@ export class Template {
     Handlebars.registerPartial('documentablePartialTemplate', documentablePartialTemplate);
     Handlebars.registerPartial('methodsPartialTemplate', methodsPartialTemplate);
     Handlebars.registerPartial('constructorsPartialTemplate', constructorsPartialTemplate);
+    Handlebars.registerPartial('groupedMembersPartialTemplate', groupedMembersPartialTemplate);
     Handlebars.registerPartial('fieldsPartialTemplate', fieldsPartialTemplate);
     Handlebars.registerPartial('classTemplate', classMarkdownTemplate);
     Handlebars.registerPartial('enumTemplate', enumMarkdownTemplate);
