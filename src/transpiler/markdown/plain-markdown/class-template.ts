@@ -27,7 +27,11 @@ export const classMarkdownTemplate = `
 {{/if}}
 
 {{#if properties.value}}
+{{#if properties.isGrouped}}
+{{> groupedMembersPartialTemplate properties subTemplate="fieldsPartialTemplate"}}
+{{else}}
 {{> fieldsPartialTemplate properties}}
+{{/if}}
 {{/if}}
 
 {{#if constructors.value}}

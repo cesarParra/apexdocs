@@ -51,14 +51,15 @@ public sampleEnumFromBase
 [ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md)
 
 ## Properties
-### `someProperty`
+### Group Name
+#### `someProperty`
 
-#### Signature
+##### Signature
 ```apex
 public someProperty
 ```
 
-#### Type
+##### Type
 String
 
 ## Constructors

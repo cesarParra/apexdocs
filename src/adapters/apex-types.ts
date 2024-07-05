@@ -123,18 +123,18 @@ export function classTypeToClassSource(
         adaptConstructor(classType.name, constructor, linkGenerator, baseHeadingLevel + 2),
       ),
     },
-    fields: adaptFields(
+    fields: adaptFieldsOrProperties(
+      'Fields',
       classType.fields as FieldMirrorWithInheritance[],
       linkFromTypeNameGenerator,
       baseHeadingLevel + 1,
     ),
-    properties: {
-      headingLevel: baseHeadingLevel + 1,
-      heading: 'Properties',
-      value: classType.properties.map((property) =>
-        adaptFieldOrProperty(property as PropertyMirrorWithInheritance, linkGenerator, baseHeadingLevel + 2),
-      ),
-    },
+    properties: adaptFieldsOrProperties(
+      'Properties',
+      classType.properties as PropertyMirrorWithInheritance[],
+      linkFromTypeNameGenerator,
+      baseHeadingLevel + 1,
+    ),
     innerClasses: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Classes',
@@ -157,11 +157,13 @@ export function classTypeToClassSource(
   };
 }
 
-function anyFieldHasGroup(field: FieldMirrorWithInheritance[]): boolean {
+type FieldOrProperty = FieldMirrorWithInheritance | PropertyMirrorWithInheritance;
+
+function anyFieldHasGroup(field: FieldOrProperty[]): boolean {
   return field.some((field) => field.group);
 }
 
-function groupFieldsByGroupName(fields: FieldMirrorWithInheritance[]): Record<string, FieldMirrorWithInheritance[]> {
+function groupFieldsByGroupName(fields: FieldOrProperty[]): Record<string, FieldOrProperty[]> {
   return fields.reduce((acc, field) => {
     const groupName = field.group ?? 'Other';
     acc[groupName] = acc[groupName] ?? [];
@@ -170,14 +172,15 @@ function groupFieldsByGroupName(fields: FieldMirrorWithInheritance[]): Record<st
   }, {} as Record<string, FieldMirrorWithInheritance[]>);
 }
 
-function adaptFields(
-  fields: FieldMirrorWithInheritance[],
+function adaptFieldsOrProperties(
+  heading: string,
+  fields: FieldOrProperty[],
   linkFromTypeNameGenerator: GetRenderableContentByTypeName,
   headingLevel: number,
 ): RenderableSection<RenderableField[] | GroupedRenderableField[]> & { isGrouped: boolean } {
   return {
     headingLevel,
-    heading: 'Fields',
+    heading,
     isGrouped: anyFieldHasGroup(fields),
     value: anyFieldHasGroup(fields)
       ? toGroupedFields(fields, linkFromTypeNameGenerator, headingLevel + 1)
@@ -186,7 +189,7 @@ function adaptFields(
 }
 
 function toFlatFields(
-  fields: FieldMirrorWithInheritance[],
+  fields: FieldOrProperty[],
   linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number,
 ): RenderableField[] {
@@ -194,7 +197,7 @@ function toFlatFields(
 }
 
 function toGroupedFields(
-  fields: FieldMirrorWithInheritance[],
+  fields: FieldOrProperty[],
   linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number,
 ): GroupedRenderableField[] {
@@ -207,7 +210,7 @@ function toGroupedFields(
 function singleGroup(
   headingLevel: number,
   groupName: string,
-  fields: FieldMirrorWithInheritance[],
+  fields: FieldOrProperty[],
   linkGenerator: GetRenderableContentByTypeName,
 ): GroupedRenderableField {
   return {

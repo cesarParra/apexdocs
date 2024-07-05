@@ -109,7 +109,7 @@ export type RenderableClass = RenderableType & {
   constructors: RenderableSection<RenderableConstructor[]>;
   methods: RenderableSection<RenderableMethod[]>;
   fields: RenderableSection<RenderableField[] | GroupedRenderableField[]> & { isGrouped: boolean };
-  properties: RenderableSection<RenderableField[]>;
+  properties: RenderableSection<RenderableField[] | GroupedRenderableField[]> & { isGrouped: boolean };
   innerClasses: RenderableSection<RenderableClass[]>;
   innerEnums: RenderableSection<RenderableEnum[]>;
   innerInterfaces: RenderableSection<RenderableInterface[]>;
