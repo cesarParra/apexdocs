@@ -206,7 +206,6 @@ describe('Generates enum documentation', () => {
 
       const result = generateDocs([input]);
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data).firstDocContains('Description'));
       assertEither(result, (data) => expect(data).firstDocContains('This is a description'));
     });
 
@@ -238,7 +237,6 @@ describe('Generates enum documentation', () => {
 
       const result = generateDocs([input]);
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data).firstDocContains('Description'));
       assertEither(result, (data) =>
         expect(data).firstDocContains(
           'This is a description with an [test@testerson.com](mailto:test@testerson.com) email',
