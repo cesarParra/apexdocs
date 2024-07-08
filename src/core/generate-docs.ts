@@ -111,6 +111,14 @@ function typesToRenderableBundle(types: Type[], config: DocumentationConfig) {
 }
 
 function renderableToOutputDoc(renderable: Renderable): DocOutput {
+  function buildDocOutput(renderable: Renderable, docContents: string): DocOutput {
+    return {
+      docContents,
+      typeName: renderable.name,
+      type: renderable.type,
+    };
+  }
+
   return pipe(renderable, resolveApexTypeTemplate, compile, (docContents) => buildDocOutput(renderable, docContents));
 }
 
@@ -118,6 +126,17 @@ function referencesToReferenceGuide(
   references: { [key: string]: ReferenceGuideReference[] },
   template: string,
 ): string {
+  function alphabetizeReferences(references: { [key: string]: ReferenceGuideReference[] }): {
+    [key: string]: ReferenceGuideReference[];
+  } {
+    return Object.keys(references)
+      .sort((a, b) => a.localeCompare(b))
+      .reduce<{ [key: string]: ReferenceGuideReference[] }>((acc, key) => {
+        acc[key] = references[key].sort((a, b) => a.title.toString().localeCompare(b.title.toString()));
+        return acc;
+      }, {});
+  }
+
   return pipe(references, alphabetizeReferences, (references) =>
     compile({
       template: template,
@@ -126,40 +145,29 @@ function referencesToReferenceGuide(
   );
 }
 
-function alphabetizeReferences(references: { [key: string]: ReferenceGuideReference[] }): {
-  [key: string]: ReferenceGuideReference[];
-} {
-  return Object.keys(references)
-    .sort((a, b) => a.localeCompare(b))
-    .reduce<{ [key: string]: ReferenceGuideReference[] }>((acc, key) => {
-      acc[key] = references[key].sort((a, b) => a.title.toString().localeCompare(b.title.toString()));
-      return acc;
-    }, {});
-}
-
 function filterTypesOutOfScope(types: Type[], scope: string[]): Type[] {
   return new Manifest(types).filteredByAccessModifierAndAnnotations(scope);
 }
 
 function checkForReflectionErrors(reflectionResult: E.Either<string, Type>[]) {
+  function reduceReflectionResultIntoSingleEither(results: E.Either<string, Type>[]): {
+    errors: string[];
+    types: Type[];
+  } {
+    return results.reduce<{ errors: string[]; types: Type[] }>(
+      (acc, result) => {
+        E.isLeft(result) ? acc.errors.push(result.left) : acc.types.push(result.right);
+        return acc;
+      },
+      {
+        errors: [],
+        types: [],
+      },
+    );
+  }
+
   return pipe(reflectionResult, reduceReflectionResultIntoSingleEither, ({ errors, types }) =>
     errors.length ? E.left(errors) : E.right(types),
-  );
-}
-
-function reduceReflectionResultIntoSingleEither(results: E.Either<string, Type>[]): {
-  errors: string[];
-  types: Type[];
-} {
-  return results.reduce<{ errors: string[]; types: Type[] }>(
-    (acc, result) => {
-      E.isLeft(result) ? acc.errors.push(result.left) : acc.types.push(result.right);
-      return acc;
-    },
-    {
-      errors: [],
-      types: [],
-    },
   );
 }
 
@@ -170,33 +178,25 @@ function reflectSourceBody(input: string): E.Either<string, Type> {
 }
 
 function resolveApexTypeTemplate(renderable: Renderable): CompilationRequest {
+  function getTemplate(renderable: Renderable): string {
+    switch (renderable.type) {
+      case 'enum':
+        return enumMarkdownTemplate;
+      case 'interface':
+        return interfaceMarkdownTemplate;
+      case 'class':
+        return classMarkdownTemplate;
+    }
+  }
+
   return {
     template: getTemplate(renderable),
     source: renderable as RenderableEnum,
   };
 }
 
-function getTemplate(renderable: Renderable): string {
-  switch (renderable.type) {
-    case 'enum':
-      return enumMarkdownTemplate;
-    case 'interface':
-      return interfaceMarkdownTemplate;
-    case 'class':
-      return classMarkdownTemplate;
-  }
-}
-
 function compile(request: CompilationRequest): string {
   return Template.getInstance().compile(request);
-}
-
-function buildDocOutput(renderable: Renderable, docContents: string): DocOutput {
-  return {
-    docContents,
-    typeName: renderable.name,
-    type: renderable.type,
-  };
 }
 
 function findType(repository: Type[], referenceName: string) {
