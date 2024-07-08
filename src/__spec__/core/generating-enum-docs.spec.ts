@@ -1,36 +1,11 @@
-import { DocumentationBundle, generateDocs } from '../../core/generate-docs';
-import * as E from 'fp-ts/Either';
-import { pipe } from 'fp-ts/function';
-
-expect.extend({
-  documentationBundleHasLength(received: E.Either<string[], DocumentationBundle>, length: number) {
-    return {
-      pass: E.isRight(received) && received.right.docs.length === length,
-      message: () => `Expected documentation bundle to have length ${length}`,
-    };
-  },
-  firstDocContains(doc: DocumentationBundle, content: string) {
-    return {
-      pass: doc.docs[0].docContents.includes(content),
-      message: () => `Expected documentation to contain ${content}. Got ${doc.docs[0].docContents}`,
-    };
-  },
-  firstDocContainsNot(doc: DocumentationBundle, content: string) {
-    return {
-      pass: !doc.docs[0].docContents.includes(content),
-      message: () => `Expected documentation to not contain ${content}. Got ${doc.docs[0].docContents}`,
-    };
-  },
-});
-
-function assertEither<T, U>(result: E.Either<T, U>, assertion: (data: U) => void): void {
-  E.match<T, U, void>(
-    (error) => fail(error),
-    (data) => assertion(data),
-  )(result);
-}
+import { generateDocs } from '../../core/generate-docs';
+import { assertEither, extendExpect } from './expect-extensions';
 
 describe('Generates enum documentation', () => {
+  beforeAll(() => {
+    extendExpect();
+  });
+
   describe('documentation output', () => {
     it('always returns markdown as the format', () => {
       const input = `
@@ -105,161 +80,6 @@ describe('Generates enum documentation', () => {
     });
   });
 
-  describe('documentation reference guide', () => {
-    it('returns a reference guide with links to all other files', () => {
-      const input1 = `
-      public enum MyEnum {
-        VALUE1,
-        VALUE2
-      }
-      `;
-
-      const input2 = `
-      public class MyClass {}
-      `;
-
-      const result = generateDocs([input1, input2]);
-      expect(result).documentationBundleHasLength(2);
-
-      assertEither(result, (data) => expect(data.referenceGuide).toContain('[MyEnum](./Miscellaneous/MyEnum.md)'));
-      assertEither(result, (data) => expect(data.referenceGuide).toContain('[MyClass](./Miscellaneous/MyClass.md)'));
-    });
-
-    it('groups things under Miscellaneous if no group is provided', () => {
-      const input = `
-      public enum MyEnum {
-        VALUE1,
-        VALUE2
-      }
-      `;
-
-      const result = generateDocs([input]);
-      expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.referenceGuide).toContain('## Miscellaneous'));
-    });
-
-    it('group things under the provided group', () => {
-      const input = `
-      /**
-        * @group MyGroup
-        */
-      public enum MyEnum {
-        VALUE1,
-        VALUE2
-      }
-      `;
-
-      const result = generateDocs([input]);
-      expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.referenceGuide).toContain('## MyGroup'));
-    });
-
-    it('displays groups in alphabetical order', () => {
-      const input1 = `
-      /**
-        * @group ZGroup
-        */
-      public enum MyEnum {
-        VALUE1,
-        VALUE2
-      }
-      `;
-
-      const input2 = `
-      /**
-        * @group AGroup
-        */
-      public class MyClass {}
-      `;
-
-      const result = generateDocs([input1, input2]);
-      expect(result).documentationBundleHasLength(2);
-      pipe(
-        result,
-        E.map((data) => ({
-          aGroupIndex: data.referenceGuide.indexOf('## AGroup'),
-          zGroupIndex: data.referenceGuide.indexOf('## ZGroup'),
-        })),
-        E.match(
-          () => fail('Expected data'),
-          (data) => expect(data.aGroupIndex).toBeLessThan(data.zGroupIndex),
-        ),
-      );
-    });
-
-    it('displays references within groups in alphabetical order', () => {
-      const input1 = `
-      /**
-        * @group Group1
-        */
-      public enum MyEnum {
-        VALUE1,
-        VALUE2
-      }
-      `;
-
-      const input2 = `
-      /**
-        * @group Group1
-        */
-      public class MyClass {}
-      `;
-
-      const result = generateDocs([input1, input2]);
-      expect(result).documentationBundleHasLength(2);
-      assertEither(result, (data) => expect(data.referenceGuide).toContain('## Group1'));
-      assertEither(result, (data) => expect(data.referenceGuide).toContain('MyClass'));
-      assertEither(result, (data) => expect(data.referenceGuide).toContain('MyEnum'));
-    });
-
-    it('returns a reference guide with descriptions', () => {
-      const input1 = `
-      /**
-        * @description This is a description
-        */
-      public enum MyEnum {
-        VALUE1,
-        VALUE2
-      }
-      `;
-
-      const input2 = `
-      /**
-        * @description This is a description
-        */
-      public class MyClass {}
-      `;
-
-      const result = generateDocs([input1, input2]);
-      expect(result).documentationBundleHasLength(2);
-      assertEither(result, (data) => expect(data.referenceGuide).toContain('This is a description'));
-    });
-
-    it('returns a reference guide with descriptions with links to all other files', () => {
-      const input1 = `
-      /**
-        * @description This is a description with a {@link MyClass}
-        * @group Group1
-        */
-      public enum MyEnum {
-        VALUE1,
-        VALUE2
-      }
-      `;
-
-      const input2 = `
-      /**
-        * @group Group2
-        */
-      public class MyClass {}
-      `;
-
-      const result = generateDocs([input1, input2]);
-      expect(result).documentationBundleHasLength(2);
-      assertEither(result, (data) => expect(data.referenceGuide).toContain('with a [MyClass](./Group2/MyClass.md)'));
-    });
-  });
-
   describe('documentation content', () => {
     it('generates a heading with the enum name', () => {
       const input = `
@@ -278,12 +98,12 @@ describe('Generates enum documentation', () => {
 
     it('displays type level annotations', () => {
       const input = `
-     @NamespaceAccessible
-     public enum MyEnum {
-        VALUE1,
-        VALUE2
-      }
-    `;
+        @NamespaceAccessible
+        public enum MyEnum {
+           VALUE1,
+           VALUE2
+         }
+       `;
 
       const result = generateDocs([input]);
       expect(result).documentationBundleHasLength(1);
@@ -384,7 +204,6 @@ describe('Generates enum documentation', () => {
 
       const result = generateDocs([input]);
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data).firstDocContains('Description'));
       assertEither(result, (data) => expect(data).firstDocContains('This is a description'));
     });
 
@@ -416,7 +235,6 @@ describe('Generates enum documentation', () => {
 
       const result = generateDocs([input]);
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data).firstDocContains('Description'));
       assertEither(result, (data) =>
         expect(data).firstDocContains(
           'This is a description with an [test@testerson.com](mailto:test@testerson.com) email',

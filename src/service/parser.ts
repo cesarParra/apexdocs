@@ -60,7 +60,7 @@ export class RawBodyParser implements TypeParser {
         continue;
       }
 
-      // If reaching here then we are dealing with an interface
+      // At this stage, we can be sure we are dealing with an interface
       let typeAsInterface = currentType as InterfaceMirror;
       if (!typeAsInterface.extended_interfaces.length) {
         typesWithFields.push(currentType);
