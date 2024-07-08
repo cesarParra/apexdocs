@@ -407,6 +407,24 @@ describe('Generates interface documentation', () => {
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) => expect(data).firstDocContains('### Throws'));
       });
+
+      it('displays an "inherited" tag if the method was inherited from a different interface', () => {
+        const input1 = `
+        public interface MyInterface {
+          void myMethod();
+        }
+      `;
+
+        const input2 = `
+        public interface AnotherInterface extends MyInterface {}
+      `;
+
+        const result = generateDocs([input1, input2]);
+        expect(result).documentationBundleHasLength(2);
+        assertEither(result, (data) =>
+          expect(data.docs.find((doc) => doc.typeName === 'AnotherInterface')?.docContents).toContain('Inherited'),
+        );
+      });
     });
   });
 });

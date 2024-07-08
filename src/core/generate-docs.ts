@@ -1,4 +1,4 @@
-import { reflect as mirrorReflection, Type } from '@cparra/apex-reflection';
+import { ClassMirror, InterfaceMirror, MethodMirror, reflect as mirrorReflection, Type } from '@cparra/apex-reflection';
 import { typeToRenderableType } from '../adapters/apex-types';
 import { Renderable, RenderableContent, RenderableEnum, StringOrLink } from './renderable/types';
 import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/class-template';
@@ -50,6 +50,7 @@ export function generateDocs(
     input,
     (input) => input.map(reflectSourceBody),
     checkForReflectionErrors,
+    E.map((types) => types.map((type) => addInheritedMembers(type, types))),
     E.map((types) => filterTypesOutOfScope(types, configWithDefaults.scope)),
     E.map((types) => typesToRenderableBundle(types, configWithDefaults)),
     E.map(({ references, renderables }) => ({
@@ -200,6 +201,87 @@ function buildDocOutput(renderable: Renderable, docContents: string): DocOutput 
 
 function findType(repository: Type[], referenceName: string) {
   return repository.find((currentType: Type) => currentType.name.toLowerCase() === referenceName.toLowerCase());
+}
+
+function addInheritedMembers<T extends Type>(current: T, repository: Type[]): T {
+  if (current.type_name === 'enum') {
+    return current;
+  } else if (current.type_name === 'interface') {
+    return addInheritedInterfaceMethods(current as InterfaceMirror, repository) as T;
+  } else {
+    return addInheritedClassMembers(current as ClassMirror, repository) as T;
+  }
+}
+
+function getParents<T extends Type>(
+  extendedNamesExtractor: (current: T) => string[],
+  current: T,
+  repository: Type[],
+): T[] {
+  return pipe(
+    extendedNamesExtractor(current),
+    (interfaces: string[]) => interfaces.map((interfaceName) => repository.find((type) => type.name === interfaceName)),
+    (interfaces = []) => interfaces.filter((type) => type !== undefined) as T[],
+    (interfaces) =>
+      interfaces.reduce<T[]>(
+        (acc, current) => [...acc, ...getParents(extendedNamesExtractor, current, repository)],
+        interfaces,
+      ),
+  );
+}
+
+function addInheritedInterfaceMethods(interfaceMirror: InterfaceMirror, repository: Type[]): InterfaceMirror {
+  function methodAlreadyExists(memberName: string, members: { name: string }[]) {
+    return members.some((member) => member.name.toLowerCase() === memberName.toLowerCase());
+  }
+
+  function parentExtractor(interfaceMirror: InterfaceMirror): string[] {
+    return interfaceMirror.extended_interfaces;
+  }
+
+  const parents = getParents(parentExtractor, interfaceMirror, repository);
+  return parents.reduce((acc, current) => {
+    return {
+      ...acc,
+      methods: [
+        ...acc.methods,
+        ...current.methods
+          .filter((method) => !methodAlreadyExists(method.name, acc.methods))
+          .map((method) => ({
+            ...method,
+            inherited: true,
+          })),
+      ],
+    };
+  }, interfaceMirror);
+}
+
+function addInheritedClassMembers(classMirror: ClassMirror, repository: Type[]): ClassMirror {
+  function memberAlreadyExists(memberName: string, members: { name: string }[]) {
+    return members.some((member) => member.name.toLowerCase() === memberName.toLowerCase());
+  }
+
+  function parentExtractor(classMirror: ClassMirror): string[] {
+    return classMirror.extended_class ? [classMirror.extended_class] : [];
+  }
+
+  function filterMember(parent: ClassMirror, existing: MethodMirror[]): MethodMirror[] {
+    return parent.methods
+      .filter((method) => method.access_modifier.toLowerCase() === 'private')
+      .filter((method) => !memberAlreadyExists(method.name, existing))
+      .map((method) => ({
+        ...method,
+        inherited: true,
+      }));
+  }
+
+  const parents = getParents(parentExtractor, classMirror, repository);
+  return parents.reduce((acc, current) => {
+    return {
+      ...acc,
+      methods: [...acc.methods, ...filterMember(current, classMirror.methods)],
+    };
+  }, classMirror);
 }
 
 function linkFromTypeNameGenerator(
