@@ -1,6 +1,4 @@
 import { generateDocs } from '../../core/generate-docs';
-import * as E from 'fp-ts/Either';
-import { pipe } from 'fp-ts/function';
 import { assertEither, extendExpect } from './expect-extensions';
 
 describe('Generates enum documentation', () => {
