@@ -82,7 +82,6 @@ describe('Generates enum documentation', () => {
     });
   });
 
-
   describe('documentation content', () => {
     it('generates a heading with the enum name', () => {
       const input = `
@@ -101,12 +100,12 @@ describe('Generates enum documentation', () => {
 
     it('displays type level annotations', () => {
       const input = `
-     @NamespaceAccessible
-     public enum MyEnum {
-        VALUE1,
-        VALUE2
-      }
-    `;
+        @NamespaceAccessible
+        public enum MyEnum {
+           VALUE1,
+           VALUE2
+         }
+       `;
 
       const result = generateDocs([input]);
       expect(result).documentationBundleHasLength(1);

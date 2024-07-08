@@ -77,4 +77,34 @@ describe('Generates interface documentation', () => {
       assertEither(result, (data) => expect(data.docs[0].docContents).not.toContain('myMethod'));
     });
   });
+
+  describe('documentation content', () => {
+    it('generates a heading with the interface name', () => {
+      const input = `
+        public interface MyInterface {}
+      `;
+
+      const output = `# MyInterface Interface`;
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains(output));
+    });
+
+    it('displays type level annotations', () => {
+      const input = `
+        @NamespaceAccessible
+        public interface MyEnum {
+          @Deprecated
+          void myMethod();   
+        }
+       `;
+
+      const result = generateDocs([input]);
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('NAMESPACEACCESSIBLE'));
+      assertEither(result, (data) => expect(data).firstDocContains('DEPRECATED'));
+    });
+  });
 });
+
+// TODO: Methods
