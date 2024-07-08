@@ -70,7 +70,7 @@ export default class Manifest {
   filterAccessibleModifier(accessAndDocAware: AccessAndDocAware[], modifiers: string[]) {
     return accessAndDocAware.filter((currentType) => {
       const hasIgnoreDocAnnotation = currentType.docComment?.annotations.some(
-        (annotation: DocCommentAnnotation) => annotation.name === 'ignore',
+        (annotation: DocCommentAnnotation) => annotation.name.toLowerCase() === 'ignore',
       );
       if (hasIgnoreDocAnnotation) {
         return false;
