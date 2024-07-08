@@ -94,7 +94,7 @@ describe('Generates interface documentation', () => {
       it('displays type level annotations', () => {
         const input = `
         @NamespaceAccessible
-        public interface MyEnum {
+        public interface MyInterface {
           @Deprecated
           void myMethod();   
         }
@@ -108,11 +108,11 @@ describe('Generates interface documentation', () => {
 
       it('displays the description', () => {
         const input = `
-     /**
-      * This is a description
-      */
-     public interface MyInterface {}
-    `;
+          /**
+           * This is a description
+           */
+          public interface MyInterface {}
+         `;
 
         const result = generateDocs([input]);
         expect(result).documentationBundleHasLength(1);
@@ -121,10 +121,11 @@ describe('Generates interface documentation', () => {
 
       it('display custom documentation tags', () => {
         const input = `
-     /**
-      * @custom-tag My Value
-      */
-     public interface MyInterface {}`;
+          /**
+           * @custom-tag My Value
+           */
+          public interface MyInterface {}
+        `;
 
         const result = generateDocs([input]);
         expect(result).documentationBundleHasLength(1);
@@ -134,10 +135,10 @@ describe('Generates interface documentation', () => {
 
       it('displays the group', () => {
         const input = `
-     /**
-      * @group MyGroup
-      */
-     public interface MyInterface {}`;
+          /**
+           * @group MyGroup
+           */
+          public interface MyInterface {}`;
 
         const result = generateDocs([input]);
         expect(result).documentationBundleHasLength(1);
@@ -147,10 +148,10 @@ describe('Generates interface documentation', () => {
 
       it('displays the author', () => {
         const input = `
-     /**
-      * @author John Doe
-      */
-     public interface MyInterface {}`;
+          /**
+           * @author John Doe
+           */
+          public interface MyInterface {}`;
 
         const result = generateDocs([input]);
         expect(result).documentationBundleHasLength(1);
@@ -160,10 +161,10 @@ describe('Generates interface documentation', () => {
 
       it('displays the date', () => {
         const input = `
-     /**
-      * @date 2021-01-01
-      */
-     public interface MyInterface {}`;
+          /**
+           * @date 2021-01-01
+           */
+          public interface MyInterface {}`;
 
         const result = generateDocs([input]);
         expect(result).documentationBundleHasLength(1);
@@ -173,10 +174,10 @@ describe('Generates interface documentation', () => {
 
       it('displays descriptions', () => {
         const input = `
-      /**
-        * @description This is a description
-        */
-      public interface MyInterface {}`;
+          /**
+            * @description This is a description
+            */
+          public interface MyInterface {}`;
 
         const result = generateDocs([input]);
         expect(result).documentationBundleHasLength(1);
@@ -185,11 +186,11 @@ describe('Generates interface documentation', () => {
 
       it('displays descriptions with links', () => {
         const input1 = `
-      /**
-        * @description This is a description with a {@link InterfaceRef} reference
-        */
-      public enum MyEnum {}
-      `;
+          /**
+            * @description This is a description with a {@link InterfaceRef} reference
+            */
+          public enum MyInterface {}
+          `;
 
         const input2 = 'public interface InterfaceRef {}';
 
@@ -202,11 +203,11 @@ describe('Generates interface documentation', () => {
 
       it('displays descriptions with emails', () => {
         const input = `
-      /**
-        * @description This is a description with an {@email test@testerson.com} email
-        */
-      public interface MyInterface {}
-      `;
+          /**
+            * @description This is a description with an {@email test@testerson.com} email
+            */
+          public interface MyInterface {}
+          `;
 
         const result = generateDocs([input]);
         expect(result).documentationBundleHasLength(1);
@@ -219,11 +220,11 @@ describe('Generates interface documentation', () => {
 
       it('displays sees with accurately resolved links', () => {
         const input1 = `
-      /**
-        * @see InterfaceRef
-        */
-      public interface MyInterface {}
-      `;
+          /**
+            * @see InterfaceRef
+            */
+          public interface MyInterface {}
+          `;
 
         const input2 = 'public interface InterfaceRef {}';
 
@@ -235,11 +236,11 @@ describe('Generates interface documentation', () => {
 
       it('displays sees without links when the reference is not found', () => {
         const input = `
-      /**
-        * @see InterfaceRef
-        */
-      public interface MyInterface {}
-      `;
+          /**
+            * @see InterfaceRef
+            */
+          public interface MyInterface {}
+          `;
 
         const result = generateDocs([input]);
         expect(result).documentationBundleHasLength(1);
@@ -266,16 +267,16 @@ describe('Generates interface documentation', () => {
 
       it('displays a mermaid diagram', () => {
         const input = `
-      /**
-        * @mermaid
-        * graph TD
-        *   A[Square Rect] -- Link text --> B((Circle))
-        *   A --> C(Round Rect)
-        *   B --> D{Rhombus}
-        *   C --> D
-        */
-      public interface MyInterface {}
-      `;
+          /**
+            * @mermaid
+            * graph TD
+            *   A[Square Rect] -- Link text --> B((Circle))
+            *   A --> C(Round Rect)
+            *   B --> D{Rhombus}
+            *   C --> D
+            */
+          public interface MyInterface {}
+          `;
 
         const result = generateDocs([input]);
         expect(result).documentationBundleHasLength(1);
@@ -285,15 +286,15 @@ describe('Generates interface documentation', () => {
 
       it('displays an example code block', () => {
         const input = `
-      /**
-        * @example
-        * public class MyClass {
-        *   public void myMethod() {
-        *     System.debug('Hello, World!');
-        *   }
-        * }
-        */
-      public interface MyInterface {}`;
+          /**
+            * @example
+            * public class MyClass {
+            *   public void myMethod() {
+            *     System.debug('Hello, World!');
+            *   }
+            * }
+            */
+          public interface MyInterface {}`;
 
         const result = generateDocs([input]);
         expect(result).documentationBundleHasLength(1);
@@ -406,6 +407,24 @@ describe('Generates interface documentation', () => {
         const result = generateDocs([input]);
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) => expect(data).firstDocContains('### Throws'));
+      });
+
+      it('displays an "inherited" tag if the method was inherited from a different interface', () => {
+        const input1 = `
+        public interface MyInterface {
+          void myMethod();
+        }
+      `;
+
+        const input2 = `
+        public interface AnotherInterface extends MyInterface {}
+      `;
+
+        const result = generateDocs([input1, input2]);
+        expect(result).documentationBundleHasLength(2);
+        assertEither(result, (data) =>
+          expect(data.docs.find((doc) => doc.typeName === 'AnotherInterface')?.docContents).toContain('Inherited'),
+        );
       });
     });
   });

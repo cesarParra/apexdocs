@@ -1,4 +1,4 @@
-import { reflect as mirrorReflection, Type } from '@cparra/apex-reflection';
+import { ClassMirror, InterfaceMirror, reflect as mirrorReflection, Type } from '@cparra/apex-reflection';
 import { typeToRenderableType } from '../adapters/apex-types';
 import { Renderable, RenderableContent, RenderableEnum, StringOrLink } from './renderable/types';
 import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/class-template';
@@ -50,6 +50,7 @@ export function generateDocs(
     input,
     (input) => input.map(reflectSourceBody),
     checkForReflectionErrors,
+    E.map((types) => types.map((type) => addInheritedMembers(type, types))),
     E.map((types) => filterTypesOutOfScope(types, configWithDefaults.scope)),
     E.map((types) => typesToRenderableBundle(types, configWithDefaults)),
     E.map(({ references, renderables }) => ({
@@ -110,6 +111,14 @@ function typesToRenderableBundle(types: Type[], config: DocumentationConfig) {
 }
 
 function renderableToOutputDoc(renderable: Renderable): DocOutput {
+  function buildDocOutput(renderable: Renderable, docContents: string): DocOutput {
+    return {
+      docContents,
+      typeName: renderable.name,
+      type: renderable.type,
+    };
+  }
+
   return pipe(renderable, resolveApexTypeTemplate, compile, (docContents) => buildDocOutput(renderable, docContents));
 }
 
@@ -117,6 +126,17 @@ function referencesToReferenceGuide(
   references: { [key: string]: ReferenceGuideReference[] },
   template: string,
 ): string {
+  function alphabetizeReferences(references: { [key: string]: ReferenceGuideReference[] }): {
+    [key: string]: ReferenceGuideReference[];
+  } {
+    return Object.keys(references)
+      .sort((a, b) => a.localeCompare(b))
+      .reduce<{ [key: string]: ReferenceGuideReference[] }>((acc, key) => {
+        acc[key] = references[key].sort((a, b) => a.title.toString().localeCompare(b.title.toString()));
+        return acc;
+      }, {});
+  }
+
   return pipe(references, alphabetizeReferences, (references) =>
     compile({
       template: template,
@@ -125,40 +145,29 @@ function referencesToReferenceGuide(
   );
 }
 
-function alphabetizeReferences(references: { [key: string]: ReferenceGuideReference[] }): {
-  [key: string]: ReferenceGuideReference[];
-} {
-  return Object.keys(references)
-    .sort((a, b) => a.localeCompare(b))
-    .reduce<{ [key: string]: ReferenceGuideReference[] }>((acc, key) => {
-      acc[key] = references[key].sort((a, b) => a.title.toString().localeCompare(b.title.toString()));
-      return acc;
-    }, {});
-}
-
 function filterTypesOutOfScope(types: Type[], scope: string[]): Type[] {
   return new Manifest(types).filteredByAccessModifierAndAnnotations(scope);
 }
 
 function checkForReflectionErrors(reflectionResult: E.Either<string, Type>[]) {
+  function reduceReflectionResultIntoSingleEither(results: E.Either<string, Type>[]): {
+    errors: string[];
+    types: Type[];
+  } {
+    return results.reduce<{ errors: string[]; types: Type[] }>(
+      (acc, result) => {
+        E.isLeft(result) ? acc.errors.push(result.left) : acc.types.push(result.right);
+        return acc;
+      },
+      {
+        errors: [],
+        types: [],
+      },
+    );
+  }
+
   return pipe(reflectionResult, reduceReflectionResultIntoSingleEither, ({ errors, types }) =>
     errors.length ? E.left(errors) : E.right(types),
-  );
-}
-
-function reduceReflectionResultIntoSingleEither(results: E.Either<string, Type>[]): {
-  errors: string[];
-  types: Type[];
-} {
-  return results.reduce<{ errors: string[]; types: Type[] }>(
-    (acc, result) => {
-      E.isLeft(result) ? acc.errors.push(result.left) : acc.types.push(result.right);
-      return acc;
-    },
-    {
-      errors: [],
-      types: [],
-    },
   );
 }
 
@@ -169,37 +178,120 @@ function reflectSourceBody(input: string): E.Either<string, Type> {
 }
 
 function resolveApexTypeTemplate(renderable: Renderable): CompilationRequest {
+  function getTemplate(renderable: Renderable): string {
+    switch (renderable.type) {
+      case 'enum':
+        return enumMarkdownTemplate;
+      case 'interface':
+        return interfaceMarkdownTemplate;
+      case 'class':
+        return classMarkdownTemplate;
+    }
+  }
+
   return {
     template: getTemplate(renderable),
     source: renderable as RenderableEnum,
   };
 }
 
-function getTemplate(renderable: Renderable): string {
-  switch (renderable.type) {
-    case 'enum':
-      return enumMarkdownTemplate;
-    case 'interface':
-      return interfaceMarkdownTemplate;
-    case 'class':
-      return classMarkdownTemplate;
-  }
-}
-
 function compile(request: CompilationRequest): string {
   return Template.getInstance().compile(request);
 }
 
-function buildDocOutput(renderable: Renderable, docContents: string): DocOutput {
+function findType(repository: Type[], referenceName: string) {
+  return repository.find((currentType: Type) => currentType.name.toLowerCase() === referenceName.toLowerCase());
+}
+
+function addInheritedMembers<T extends Type>(current: T, repository: Type[]): T {
+  if (current.type_name === 'enum') {
+    return current;
+  } else if (current.type_name === 'interface') {
+    return addInheritedInterfaceMethods(current as InterfaceMirror, repository) as T;
+  } else {
+    return addInheritedClassMembers(current as ClassMirror, repository) as T;
+  }
+}
+
+function getParents<T extends Type>(
+  extendedNamesExtractor: (current: T) => string[],
+  current: T,
+  repository: Type[],
+): T[] {
+  return pipe(
+    extendedNamesExtractor(current),
+    (interfaces: string[]) => interfaces.map((interfaceName) => repository.find((type) => type.name === interfaceName)),
+    (interfaces = []) => interfaces.filter((type) => type !== undefined) as T[],
+    (interfaces) =>
+      interfaces.reduce<T[]>(
+        (acc, current) => [...acc, ...getParents(extendedNamesExtractor, current, repository)],
+        interfaces,
+      ),
+  );
+}
+
+function addInheritedInterfaceMethods(interfaceMirror: InterfaceMirror, repository: Type[]): InterfaceMirror {
+  function methodAlreadyExists(memberName: string, members: { name: string }[]) {
+    return members.some((member) => member.name.toLowerCase() === memberName.toLowerCase());
+  }
+
+  function parentExtractor(interfaceMirror: InterfaceMirror): string[] {
+    return interfaceMirror.extended_interfaces;
+  }
+
+  const parents = getParents(parentExtractor, interfaceMirror, repository);
   return {
-    docContents,
-    typeName: renderable.name,
-    type: renderable.type,
+    ...interfaceMirror,
+    methods: parents.reduce(
+      (acc, currentValue) => [
+        ...acc,
+        ...currentValue.methods
+          .filter((method) => !methodAlreadyExists(method.name, acc))
+          .map((method) => ({
+            ...method,
+            inherited: true,
+          })),
+      ],
+      interfaceMirror.methods,
+    ),
   };
 }
 
-function findType(repository: Type[], referenceName: string) {
-  return repository.find((currentType: Type) => currentType.name.toLowerCase() === referenceName.toLowerCase());
+function addInheritedClassMembers(classMirror: ClassMirror, repository: Type[]): ClassMirror {
+  function memberAlreadyExists(memberName: string, members: { name: string }[]) {
+    return members.some((member) => member.name.toLowerCase() === memberName.toLowerCase());
+  }
+
+  function parentExtractor(classMirror: ClassMirror): string[] {
+    return classMirror.extended_class ? [classMirror.extended_class] : [];
+  }
+
+  function filterMember<T extends { name: string; access_modifier: string }>(members: T[], existing: T[]): T[] {
+    return members
+      .filter((member) => member.access_modifier.toLowerCase() !== 'private')
+      .filter((member) => !memberAlreadyExists(member.name, existing))
+      .map((member) => ({
+        ...member,
+        inherited: true,
+      }));
+  }
+
+  const parents = getParents(parentExtractor, classMirror, repository);
+  return {
+    ...classMirror,
+    fields: parents.reduce(
+      (acc, currentValue) => [...acc, ...filterMember(currentValue.fields, acc)],
+      classMirror.fields,
+    ),
+    properties: parents.reduce(
+      (acc, currentValue) => [...acc, ...filterMember(currentValue.properties, acc)],
+      classMirror.properties,
+    ),
+    methods: parents.reduce(
+      (acc, currentValue) => [...acc, ...filterMember(currentValue.methods, acc)],
+      classMirror.methods,
+    ),
+  };
 }
 
 function linkFromTypeNameGenerator(
