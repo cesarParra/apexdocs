@@ -1,4 +1,4 @@
-import { ClassMirror, InterfaceMirror, MethodMirror, reflect as mirrorReflection, Type } from '@cparra/apex-reflection';
+import { ClassMirror, InterfaceMirror, reflect as mirrorReflection, Type } from '@cparra/apex-reflection';
 import { typeToRenderableType } from '../adapters/apex-types';
 import { Renderable, RenderableContent, RenderableEnum, StringOrLink } from './renderable/types';
 import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/class-template';
@@ -240,20 +240,21 @@ function addInheritedInterfaceMethods(interfaceMirror: InterfaceMirror, reposito
   }
 
   const parents = getParents(parentExtractor, interfaceMirror, repository);
-  return parents.reduce((acc, current) => {
-    return {
-      ...acc,
-      methods: [
-        ...acc.methods,
-        ...current.methods
-          .filter((method) => !methodAlreadyExists(method.name, acc.methods))
+  return {
+    ...interfaceMirror,
+    methods: parents.reduce(
+      (acc, currentValue) => [
+        ...acc,
+        ...currentValue.methods
+          .filter((method) => !methodAlreadyExists(method.name, acc))
           .map((method) => ({
             ...method,
             inherited: true,
           })),
       ],
-    };
-  }, interfaceMirror);
+      interfaceMirror.methods,
+    ),
+  };
 }
 
 function addInheritedClassMembers(classMirror: ClassMirror, repository: Type[]): ClassMirror {
@@ -265,23 +266,32 @@ function addInheritedClassMembers(classMirror: ClassMirror, repository: Type[]):
     return classMirror.extended_class ? [classMirror.extended_class] : [];
   }
 
-  function filterMember(parent: ClassMirror, existing: MethodMirror[]): MethodMirror[] {
-    return parent.methods
-      .filter((method) => method.access_modifier.toLowerCase() === 'private')
-      .filter((method) => !memberAlreadyExists(method.name, existing))
-      .map((method) => ({
-        ...method,
+  function filterMember<T extends { name: string; access_modifier: string }>(members: T[], existing: T[]): T[] {
+    return members
+      .filter((member) => member.access_modifier.toLowerCase() !== 'private')
+      .filter((member) => !memberAlreadyExists(member.name, existing))
+      .map((member) => ({
+        ...member,
         inherited: true,
       }));
   }
 
   const parents = getParents(parentExtractor, classMirror, repository);
-  return parents.reduce((acc, current) => {
-    return {
-      ...acc,
-      methods: [...acc.methods, ...filterMember(current, classMirror.methods)],
-    };
-  }, classMirror);
+  return {
+    ...classMirror,
+    fields: parents.reduce(
+      (acc, currentValue) => [...acc, ...filterMember(currentValue.fields, acc)],
+      classMirror.fields,
+    ),
+    properties: parents.reduce(
+      (acc, currentValue) => [...acc, ...filterMember(currentValue.properties, acc)],
+      classMirror.properties,
+    ),
+    methods: parents.reduce(
+      (acc, currentValue) => [...acc, ...filterMember(currentValue.methods, acc)],
+      classMirror.methods,
+    ),
+  };
 }
 
 function linkFromTypeNameGenerator(
