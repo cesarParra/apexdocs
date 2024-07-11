@@ -13,4 +13,4 @@ public sampleEnumFromBase
 ```
 
 #### Type
-[ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md)
+SampleEnum

@@ -3,5 +3,5 @@
 ## Namespace
 ns
 
-**Extends**
+**Inheritance**
 Exception

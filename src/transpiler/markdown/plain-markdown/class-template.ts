@@ -6,9 +6,11 @@ export const classMarkdownTemplate = `
 
 {{> typeDocumentation}}
 
-{{#if extends}}
-**Extends**
-{{link extends}}
+{{#if extends.length}}
+**Inheritance**
+{{#each extends}}
+{{link this}}{{#unless @last}} < {{/unless}}
+{{/each}}
 {{/if}}
 
 {{#if implements}}

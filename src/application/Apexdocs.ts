@@ -12,6 +12,10 @@ import ApexBundle from '../model/apex-bundle';
 import Manifest from '../model/manifest';
 import { TypesRepository } from '../model/types-repository';
 import { TypeTranspilerFactory } from '../transpiler/factory';
+import { generateDocs } from '../core/generate-docs';
+import { pipe } from 'fp-ts/function';
+import * as E from 'fp-ts/Either';
+import { MarkdownFile } from '../model/markdown-file';
 
 /**
  * Application entry-point to generate documentation out of Apex source files.
@@ -23,24 +27,60 @@ export class Apexdocs {
   static generate(): void {
     Logger.log('Initializing...');
     const fileBodies = ApexFileReader.processFiles(new DefaultFileSystem());
-    const manifest = createManifest(new RawBodyParser(fileBodies), this._reflectionWithLogger);
-    TypesRepository.getInstance().populateAll(manifest.types);
-    const filteredTypes = this.filterByScopes(manifest);
-    TypesRepository.getInstance().populateScoped(filteredTypes);
-    const processor = TypeTranspilerFactory.get(Settings.getInstance().targetGenerator);
-    Transpiler.generate(filteredTypes, processor);
-    const generatedFiles = processor.fileBuilder().files();
 
-    const files: TargetFile[] = [];
-    FileWriter.write(generatedFiles, (file: TargetFile) => {
-      Logger.logSingle(`${file.name} processed.`, false, 'green', false);
-      files.push(file);
-    });
+    if (Settings.getInstance().targetGenerator === 'plain-markdown') {
+      pipe(
+        generateDocs(
+          fileBodies.map((file) => file.rawTypeContent),
+          {
+            scope: Settings.getInstance().scope,
+            outputDir: Settings.getInstance().outputDir,
+            namespace: Settings.getInstance().getNamespace(),
+            sortMembersAlphabetically: Settings.getInstance().sortMembersAlphabetically(),
+            defaultGroupName: Settings.getInstance().getDefaultGroupName(),
+          },
+        ),
+        E.map((docBundle): MarkdownFile[] => {
+          const referenceGuide = new MarkdownFile('index', '');
+          referenceGuide.addText(docBundle.referenceGuide);
 
-    Settings.getInstance().onAfterProcess(files);
+          const files: MarkdownFile[] = docBundle.docs.map((doc) => {
+            const file = new MarkdownFile(
+              `${Settings.getInstance().getNamespacePrefix()}${doc.typeName}`,
+              doc.directory,
+            );
+            file.addText(doc.docContents);
+            return file;
+          });
 
-    // Error logging
-    ErrorLogger.logErrors(filteredTypes);
+          return [referenceGuide, ...files];
+        }),
+        E.map((files) => {
+          FileWriter.write(files, (file: TargetFile) => {
+            Logger.logSingle(`${file.name} processed.`, false, 'green', false);
+          });
+        }),
+      );
+    } else {
+      const manifest = createManifest(new RawBodyParser(fileBodies), this._reflectionWithLogger);
+      TypesRepository.getInstance().populateAll(manifest.types);
+      const filteredTypes = this.filterByScopes(manifest);
+      TypesRepository.getInstance().populateScoped(filteredTypes);
+      const processor = TypeTranspilerFactory.get(Settings.getInstance().targetGenerator);
+      Transpiler.generate(filteredTypes, processor);
+      const generatedFiles = processor.fileBuilder().files();
+
+      const files: TargetFile[] = [];
+      FileWriter.write(generatedFiles, (file: TargetFile) => {
+        Logger.logSingle(`${file.name} processed.`, false, 'green', false);
+        files.push(file);
+      });
+
+      Settings.getInstance().onAfterProcess(files);
+
+      // Error logging
+      ErrorLogger.logErrors(filteredTypes);
+    }
   }
 
   private static filterByScopes(manifest: Manifest) {

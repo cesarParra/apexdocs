@@ -102,7 +102,7 @@ export type GroupedMember<T> = RenderableSection<T[]> & { groupDescription: stri
 
 export type RenderableClass = RenderableType & {
   type: 'class';
-  extends?: StringOrLink;
+  extends?: StringOrLink[];
   implements?: StringOrLink[];
   classModifier?: string;
   sharingModifier?: string;

@@ -16,12 +16,12 @@ SampleClass sample = new SampleClass();
 sample.doSomething();
 ```
 
-**Extends**
-[ns.BaseClass](../Miscellaneous/ns.BaseClass.md)
+**Inheritance**
+BaseClass
 
 **Implements**
-[ns.SampleInterface](../Miscellaneous/ns.SampleInterface.md), 
-[ns.ParentInterface](../Miscellaneous/ns.ParentInterface.md)
+SampleInterface, 
+ParentInterface
 
 ## Fields
 ### Group Name
@@ -48,7 +48,7 @@ public sampleEnumFromBase
 ```
 
 ##### Type
-[ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md)
+SampleEnum
 
 ## Properties
 ### Group Name

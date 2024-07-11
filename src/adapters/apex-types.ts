@@ -10,7 +10,11 @@ import {
 } from '../core/renderable/types';
 import { adaptDescribable, adaptDocumentable } from './documentables';
 import { GetRenderableContentByTypeName, linkFromTypeNameGenerator } from './references';
-import { FieldMirrorWithInheritance, PropertyMirrorWithInheritance } from '../model/inheritance';
+import {
+  ClassMirrorWithInheritanceChain,
+  FieldMirrorWithInheritance,
+  PropertyMirrorWithInheritance,
+} from '../model/inheritance';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
 
@@ -52,7 +56,7 @@ export function typeToRenderableType(
       case 'interface':
         return interfaceTypeToInterfaceSource(type as InterfaceMirror, linkGenerator);
       case 'class':
-        return classTypeToClassSource(type as ClassMirror, linkGenerator);
+        return classTypeToClassSource(type as ClassMirrorWithInheritanceChain, linkGenerator);
     }
   }
 
@@ -99,17 +103,19 @@ export function interfaceTypeToInterfaceSource(
 }
 
 export function classTypeToClassSource(
-  classType: ClassMirror,
+  classType: ClassMirrorWithInheritanceChain,
   linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number = 1,
 ): RenderableClass {
+  console.log('current classType:', classType.name);
   return {
     type: 'class',
     ...baseTypeAdapter(classType, linkGenerator, baseHeadingLevel),
     classModifier: classType.classModifier,
     sharingModifier: classType.sharingModifier,
     implements: classType.implemented_interfaces.map(linkFromTypeNameGenerator),
-    extends: classType.extended_class ? linkFromTypeNameGenerator(classType.extended_class) : undefined,
+    extends: classType.inheritanceChain.map(linkFromTypeNameGenerator),
+    //extends: classType.extended_class ? linkFromTypeNameGenerator(classType.extended_class) : undefined,
     methods: adaptMembers('Methods', classType.methods, adaptMethod, linkFromTypeNameGenerator, baseHeadingLevel + 1),
     constructors: adaptMembers(
       'Constructors',
@@ -137,7 +143,7 @@ export function classTypeToClassSource(
       headingLevel: baseHeadingLevel + 1,
       heading: 'Classes',
       value: classType.classes.map((innerClass) =>
-        classTypeToClassSource(innerClass, linkGenerator, baseHeadingLevel + 2),
+        classTypeToClassSource({ ...innerClass, inheritanceChain: [] }, linkGenerator, baseHeadingLevel + 2),
       ),
     },
     innerEnums: {
@@ -200,12 +206,15 @@ function toGroupedMembers<T extends Groupable, K>(
 }
 
 function groupByGroupName<T extends Groupable>(members: T[]): Record<string, T[]> {
-  return members.reduce((acc, member) => {
-    const groupName = member.group ?? 'Other';
-    acc[groupName] = acc[groupName] ?? [];
-    acc[groupName].push(member);
-    return acc;
-  }, {} as Record<string, T[]>);
+  return members.reduce(
+    (acc, member) => {
+      const groupName = member.group ?? 'Other';
+      acc[groupName] = acc[groupName] ?? [];
+      acc[groupName].push(member);
+      return acc;
+    },
+    {} as Record<string, T[]>,
+  );
 }
 
 function singleGroup<T extends Groupable, K>(
