@@ -24,7 +24,7 @@ export class MarkdownFile extends OutputFile {
   }
 
   public addLink(text: string) {
-    this.addText(`\{@link ${text}\}`);
+    this.addText(`{@link ${text}}`);
   }
 
   startCodeBlock(language = 'apex') {

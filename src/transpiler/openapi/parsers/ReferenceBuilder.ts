@@ -227,7 +227,7 @@ export class ReferenceBuilder {
         return { schema: { type: 'object' }, referenceComponents: [] };
       case 'object':
         return { schema: { type: 'object' }, referenceComponents: [] };
-      default:
+      default: {
         // If we got here we are dealing with a non-primitive (most likely a custom class or an SObject).
         const referencedType = TypesRepository.getInstance().getFromAllByName(typeName);
         if (!referencedType) {
@@ -243,6 +243,7 @@ export class ReferenceBuilder {
           schema: reference.entrypointReferenceObject,
           referenceComponents: [...reference.referenceComponents],
         };
+      }
     }
   }
 
@@ -266,7 +267,7 @@ type SchemaObjectReferencePair = {
 
 class ReferenceOverrides {
   static build(referenceAsString: string): ReferenceOverride[] {
-    const cleanedUpReference = referenceAsString.replace(/[\[\]]/g, '');
+    const cleanedUpReference = referenceAsString.replace(/[[\]]/g, '');
     const referenceStrings = cleanedUpReference.split(',').map((item) => item.replace(/\s/g, ''));
     return referenceStrings.map((item) => {
       const [propertyName, referenceName] = item.split(':');
