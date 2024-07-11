@@ -17,11 +17,11 @@ sample.doSomething();
 ```
 
 **Inheritance**
-BaseClass
+[ns.BaseClass](../Miscellaneous/ns.BaseClass.md)
 
 **Implements**
-SampleInterface, 
-ParentInterface
+[ns.SampleInterface](../Miscellaneous/ns.SampleInterface.md), 
+[ns.ParentInterface](../Miscellaneous/ns.ParentInterface.md)
 
 ## Fields
 ### Group Name
@@ -48,7 +48,7 @@ public sampleEnumFromBase
 ```
 
 ##### Type
-SampleEnum
+[ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md)
 
 ## Properties
 ### Group Name

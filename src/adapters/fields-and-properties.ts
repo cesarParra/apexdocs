@@ -1,13 +1,14 @@
 import { FieldMirrorWithInheritance, PropertyMirrorWithInheritance } from '../model/inheritance';
 import { RenderableField } from '../core/renderable/types';
 import { adaptDocumentable } from './documentables';
-import { GetRenderableContentByTypeName, linkFromTypeNameGenerator } from './references';
+import { GetRenderableContentByTypeName } from './references';
 
 export function adaptFieldOrProperty(
   field: FieldMirrorWithInheritance | PropertyMirrorWithInheritance,
   linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number,
 ): RenderableField {
+  console.log('adapting field', field.name);
   function buildSignature() {
     const { access_modifier, name } = field;
     const memberModifiers = field.memberModifiers.join(' ');
@@ -25,7 +26,7 @@ export function adaptFieldOrProperty(
     type: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Type',
-      value: linkFromTypeNameGenerator(field.typeReference.rawDeclaration),
+      value: linkGenerator(field.typeReference.rawDeclaration),
     },
     inherited: field.inherited,
     accessModifier: field.access_modifier,

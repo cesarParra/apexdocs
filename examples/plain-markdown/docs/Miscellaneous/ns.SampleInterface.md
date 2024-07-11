@@ -30,7 +30,7 @@ sampleInterface.sampleMethod();
 ```
 
 **Extends**
-ParentInterface
+[ns.ParentInterface](./ns.ParentInterface.md)
 
 ## Methods
 ### `sampleMethod()`

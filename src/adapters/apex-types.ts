@@ -9,7 +9,7 @@ import {
   GroupedMember,
 } from '../core/renderable/types';
 import { adaptDescribable, adaptDocumentable } from './documentables';
-import { GetRenderableContentByTypeName, linkFromTypeNameGenerator } from './references';
+import { GetRenderableContentByTypeName } from './references';
 import {
   ClassMirrorWithInheritanceChain,
   FieldMirrorWithInheritance,
@@ -93,7 +93,7 @@ export function interfaceTypeToInterfaceSource(
   return {
     type: 'interface',
     ...baseTypeAdapter(interfaceType, linkGenerator, baseHeadingLevel),
-    extends: interfaceType.extended_interfaces.map(linkFromTypeNameGenerator),
+    extends: interfaceType.extended_interfaces.map(linkGenerator),
     methods: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Methods',
@@ -113,30 +113,30 @@ export function classTypeToClassSource(
     ...baseTypeAdapter(classType, linkGenerator, baseHeadingLevel),
     classModifier: classType.classModifier,
     sharingModifier: classType.sharingModifier,
-    implements: classType.implemented_interfaces.map(linkFromTypeNameGenerator),
-    extends: classType.inheritanceChain.map(linkFromTypeNameGenerator),
+    implements: classType.implemented_interfaces.map(linkGenerator),
+    extends: classType.inheritanceChain.map(linkGenerator),
     //extends: classType.extended_class ? linkFromTypeNameGenerator(classType.extended_class) : undefined,
-    methods: adaptMembers('Methods', classType.methods, adaptMethod, linkFromTypeNameGenerator, baseHeadingLevel + 1),
+    methods: adaptMembers('Methods', classType.methods, adaptMethod, linkGenerator, baseHeadingLevel + 1),
     constructors: adaptMembers(
       'Constructors',
       classType.constructors,
       (constructor, linkGenerator, baseHeadingLevel) =>
         adaptConstructor(classType.name, constructor, linkGenerator, baseHeadingLevel),
-      linkFromTypeNameGenerator,
+      linkGenerator,
       baseHeadingLevel + 1,
     ),
     fields: adaptMembers(
       'Fields',
       classType.fields as FieldMirrorWithInheritance[],
       adaptFieldOrProperty,
-      linkFromTypeNameGenerator,
+      linkGenerator,
       baseHeadingLevel + 1,
     ),
     properties: adaptMembers(
       'Properties',
       classType.properties as PropertyMirrorWithInheritance[],
       adaptFieldOrProperty,
-      linkFromTypeNameGenerator,
+      linkGenerator,
       baseHeadingLevel + 1,
     ),
     innerClasses: {
