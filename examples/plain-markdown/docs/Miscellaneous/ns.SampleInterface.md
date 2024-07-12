@@ -54,7 +54,7 @@ public String sampleMethod()
 Some return value
 
 #### Throws
-SampleException: This is a sample exception
+[ns.SampleException](./ns.SampleException.md): This is a sample exception
 
 AnotherSampleException: This is another sample exception
 
@@ -93,10 +93,10 @@ public SampleEnum sampleMethodWithParams(String param1, Integer param2, SampleEn
 |------|------|-------------|
 | param1 | String | This is the first parameter |
 | param2 | Integer | This is the second parameter |
-| theEnum | SampleEnum | This is an enum parameter |
+| theEnum | [ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md) | This is an enum parameter |
 
 #### Return Type
-**SampleEnum**
+**[ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md)**
 
 Some return value
 
