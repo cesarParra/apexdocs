@@ -12,10 +12,7 @@ import ApexBundle from '../model/apex-bundle';
 import Manifest from '../model/manifest';
 import { TypesRepository } from '../model/types-repository';
 import { TypeTranspilerFactory } from '../transpiler/factory';
-import { DocumentationBundle, generateDocs as generate } from '../core/generate-docs';
-import { pipe } from 'fp-ts/function';
-import * as E from 'fp-ts/Either';
-import { MarkdownFile } from '../model/markdown-file';
+import { generateMarkdownFiles } from './flows/generate-markdown-files';
 
 /**
  * Application entry-point to generate documentation out of Apex source files.
@@ -28,47 +25,8 @@ export class Apexdocs {
     Logger.log('Initializing...');
     const fileBodies = ApexFileReader.processFiles(new DefaultFileSystem());
 
-    function generateDocs(bundles: ApexBundle[]) {
-      return generate(
-        bundles.map((file) => file.rawTypeContent),
-        {
-          scope: Settings.getInstance().scope,
-          outputDir: Settings.getInstance().outputDir,
-          namespace: Settings.getInstance().getNamespace(),
-          sortMembersAlphabetically: Settings.getInstance().sortMembersAlphabetically(),
-          defaultGroupName: Settings.getInstance().getDefaultGroupName(),
-        },
-      );
-    }
-
-    function convertToMarkdownFiles(docBundle: DocumentationBundle): MarkdownFile[] {
-      const referenceGuide = new MarkdownFile('index', '');
-      referenceGuide.addText(docBundle.referenceGuide);
-
-      const files: MarkdownFile[] = docBundle.docs.map((doc) => {
-        const file = new MarkdownFile(`${Settings.getInstance().getNamespacePrefix()}${doc.typeName}`, doc.directory);
-        file.addText(doc.docContents);
-        return file;
-      });
-
-      return [referenceGuide, ...files];
-    }
-
-    function writeFilesToSystem(files: MarkdownFile[]) {
-      FileWriter.write(files, (file: TargetFile) => {
-        Logger.logSingle(`${file.name} processed.`, false, 'green', false);
-      });
-    }
-
     if (Settings.getInstance().targetGenerator === 'plain-markdown') {
-      pipe(
-        generateDocs(fileBodies),
-        E.map(convertToMarkdownFiles),
-        E.map(writeFilesToSystem),
-        E.mapLeft((errors) => {
-          Logger.error(errors.join('\n'));
-        }),
-      );
+      generateMarkdownFiles(fileBodies);
     } else {
       const manifest = createManifest(new RawBodyParser(fileBodies), this._reflectionWithLogger);
       TypesRepository.getInstance().populateAll(manifest.types);
