@@ -85,7 +85,7 @@ function enumTypeToEnumSource(
   };
 }
 
-function interfaceTypeToInterfaceSource(
+export function interfaceTypeToInterfaceSource(
   interfaceType: InterfaceMirror,
   linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number = 1,
