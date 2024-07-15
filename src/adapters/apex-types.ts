@@ -18,6 +18,28 @@ import {
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
 
+export function typeToRenderableType(
+  type: Type,
+  linkGenerator: GetRenderableContentByTypeName,
+  namespace?: string,
+): Renderable {
+  function getRenderable() {
+    switch (type.type_name) {
+      case 'enum':
+        return enumTypeToEnumSource(type as EnumMirror, linkGenerator);
+      case 'interface':
+        return interfaceTypeToInterfaceSource(type as InterfaceMirror, linkGenerator);
+      case 'class':
+        return classTypeToClassSource(type as ClassMirrorWithInheritanceChain, linkGenerator);
+    }
+  }
+
+  return {
+    ...getRenderable(),
+    namespace,
+  };
+}
+
 function baseTypeAdapter(
   type: EnumMirror | InterfaceMirror | ClassMirror,
   linkGenerator: GetRenderableContentByTypeName,
@@ -44,29 +66,7 @@ function baseTypeAdapter(
   };
 }
 
-export function typeToRenderableType(
-  type: Type,
-  linkGenerator: GetRenderableContentByTypeName,
-  namespace?: string,
-): Renderable {
-  function getRenderable() {
-    switch (type.type_name) {
-      case 'enum':
-        return enumTypeToEnumSource(type as EnumMirror, linkGenerator);
-      case 'interface':
-        return interfaceTypeToInterfaceSource(type as InterfaceMirror, linkGenerator);
-      case 'class':
-        return classTypeToClassSource(type as ClassMirrorWithInheritanceChain, linkGenerator);
-    }
-  }
-
-  return {
-    ...getRenderable(),
-    namespace,
-  };
-}
-
-export function enumTypeToEnumSource(
+function enumTypeToEnumSource(
   enumType: EnumMirror,
   linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number = 1,
@@ -85,7 +85,7 @@ export function enumTypeToEnumSource(
   };
 }
 
-export function interfaceTypeToInterfaceSource(
+function interfaceTypeToInterfaceSource(
   interfaceType: InterfaceMirror,
   linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number = 1,
@@ -102,12 +102,11 @@ export function interfaceTypeToInterfaceSource(
   };
 }
 
-export function classTypeToClassSource(
+function classTypeToClassSource(
   classType: ClassMirrorWithInheritanceChain,
   linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number = 1,
 ): RenderableClass {
-  console.log('current classType:', classType.name);
   return {
     type: 'class',
     ...baseTypeAdapter(classType, linkGenerator, baseHeadingLevel),
@@ -115,7 +114,6 @@ export function classTypeToClassSource(
     sharingModifier: classType.sharingModifier,
     implements: classType.implemented_interfaces.map(linkGenerator),
     extends: classType.inheritanceChain.map(linkGenerator),
-    //extends: classType.extended_class ? linkFromTypeNameGenerator(classType.extended_class) : undefined,
     methods: adaptMembers('Methods', classType.methods, adaptMethod, linkGenerator, baseHeadingLevel + 1),
     constructors: adaptMembers(
       'Constructors',

@@ -325,26 +325,9 @@ function linkFromTypeNameGenerator(
 ): StringOrLink {
   const type = findType(repository, referenceName);
   if (!type) {
-    console.log(
-      'Could not find',
-      referenceName,
-      'in',
-      repository.map((type) => type.name).join(', '),
-      'for',
-      typeBeingDocumented.name,
-    );
     // If the type is not found, we return the type name as a string.
     return referenceName;
   }
-
-  console.log(
-    'Found',
-    referenceName,
-    'in',
-    repository.map((type) => type.name).join(', '),
-    'for',
-    typeBeingDocumented.name,
-  );
 
   const [fullClassName, fileLink] = getFileLinkTuple(typeBeingDocumented, type, config);
   return {

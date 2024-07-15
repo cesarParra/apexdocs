@@ -4,6 +4,8 @@
 
 ### [ns.BaseClass](./Miscellaneous/ns.BaseClass.md)
 
+### [ns.MultiInheritanceClass](./Miscellaneous/ns.MultiInheritanceClass.md)
+
 ### [ns.ParentInterface](./Miscellaneous/ns.ParentInterface.md)
 
 ### [ns.ReferencedEnum](./Miscellaneous/ns.ReferencedEnum.md)

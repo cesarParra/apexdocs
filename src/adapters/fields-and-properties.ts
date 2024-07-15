@@ -8,7 +8,6 @@ export function adaptFieldOrProperty(
   linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number,
 ): RenderableField {
-  console.log('adapting field', field.name);
   function buildSignature() {
     const { access_modifier, name } = field;
     const memberModifiers = field.memberModifiers.join(' ');
