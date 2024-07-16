@@ -19,7 +19,6 @@ export class MarkdownFile extends OutputFile {
   }
 
   public addText(text: string) {
-    //super.addText(this._replaceInlineReferences(text), encodeHtml);
     super.addText(text);
     return this;
   }

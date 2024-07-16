@@ -21,5 +21,3 @@ function inheritanceChainFromParentClassName(repository: Type[], className: stri
     ),
   );
 }
-
-// TODO: We want the inner classes to also have inheritance chain support

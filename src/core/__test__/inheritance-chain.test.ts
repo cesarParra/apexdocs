@@ -40,4 +40,15 @@ describe('inheritance chain for classes', () => {
 
     expect(inheritanceChain).toEqual(['ExtendedClass', 'SuperClass']);
   });
+
+  test('returns the inheritance for a class that extends an inner class', () => {
+    const classMirror = new ClassMirrorBuilder().withExtendedClass('OuterClass.InnerClass').build();
+    const innerClass = new ClassMirrorBuilder().withName('InnerClass').build();
+    const outerClass = new ClassMirrorBuilder().withName('OuterClass').addInnerClass(innerClass).build();
+    const repository = [classMirror, outerClass];
+
+    const inheritanceChain = createInheritanceChain(repository, classMirror);
+
+    expect(inheritanceChain).toEqual(['OuterClass.InnerClass']);
+  });
 });

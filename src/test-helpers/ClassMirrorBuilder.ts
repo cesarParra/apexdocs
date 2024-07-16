@@ -10,6 +10,7 @@ export class ClassMirrorBuilder {
   private docComment?: DocComment;
   private methods: MethodMirror[] = [];
   private fields: FieldMirror[] = [];
+  private innerClasses: ClassMirror[] = [];
   private extendedClass: string | undefined;
 
   withName(name: string): ClassMirrorBuilder {
@@ -37,6 +38,11 @@ export class ClassMirrorBuilder {
     return this;
   }
 
+  addInnerClass(innerClass: ClassMirror): ClassMirrorBuilder {
+    this.innerClasses.push(innerClass);
+    return this;
+  }
+
   withExtendedClass(extendedClass: string): ClassMirrorBuilder {
     this.extendedClass = extendedClass;
     return this;
@@ -54,7 +60,7 @@ export class ClassMirrorBuilder {
       constructors: [],
       enums: [],
       interfaces: [],
-      classes: [],
+      classes: this.innerClasses,
       access_modifier: 'public',
       docComment: this.docComment,
       extended_class: this.extendedClass,
