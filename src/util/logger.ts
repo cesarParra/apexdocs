@@ -5,7 +5,7 @@ import logUpdate from 'log-update';
  * Logs messages to the console.
  */
 export class Logger {
-  static currentFrame = -1;
+  static currentFrame = 0;
 
   static frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
 
