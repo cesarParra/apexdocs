@@ -1,5 +1,5 @@
 import { ClassMirror, InterfaceMirror, reflect as mirrorReflection, Type } from '@cparra/apex-reflection';
-import { typeToRenderableType } from '../adapters/apex-types';
+import { typeToRenderable } from '../adapters/apex-types';
 import { Link, Renderable, RenderableContent, RenderableEnum, StringOrLink } from './renderable/types';
 import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/class-template';
 import { enumMarkdownTemplate } from '../transpiler/markdown/plain-markdown/enum-template';
@@ -15,7 +15,7 @@ import { createInheritanceChain } from './inheritance-chain';
 import ApexBundle from '../model/apex-bundle';
 import MetadataProcessor from '../service/metadata-processor';
 
-export const documentType = flow(typeToRenderableType, resolveApexTypeTemplate, compile);
+export const documentType = flow(typeToRenderable, resolveApexTypeTemplate, compile);
 
 export type DocumentationBundle = {
   format: 'markdown';
@@ -49,11 +49,11 @@ const configDefaults: DocumentationConfig = {
 export function generateDocs(
   input: ApexBundle[],
   config?: Partial<DocumentationConfig>,
-): E.Either<string[], DocumentationBundle> {
+): E.Either<ReflectionError[], DocumentationBundle> {
   const configWithDefaults = { ...configDefaults, ...config };
   return pipe(
     input,
-    (input) => input.map((bundle) => reflectSourceBody(bundle.rawTypeContent, bundle.rawMetadataContent)),
+    (input) => input.map((bundle) => reflectSourceBody(bundle)),
     checkForReflectionErrors,
     E.map((types) => filterTypesOutOfScope(types, configWithDefaults.scope)),
     E.map((types) => types.map((type) => addInheritedMembers(type, types))),
@@ -85,7 +85,7 @@ type RenderableBundle = {
 function typesToRenderableBundle(types: Type[], config: DocumentationConfig) {
   return types.reduce<RenderableBundle>(
     (acc, type) => {
-      const renderable = typeToRenderableType(
+      const renderable = typeToRenderable(
         type,
         (referenceName) => {
           return linkFromTypeNameGenerator(type, types, referenceName, config);
@@ -162,12 +162,12 @@ function filterTypesOutOfScope(types: Type[], scope: string[]): Type[] {
   return new Manifest(types).filteredByAccessModifierAndAnnotations(scope);
 }
 
-function checkForReflectionErrors(reflectionResult: E.Either<string, Type>[]) {
-  function reduceReflectionResultIntoSingleEither(results: E.Either<string, Type>[]): {
-    errors: string[];
+function checkForReflectionErrors(reflectionResult: E.Either<ReflectionError, Type>[]) {
+  function reduceReflectionResultIntoSingleEither(results: E.Either<ReflectionError, Type>[]): {
+    errors: ReflectionError[];
     types: Type[];
   } {
-    return results.reduce<{ errors: string[]; types: Type[] }>(
+    return results.reduce<{ errors: ReflectionError[]; types: Type[] }>(
       (acc, result) => {
         E.isLeft(result) ? acc.errors.push(result.left) : acc.types.push(result.right);
         return acc;
@@ -203,11 +203,19 @@ function addFileMetadataToTypeAnnotation(type: Type, metadata: string | null): T
   );
 }
 
-function reflectSourceBody(input: string, metadata: string | null): E.Either<string, Type> {
+export class ReflectionError {
+  constructor(
+    public file: string,
+    public message: string,
+  ) {}
+}
+
+function reflectSourceBody(apexBundle: ApexBundle): E.Either<ReflectionError, Type> {
+  const { filePath, rawTypeContent: input, rawMetadataContent: metadata } = apexBundle;
   const result = mirrorReflection(input);
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return result.error
-    ? E.left(result.error.message)
+    ? E.left(new ReflectionError(filePath, result.error.message))
     : E.right(addFileMetadataToTypeAnnotation(result.typeMirror!, metadata));
 }
 

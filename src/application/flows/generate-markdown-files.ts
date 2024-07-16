@@ -1,6 +1,6 @@
 import ApexBundle from '../../model/apex-bundle';
 import { Settings, TargetFile } from '../../settings';
-import { DocumentationBundle, generateDocs } from '../../core/generate-docs';
+import { DocumentationBundle, generateDocs, ReflectionError } from '../../core/generate-docs';
 import { MarkdownFile } from '../../model/markdown-file';
 import { FileWriter } from '../../service/file-writer';
 import { Logger } from '../../util/logger';
@@ -12,7 +12,11 @@ export const generateMarkdownFiles = flow(
   E.map(convertToMarkdownFiles),
   E.map(writeFilesToSystem),
   E.mapLeft((errors) => {
-    Logger.error(errors.join('\n'));
+    const errorMessages = [
+      'Error(s) occurred while parsing files. Please review the following issues:',
+      errors.map(formatReflectionError),
+    ].join('\n');
+    Logger.error(errorMessages);
   }),
 );
 
@@ -41,4 +45,8 @@ function writeFilesToSystem(files: MarkdownFile[]) {
   FileWriter.write(files, (file: TargetFile) => {
     Logger.logSingle(`${file.name} processed.`, false, 'green', false);
   });
+}
+
+function formatReflectionError(error: ReflectionError) {
+  return `Source file: ${error.file}\n${error.message}\n`;
 }
