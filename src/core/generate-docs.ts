@@ -95,11 +95,10 @@ function typesToRenderableBundle(types: Type[], config: DocumentationConfig) {
       const reference = {
         typeName: type.name,
         directory: getDirectoryFromRoot(config, type),
-        title: getLinkFromRoot(config, type) as Link, // TODO: I don't love this "as", but the title should always exist since it is for a type we know we have. Let's see how we can clean this up
-        description: adaptDescribable(descriptionLines, (referenceName) => {
-          const type = findType(types, referenceName);
-          return type ? getLinkFromRoot(config, type) : referenceName;
-        }).description,
+        title: getLinkFromRoot(config, type),
+        description: adaptDescribable(descriptionLines, (referenceName) =>
+          getPossibleLinkFromRoot(config, referenceName, findType(types, referenceName)),
+        ).description,
       };
 
       const group = getTypeGroup(type, config);
@@ -356,10 +355,19 @@ function getDirectoryFromRoot(config: DocumentationConfig, type?: Type): string 
   return `./${getSanitizedGroup(type, config)}`;
 }
 
-function getLinkFromRoot(config: DocumentationConfig, type?: Type): StringOrLink {
+function getPossibleLinkFromRoot(config: DocumentationConfig, fallback: string, type?: Type): StringOrLink {
   if (!type) {
-    return '';
+    return fallback;
   }
+  const namespacePrefix = config.namespace ? `${config.namespace}.` : '';
+  const title = `${namespacePrefix}${type.name}`;
+  return {
+    title: title,
+    url: `${getDirectoryFromRoot(config, type)}/${title}.md`,
+  };
+}
+
+function getLinkFromRoot(config: DocumentationConfig, type: Type): Link {
   const namespacePrefix = config.namespace ? `${config.namespace}.` : '';
   const title = `${namespacePrefix}${type.name}`;
   return {
