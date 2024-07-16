@@ -2,6 +2,7 @@ import { assertEither, extendExpect } from './expect-extensions';
 import { generateDocs } from '../../core/generate-docs';
 import { pipe } from 'fp-ts/function';
 import * as E from 'fp-ts/Either';
+import { apexBundleFromRawString } from './test-helpers';
 
 describe('Generates a Reference Guide', () => {
   beforeAll(() => {
@@ -20,7 +21,7 @@ describe('Generates a Reference Guide', () => {
       public class MyClass {}
       `;
 
-    const result = generateDocs([input1, input2]);
+    const result = generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)]);
     expect(result).documentationBundleHasLength(2);
 
     assertEither(result, (data) => expect(data.referenceGuide).toContain('[MyEnum](./Miscellaneous/MyEnum.md)'));
@@ -35,7 +36,7 @@ describe('Generates a Reference Guide', () => {
       }
       `;
 
-    const result = generateDocs([input]);
+    const result = generateDocs([apexBundleFromRawString(input)]);
     expect(result).documentationBundleHasLength(1);
     assertEither(result, (data) => expect(data.referenceGuide).toContain('## Miscellaneous'));
   });
@@ -51,7 +52,7 @@ describe('Generates a Reference Guide', () => {
       }
       `;
 
-    const result = generateDocs([input]);
+    const result = generateDocs([apexBundleFromRawString(input)]);
     expect(result).documentationBundleHasLength(1);
     assertEither(result, (data) => expect(data.referenceGuide).toContain('## MyGroup'));
   });
@@ -74,7 +75,7 @@ describe('Generates a Reference Guide', () => {
       public class MyClass {}
       `;
 
-    const result = generateDocs([input1, input2]);
+    const result = generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)]);
     expect(result).documentationBundleHasLength(2);
     pipe(
       result,
@@ -107,7 +108,7 @@ describe('Generates a Reference Guide', () => {
       public class MyClass {}
       `;
 
-    const result = generateDocs([input1, input2]);
+    const result = generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)]);
     expect(result).documentationBundleHasLength(2);
     assertEither(result, (data) => expect(data.referenceGuide).toContain('## Group1'));
     assertEither(result, (data) => expect(data.referenceGuide).toContain('MyClass'));
@@ -132,7 +133,7 @@ describe('Generates a Reference Guide', () => {
       public class MyClass {}
       `;
 
-    const result = generateDocs([input1, input2]);
+    const result = generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)]);
     expect(result).documentationBundleHasLength(2);
     assertEither(result, (data) => expect(data.referenceGuide).toContain('This is a description'));
   });
@@ -156,7 +157,7 @@ describe('Generates a Reference Guide', () => {
       public class MyClass {}
       `;
 
-    const result = generateDocs([input1, input2]);
+    const result = generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)]);
     expect(result).documentationBundleHasLength(2);
     assertEither(result, (data) => expect(data.referenceGuide).toContain('with a [MyClass](./Group2/MyClass.md)'));
   });

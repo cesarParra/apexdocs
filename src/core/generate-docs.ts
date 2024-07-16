@@ -11,6 +11,7 @@ import Manifest from '../model/manifest';
 import { referenceGuideTemplate } from './templates/reference-guide';
 import { adaptDescribable } from '../adapters/documentables';
 import { createInheritanceChain } from './inheritance-chain';
+import ApexBundle from '../model/apex-bundle';
 
 export const documentType = flow(typeToRenderableType, resolveApexTypeTemplate, compile);
 
@@ -44,13 +45,13 @@ const configDefaults: DocumentationConfig = {
 };
 
 export function generateDocs(
-  input: string[],
+  input: ApexBundle[],
   config?: Partial<DocumentationConfig>,
 ): E.Either<string[], DocumentationBundle> {
   const configWithDefaults = { ...configDefaults, ...config };
   return pipe(
     input,
-    (input) => input.map(reflectSourceBody),
+    (input) => input.map((bundle) => reflectSourceBody(bundle.rawTypeContent)),
     checkForReflectionErrors,
     E.map((types) => filterTypesOutOfScope(types, configWithDefaults.scope)),
     E.map((types) => types.map((type) => addInheritedMembers(type, types))),

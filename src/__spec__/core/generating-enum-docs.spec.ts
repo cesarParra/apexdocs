@@ -1,5 +1,6 @@
 import { generateDocs } from '../../core/generate-docs';
 import { assertEither, extendExpect } from './expect-extensions';
+import { apexBundleFromRawString } from './test-helpers';
 
 describe('Generates enum documentation', () => {
   beforeAll(() => {
@@ -15,7 +16,7 @@ describe('Generates enum documentation', () => {
       }
     `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       assertEither(result, (data) => expect(data.format).toBe('markdown'));
     });
 
@@ -27,7 +28,7 @@ describe('Generates enum documentation', () => {
       }
     `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data.docs[0].typeName).toBe('MyEnum'));
     });
@@ -40,7 +41,7 @@ describe('Generates enum documentation', () => {
       }
     `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data.docs[0].type).toBe('enum'));
     });
@@ -60,7 +61,9 @@ describe('Generates enum documentation', () => {
         }
       `;
 
-      const result = generateDocs([input1, input2], { scope: ['global'] });
+      const result = generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)], {
+        scope: ['global'],
+      });
       expect(result).documentationBundleHasLength(1);
     });
 
@@ -75,7 +78,7 @@ describe('Generates enum documentation', () => {
       }
       `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(0);
     });
   });
@@ -91,7 +94,7 @@ describe('Generates enum documentation', () => {
 
       const output = `# MyEnum Enum`;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains(output));
     });
@@ -105,7 +108,7 @@ describe('Generates enum documentation', () => {
          }
        `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('NAMESPACEACCESSIBLE'));
     });
@@ -121,7 +124,7 @@ describe('Generates enum documentation', () => {
       }
     `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('This is a description'));
     });
@@ -137,7 +140,7 @@ describe('Generates enum documentation', () => {
       }
     `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('Custom Tag'));
       assertEither(result, (data) => expect(data).firstDocContains('My Value'));
@@ -154,7 +157,7 @@ describe('Generates enum documentation', () => {
       }
     `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('Group'));
       assertEither(result, (data) => expect(data).firstDocContains('MyGroup'));
@@ -171,7 +174,7 @@ describe('Generates enum documentation', () => {
       }
     `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('Author'));
       assertEither(result, (data) => expect(data).firstDocContains('John Doe'));
@@ -188,7 +191,7 @@ describe('Generates enum documentation', () => {
       }
     `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('Date'));
       assertEither(result, (data) => expect(data).firstDocContains('2021-01-01'));
@@ -202,7 +205,7 @@ describe('Generates enum documentation', () => {
       public enum MyEnum {}
       `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('This is a description'));
     });
@@ -217,7 +220,7 @@ describe('Generates enum documentation', () => {
 
       const input2 = 'public enum EnumRef {}';
 
-      const result = generateDocs([input1, input2]);
+      const result = generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)]);
       expect(result).documentationBundleHasLength(2);
       assertEither(result, (data) => expect(data).firstDocContains('Description'));
       assertEither(result, (data) =>
@@ -233,7 +236,7 @@ describe('Generates enum documentation', () => {
       public enum MyEnum {}
       `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) =>
         expect(data).firstDocContains(
@@ -252,7 +255,7 @@ describe('Generates enum documentation', () => {
 
       const input2 = 'public enum EnumRef {}';
 
-      const result = generateDocs([input1, input2]);
+      const result = generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)]);
       expect(result).documentationBundleHasLength(2);
       assertEither(result, (data) => expect(data).firstDocContains('See'));
       assertEither(result, (data) => expect(data).firstDocContains('[EnumRef](./EnumRef.md)'));
@@ -266,7 +269,7 @@ describe('Generates enum documentation', () => {
       public enum MyEnum {}
       `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('See'));
       assertEither(result, (data) => expect(data).firstDocContains('EnumRef'));
@@ -277,7 +280,7 @@ describe('Generates enum documentation', () => {
       public enum MyEnum {}
       `;
 
-      const result = generateDocs([input], { namespace: 'MyNamespace' });
+      const result = generateDocs([apexBundleFromRawString(input)], { namespace: 'MyNamespace' });
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Namespace'));
       assertEither(result, (data) => expect(data).firstDocContains('MyNamespace'));
@@ -288,7 +291,7 @@ describe('Generates enum documentation', () => {
       public enum MyEnum {}
       `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContainsNot('## Namespace'));
     });
@@ -309,7 +312,7 @@ describe('Generates enum documentation', () => {
       }
       `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('```mermaid'));
       assertEither(result, (data) => expect(data).firstDocContains('graph TD'));
@@ -331,7 +334,7 @@ describe('Generates enum documentation', () => {
       }
       `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('```apex'));
       assertEither(result, (data) => expect(data).firstDocContains('public class MyClass'));
@@ -345,7 +348,7 @@ describe('Generates enum documentation', () => {
       }
       `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Values'));
       assertEither(result, (data) => expect(data).firstDocContains('VALUE1'));

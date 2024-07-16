@@ -1,5 +1,6 @@
 import { assertEither, extendExpect } from './expect-extensions';
 import { generateDocs } from '../../core/generate-docs';
+import { apexBundleFromRawString } from './test-helpers';
 
 describe('Generates interface documentation', () => {
   beforeAll(() => {
@@ -10,14 +11,14 @@ describe('Generates interface documentation', () => {
     it('always returns markdown as the format', () => {
       const input = 'public class MyClass {}';
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       assertEither(result, (data) => expect(data.format).toBe('markdown'));
     });
 
     it('returns the name of the class', () => {
       const input = 'public class MyClass {}';
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data.docs[0].typeName).toBe('MyClass'));
     });
@@ -25,7 +26,7 @@ describe('Generates interface documentation', () => {
     it('returns the type as class', () => {
       const input = 'public class MyClass {}';
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data.docs[0].type).toBe('class'));
     });
@@ -39,7 +40,9 @@ describe('Generates interface documentation', () => {
         public class AnotherClass {}
       `;
 
-      const result = generateDocs([input1, input2], { scope: ['global'] });
+      const result = generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)], {
+        scope: ['global'],
+      });
       expect(result).documentationBundleHasLength(1);
     });
 
@@ -50,7 +53,7 @@ describe('Generates interface documentation', () => {
         */
       public class MyClass {}`;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(0);
     });
 
@@ -63,7 +66,7 @@ describe('Generates interface documentation', () => {
         public void myMethod() {}
       }`;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data.docs[0].docContents).not.toContain('myMethod'));
     });
@@ -77,7 +80,7 @@ describe('Generates interface documentation', () => {
         public String myProperty { get; set; }
       }`;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data.docs[0].docContents).not.toContain('myProperty'));
     });
@@ -91,7 +94,7 @@ describe('Generates interface documentation', () => {
         public String myField;
       }`;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data.docs[0].docContents).not.toContain('myField'));
     });
@@ -105,7 +108,7 @@ describe('Generates interface documentation', () => {
         public class InnerClass {}
       }`;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data.docs[0].docContents).not.toContain('InnerClass'));
     });
@@ -119,7 +122,7 @@ describe('Generates interface documentation', () => {
         public interface InnerInterface {}
       }`;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data.docs[0].docContents).not.toContain('InnerInterface'));
     });
@@ -133,7 +136,7 @@ describe('Generates interface documentation', () => {
         public enum InnerEnum {}
       }`;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data.docs[0].docContents).not.toContain('InnerEnum'));
     });
@@ -145,7 +148,7 @@ describe('Generates interface documentation', () => {
         const input = 'public class MyClass {}';
 
         const output = `# MyClass Class`;
-        const result = generateDocs([input]);
+        const result = generateDocs([apexBundleFromRawString(input)]);
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) => expect(data).firstDocContains(output));
       });
@@ -159,7 +162,7 @@ describe('Generates interface documentation', () => {
         }
        `;
 
-        const result = generateDocs([input]);
+        const result = generateDocs([apexBundleFromRawString(input)]);
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) => expect(data).firstDocContains('NAMESPACEACCESSIBLE'));
         assertEither(result, (data) => expect(data).firstDocContains('DEPRECATED'));
@@ -173,7 +176,7 @@ describe('Generates interface documentation', () => {
           public class MyClass {}
          `;
 
-        const result = generateDocs([input]);
+        const result = generateDocs([apexBundleFromRawString(input)]);
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) => expect(data).firstDocContains('This is a description'));
       });
@@ -186,7 +189,7 @@ describe('Generates interface documentation', () => {
           public class MyClass {}
         `;
 
-        const result = generateDocs([input]);
+        const result = generateDocs([apexBundleFromRawString(input)]);
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) => expect(data).firstDocContains('Custom Tag'));
         assertEither(result, (data) => expect(data).firstDocContains('My Value'));
@@ -199,7 +202,7 @@ describe('Generates interface documentation', () => {
            */
           public class MyClass {}`;
 
-        const result = generateDocs([input]);
+        const result = generateDocs([apexBundleFromRawString(input)]);
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) => expect(data).firstDocContains('Group'));
         assertEither(result, (data) => expect(data).firstDocContains('MyGroup'));
@@ -212,7 +215,7 @@ describe('Generates interface documentation', () => {
            */
           public class MyClass {}`;
 
-        const result = generateDocs([input]);
+        const result = generateDocs([apexBundleFromRawString(input)]);
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) => expect(data).firstDocContains('Author'));
         assertEither(result, (data) => expect(data).firstDocContains('John Doe'));
@@ -225,7 +228,7 @@ describe('Generates interface documentation', () => {
            */
           public class MyClass {}`;
 
-        const result = generateDocs([input]);
+        const result = generateDocs([apexBundleFromRawString(input)]);
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) => expect(data).firstDocContains('Date'));
         assertEither(result, (data) => expect(data).firstDocContains('2021-01-01'));
@@ -238,7 +241,7 @@ describe('Generates interface documentation', () => {
             */
           public class MyClass {}`;
 
-        const result = generateDocs([input]);
+        const result = generateDocs([apexBundleFromRawString(input)]);
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) => expect(data).firstDocContains('This is a description'));
       });
@@ -253,7 +256,7 @@ describe('Generates interface documentation', () => {
 
         const input2 = 'public class ClassRef {}';
 
-        const result = generateDocs([input1, input2]);
+        const result = generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)]);
         expect(result).documentationBundleHasLength(2);
         assertEither(result, (data) =>
           expect(data).firstDocContains('This is a description with a [ClassRef](./ClassRef.md) reference'),
@@ -268,7 +271,7 @@ describe('Generates interface documentation', () => {
           public class MyClass {}
           `;
 
-        const result = generateDocs([input]);
+        const result = generateDocs([apexBundleFromRawString(input)]);
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) =>
           expect(data).firstDocContains(
@@ -287,7 +290,7 @@ describe('Generates interface documentation', () => {
 
         const input2 = 'public class ClassRef {}';
 
-        const result = generateDocs([input1, input2]);
+        const result = generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)]);
         expect(result).documentationBundleHasLength(2);
         assertEither(result, (data) => expect(data).firstDocContains('See'));
         assertEither(result, (data) => expect(data).firstDocContains('[ClassRef](./ClassRef.md)'));
@@ -301,7 +304,7 @@ describe('Generates interface documentation', () => {
           public class MyClass {}
           `;
 
-        const result = generateDocs([input]);
+        const result = generateDocs([apexBundleFromRawString(input)]);
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) => expect(data).firstDocContains('See'));
         assertEither(result, (data) => expect(data).firstDocContains('ClassRef'));
@@ -310,7 +313,7 @@ describe('Generates interface documentation', () => {
       it('displays the namespace if present in the config', () => {
         const input = 'public class MyClass {}';
 
-        const result = generateDocs([input], { namespace: 'MyNamespace' });
+        const result = generateDocs([apexBundleFromRawString(input)], { namespace: 'MyNamespace' });
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) => expect(data).firstDocContains('## Namespace'));
         assertEither(result, (data) => expect(data).firstDocContains('MyNamespace'));
@@ -319,7 +322,7 @@ describe('Generates interface documentation', () => {
       it('does not display the namespace if not present in the config', () => {
         const input = 'public class MyClass {}';
 
-        const result = generateDocs([input]);
+        const result = generateDocs([apexBundleFromRawString(input)]);
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) => expect(data).firstDocContainsNot('## Namespace'));
       });
@@ -337,7 +340,7 @@ describe('Generates interface documentation', () => {
           public class MyClass {}
           `;
 
-        const result = generateDocs([input]);
+        const result = generateDocs([apexBundleFromRawString(input)]);
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) => expect(data).firstDocContains('```mermaid'));
         assertEither(result, (data) => expect(data).firstDocContains('graph TD'));
@@ -355,7 +358,7 @@ describe('Generates interface documentation', () => {
             */
           public class MyClass {}`;
 
-        const result = generateDocs([input]);
+        const result = generateDocs([apexBundleFromRawString(input)]);
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) => expect(data).firstDocContains('```apex'));
         assertEither(result, (data) => expect(data).firstDocContains('public class MyClass'));
@@ -371,7 +374,7 @@ describe('Generates interface documentation', () => {
         }
       `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Methods'));
     });
@@ -383,7 +386,7 @@ describe('Generates interface documentation', () => {
         }
       `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Properties'));
     });
@@ -395,7 +398,7 @@ describe('Generates interface documentation', () => {
         }
       `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Fields'));
     });
@@ -407,7 +410,7 @@ describe('Generates interface documentation', () => {
         }
       `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Constructors'));
     });
@@ -419,7 +422,7 @@ describe('Generates interface documentation', () => {
         }
       `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Classes'));
     });
@@ -431,7 +434,7 @@ describe('Generates interface documentation', () => {
         }
       `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Interfaces'));
     });
@@ -443,7 +446,7 @@ describe('Generates interface documentation', () => {
         }
       `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Enums'));
     });
@@ -463,7 +466,7 @@ describe('Generates interface documentation', () => {
         }
       `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('```mermaid'));
       assertEither(result, (data) => expect(data).firstDocContains('graph TD'));
@@ -484,7 +487,7 @@ describe('Generates interface documentation', () => {
         }
       `;
 
-      const result = generateDocs([input]);
+      const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('```apex'));
       assertEither(result, (data) => expect(data).firstDocContains('public class MyClass'));
@@ -501,7 +504,7 @@ describe('Generates interface documentation', () => {
         public class AnotherClass extends MyClass {}
       `;
 
-      const result = generateDocs([input1, input2]);
+      const result = generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)]);
       expect(result).documentationBundleHasLength(2);
       assertEither(result, (data) =>
         expect(data.docs.find((doc) => doc.typeName === 'AnotherClass')?.docContents).toContain('Inherited'),
