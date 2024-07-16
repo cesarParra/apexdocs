@@ -2,7 +2,7 @@ import { ConstructorMirror, MethodMirror, ParameterMirror, ThrowsAnnotation } fr
 import { RenderableConstructor, RenderableMethod } from '../core/renderable/types';
 import { MethodMirrorWithInheritance } from '../model/inheritance';
 import { adaptDescribable, adaptDocumentable } from './documentables';
-import { GetRenderableContentByTypeName, linkFromTypeNameGenerator } from './references';
+import { GetRenderableContentByTypeName } from './references';
 import { Documentable } from './types';
 
 export function adaptMethod(
@@ -39,18 +39,18 @@ export function adaptMethod(
       heading: 'Return Type',
       value: {
         ...adaptDescribable(method.docComment?.returnAnnotation?.bodyLines, linkGenerator),
-        type: linkFromTypeNameGenerator(method.typeReference.rawDeclaration),
+        type: linkGenerator(method.typeReference.rawDeclaration),
       },
     },
     throws: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Throws',
-      value: method.docComment?.throwsAnnotations.map((thrown) => mapThrows(thrown)),
+      value: method.docComment?.throwsAnnotations.map((thrown) => mapThrows(thrown, linkGenerator)),
     },
     parameters: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Parameters',
-      value: method.parameters.map((param) => mapParameters(method, param)),
+      value: method.parameters.map((param) => mapParameters(method, param, linkGenerator)),
     },
     inherited: (method as MethodMirrorWithInheritance).inherited,
   };
@@ -88,30 +88,34 @@ export function adaptConstructor(
     parameters: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Parameters',
-      value: constructor.parameters.map((param) => mapParameters(constructor, param)),
+      value: constructor.parameters.map((param) => mapParameters(constructor, param, linkGenerator)),
     },
     throws: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Throws',
-      value: constructor.docComment?.throwsAnnotations.map((thrown) => mapThrows(thrown)),
+      value: constructor.docComment?.throwsAnnotations.map((thrown) => mapThrows(thrown, linkGenerator)),
     },
   };
 }
 
-function mapParameters(documentable: Documentable, param: ParameterMirror) {
+function mapParameters(
+  documentable: Documentable,
+  param: ParameterMirror,
+  linkGenerator: GetRenderableContentByTypeName,
+) {
   const paramAnnotation = documentable.docComment?.paramAnnotations.find(
     (pa) => pa.paramName.toLowerCase() === param.name.toLowerCase(),
   );
   return {
-    ...adaptDescribable(paramAnnotation?.bodyLines, linkFromTypeNameGenerator),
+    ...adaptDescribable(paramAnnotation?.bodyLines, linkGenerator),
     name: param.name,
-    type: linkFromTypeNameGenerator(param.typeReference.rawDeclaration),
+    type: linkGenerator(param.typeReference.rawDeclaration),
   };
 }
 
-function mapThrows(thrown: ThrowsAnnotation) {
+function mapThrows(thrown: ThrowsAnnotation, linkGenerator: GetRenderableContentByTypeName) {
   return {
-    ...adaptDescribable(thrown.bodyLines, linkFromTypeNameGenerator),
-    type: linkFromTypeNameGenerator(thrown.exceptionName),
+    ...adaptDescribable(thrown.bodyLines, linkGenerator),
+    type: linkGenerator(thrown.exceptionName),
   };
 }

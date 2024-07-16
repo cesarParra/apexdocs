@@ -1,6 +1,6 @@
 import { ClassMirror, InterfaceMirror, reflect as mirrorReflection, Type } from '@cparra/apex-reflection';
 import { typeToRenderableType } from '../adapters/apex-types';
-import { Renderable, RenderableContent, RenderableEnum, StringOrLink } from './renderable/types';
+import { Link, Renderable, RenderableContent, RenderableEnum, StringOrLink } from './renderable/types';
 import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/class-template';
 import { enumMarkdownTemplate } from '../transpiler/markdown/plain-markdown/enum-template';
 import { interfaceMarkdownTemplate } from '../transpiler/markdown/plain-markdown/interface-template';
@@ -10,6 +10,7 @@ import { CompilationRequest, Template } from './template';
 import Manifest from '../model/manifest';
 import { referenceGuideTemplate } from './templates/reference-guide';
 import { adaptDescribable } from '../adapters/documentables';
+import { createInheritanceChain } from './inheritance-chain';
 
 export const documentType = flow(typeToRenderableType, resolveApexTypeTemplate, compile);
 
@@ -29,6 +30,7 @@ type DocumentationConfig = {
 };
 
 type DocOutput = {
+  directory: string;
   docContents: string;
   typeName: string;
   type: 'class' | 'interface' | 'enum';
@@ -50,19 +52,22 @@ export function generateDocs(
     input,
     (input) => input.map(reflectSourceBody),
     checkForReflectionErrors,
-    E.map((types) => types.map((type) => addInheritedMembers(type, types))),
     E.map((types) => filterTypesOutOfScope(types, configWithDefaults.scope)),
+    E.map((types) => types.map((type) => addInheritedMembers(type, types))),
+    E.map((types) => types.map((type) => addInheritanceChain(type, types))),
     E.map((types) => typesToRenderableBundle(types, configWithDefaults)),
     E.map(({ references, renderables }) => ({
       referenceGuide: pipe(referencesToReferenceGuide(references, configWithDefaults.referenceGuideTemplate)),
-      docs: renderables.map(renderableToOutputDoc),
+      docs: renderables.map((renderable) => renderableToOutputDoc(Object.values(references).flat(), renderable)),
     })),
     E.map(({ referenceGuide, docs }) => ({ format: 'markdown', referenceGuide: referenceGuide, docs })),
   );
 }
 
 type ReferenceGuideReference = {
-  title: StringOrLink;
+  typeName: string;
+  directory: string;
+  title: Link;
   description: RenderableContent[] | undefined;
 };
 
@@ -88,11 +93,12 @@ function typesToRenderableBundle(types: Type[], config: DocumentationConfig) {
 
       const descriptionLines = type.docComment?.descriptionLines;
       const reference = {
+        typeName: type.name,
+        directory: getDirectoryFromRoot(config, type),
         title: getLinkFromRoot(config, type),
-        description: adaptDescribable(descriptionLines, (referenceName) => {
-          const type = findType(types, referenceName);
-          return type ? getLinkFromRoot(config, type) : referenceName;
-        }).description,
+        description: adaptDescribable(descriptionLines, (referenceName) =>
+          getPossibleLinkFromRoot(config, referenceName, findType(types, referenceName)),
+        ).description,
       };
 
       const group = getTypeGroup(type, config);
@@ -110,9 +116,13 @@ function typesToRenderableBundle(types: Type[], config: DocumentationConfig) {
   );
 }
 
-function renderableToOutputDoc(renderable: Renderable): DocOutput {
+function renderableToOutputDoc(referenceGuideReference: ReferenceGuideReference[], renderable: Renderable): DocOutput {
   function buildDocOutput(renderable: Renderable, docContents: string): DocOutput {
+    const reference = referenceGuideReference.find(
+      (ref) => ref.typeName.toLowerCase() === renderable.name.toLowerCase(),
+    );
     return {
+      directory: reference!.directory,
       docContents,
       typeName: renderable.name,
       type: renderable.type,
@@ -210,6 +220,18 @@ function addInheritedMembers<T extends Type>(current: T, repository: Type[]): T 
     return addInheritedInterfaceMethods(current as InterfaceMirror, repository) as T;
   } else {
     return addInheritedClassMembers(current as ClassMirror, repository) as T;
+  }
+}
+
+function addInheritanceChain<T extends Type>(current: T, repository: Type[]): T {
+  if (current.type_name === 'enum' || current.type_name === 'interface') {
+    return current;
+  } else {
+    const inheritanceChain = createInheritanceChain(repository, current as ClassMirror);
+    return {
+      ...current,
+      inheritanceChain,
+    };
   }
 }
 
@@ -326,14 +348,31 @@ function getFileLinkTuple(
   return [fullClassName, `${directoryRoot}${fullClassName}.md`];
 }
 
-function getLinkFromRoot(config: DocumentationConfig, type?: Type): StringOrLink {
+function getDirectoryFromRoot(config: DocumentationConfig, type?: Type): string {
   if (!type) {
     return '';
   }
-  const namespacePrefix = config.namespace ? `${config.namespace}./` : '';
+  return `./${getSanitizedGroup(type, config)}`;
+}
+
+function getPossibleLinkFromRoot(config: DocumentationConfig, fallback: string, type?: Type): StringOrLink {
+  if (!type) {
+    return fallback;
+  }
+  const namespacePrefix = config.namespace ? `${config.namespace}.` : '';
+  const title = `${namespacePrefix}${type.name}`;
   return {
-    title: `${namespacePrefix}${type.name}`,
-    url: `./${namespacePrefix}${getSanitizedGroup(type, config)}/${type.name}.md`,
+    title: title,
+    url: `${getDirectoryFromRoot(config, type)}/${title}.md`,
+  };
+}
+
+function getLinkFromRoot(config: DocumentationConfig, type: Type): Link {
+  const namespacePrefix = config.namespace ? `${config.namespace}.` : '';
+  const title = `${namespacePrefix}${type.name}`;
+  return {
+    title: title,
+    url: `${getDirectoryFromRoot(config, type)}/${title}.md`,
   };
 }
 

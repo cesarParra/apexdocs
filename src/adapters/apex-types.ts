@@ -9,10 +9,36 @@ import {
   GroupedMember,
 } from '../core/renderable/types';
 import { adaptDescribable, adaptDocumentable } from './documentables';
-import { GetRenderableContentByTypeName, linkFromTypeNameGenerator } from './references';
-import { FieldMirrorWithInheritance, PropertyMirrorWithInheritance } from '../model/inheritance';
+import { GetRenderableContentByTypeName } from './references';
+import {
+  ClassMirrorWithInheritanceChain,
+  FieldMirrorWithInheritance,
+  PropertyMirrorWithInheritance,
+} from '../model/inheritance';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
+
+export function typeToRenderableType(
+  type: Type,
+  linkGenerator: GetRenderableContentByTypeName,
+  namespace?: string,
+): Renderable {
+  function getRenderable() {
+    switch (type.type_name) {
+      case 'enum':
+        return enumTypeToEnumSource(type as EnumMirror, linkGenerator);
+      case 'interface':
+        return interfaceTypeToInterfaceSource(type as InterfaceMirror, linkGenerator);
+      case 'class':
+        return classTypeToClassSource(type as ClassMirrorWithInheritanceChain, linkGenerator);
+    }
+  }
+
+  return {
+    ...getRenderable(),
+    namespace,
+  };
+}
 
 function baseTypeAdapter(
   type: EnumMirror | InterfaceMirror | ClassMirror,
@@ -40,29 +66,7 @@ function baseTypeAdapter(
   };
 }
 
-export function typeToRenderableType(
-  type: Type,
-  linkGenerator: GetRenderableContentByTypeName,
-  namespace?: string,
-): Renderable {
-  function getRenderable() {
-    switch (type.type_name) {
-      case 'enum':
-        return enumTypeToEnumSource(type as EnumMirror, linkGenerator);
-      case 'interface':
-        return interfaceTypeToInterfaceSource(type as InterfaceMirror, linkGenerator);
-      case 'class':
-        return classTypeToClassSource(type as ClassMirror, linkGenerator);
-    }
-  }
-
-  return {
-    ...getRenderable(),
-    namespace,
-  };
-}
-
-export function enumTypeToEnumSource(
+function enumTypeToEnumSource(
   enumType: EnumMirror,
   linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number = 1,
@@ -89,7 +93,7 @@ export function interfaceTypeToInterfaceSource(
   return {
     type: 'interface',
     ...baseTypeAdapter(interfaceType, linkGenerator, baseHeadingLevel),
-    extends: interfaceType.extended_interfaces.map(linkFromTypeNameGenerator),
+    extends: interfaceType.extended_interfaces.map(linkGenerator),
     methods: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Methods',
@@ -98,8 +102,8 @@ export function interfaceTypeToInterfaceSource(
   };
 }
 
-export function classTypeToClassSource(
-  classType: ClassMirror,
+function classTypeToClassSource(
+  classType: ClassMirrorWithInheritanceChain,
   linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number = 1,
 ): RenderableClass {
@@ -108,36 +112,36 @@ export function classTypeToClassSource(
     ...baseTypeAdapter(classType, linkGenerator, baseHeadingLevel),
     classModifier: classType.classModifier,
     sharingModifier: classType.sharingModifier,
-    implements: classType.implemented_interfaces.map(linkFromTypeNameGenerator),
-    extends: classType.extended_class ? linkFromTypeNameGenerator(classType.extended_class) : undefined,
-    methods: adaptMembers('Methods', classType.methods, adaptMethod, linkFromTypeNameGenerator, baseHeadingLevel + 1),
+    implements: classType.implemented_interfaces.map(linkGenerator),
+    extends: classType.inheritanceChain.map(linkGenerator),
+    methods: adaptMembers('Methods', classType.methods, adaptMethod, linkGenerator, baseHeadingLevel + 1),
     constructors: adaptMembers(
       'Constructors',
       classType.constructors,
       (constructor, linkGenerator, baseHeadingLevel) =>
         adaptConstructor(classType.name, constructor, linkGenerator, baseHeadingLevel),
-      linkFromTypeNameGenerator,
+      linkGenerator,
       baseHeadingLevel + 1,
     ),
     fields: adaptMembers(
       'Fields',
       classType.fields as FieldMirrorWithInheritance[],
       adaptFieldOrProperty,
-      linkFromTypeNameGenerator,
+      linkGenerator,
       baseHeadingLevel + 1,
     ),
     properties: adaptMembers(
       'Properties',
       classType.properties as PropertyMirrorWithInheritance[],
       adaptFieldOrProperty,
-      linkFromTypeNameGenerator,
+      linkGenerator,
       baseHeadingLevel + 1,
     ),
     innerClasses: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Classes',
       value: classType.classes.map((innerClass) =>
-        classTypeToClassSource(innerClass, linkGenerator, baseHeadingLevel + 2),
+        classTypeToClassSource({ ...innerClass, inheritanceChain: [] }, linkGenerator, baseHeadingLevel + 2),
       ),
     },
     innerEnums: {
@@ -200,12 +204,15 @@ function toGroupedMembers<T extends Groupable, K>(
 }
 
 function groupByGroupName<T extends Groupable>(members: T[]): Record<string, T[]> {
-  return members.reduce((acc, member) => {
-    const groupName = member.group ?? 'Other';
-    acc[groupName] = acc[groupName] ?? [];
-    acc[groupName].push(member);
-    return acc;
-  }, {} as Record<string, T[]>);
+  return members.reduce(
+    (acc, member) => {
+      const groupName = member.group ?? 'Other';
+      acc[groupName] = acc[groupName] ?? [];
+      acc[groupName].push(member);
+      return acc;
+    },
+    {} as Record<string, T[]>,
+  );
 }
 
 function singleGroup<T extends Groupable, K>(

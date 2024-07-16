@@ -16,7 +16,7 @@ SampleClass sample = new SampleClass();
 sample.doSomething();
 ```
 
-**Extends**
+**Inheritance**
 [ns.BaseClass](../Miscellaneous/ns.BaseClass.md)
 
 **Implements**
