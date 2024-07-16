@@ -14,8 +14,9 @@ export const generateMarkdownFiles = flow(
   E.mapLeft((errors) => {
     const errorMessages = [
       'Error(s) occurred while parsing files. Please review the following issues:',
-      errors.map(formatReflectionError),
+      ...errors.map(formatReflectionError),
     ].join('\n');
+
     Logger.error(errorMessages);
   }),
 );
