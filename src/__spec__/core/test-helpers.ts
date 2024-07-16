@@ -1,9 +1,9 @@
 import ApexBundle from '../../model/apex-bundle';
 
-export function apexBundleFromRawString(raw: string): ApexBundle {
+export function apexBundleFromRawString(raw: string, rawMetadata?: string): ApexBundle {
   return {
-    filePath: 'test.apex',
+    filePath: 'test.cls',
     rawTypeContent: raw,
-    rawMetadataContent: null,
+    rawMetadataContent: rawMetadata ?? null,
   };
 }

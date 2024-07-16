@@ -168,6 +168,23 @@ describe('Generates interface documentation', () => {
         assertEither(result, (data) => expect(data).firstDocContains('DEPRECATED'));
       });
 
+      it('displays metadata as annotations', () => {
+        const input = 'public class MyClass {}';
+        const metadata = `
+        <?xml version="1.0" encoding="UTF-8"?>
+        <ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">
+            <apiVersion>59.0</apiVersion>
+            <status>Active</status>
+        </ApexClass>
+        `;
+
+        const result = generateDocs([apexBundleFromRawString(input, metadata)]);
+
+        expect(result).documentationBundleHasLength(1);
+        assertEither(result, (data) => expect(data).firstDocContains('APIVERSION'));
+        assertEither(result, (data) => expect(data).firstDocContains('STATUS'));
+      });
+
       it('displays the description', () => {
         const input = `
           /**

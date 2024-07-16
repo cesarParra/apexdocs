@@ -5,6 +5,7 @@ import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/cla
 import { enumMarkdownTemplate } from '../transpiler/markdown/plain-markdown/enum-template';
 import { interfaceMarkdownTemplate } from '../transpiler/markdown/plain-markdown/interface-template';
 import * as E from 'fp-ts/Either';
+import * as O from 'fp-ts/Option';
 import { flow, pipe } from 'fp-ts/function';
 import { CompilationRequest, Template } from './template';
 import Manifest from '../model/manifest';
@@ -12,6 +13,7 @@ import { referenceGuideTemplate } from './templates/reference-guide';
 import { adaptDescribable } from '../adapters/documentables';
 import { createInheritanceChain } from './inheritance-chain';
 import ApexBundle from '../model/apex-bundle';
+import MetadataProcessor from '../service/metadata-processor';
 
 export const documentType = flow(typeToRenderableType, resolveApexTypeTemplate, compile);
 
@@ -51,7 +53,7 @@ export function generateDocs(
   const configWithDefaults = { ...configDefaults, ...config };
   return pipe(
     input,
-    (input) => input.map((bundle) => reflectSourceBody(bundle.rawTypeContent)),
+    (input) => input.map((bundle) => reflectSourceBody(bundle.rawTypeContent, bundle.rawMetadataContent)),
     checkForReflectionErrors,
     E.map((types) => filterTypesOutOfScope(types, configWithDefaults.scope)),
     E.map((types) => types.map((type) => addInheritedMembers(type, types))),
@@ -182,10 +184,31 @@ function checkForReflectionErrors(reflectionResult: E.Either<string, Type>[]) {
   );
 }
 
-function reflectSourceBody(input: string): E.Either<string, Type> {
+function addFileMetadataToTypeAnnotation(type: Type, metadata: string | null): Type {
+  return pipe(
+    O.fromNullable(metadata),
+    O.map((metadata) => {
+      const metadataParams = MetadataProcessor.process(metadata);
+      metadataParams.forEach((value, key) => {
+        const declaration = `${key}: ${value}`;
+        type.annotations.push({
+          rawDeclaration: declaration,
+          name: declaration,
+          type: declaration,
+        });
+      });
+      return type;
+    }),
+    O.getOrElse(() => type),
+  );
+}
+
+function reflectSourceBody(input: string, metadata: string | null): E.Either<string, Type> {
   const result = mirrorReflection(input);
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  return result.error ? E.left(result.error.message) : E.right(result.typeMirror!);
+  return result.error
+    ? E.left(result.error.message)
+    : E.right(addFileMetadataToTypeAnnotation(result.typeMirror!, metadata));
 }
 
 function resolveApexTypeTemplate(renderable: Renderable): CompilationRequest {
