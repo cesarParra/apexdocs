@@ -17,16 +17,13 @@ export const generateMarkdownFiles = flow(
 );
 
 function generateDocumentationBundle(bundles: ApexBundle[]) {
-  return generateDocs(
-    bundles.map((file) => file.rawTypeContent),
-    {
-      scope: Settings.getInstance().scope,
-      outputDir: Settings.getInstance().outputDir,
-      namespace: Settings.getInstance().getNamespace(),
-      sortMembersAlphabetically: Settings.getInstance().sortMembersAlphabetically(),
-      defaultGroupName: Settings.getInstance().getDefaultGroupName(),
-    },
-  );
+  return generateDocs(bundles, {
+    scope: Settings.getInstance().scope,
+    outputDir: Settings.getInstance().outputDir,
+    namespace: Settings.getInstance().getNamespace(),
+    sortMembersAlphabetically: Settings.getInstance().sortMembersAlphabetically(),
+    defaultGroupName: Settings.getInstance().getDefaultGroupName(),
+  });
 }
 
 function convertToMarkdownFiles(docBundle: DocumentationBundle): MarkdownFile[] {
