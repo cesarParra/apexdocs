@@ -22,7 +22,7 @@ export class Apexdocs {
    * Generates documentation out of Apex source files.
    */
   static generate(): void {
-    Logger.log('Initializing...');
+    Logger.logSingle('Initializing...', false);
     const fileBodies = ApexFileReader.processFiles(new DefaultFileSystem());
 
     if (Settings.getInstance().targetGenerator === 'plain-markdown') {

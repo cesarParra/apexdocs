@@ -4,7 +4,6 @@ import {
   RenderableClass,
   RenderableEnum,
   RenderableInterface,
-  Renderable,
   RenderableSection,
   GroupedMember,
 } from '../core/renderable/types';
@@ -18,24 +17,30 @@ import {
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
 
-export function typeToRenderableType(
-  type: Type,
+type GetReturnRenderable<T extends Type> = T extends InterfaceMirror
+  ? RenderableInterface
+  : T extends ClassMirror
+    ? RenderableClass
+    : RenderableEnum;
+
+export function typeToRenderable<T extends Type>(
+  type: T,
   linkGenerator: GetRenderableContentByTypeName,
   namespace?: string,
-): Renderable {
-  function getRenderable() {
+): GetReturnRenderable<T> {
+  function getRenderable(): RenderableInterface | RenderableClass | RenderableEnum {
     switch (type.type_name) {
       case 'enum':
-        return enumTypeToEnumSource(type as EnumMirror, linkGenerator);
+        return enumTypeToEnumSource(type as EnumMirror, linkGenerator) as RenderableEnum;
       case 'interface':
-        return interfaceTypeToInterfaceSource(type as InterfaceMirror, linkGenerator);
+        return interfaceTypeToInterfaceSource(type as InterfaceMirror, linkGenerator) as RenderableInterface;
       case 'class':
-        return classTypeToClassSource(type as ClassMirrorWithInheritanceChain, linkGenerator);
+        return classTypeToClassSource(type as ClassMirrorWithInheritanceChain, linkGenerator) as RenderableClass;
     }
   }
 
   return {
-    ...getRenderable(),
+    ...(getRenderable() as GetReturnRenderable<T>),
     namespace,
   };
 }
@@ -85,7 +90,7 @@ function enumTypeToEnumSource(
   };
 }
 
-export function interfaceTypeToInterfaceSource(
+function interfaceTypeToInterfaceSource(
   interfaceType: InterfaceMirror,
   linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number = 1,
