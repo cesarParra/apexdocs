@@ -4,7 +4,6 @@ import {
   RenderableClass,
   RenderableEnum,
   RenderableInterface,
-  Renderable,
   RenderableSection,
   GroupedMember,
 } from '../core/renderable/types';
