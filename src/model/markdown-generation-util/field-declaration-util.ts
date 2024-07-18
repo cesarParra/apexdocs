@@ -1,5 +1,5 @@
 import { MarkdownFile } from '../markdown-file';
-import { FieldMirrorWithInheritance, FieldOrProperty, PropertyMirrorWithInheritance } from '../inheritance';
+import { FieldMirrorWithInheritance, FieldOrProperty, PropertyMirrorWithInheritance } from '../../core/adapters/types';
 
 export function declareField(
   markdownFile: MarkdownFile,

@@ -19,6 +19,7 @@ export class SettingsBuilder {
       openApiFileName: 'openapi',
       title: 'Classes',
       includeMetadata: false,
+      linkingStrategy: 'root-relative',
     };
   }
 }

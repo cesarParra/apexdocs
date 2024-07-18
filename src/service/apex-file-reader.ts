@@ -1,6 +1,6 @@
 import { Settings } from '../settings';
 import { FileSystem } from './file-system';
-import ApexBundle from '../model/apex-bundle';
+import ApexBundle from '../core/apex-bundle';
 
 const APEX_FILE_EXTENSION = '.cls';
 

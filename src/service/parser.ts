@@ -1,5 +1,5 @@
 import { ClassMirror, InterfaceMirror, ReflectionResult, Type } from '@cparra/apex-reflection';
-import ApexBundle from '../model/apex-bundle';
+import ApexBundle from '../core/apex-bundle';
 import MetadataProcessor from './metadata-processor';
 import { Logger } from '../util/logger';
 

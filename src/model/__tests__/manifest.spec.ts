@@ -1,4 +1,4 @@
-import Manifest from '../manifest';
+import Manifest from '../../core/manifest';
 import { EnumMirror } from '@cparra/apex-reflection';
 
 const sampleEnum: EnumMirror = {

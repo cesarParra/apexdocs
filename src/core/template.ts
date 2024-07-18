@@ -7,8 +7,8 @@ import { fieldsPartialTemplate } from '../transpiler/markdown/plain-markdown/fie
 import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/class-template';
 import { enumMarkdownTemplate } from '../transpiler/markdown/plain-markdown/enum-template';
 import { interfaceMarkdownTemplate } from '../transpiler/markdown/plain-markdown/interface-template';
-import { RenderableContent, StringOrLink } from './renderable/types';
-import { isEmptyLine } from '../adapters/type-utils';
+import { RenderableContent, StringOrLink } from './adapters/types';
+import { isEmptyLine } from './adapters/type-utils';
 import { groupedMembersPartialTemplate } from '../transpiler/markdown/plain-markdown/grouped-members-partial-template';
 
 export type CompilationRequest = {

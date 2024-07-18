@@ -8,11 +8,11 @@ import { Settings, TargetFile } from '../settings';
 import Transpiler from '../transpiler/transpiler';
 import { FileWriter } from '../service/file-writer';
 import ErrorLogger from '../util/error-logger';
-import ApexBundle from '../model/apex-bundle';
-import Manifest from '../model/manifest';
+import ApexBundle from '../core/apex-bundle';
+import Manifest from '../core/manifest';
 import { TypesRepository } from '../model/types-repository';
 import { TypeTranspilerFactory } from '../transpiler/factory';
-import { generateMarkdownFiles } from './flows/generate-markdown-files';
+import { generateMarkdownFiles } from './generators/generate-markdown-files';
 
 /**
  * Application entry-point to generate documentation out of Apex source files.

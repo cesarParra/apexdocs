@@ -2,8 +2,6 @@ import { Type } from '@cparra/apex-reflection';
 import { TypesRepository } from '../../model/types-repository';
 import { Settings } from '../../settings';
 import State from '../../service/state';
-import { TypeTranspilerFactory } from '../factory';
-import { StringOrLink } from '../../core/renderable/types';
 
 export default class ClassFileGeneratorHelper {
   public static getSanitizedGroup(classModel: Type) {
@@ -32,24 +30,9 @@ export default class ClassFileGeneratorHelper {
     return this.getFileLink(type);
   }
 
-  public static getRenderableLinkByTypeName(typeName: string): StringOrLink {
-    const type = TypesRepository.getInstance().getFromScopedByName(typeName);
-    if (!type) {
-      // If the type is not found, we return the type name as a string.
-      return typeName;
-    }
-
-    const [fullClassName, fileLink] = ClassFileGeneratorHelper.getFileLinkTuple(type);
-    return {
-      title: fullClassName,
-      url: fileLink,
-    };
-  }
-
   private static getDirectoryRoot(classModel: Type) {
     // root-relative links start from the root by using a leading '/'
-    const generator = Settings.getInstance().targetGenerator;
-    if (TypeTranspilerFactory.get(generator).getLinkingStrategy() === 'root-relative') {
+    if (Settings.getInstance().getLinkingStrategy() === 'root-relative') {
       return `/${this.getSanitizedGroup(classModel)}/`;
     }
 

@@ -1,7 +1,7 @@
-import Manifest from '../model/manifest';
+import Manifest from '../core/manifest';
 import { TypeParser } from './parser';
 import { ReflectionResult } from '@cparra/apex-reflection';
-import ApexBundle from '../model/apex-bundle';
+import ApexBundle from '../core/apex-bundle';
 
 /**
  * Builds a new Manifest object, sourcing its types from the received TypeParser.

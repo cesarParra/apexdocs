@@ -11,8 +11,12 @@ import { WalkerListener } from '../service/walkers/walker';
 import { MarkdownFile } from './markdown-file';
 import { declareType, declareMethod, declareField } from './markdown-generation-util';
 import ClassFileGeneratorHelper from '../transpiler/markdown/class-file-generatorHelper';
-import { FieldMirrorWithInheritance, MethodMirrorWithInheritance, PropertyMirrorWithInheritance } from './inheritance';
 import { Settings } from '../settings';
+import {
+  FieldMirrorWithInheritance,
+  MethodMirrorWithInheritance,
+  PropertyMirrorWithInheritance
+} from '../core/adapters/types';
 
 interface GroupAware {
   group?: string;
