@@ -75,14 +75,14 @@ result.then((config) => {
       },
       title: {
         type: 'string',
-        describe: "If this allows you to specify the title of the generated documentation's home file.",
+        describe: 'If this allows you to specify the title of the generated documentation\'s home file.',
         default: 'Classes',
       },
       namespace: {
         type: 'string',
         describe:
           'The package namespace, if any. If this value is provided the namespace will be added as a prefix to all of the parsed files. ' +
-          "If generating an OpenApi definition, it will be added to the file's Server Url.",
+          'If generating an OpenApi definition, it will be added to the file\'s Server Url.',
       },
       openApiFileName: {
         type: 'string',
@@ -96,7 +96,7 @@ result.then((config) => {
       },
       includeMetadata: {
         type: 'boolean',
-        describe: "Whether to include the file's meta.xml information: Whether it is active and and the API version",
+        describe: 'Whether to include the file\'s meta.xml information: Whether it is active and and the API version',
         default: false,
       },
       documentationRootDir: {
@@ -131,7 +131,7 @@ result.then((config) => {
     onAfterProcess: config?.config?.onAfterProcess,
     onBeforeFileWrite: config?.config?.onBeforeFileWrite,
     frontMatterHeader: config?.config?.frontMatterHeader,
-    linkingStrategy: TypeTranspilerFactory.get(targetGenerator).getLinkingStrategy()
+    linkingStrategy: targetGenerator === 'plain-markdown' ? 'path-relative' : TypeTranspilerFactory.get(targetGenerator).getLinkingStrategy()
   });
 
   try {
