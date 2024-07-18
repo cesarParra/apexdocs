@@ -2,7 +2,6 @@ import { Type } from '@cparra/apex-reflection';
 import { TypesRepository } from '../../model/types-repository';
 import { Settings } from '../../settings';
 import State from '../../service/state';
-import { TypeTranspilerFactory } from '../factory';
 import { StringOrLink } from '../../core/renderable/types';
 
 export default class ClassFileGeneratorHelper {
@@ -48,8 +47,7 @@ export default class ClassFileGeneratorHelper {
 
   private static getDirectoryRoot(classModel: Type) {
     // root-relative links start from the root by using a leading '/'
-    const generator = Settings.getInstance().targetGenerator;
-    if (TypeTranspilerFactory.get(generator).getLinkingStrategy() === 'root-relative') {
+    if (Settings.getInstance().getLinkingStrategy() === 'root-relative') {
       return `/${this.getSanitizedGroup(classModel)}/`;
     }
 

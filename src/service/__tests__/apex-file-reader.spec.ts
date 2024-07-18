@@ -15,6 +15,7 @@ describe('File Reader', () => {
       openApiFileName: 'openapi',
       title: 'Classes',
       includeMetadata: false,
+      linkingStrategy: 'root-relative',
     } as SettingsConfig);
   });
 

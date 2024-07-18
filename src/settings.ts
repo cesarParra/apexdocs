@@ -1,4 +1,5 @@
 import { GeneratorChoices } from './transpiler/generator-choices';
+import { LinkingStrategy } from './transpiler/processor-type-transpiler';
 
 export type OnBeforeFileWrite = (file: TargetFile) => TargetFile;
 
@@ -40,6 +41,7 @@ export interface SettingsConfig {
   onAfterProcess?: (files: TargetFile[]) => void;
   onBeforeFileWrite?: (file: TargetFile) => TargetFile;
   frontMatterHeader?: (file: TargetType) => string[];
+  linkingStrategy: LinkingStrategy;
 }
 
 export class Settings {
@@ -143,5 +145,9 @@ export class Settings {
       return this.config.frontMatterHeader(file);
     }
     return [];
+  }
+
+  public getLinkingStrategy(): LinkingStrategy {
+    return this.config.linkingStrategy;
   }
 }

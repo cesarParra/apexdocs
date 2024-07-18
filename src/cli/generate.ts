@@ -5,6 +5,7 @@ import { Settings } from '../settings';
 import { Apexdocs } from '../application/Apexdocs';
 import { GeneratorChoices } from '../transpiler/generator-choices';
 import { cosmiconfig } from 'cosmiconfig';
+import { TypeTranspilerFactory } from '../transpiler/factory';
 
 const result = cosmiconfig('apexdocs').search();
 result.then((config) => {
@@ -110,12 +111,13 @@ result.then((config) => {
     argv = { ...config.config, ...argv };
   }
 
+  const targetGenerator = argv.targetGenerator as GeneratorChoices;
   Settings.build({
     sourceDirectory: argv.sourceDir,
     recursive: argv.recursive,
     scope: argv.scope,
     outputDir: argv.targetDir,
-    targetGenerator: argv.targetGenerator as GeneratorChoices,
+    targetGenerator: targetGenerator,
     indexOnly: argv.indexOnly,
     defaultGroupName: argv.defaultGroupName,
     sanitizeHtml: argv.sanitizeHtml,
@@ -129,6 +131,7 @@ result.then((config) => {
     onAfterProcess: config?.config?.onAfterProcess,
     onBeforeFileWrite: config?.config?.onBeforeFileWrite,
     frontMatterHeader: config?.config?.frontMatterHeader,
+    linkingStrategy: TypeTranspilerFactory.get(targetGenerator).getLinkingStrategy()
   });
 
   try {

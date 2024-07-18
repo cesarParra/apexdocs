@@ -3,7 +3,7 @@ build
 npm-debug.log
 .env
 .DS_Store
-/lib
 TODO.md
 /coverage
 /.idea/
+/dist/
