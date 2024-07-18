@@ -12,7 +12,7 @@ import ApexBundle from '../model/apex-bundle';
 import Manifest from '../model/manifest';
 import { TypesRepository } from '../model/types-repository';
 import { TypeTranspilerFactory } from '../transpiler/factory';
-import { generateMarkdownFiles } from './flows/generate-markdown-files';
+import { generateMarkdownFiles } from '././generators/generate-markdown-files';
 
 /**
  * Application entry-point to generate documentation out of Apex source files.

@@ -1,10 +1,6 @@
-import ClassFileGeneratorHelper from '../transpiler/markdown/class-file-generatorHelper';
 import { Link, RenderableContent, StringOrLink } from '../core/renderable/types';
 
 export type GetRenderableContentByTypeName = (typeName: string) => StringOrLink;
-
-export const linkFromTypeNameGenerator: GetRenderableContentByTypeName =
-  ClassFileGeneratorHelper.getRenderableLinkByTypeName;
 
 function defaultGetEmailByReference(email: string): Link {
   return {
@@ -15,7 +11,7 @@ function defaultGetEmailByReference(email: string): Link {
 
 export function replaceInlineReferences(
   text: string,
-  linkReplacer: GetRenderableContentByTypeName = linkFromTypeNameGenerator,
+  linkReplacer: GetRenderableContentByTypeName,
   emailReplacer: GetRenderableContentByTypeName = defaultGetEmailByReference,
 ): RenderableContent[] {
   return replaceInlineEmails(replaceInlineLinks([text], linkReplacer), emailReplacer);
