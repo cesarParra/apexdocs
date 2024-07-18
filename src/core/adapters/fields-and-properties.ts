@@ -1,5 +1,4 @@
-import { FieldMirrorWithInheritance, PropertyMirrorWithInheritance } from '../model/inheritance';
-import { RenderableField } from '../core/renderable/types';
+import { FieldMirrorWithInheritance, PropertyMirrorWithInheritance, RenderableField } from './types';
 import { adaptDocumentable } from './documentables';
 import { GetRenderableContentByTypeName } from './references';
 

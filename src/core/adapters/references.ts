@@ -1,4 +1,4 @@
-import { Link, RenderableContent, StringOrLink } from '../core/renderable/types';
+import { Link, RenderableContent, StringOrLink } from './types';
 
 export type GetRenderableContentByTypeName = (typeName: string) => StringOrLink;
 

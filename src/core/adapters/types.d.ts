@@ -1,3 +1,29 @@
+// Apex Reflection based types
+import {
+  Annotation as MirrorAnnotation,
+  ClassMirror,
+  DocComment,
+  FieldMirror,
+  MethodMirror,
+  PropertyMirror
+} from '@cparra/apex-reflection';
+
+export type Describable = string[] | undefined;
+
+export type Documentable = {
+  annotations: MirrorAnnotation[];
+  docComment?: DocComment;
+};
+
+export type InheritanceSupport = { inherited: boolean };
+export type ClassMirrorWithInheritanceChain = ClassMirror & { inheritanceChain: string[] };
+export type FieldMirrorWithInheritance = FieldMirror & InheritanceSupport;
+export type PropertyMirrorWithInheritance = PropertyMirror & InheritanceSupport;
+export type MethodMirrorWithInheritance = MethodMirror & InheritanceSupport;
+export type FieldOrProperty = FieldMirrorWithInheritance | PropertyMirrorWithInheritance;
+
+// Renderable types
+
 export type Link = {
   title: string;
   url: string;
@@ -129,3 +155,4 @@ export type RenderableEnum = RenderableType & {
 };
 
 export type Renderable = RenderableClass | RenderableInterface | RenderableEnum;
+

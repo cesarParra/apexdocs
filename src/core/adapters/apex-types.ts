@@ -6,14 +6,12 @@ import {
   RenderableInterface,
   RenderableSection,
   GroupedMember,
-} from '../core/renderable/types';
-import { adaptDescribable, adaptDocumentable } from './documentables';
-import { GetRenderableContentByTypeName } from './references';
-import {
   ClassMirrorWithInheritanceChain,
   FieldMirrorWithInheritance,
   PropertyMirrorWithInheritance,
-} from '../model/inheritance';
+} from './types';
+import { adaptDescribable, adaptDocumentable } from './documentables';
+import { GetRenderableContentByTypeName } from './references';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
 
