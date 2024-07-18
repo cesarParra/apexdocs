@@ -16,7 +16,7 @@
     "apexdocs-generate": "./dist/cli/generate.js"
   },
   "scripts": {
-    "test": "jest",
+    "test": "npm run build && jest",
     "build": "rimraf ./lib && npm run lint && pkgroll --minify",
     "lint": "eslint \"./src/**/*.{js,ts}\" --quiet --fix",
     "prepare": "npm run build",
