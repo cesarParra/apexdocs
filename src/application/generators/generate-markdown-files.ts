@@ -1,4 +1,4 @@
-import ApexBundle from '../../model/apex-bundle';
+import ApexBundle from '../../core/apex-bundle';
 import { Settings, TargetFile } from '../../settings';
 import { DocumentationBundle, generateDocs, ReflectionError } from '../../core/generate-docs';
 import { MarkdownFile } from '../../model/markdown-file';

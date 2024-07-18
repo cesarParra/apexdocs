@@ -2,7 +2,7 @@ import { ConstructorMirror, DocComment } from '@cparra/apex-reflection';
 import { MarkdownFile } from '../markdown-file';
 import { ParameterMirror } from '@cparra/apex-reflection';
 import { addCustomDocCommentAnnotations, addMermaid } from './doc-comment-annotation-util';
-import { MethodMirrorWithInheritance } from '../inheritance';
+import { MethodMirrorWithInheritance } from '../../core/adapters/types';
 
 export function declareMethod(
   markdownFile: MarkdownFile,

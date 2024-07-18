@@ -1,21 +1,22 @@
 import { ClassMirror, InterfaceMirror, reflect as mirrorReflection, Type } from '@cparra/apex-reflection';
+import * as O from 'fp-ts/Option';
+import { pipe } from 'fp-ts/function';
+import * as E from 'fp-ts/Either';
+
 import { typeToRenderable } from './adapters/apex-types';
 import { Link, Renderable, RenderableContent, RenderableEnum, StringOrLink } from './adapters/types';
-import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/class-template';
-import { enumMarkdownTemplate } from '../transpiler/markdown/plain-markdown/enum-template';
-import { interfaceMarkdownTemplate } from '../transpiler/markdown/plain-markdown/interface-template';
-import * as E from 'fp-ts/Either';
-import * as O from 'fp-ts/Option';
-import { flow, pipe } from 'fp-ts/function';
 import { CompilationRequest, Template } from './template';
-import Manifest from '../model/manifest';
 import { referenceGuideTemplate } from './templates/reference-guide';
 import { adaptDescribable } from './adapters/documentables';
 import { createInheritanceChain } from './inheritance-chain';
-import ApexBundle from '../model/apex-bundle';
-import MetadataProcessor from '../service/metadata-processor';
+import ApexBundle from './apex-bundle';
+import Manifest from './manifest';
 
-export const documentType = flow(typeToRenderable, resolveApexTypeTemplate, compile);
+// TODO: The core should never depend on things from the outside, so it should never reference "back" (../)
+import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/class-template';
+import { interfaceMarkdownTemplate } from '../transpiler/markdown/plain-markdown/interface-template';
+import { enumMarkdownTemplate } from '../transpiler/markdown/plain-markdown/enum-template';
+import MetadataProcessor from '../service/metadata-processor';
 
 export type DocumentationBundle = {
   format: 'markdown';
