@@ -31,7 +31,7 @@ This is a sample field.
 
 ##### Signature
 ```apex
-private name
+private final name
 ```
 
 ##### Type
