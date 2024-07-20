@@ -4,13 +4,24 @@ import * as yargs from 'yargs';
 import { Settings } from '../settings';
 import { Apexdocs } from '../application/Apexdocs';
 import { GeneratorChoices } from '../transpiler/generator-choices';
-import { cosmiconfig } from 'cosmiconfig';
+import { cosmiconfig, CosmiconfigResult } from 'cosmiconfig';
 import { TypeTranspilerFactory } from '../transpiler/factory';
 
-const result = cosmiconfig('apexdocs').search();
-result.then((config) => {
-  yargs.config(config?.config);
-  let argv = yargs
+/**
+ * Extracts configuration from a configuration file or the package.json
+ * through cosmiconfig.
+ */
+function _extractConfig(): Promise<CosmiconfigResult> {
+  return cosmiconfig('apexdocs').search();
+}
+
+/**
+ * Extracts arguments from the command line.
+ * @param config The configuration object from the configuration file, if any.
+ */
+function _extractYargs(config?: CosmiconfigResult) {
+  return yargs
+    .config(config?.config)
     .options({
       sourceDir: {
         type: 'string',
@@ -75,14 +86,14 @@ result.then((config) => {
       },
       title: {
         type: 'string',
-        describe: 'If this allows you to specify the title of the generated documentation\'s home file.',
+        describe: "If this allows you to specify the title of the generated documentation's home file.",
         default: 'Classes',
       },
       namespace: {
         type: 'string',
         describe:
           'The package namespace, if any. If this value is provided the namespace will be added as a prefix to all of the parsed files. ' +
-          'If generating an OpenApi definition, it will be added to the file\'s Server Url.',
+          "If generating an OpenApi definition, it will be added to the file's Server Url.",
       },
       openApiFileName: {
         type: 'string',
@@ -96,7 +107,7 @@ result.then((config) => {
       },
       includeMetadata: {
         type: 'boolean',
-        describe: 'Whether to include the file\'s meta.xml information: Whether it is active and and the API version',
+        describe: "Whether to include the file's meta.xml information: Whether it is active and and the API version",
         default: false,
       },
       documentationRootDir: {
@@ -106,11 +117,25 @@ result.then((config) => {
       },
     })
     .parseSync();
+}
 
-  if (config) {
-    argv = { ...config.config, ...argv };
-  }
+/**
+ * Combines the extracted configuration and arguments.
+ */
+async function _extractArgs() {
+  const config = await _extractConfig();
+  const cliArgs = _extractYargs(config);
+  return { ...config?.config, ...cliArgs };
+}
 
+type Args = ReturnType<typeof _extractArgs>;
+
+/**
+ * Initializes the settings object with the arguments provided.
+ * @param args The arguments object.
+ */
+async function _initializeSettings(args: Args) {
+  const argv = await args;
   const targetGenerator = argv.targetGenerator as GeneratorChoices;
   Settings.build({
     sourceDirectory: argv.sourceDir,
@@ -128,16 +153,25 @@ result.then((config) => {
     sortMembersAlphabetically: argv.sortMembersAlphabetically,
     includeMetadata: argv.includeMetadata,
     rootDir: argv.documentationRootDir,
-    onAfterProcess: config?.config?.onAfterProcess,
-    onBeforeFileWrite: config?.config?.onBeforeFileWrite,
-    frontMatterHeader: config?.config?.frontMatterHeader,
-    linkingStrategy: targetGenerator === 'plain-markdown' ? 'path-relative' : TypeTranspilerFactory.get(targetGenerator).getLinkingStrategy()
+    onAfterProcess: argv.onAfterProcess,
+    onBeforeFileWrite: argv.onBeforeFileWrite,
+    frontMatterHeader: argv.frontMatterHeader,
+    linkingStrategy:
+      targetGenerator === 'plain-markdown'
+        ? 'path-relative'
+        : TypeTranspilerFactory.get(targetGenerator).getLinkingStrategy(),
   });
+}
 
-  try {
-    Apexdocs.generate();
-  } catch (error) {
-    console.error(error);
-    process.exit(1);
-  }
-});
+function main() {
+  _initializeSettings(_extractArgs())
+    .then(() => {
+      Apexdocs.generate();
+    })
+    .catch((error) => {
+      console.error(error);
+      process.exit(1);
+    });
+}
+
+main();
