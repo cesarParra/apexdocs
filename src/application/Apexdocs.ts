@@ -13,6 +13,8 @@ import Manifest from '../core/manifest';
 import { TypesRepository } from '../model/types-repository';
 import { TypeTranspilerFactory } from '../transpiler/factory';
 import { generateMarkdownFiles } from './generators/generate-markdown-files';
+import { AllConfigurableOptions } from '../cli/args';
+import { GeneratorChoices } from '../transpiler/generator-choices';
 
 /**
  * Application entry-point to generate documentation out of Apex source files.
@@ -21,8 +23,9 @@ export class Apexdocs {
   /**
    * Generates documentation out of Apex source files.
    */
-  static generate(): void {
+  static generate(config: AllConfigurableOptions): void {
     Logger.logSingle('Initializing...', false);
+    this.initializeSettings(config);
     const fileBodies = ApexFileReader.processFiles(new DefaultFileSystem());
 
     if (Settings.getInstance().targetGenerator === 'plain-markdown') {
@@ -47,6 +50,34 @@ export class Apexdocs {
       // Error logging
       ErrorLogger.logErrors(filteredTypes);
     }
+  }
+
+  private static initializeSettings(argv: AllConfigurableOptions) {
+    const targetGenerator = argv.targetGenerator as GeneratorChoices;
+    Settings.build({
+      sourceDirectory: argv.sourceDir,
+      recursive: argv.recursive,
+      scope: argv.scope,
+      outputDir: argv.targetDir,
+      targetGenerator: targetGenerator,
+      indexOnly: argv.indexOnly,
+      defaultGroupName: argv.defaultGroupName,
+      sanitizeHtml: argv.sanitizeHtml,
+      openApiTitle: argv.openApiTitle,
+      title: argv.title,
+      namespace: argv.namespace,
+      openApiFileName: argv.openApiFileName,
+      sortMembersAlphabetically: argv.sortMembersAlphabetically,
+      includeMetadata: argv.includeMetadata,
+      rootDir: argv.documentationRootDir,
+      onAfterProcess: argv.onAfterProcess,
+      onBeforeFileWrite: argv.onBeforeFileWrite,
+      frontMatterHeader: argv.frontMatterHeader,
+      linkingStrategy:
+        targetGenerator === 'plain-markdown'
+          ? 'path-relative'
+          : TypeTranspilerFactory.get(targetGenerator).getLinkingStrategy(),
+    });
   }
 
   private static filterByScopes(manifest: Manifest) {
