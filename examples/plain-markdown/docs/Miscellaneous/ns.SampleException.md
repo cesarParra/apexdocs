@@ -2,19 +2,21 @@
 
 This is a sample exception.
 
-**Usage** &#x60;&#x60;&#x60;apex 
+**Usage** 
 
-try { 
+You can use the exception the following way. 
 
-throw new SampleException(); 
+You can also take a look at [ns.SampleClass](../SampleGroup/ns.SampleClass.md) to see how it is used. 
 
-} catch (SampleException e) { 
+This is a dangerous HTML tag: &lt;script&gt;alert(&#x27;Hello&#x27;);&lt;/script&gt; 
 
-System.debug(&#x27;Caught exception&#x27;); 
-
-} 
-
-&#x60;&#x60;&#x60;
+```apex
+try {
+   throw new SampleException();
+} catch (SampleException e) {
+  System.debug('Caught exception');
+}
+```
 
 ## Namespace
 ns

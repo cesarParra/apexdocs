@@ -39,9 +39,13 @@ sampleInterface.sampleMethod();
 
 This is a sample method
 
-**Custom Tag** This is a custom tag
+**Custom Tag** 
 
-**Another Custom Tag** This is another custom tag
+This is a custom tag
+
+**Another Custom Tag** 
+
+This is another custom tag
 
 #### Signature
 ```apex
@@ -81,7 +85,7 @@ sampleInterface.sampleMethod();
 
 This is a sample method with parameters 
 
-Sometimes it won&#x27;t be possible to find a NonExistent link.
+Sometimes it won&amp;#x27;t be possible to find a NonExistent link.
 
 #### Signature
 ```apex

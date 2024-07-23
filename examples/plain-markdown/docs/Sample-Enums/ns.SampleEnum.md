@@ -6,7 +6,9 @@ This is a sample enum. This references [ns.ReferencedEnum](../Miscellaneous/ns.R
 
 This description has several lines
 
-**Some Custom** Test. I can also have a [ns.ReferencedEnum](../Miscellaneous/ns.ReferencedEnum.md) here. 
+**Some Custom** 
+
+Test. I can also have a [ns.ReferencedEnum](../Miscellaneous/ns.ReferencedEnum.md) here. 
 
 And it can be multiline.
 

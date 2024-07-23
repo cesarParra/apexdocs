@@ -8,7 +8,7 @@ import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/cla
 import { enumMarkdownTemplate } from '../transpiler/markdown/plain-markdown/enum-template';
 import { interfaceMarkdownTemplate } from '../transpiler/markdown/plain-markdown/interface-template';
 import { CodeBlock, RenderableContent, StringOrLink } from './adapters/types';
-import { isEmptyLine } from './adapters/type-utils';
+import { isCodeBlock, isEmptyLine } from './adapters/type-utils';
 import { groupedMembersPartialTemplate } from '../transpiler/markdown/plain-markdown/grouped-members-partial-template';
 
 export type CompilationRequest = {
@@ -92,8 +92,11 @@ const resolveRenderableContent = (description?: RenderableContent[]): string => 
     if (isEmptyLine(curr)) {
       return acc + '\n\n';
     }
-
-    return acc + link(curr).trim() + ' ';
+    if (isCodeBlock(curr)) {
+      return acc + convertCodeBlock(curr) + '\n';
+    } else {
+      return acc + Handlebars.escapeExpression(link(curr)).trim() + ' ';
+    }
   }
 
   return description.reduce(reduceDescription, '').trim();

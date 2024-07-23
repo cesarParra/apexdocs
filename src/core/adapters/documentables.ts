@@ -14,18 +14,109 @@ export function adaptDescribable(
       return;
     }
 
-    return (
-      describable
-        .map<RenderableContent[]>((line) => [
-          ...replaceInlineReferences(line, linkGenerator),
+    let content: RenderableContent[] = [];
+    for (let i = 0; i < describable.length; i++) {
+      const line = describable[i];
+      // The language might or might not be present after ```
+      const codeBlockMatch = line.match(/^```([a-zA-Z]*)$/);
+      if (codeBlockMatch) {
+        // Check if the language is present, if not, fallback to "apex"
+        const language = codeBlockMatch[1] || 'apex';
+        const codeBlockLines: string[] = [];
+        i++;
+        while (i < describable.length) {
+          const currentLine = describable[i];
+          if (currentLine.trim() === '```') {
+            break;
+          }
+          codeBlockLines.push(currentLine);
+          i++;
+        }
+        console.log('codeBlockLines', codeBlockLines);
+        content = [
+          ...content,
           {
-            type: 'empty-line',
+            __type: 'code-block',
+            language,
+            content: codeBlockLines,
           },
-        ])
+          { __type: 'empty-line' },
+        ];
+        continue;
+      }
+
+      content = [
+        ...content,
+        ...replaceInlineReferences(line, linkGenerator),
+        {
+          __type: 'empty-line',
+        },
+      ];
+    }
+    return (
+      content
         .flatMap((line) => line)
         // If the last element is an empty line, remove it
         .filter((line, index, lines) => !(isEmptyLine(line) && index === lines.length - 1))
     );
+
+    // TODO: Now we want to also extract code blocks if we encounter any line that starts with "```"
+
+    // return describable.reduce<RenderableContent[]>(
+    //   (acc, line) => {
+    //     if (line.trim() === '') {
+    //       return [...acc, { __type: 'empty-line' }];
+    //     }
+    //
+    //     // The language might or might not be present after ```
+    //     const codeBlockMatch = line.match(/^```([a-zA-Z]*)$/);
+    //     if (codeBlockMatch) {
+    //       console.log('codeBlockMatch', codeBlockMatch);
+    //       // Check if the language is present, if not, fallback to "apex"
+    //       const language = codeBlockMatch[1] || 'apex';
+    //       const codeBlockLines: string[] = [];
+    //       let index = acc.length + 1;
+    //       while (index < describable.length) {
+    //         const currentLine = describable[index];
+    //         if (currentLine.trim() === '```') {
+    //           break;
+    //         }
+    //         codeBlockLines.push(currentLine);
+    //         index++;
+    //       }
+    //       return [
+    //         ...acc,
+    //         {
+    //           __type: 'code-block',
+    //           language,
+    //           content: codeBlockLines,
+    //         },
+    //       ];
+    //     }
+    //
+    //     return [
+    //       ...acc,
+    //       ...replaceInlineReferences(line, linkGenerator),
+    //       {
+    //         __type: 'empty-line',
+    //       },
+    //     ];
+    //   },
+    //   <RenderableContent[]>[],
+    // );
+
+    // return (
+    //   describable
+    //     .map<RenderableContent[]>((line) => [
+    //       ...replaceInlineReferences(line, linkGenerator),
+    //       {
+    //         __type: 'empty-line',
+    //       },
+    //     ])
+    //     .flatMap((line) => line)
+    //     // If the last element is an empty line, remove it
+    //     .filter((line, index, lines) => !(isEmptyLine(line) && index === lines.length - 1))
+    // );
   }
 
   return {

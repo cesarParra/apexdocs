@@ -31,13 +31,12 @@ export type Link = {
 };
 
 export type EmptyLine = {
-  type: 'empty-line';
+  __type: 'empty-line';
 };
 
 export type StringOrLink = string | Link;
 
-// TODO: Renderable Content can also be a code block
-export type RenderableContent = StringOrLink | EmptyLine;
+export type RenderableContent = StringOrLink | EmptyLine | CodeBlock;
 
 type EnumValue = {
   value: string;
