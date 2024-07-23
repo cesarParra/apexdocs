@@ -47,7 +47,7 @@ describe('Conversion from InterfaceMirror to InterfaceSource understandable by t
     const interfaceSource = typeToRenderable(interfaceMirror, linkGenerator);
 
     expect(interfaceSource.methods.value).toHaveLength(1);
-    expect(interfaceSource.methods.value[0].signature.value[0]).toBe('public String sampleMethod()');
+    expect(interfaceSource.methods.value[0].signature.value.content[0]).toBe('public String sampleMethod()');
   });
 
   it('converts method declarations. Method with parameters', () => {
@@ -75,6 +75,8 @@ describe('Conversion from InterfaceMirror to InterfaceSource understandable by t
     const interfaceSource = typeToRenderable(interfaceMirror, linkGenerator);
 
     expect(interfaceSource.methods.value).toHaveLength(1);
-    expect(interfaceSource.methods.value[0].signature.value[0]).toBe('public String sampleMethod(String param1)');
+    expect(interfaceSource.methods.value[0].signature.value.content[0]).toBe(
+      'public String sampleMethod(String param1)',
+    );
   });
 });

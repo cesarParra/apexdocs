@@ -12,6 +12,8 @@
 
 ### [ns.SampleException](./Miscellaneous/ns.SampleException.md)
 
+This is a sample exception.
+
 ### [ns.SampleInterface](./Miscellaneous/ns.SampleInterface.md)
 
 This is a sample interface

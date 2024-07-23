@@ -1,4 +1,4 @@
-import { CustomTag, RenderableDocumentation, RenderableContent } from './types';
+import { CustomTag, RenderableDocumentation, RenderableContent, CodeBlock } from './types';
 import { Describable, Documentable } from './types';
 import { GetRenderableContentByTypeName, replaceInlineReferences } from './references';
 import { isEmptyLine } from './type-utils';
@@ -71,6 +71,17 @@ export function adaptDocumentable(
     );
   }
 
+  function bodyLinesToCodeBlock(language: string, bodyLines: string[] | undefined): CodeBlock | undefined {
+    if (!bodyLines) {
+      return;
+    }
+    return {
+      __type: 'code-block',
+      language,
+      content: bodyLines,
+    };
+  }
+
   return {
     ...adaptDescribable(documentable.docComment?.descriptionLines, linkGenerator),
     annotations: documentable.annotations.map((annotation) => annotation.type.toUpperCase()),
@@ -78,12 +89,12 @@ export function adaptDocumentable(
     mermaid: {
       headingLevel: subHeadingLevel,
       heading: 'Diagram',
-      value: extractAnnotationBodyLines(documentable, 'mermaid'),
+      value: bodyLinesToCodeBlock('mermaid', extractAnnotationBodyLines(documentable, 'mermaid')),
     },
     example: {
       headingLevel: subHeadingLevel,
       heading: 'Example',
-      value: documentable.docComment?.exampleAnnotation?.bodyLines,
+      value: bodyLinesToCodeBlock('apex', documentable.docComment?.exampleAnnotation?.bodyLines),
     },
     group: extractAnnotationBody(documentable, 'group'),
     author: extractAnnotationBody(documentable, 'author'),

@@ -3,6 +3,7 @@ import { Link } from '../types';
 
 function getFileLink(typeName: string): Link {
   return {
+    __type: 'link' as const,
     title: typeName,
     url: `/api/${typeName}.html`,
   };
@@ -10,6 +11,7 @@ function getFileLink(typeName: string): Link {
 
 function getEmailLink(typeName: string) {
   return {
+    __type: 'link' as const,
     title: typeName,
     url: `mailto:${typeName}`,
   };
@@ -33,6 +35,7 @@ describe('reference utilities', () => {
       const expected = [
         'This is a test ',
         {
+          __type: 'link',
           title: 'ClassName',
           url: '/api/ClassName.html',
         },
@@ -44,6 +47,7 @@ describe('reference utilities', () => {
     it('replaces links in the format of {@link ClassName}', () => {
       function getFileLinkByTypeName(typeName: string): Link {
         return {
+          __type: 'link' as const,
           title: typeName,
           url: `/api/${typeName}.html`,
         };
@@ -55,6 +59,7 @@ describe('reference utilities', () => {
       const expected = [
         'This is a test ',
         {
+          __type: 'link',
           title: 'ClassName',
           url: '/api/ClassName.html',
         },
@@ -68,6 +73,7 @@ describe('reference utilities', () => {
     it('replaces emails in the format of {@email email-address}', () => {
       function getLinkByTypeName(typeName: string) {
         return {
+          __type: 'link' as const,
           title: typeName,
           url: `mailto:${typeName}`,
         };
@@ -79,6 +85,7 @@ describe('reference utilities', () => {
       const expected = [
         'This is an email ',
         {
+          __type: 'link',
           title: 'example@example.com',
           url: 'mailto:example@example.com',
         },
@@ -95,16 +102,19 @@ describe('reference utilities', () => {
     const expected = [
       'This is a test ',
       {
+        __type: 'link',
         title: 'ClassName',
         url: '/api/ClassName.html',
       },
       ', and ',
       {
+        __type: 'link',
         title: 'AnotherClass',
         url: '/api/AnotherClass.html',
       },
       ', and an email ',
       {
+        __type: 'link',
         title: 'testerson',
         url: 'mailto:testerson',
       },

@@ -7,7 +7,7 @@ import { fieldsPartialTemplate } from '../transpiler/markdown/plain-markdown/fie
 import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/class-template';
 import { enumMarkdownTemplate } from '../transpiler/markdown/plain-markdown/enum-template';
 import { interfaceMarkdownTemplate } from '../transpiler/markdown/plain-markdown/interface-template';
-import { RenderableContent, StringOrLink } from './adapters/types';
+import { CodeBlock, RenderableContent, StringOrLink } from './adapters/types';
 import { isEmptyLine } from './adapters/type-utils';
 import { groupedMembersPartialTemplate } from '../transpiler/markdown/plain-markdown/grouped-members-partial-template';
 
@@ -73,11 +73,11 @@ const inlineCode = (text: string) => {
   return new Handlebars.SafeString(`\`${text}\``);
 };
 
-const convertCodeBlock = (language: string, lines: string[]): Handlebars.SafeString => {
+const convertCodeBlock = (codeBlock: CodeBlock): Handlebars.SafeString => {
   return new Handlebars.SafeString(
     `
-\`\`\`${language}
-${lines.join('\n')}
+\`\`\`${codeBlock.language}
+${codeBlock.content.join('\n')}
 \`\`\`
   `.trim(),
   );

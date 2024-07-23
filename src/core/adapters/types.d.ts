@@ -25,6 +25,7 @@ export type FieldOrProperty = FieldMirrorWithInheritance | PropertyMirrorWithInh
 // Renderable types
 
 export type Link = {
+  readonly __type: 'link';
   title: string;
   url: string;
 };
@@ -53,7 +54,11 @@ type CustomTag = {
  */
 type Annotation = string;
 
-type CodeBlock = string[];
+type CodeBlock = {
+  readonly __type: 'code-block';
+  language: string;
+  content: string[];
+};
 
 type RenderableDocumentation = {
   annotations?: Annotation[];

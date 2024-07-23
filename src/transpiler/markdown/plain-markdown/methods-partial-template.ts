@@ -10,7 +10,7 @@ export const methodsPartialTemplate = `
 {{#> documentablePartialTemplate}}
 
 {{ heading signature.headingLevel signature.heading }}
-{{ code "apex" signature.value }}
+{{ code signature.value }}
 
 {{#if parameters.value}}
 {{ heading parameters.headingLevel parameters.heading }}

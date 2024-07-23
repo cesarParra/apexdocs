@@ -363,6 +363,7 @@ function linkFromTypeNameGenerator(
 
   const [fullClassName, fileLink] = getFileLinkTuple(typeBeingDocumented, type, config);
   return {
+    __type: 'link',
     title: fullClassName,
     url: fileLink,
   };
@@ -395,6 +396,7 @@ function getPossibleLinkFromRoot(config: DocumentationConfig, fallback: string, 
   const namespacePrefix = config.namespace ? `${config.namespace}.` : '';
   const title = `${namespacePrefix}${type.name}`;
   return {
+    __type: 'link',
     title: title,
     url: `${getDirectoryFromRoot(config, type)}/${title}.md`,
   };
@@ -404,6 +406,7 @@ function getLinkFromRoot(config: DocumentationConfig, type: Type): Link {
   const namespacePrefix = config.namespace ? `${config.namespace}.` : '';
   const title = `${namespacePrefix}${type.name}`;
   return {
+    __type: 'link',
     title: title,
     url: `${getDirectoryFromRoot(config, type)}/${title}.md`,
   };

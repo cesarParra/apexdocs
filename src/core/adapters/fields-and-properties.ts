@@ -1,4 +1,4 @@
-import { FieldMirrorWithInheritance, PropertyMirrorWithInheritance, RenderableField } from './types';
+import { CodeBlock, FieldMirrorWithInheritance, PropertyMirrorWithInheritance, RenderableField } from './types';
 import { adaptDocumentable } from './documentables';
 import { GetRenderableContentByTypeName } from './references';
 
@@ -7,14 +7,17 @@ export function adaptFieldOrProperty(
   linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number,
 ): RenderableField {
-  function buildSignature() {
+  function buildSignature(): CodeBlock {
     const { access_modifier, name } = field;
     const memberModifiers = field.memberModifiers.join(' ');
-    return (
-      `${access_modifier} ${memberModifiers} ${name}`
-        // remove double spaces
-        .replace(/ {2}/g, ' ')
-    );
+    const codeContents = `${access_modifier} ${memberModifiers} ${name}`
+      // remove double spaces
+      .replace(/ {2}/g, ' ');
+    return {
+      __type: 'code-block',
+      language: 'apex',
+      content: [codeContents],
+    };
   }
 
   return {
@@ -31,7 +34,7 @@ export function adaptFieldOrProperty(
     signature: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Signature',
-      value: [buildSignature()],
+      value: buildSignature(),
     },
   };
 }

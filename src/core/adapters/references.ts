@@ -4,6 +4,7 @@ export type GetRenderableContentByTypeName = (typeName: string) => StringOrLink;
 
 function defaultGetEmailByReference(email: string): Link {
   return {
+    __type: 'link',
     title: email,
     url: `mailto:${email}`,
   };

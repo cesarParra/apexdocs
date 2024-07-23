@@ -14,11 +14,11 @@ export const documentablePartialTemplate = `
 
 {{#if doc.mermaid.value}}
 {{ heading doc.mermaid.headingLevel doc.mermaid.heading }}
-{{code "mermaid" doc.mermaid.value}}
+{{code doc.mermaid.value}}
 {{/if}}
 
 {{#if doc.example.value}}
 {{ heading doc.example.headingLevel doc.example.heading }}
-{{code "apex" doc.example.value}}
+{{code doc.example.value}}
 {{/if}}
 `.trim();
