@@ -85,7 +85,7 @@ sampleInterface.sampleMethod();
 
 This is a sample method with parameters 
 
-Sometimes it won&amp;#x27;t be possible to find a NonExistent link.
+Sometimes it won&#x27;t be possible to find a NonExistent link.
 
 #### Signature
 ```apex

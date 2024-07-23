@@ -3,7 +3,7 @@ export const documentablePartialTemplate = `
 \`{{this}}\`
 {{/each}}
 
-{{renderContent doc.description}}
+{{{renderContent doc.description}}}
 
 {{#each doc.customTags}}
 **{{splitAndCapitalize name}}** 

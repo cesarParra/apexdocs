@@ -7,7 +7,7 @@ export const referenceGuideTemplate = `
 {{#each this}}
 ### {{link title}}
 
-{{renderContent description}}
+{{{renderContent description}}}
 
 {{/each}}
 {{/each}}
