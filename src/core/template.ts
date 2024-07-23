@@ -32,7 +32,7 @@ export class Template {
 
     Handlebars.registerHelper('link', link);
     Handlebars.registerHelper('code', convertCodeBlock);
-    Handlebars.registerHelper('withLinks', resolveLinksInContent);
+    Handlebars.registerHelper('renderContent', resolveRenderableContent);
     Handlebars.registerHelper('heading', heading);
     Handlebars.registerHelper('inlineCode', inlineCode);
     Handlebars.registerHelper('splitAndCapitalize', splitAndCapitalize);
@@ -83,7 +83,7 @@ ${lines.join('\n')}
   );
 };
 
-const resolveLinksInContent = (description?: RenderableContent[]): string => {
+const resolveRenderableContent = (description?: RenderableContent[]): string => {
   if (!description) {
     return '';
   }

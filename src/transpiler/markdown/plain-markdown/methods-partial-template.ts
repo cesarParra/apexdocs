@@ -17,7 +17,7 @@ export const methodsPartialTemplate = `
 | Name | Type | Description |
 |------|------|-------------|
 {{#each parameters.value}}
-| {{name}} | {{link type}} | {{withLinks description}} |
+| {{name}} | {{link type}} | {{renderContent description}} |
 {{/each}}
 {{/if}}
 

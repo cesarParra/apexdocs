@@ -3,10 +3,10 @@ export const documentablePartialTemplate = `
 \`{{this}}\`
 {{/each}}
 
-{{withLinks doc.description}}
+{{renderContent doc.description}}
 
 {{#each doc.customTags}}
-**{{splitAndCapitalize name}}** {{withLinks description}}
+**{{splitAndCapitalize name}}** {{renderContent description}}
 
 {{/each}}
 
