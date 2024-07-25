@@ -1,11 +1,11 @@
-// Apex Reflection based types
+// Apex Reflection-based types
 import {
   Annotation as MirrorAnnotation,
   ClassMirror,
   DocComment,
   FieldMirror,
   MethodMirror,
-  PropertyMirror
+  PropertyMirror,
 } from '@cparra/apex-reflection';
 
 export type Describable = string[] | undefined;
@@ -25,17 +25,18 @@ export type FieldOrProperty = FieldMirrorWithInheritance | PropertyMirrorWithInh
 // Renderable types
 
 export type Link = {
+  readonly __type: 'link';
   title: string;
   url: string;
 };
 
 export type EmptyLine = {
-  type: 'empty-line';
+  __type: 'empty-line';
 };
 
 export type StringOrLink = string | Link;
 
-export type RenderableContent = StringOrLink | EmptyLine;
+export type RenderableContent = StringOrLink | EmptyLine | CodeBlock;
 
 type EnumValue = {
   value: string;
@@ -48,11 +49,15 @@ type CustomTag = {
 };
 
 /**
- * Represents an annotation to a top-level type. For example @NamespaceAccessible.
+ * Represents an annotation to a top-level type. For example, @NamespaceAccessible.
  */
 type Annotation = string;
 
-type CodeBlock = string[];
+type CodeBlock = {
+  readonly __type: 'code-block';
+  language: string;
+  content: string[];
+};
 
 type RenderableDocumentation = {
   annotations?: Annotation[];
@@ -155,4 +160,3 @@ export type RenderableEnum = RenderableType & {
 };
 
 export type Renderable = RenderableClass | RenderableInterface | RenderableEnum;
-

@@ -7,8 +7,8 @@ import { fieldsPartialTemplate } from '../transpiler/markdown/plain-markdown/fie
 import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/class-template';
 import { enumMarkdownTemplate } from '../transpiler/markdown/plain-markdown/enum-template';
 import { interfaceMarkdownTemplate } from '../transpiler/markdown/plain-markdown/interface-template';
-import { RenderableContent, StringOrLink } from './adapters/types';
-import { isEmptyLine } from './adapters/type-utils';
+import { CodeBlock, RenderableContent, StringOrLink } from './adapters/types';
+import { isCodeBlock, isEmptyLine } from './adapters/type-utils';
 import { groupedMembersPartialTemplate } from '../transpiler/markdown/plain-markdown/grouped-members-partial-template';
 
 export type CompilationRequest = {
@@ -32,7 +32,7 @@ export class Template {
 
     Handlebars.registerHelper('link', link);
     Handlebars.registerHelper('code', convertCodeBlock);
-    Handlebars.registerHelper('withLinks', resolveLinksInContent);
+    Handlebars.registerHelper('renderContent', resolveRenderableContent);
     Handlebars.registerHelper('heading', heading);
     Handlebars.registerHelper('inlineCode', inlineCode);
     Handlebars.registerHelper('splitAndCapitalize', splitAndCapitalize);
@@ -73,17 +73,17 @@ const inlineCode = (text: string) => {
   return new Handlebars.SafeString(`\`${text}\``);
 };
 
-const convertCodeBlock = (language: string, lines: string[]): Handlebars.SafeString => {
+const convertCodeBlock = (codeBlock: CodeBlock): Handlebars.SafeString => {
   return new Handlebars.SafeString(
     `
-\`\`\`${language}
-${lines.join('\n')}
+\`\`\`${codeBlock.language}
+${codeBlock.content.join('\n')}
 \`\`\`
   `.trim(),
   );
 };
 
-const resolveLinksInContent = (description?: RenderableContent[]): string => {
+const resolveRenderableContent = (description?: RenderableContent[]): string => {
   if (!description) {
     return '';
   }
@@ -92,8 +92,11 @@ const resolveLinksInContent = (description?: RenderableContent[]): string => {
     if (isEmptyLine(curr)) {
       return acc + '\n\n';
     }
-
-    return acc + link(curr).trim() + ' ';
+    if (isCodeBlock(curr)) {
+      return acc + convertCodeBlock(curr) + '\n';
+    } else {
+      return acc + Handlebars.escapeExpression(link(curr)).trim() + ' ';
+    }
   }
 
   return description.reduce(reduceDescription, '').trim();

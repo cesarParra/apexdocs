@@ -1,5 +1,5 @@
 import { ConstructorMirror, MethodMirror, ParameterMirror, ThrowsAnnotation } from '@cparra/apex-reflection';
-import { RenderableConstructor, RenderableMethod, MethodMirrorWithInheritance } from './types';
+import { RenderableConstructor, RenderableMethod, MethodMirrorWithInheritance, CodeBlock } from './types';
 import { adaptDescribable, adaptDocumentable } from './documentables';
 import { GetRenderableContentByTypeName } from './references';
 import { Documentable } from './types';
@@ -15,13 +15,17 @@ export function adaptMethod(
     return `${name}(${parametersString})`;
   }
 
-  function buildSignature(method: MethodMirrorWithInheritance): string {
+  function buildSignature(method: MethodMirrorWithInheritance): CodeBlock {
     const { access_modifier, typeReference, name, memberModifiers } = method;
     const parameters = method.parameters
       .map((param) => `${param.typeReference.rawDeclaration} ${param.name}`)
       .join(', ');
     const members = memberModifiers.length > 0 ? `${memberModifiers.join(' ')} ` : '';
-    return `${access_modifier} ${members}${typeReference.rawDeclaration} ${name}(${parameters})`;
+    return {
+      __type: 'code-block',
+      language: 'apex',
+      content: [`${access_modifier} ${members}${typeReference.rawDeclaration} ${name}(${parameters})`],
+    };
   }
 
   return {
@@ -31,7 +35,7 @@ export function adaptMethod(
     signature: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Signature',
-      value: [buildSignature(method as MethodMirrorWithInheritance)],
+      value: buildSignature(method as MethodMirrorWithInheritance),
     },
     returnType: {
       headingLevel: baseHeadingLevel + 1,
@@ -67,12 +71,16 @@ export function adaptConstructor(
     return `${name}(${parametersString})`;
   }
 
-  function buildSignature(name: string, constructor: ConstructorMirror): string {
+  function buildSignature(name: string, constructor: ConstructorMirror): CodeBlock {
     const { access_modifier } = constructor;
     const parameters = constructor.parameters
       .map((param) => `${param.typeReference.rawDeclaration} ${param.name}`)
       .join(', ');
-    return `${access_modifier} ${name}(${parameters})`;
+    return {
+      __type: 'code-block',
+      language: 'apex',
+      content: [`${access_modifier} ${name}(${parameters})`],
+    };
   }
 
   return {
@@ -82,7 +90,7 @@ export function adaptConstructor(
     signature: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Signature',
-      value: [buildSignature(typeName, constructor)],
+      value: buildSignature(typeName, constructor),
     },
     parameters: {
       headingLevel: baseHeadingLevel + 1,

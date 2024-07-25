@@ -39,9 +39,13 @@ sampleInterface.sampleMethod();
 
 This is a sample method
 
-**Custom Tag** This is a custom tag
+**Custom Tag** 
 
-**Another Custom Tag** This is another custom tag
+This is a custom tag
+
+**Another Custom Tag** 
+
+This is another custom tag
 
 #### Signature
 ```apex

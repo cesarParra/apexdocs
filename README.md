@@ -292,6 +292,43 @@ public static Object call(String action) {
 }
 ```
 
+### Using custom tags
+
+You can use custom tags to document your code. Custom tags can be added with at symbol (`@`) followed by the name
+of the tag. Apexdocs will automatically format tags which words are separated by a dash (`-`) by separating them with a
+space and uppercasing them. For example, `@custom-tag` will be displayed as `Custom Tag`.
+
+Within a custom tag, you can also add code blocks by using the triple backtick syntax. This is useful when you want to
+display code snippets within your documentation.
+
+**Example**
+
+```apex
+   /**
+    * @custom-tag This is a custom tag
+    * @custom-tag-with-code
+    * ```
+    * System.debug('Hello World');
+    * ```
+    */
+   public class MyClass {
+   }
+```
+
+Note that the language of the code block will be set to `apex` by default, but you can change it by adding the language
+name after the triple backticks. For example, to display a JavaScript code block you can use:
+
+```apex
+   /**
+    * @custom-tag-with-code
+    * ```javascript
+    * console.log('Hello World');
+    * ```
+    */
+   public class MyClass {
+   }
+```
+
 ### Grouping Declarations Within A Class
 
 A class might have members that should be grouped together. For example, you can have a class for constants with
