@@ -54,7 +54,6 @@ export function adaptDescribable(
     }
     return (
       content
-        .flatMap((line) => line)
         // If the last element is an empty line, remove it
         .filter((line, index, lines) => !(isEmptyLine(line) && index === lines.length - 1))
     );

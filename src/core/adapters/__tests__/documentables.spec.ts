@@ -57,6 +57,22 @@ describe('describable', () => {
     });
   });
 
+  it('sets the code blocks language to apex if one is not provided', () => {
+    const describable = ['```', 'const a = 1;', '```'];
+
+    const result = adaptDescribable(describable, linkGenerator);
+
+    expect(result).toEqual({
+      description: [
+        {
+          __type: 'code-block',
+          language: 'apex',
+          content: ['const a = 1;'],
+        },
+      ],
+    });
+  });
+
   it('returns a code block followed by an empty line and then whatever content is in the describable', () => {
     const describable = ['```typescript', 'const a = 1;', '```', 'This is a test'];
 
@@ -71,6 +87,22 @@ describe('describable', () => {
         },
         { __type: 'empty-line' },
         'This is a test',
+      ],
+    });
+  });
+
+  it('returns a code block even when there is no closing tag', () => {
+    const describable = ['```typescript', 'const a = 1;'];
+
+    const result = adaptDescribable(describable, linkGenerator);
+
+    expect(result).toEqual({
+      description: [
+        {
+          __type: 'code-block',
+          language: 'typescript',
+          content: ['const a = 1;'],
+        },
       ],
     });
   });
