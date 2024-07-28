@@ -147,8 +147,48 @@ global class Url {
      * @param entityId Specifies the ID of the entity that holds the file data.
      * @param fieldName Specifies the API name of a file field component, such as `AttachmentBody`.
      * @return The download URL for the file attachment.
+     * @example
+     * String fileURL =
+     * URL.getFileFieldURL(
+     *   '087000000000123' ,
+     *   'AttachmentBody');
      */
     global static String getFileFieldURL(String entityId, String fieldName) {
+        return null;
+    }
+
+    /**
+     * @description Returns the host name of the current URL.
+     * @return The host name of the current URL.
+     */
+    global String getHost() {
+        return null;
+    }
+
+    /**
+     * @description Returns the canonical URL for your org. For example, https://MyDomainName.my.salesforce.com.
+     * @return getOrgDomainUrl() always returns the login URL for your org, regardless of context. Use that URL when making API calls to your org.
+     * @usage
+     * Use getOrgDomainUrl() to interact with Salesforce REST and SOAP APIs in Apex code. Get endpoints for User Interface API calls, for creating and customizing picklist value sets and custom fields, and more.
+     *
+     * `getOrgDomainUrl()` can access the domain URL only for the org in which the Apex code is running.
+     *
+     * You don't need a RemoteSiteSetting for your org to interact with the Salesforce APIs using domain URLs retrieved with this method.
+     *
+     * @example
+     * // This example uses the Salesforce REST API to get organization limit values. For information on limits, see Limits in the REST API Developer Guide.
+     * Http h = new Http();
+     * HttpRequest req = new HttpRequest();
+     * req.setEndpoint(Url.getOrgDomainUrl().toExternalForm()
+     *    + '/services/data/v44.0/limits');
+     * req.setMethod('GET');
+     * req.setHeader('Authorization', 'Bearer ' + UserInfo.getSessionId());
+     * HttpResponse res = h.send(req);
+     *
+     * @see-also
+     * * [Lightning Aura Components Developer Guide: Making API Calls from Apex](https://developer.salesforce.com/docs/atlas.en-us.250.0.lightning.meta/lightning/apex_api_calls.htm)
+     */
+    global static Url getOrgDomainUrl() {
         return null;
     }
 }

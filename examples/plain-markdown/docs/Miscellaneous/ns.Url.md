@@ -254,3 +254,67 @@ global static String getFileFieldURL(String entityId, String fieldName)
 **String**
 
 The download URL for the file attachment.
+
+#### Example
+```apex
+String fileURL =
+URL.getFileFieldURL(
+  '087000000000123' ,
+  'AttachmentBody');
+```
+
+---
+
+### `getHost()`
+
+Returns the host name of the current URL.
+
+#### Signature
+```apex
+global String getHost()
+```
+
+#### Return Type
+**String**
+
+The host name of the current URL.
+
+---
+
+### `getOrgDomainUrl()`
+
+Returns the canonical URL for your org. For example, https://MyDomainName.my.salesforce.com.
+
+**Usage** 
+
+Use getOrgDomainUrl() to interact with Salesforce REST and SOAP APIs in Apex code. Get endpoints for User Interface API calls, for creating and customizing picklist value sets and custom fields, and more. 
+
+ `getOrgDomainUrl()` can access the domain URL only for the org in which the Apex code is running. 
+
+You don&#x27;t need a RemoteSiteSetting for your org to interact with the Salesforce APIs using domain URLs retrieved with this method.
+
+**See Also** 
+
+* [Lightning Aura Components Developer Guide: Making API Calls from Apex](https://developer.salesforce.com/docs/atlas.en-us.250.0.lightning.meta/lightning/apex_api_calls.htm)
+
+#### Signature
+```apex
+global static Url getOrgDomainUrl()
+```
+
+#### Return Type
+**[ns.Url](./ns.Url.md)**
+
+getOrgDomainUrl() always returns the login URL for your org, regardless of context. Use that URL when making API calls to your org.
+
+#### Example
+```apex
+// This example uses the Salesforce REST API to get organization limit values. For information on limits, see Limits in the REST API Developer Guide.
+Http h = new Http();
+HttpRequest req = new HttpRequest();
+req.setEndpoint(Url.getOrgDomainUrl().toExternalForm()
+   + '/services/data/v44.0/limits');
+req.setMethod('GET');
+req.setHeader('Authorization', 'Bearer ' + UserInfo.getSessionId());
+HttpResponse res = h.send(req);
+```
