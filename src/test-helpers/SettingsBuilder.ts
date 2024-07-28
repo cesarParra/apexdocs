@@ -15,7 +15,6 @@ export class SettingsBuilder {
       defaultGroupName: 'Misc',
       openApiTitle: 'Apex API',
       openApiFileName: 'openapi',
-      title: 'Classes',
       includeMetadata: false,
       linkingStrategy: 'root-relative',
     };

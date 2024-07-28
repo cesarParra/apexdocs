@@ -62,7 +62,6 @@ export class Apexdocs {
       indexOnly: argv.indexOnly,
       defaultGroupName: argv.defaultGroupName,
       openApiTitle: argv.openApiTitle,
-      title: argv.title,
       namespace: argv.namespace,
       openApiFileName: argv.openApiFileName,
       sortMembersAlphabetically: argv.sortMembersAlphabetically,

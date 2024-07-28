@@ -42,13 +42,6 @@ function _extractYargs(config?: CosmiconfigResult) {
         default: './docs/',
         describe: 'The directory location where documentation will be generated to.',
       },
-      recursive: {
-        type: 'boolean',
-        alias: 'r',
-        default: true,
-        deprecated: 'This option is no longer needed as the recursive search is always on.',
-        describe: 'Whether .cls classes will be searched for recursively in the directory provided.',
-      },
       scope: {
         type: 'string',
         array: true,
@@ -78,25 +71,10 @@ function _extractYargs(config?: CosmiconfigResult) {
         default: 'Miscellaneous',
         describe: 'Defines the @group name to be used when a file does not specify it.',
       },
-      sanitizeHtml: {
-        type: 'boolean',
-        default: true,
-        deprecated: 'This option is no longer needed as the sanitization is always on.',
-        describe:
-          'When on, any special character within your ApexDocs is converted into its HTML code representation. ' +
-          'This is specially useful when generic objects are described within the docs, e.g. "List< Foo>", "Map<Foo, Bar>" ' +
-          'because otherwise the content within < and > would be treated as HTML tags and not shown in the output. ' +
-          'Content in @example blocks are never sanitized.',
-      },
       openApiTitle: {
         type: 'string',
         default: 'Apex REST Api',
         describe: 'If using "openapi" as the target generator, this allows you to specify the OpenApi title value.',
-      },
-      title: {
-        type: 'string',
-        describe: "Allows you to specify the title of the generated documentation's home file.",
-        default: 'Classes',
       },
       namespace: {
         type: 'string',
