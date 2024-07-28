@@ -31,8 +31,6 @@ export interface WalkerListener {
 export abstract class Walker {
   constructor(public type: Type) {}
 
-  abstract walk(listener: WalkerListener): void;
-
   protected sortType<T extends { name: string }>(types: T[]): T[] {
     if (Settings.getInstance().sortMembersAlphabetically()) {
       return types.sort((a, b) => a.name.localeCompare(b.name));
