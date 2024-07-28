@@ -1,6 +1,6 @@
 import { CustomTag, RenderableDocumentation, RenderableContent, CodeBlock } from './types';
 import { Describable, Documentable, GetRenderableContentByTypeName } from './types';
-import { replaceInlineReferences } from './references';
+import { replaceInlineReferences } from './inline';
 import { isEmptyLine } from './type-utils';
 
 export function adaptDescribable(

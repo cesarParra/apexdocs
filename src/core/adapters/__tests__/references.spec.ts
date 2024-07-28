@@ -1,4 +1,4 @@
-import { replaceInlineReferences } from '../references';
+import { replaceInlineReferences } from '../inline';
 import { Link } from '../types';
 
 function getFileLink(typeName: string): Link {

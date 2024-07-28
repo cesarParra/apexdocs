@@ -1,4 +1,6 @@
 import { InlineCode, Link, RenderableContent } from './types';
+import { pipe } from 'fp-ts/function';
+import { apply } from '../../util/fp';
 
 type InlineRenderableContent = InlineCode | Link | string;
 
@@ -12,17 +14,18 @@ function defaultGetEmailByReference(email: string): Link {
   };
 }
 
-// TODO: Rename function, file and test
 export function replaceInlineReferences(
   text: string,
   linkReplacer: ToInlineRenderableContent,
   emailReplacer: ToInlineRenderableContent = defaultGetEmailByReference,
 ): RenderableContent[] {
-  // TODO: Use pipes
-  return replaceInlineEmails(replaceInlineLinks(replaceInlineCode([text]), linkReplacer), emailReplacer);
+  const inlineLinks = apply(replaceInlineLinks, linkReplacer);
+  const inlineEmails = apply(replaceInlineEmails, emailReplacer);
+
+  return pipe(inlineCode([text]), inlineLinks, inlineEmails);
 }
 
-function replaceInlineCode(renderableContents: RenderableContent[]): RenderableContent[] {
+function inlineCode(renderableContents: RenderableContent[]): RenderableContent[] {
   return renderableContents.flatMap((renderableContent) => inlineCodeContent(renderableContent));
 }
 
@@ -49,8 +52,8 @@ function inlineCodeContent(renderableContent: RenderableContent): RenderableCont
 }
 
 function replaceInlineLinks(
-  renderableContents: RenderableContent[],
   getLinkByTypeName: ToInlineRenderableContent,
+  renderableContents: RenderableContent[],
 ): RenderableContent[] {
   return renderableContents.flatMap((renderableContent) => inlineLinkContent(renderableContent, getLinkByTypeName));
 }
@@ -72,8 +75,8 @@ function inlineLinkContent(
 }
 
 export function replaceInlineEmails(
-  renderableContents: RenderableContent[],
   getLinkByTypeName: ToInlineRenderableContent,
+  renderableContents: RenderableContent[],
 ): RenderableContent[] {
   return renderableContents.flatMap((renderableContent) => inlineEmailContent(renderableContent, getLinkByTypeName));
 }
