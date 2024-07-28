@@ -1,4 +1,4 @@
-import { OutputFile } from './outputFile';
+import { OutputFile } from '../../model/outputFile';
 
 export class MarkdownFile extends OutputFile {
   fileExtension(): string {
