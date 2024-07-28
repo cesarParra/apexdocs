@@ -10,7 +10,7 @@ import { FileWriter } from '../service/file-writer';
 import ErrorLogger from '../util/error-logger';
 import ApexBundle from '../core/apex-bundle';
 import Manifest from '../core/manifest';
-import { TypesRepository } from '../model/types-repository';
+import { TypesRepository } from '../core/openapi/types-repository';
 import { TypeTranspilerFactory } from '../transpiler/factory';
 import { generateMarkdownFiles } from './generators/generate-markdown-files';
 import { AllConfigurableOptions } from '../cli/args';

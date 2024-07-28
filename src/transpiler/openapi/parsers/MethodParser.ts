@@ -1,7 +1,7 @@
 import { ClassMirror, MethodMirror } from '@cparra/apex-reflection';
 import { OpenApi } from '../../../core/openapi/open-api';
 import * as yaml from 'js-yaml';
-import { ClassMirrorWrapper } from '../../../model/apex-type-wrappers/ClassMirrorWrapper';
+import { ClassMirrorWrapper } from '../../../core/openapi/apex-type-wrappers/ClassMirrorWrapper';
 import { Reference, ReferenceBuilder } from './ReferenceBuilder';
 import { ParameterObjectBuilder } from './ParameterObjectBuilder';
 import { ResponsesBuilder } from './ResponsesBuilder';
@@ -13,7 +13,7 @@ import {
 import { RequestBodyBuilder } from './RequestBodyBuilder';
 import { ApexDocSchemaAware } from './Builder';
 import { PropertiesObject, ReferenceObject } from '../../../core/openapi/open-api-types';
-import { MethodMirrorWrapper } from '../../../model/apex-type-wrappers/MethodMirrorWrapper';
+import { MethodMirrorWrapper } from '../../../core/openapi/apex-type-wrappers/MethodMirrorWrapper';
 
 type FallbackMethodParser = (methodMirror: MethodMirror) => void;
 type AddToOpenApi<T extends ApexDocSchemaAware> = (input: T, urlValue: string, httpMethodKey: HttpOperations) => void;

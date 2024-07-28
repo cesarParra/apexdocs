@@ -10,6 +10,8 @@ export class TypeTranspilerFactory {
       return this.typeTranspilerCache;
     }
 
+    // TODO: Now that Open Api is the only one using this, we don't need an abstraction anymore.
+    // Let's refactor so that it is just the implementation.
     switch (generator) {
       case 'openapi':
         this.typeTranspilerCache = new OpenApiDocsProcessor();

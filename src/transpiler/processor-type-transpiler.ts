@@ -1,6 +1,7 @@
 import { Type } from '@cparra/apex-reflection';
 import { FileContainer } from './file-container';
 
+// TODO: Is this still being used?
 export default abstract class ProcessorTypeTranspiler {
   onBeforeProcess: ((types: Type[]) => void) | undefined;
 

@@ -1,4 +1,4 @@
-import { TypesRepository } from '../../../../model/types-repository';
+import { TypesRepository } from '../../../../core/openapi/types-repository';
 import { ReferenceBuilder } from '../ReferenceBuilder';
 import { ClassMirrorBuilder } from '../../../../test-helpers/ClassMirrorBuilder';
 import { FieldMirrorBuilder } from '../../../../test-helpers/FieldMirrorBuilder';

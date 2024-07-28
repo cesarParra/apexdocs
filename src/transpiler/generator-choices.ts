@@ -1,1 +1,2 @@
-export type GeneratorChoices = 'jekyll' | 'docsify' | 'plain-markdown' | 'openapi';
+// TODO: plain-markdown should just be "markdown"
+export type GeneratorChoices = 'plain-markdown' | 'openapi';

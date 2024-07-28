@@ -6,7 +6,7 @@ import {
   SchemaObjectArray,
   SchemaObjectObject,
 } from '../../../core/openapi/open-api-types';
-import { TypeBundle, TypesRepository } from '../../../model/types-repository';
+import { TypeBundle, TypesRepository } from '../../../core/openapi/types-repository';
 import { ClassMirror, DocCommentAnnotation, FieldMirror, PropertyMirror } from '@cparra/apex-reflection';
 import { ListObjectType, ReferencedType } from '@cparra/apex-reflection';
 import { ApexDocSchemaObject } from '../../../core/openapi/apex-doc-types';
