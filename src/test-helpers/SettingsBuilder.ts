@@ -16,7 +16,6 @@ export class SettingsBuilder {
       openApiTitle: 'Apex API',
       openApiFileName: 'openapi',
       includeMetadata: false,
-      linkingStrategy: 'root-relative',
     };
   }
 }

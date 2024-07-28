@@ -66,14 +66,9 @@ export class Apexdocs {
       openApiFileName: argv.openApiFileName,
       sortMembersAlphabetically: argv.sortMembersAlphabetically,
       includeMetadata: argv.includeMetadata,
-      rootDir: argv.documentationRootDir,
       onAfterProcess: argv.onAfterProcess,
       onBeforeFileWrite: argv.onBeforeFileWrite,
       frontMatterHeader: argv.frontMatterHeader,
-      linkingStrategy:
-        targetGenerator === 'plain-markdown'
-          ? 'path-relative'
-          : TypeTranspilerFactory.get(targetGenerator).getLinkingStrategy(),
     });
   }
 

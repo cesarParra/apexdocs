@@ -1,5 +1,4 @@
 import { GeneratorChoices } from './transpiler/generator-choices';
-import { LinkingStrategy } from './transpiler/processor-type-transpiler';
 
 export type OnBeforeFileWrite = (file: TargetFile) => TargetFile;
 
@@ -33,12 +32,10 @@ export interface SettingsConfig {
   namespace?: string;
   openApiFileName: string;
   includeMetadata: boolean;
-  rootDir?: string;
   sortMembersAlphabetically?: boolean;
   onAfterProcess?: (files: TargetFile[]) => void;
   onBeforeFileWrite?: (file: TargetFile) => TargetFile;
   frontMatterHeader?: (file: TargetType) => string[];
-  linkingStrategy: LinkingStrategy;
 }
 
 export class Settings {
@@ -108,10 +105,6 @@ export class Settings {
     return this.config.sortMembersAlphabetically ?? false;
   }
 
-  public getRootDir(): string | undefined {
-    return this.config.rootDir;
-  }
-
   public onAfterProcess(files: TargetFile[]): void {
     if (this.config.onAfterProcess) {
       this.config.onAfterProcess(files);
@@ -130,9 +123,5 @@ export class Settings {
       return this.config.frontMatterHeader(file);
     }
     return [];
-  }
-
-  public getLinkingStrategy(): LinkingStrategy {
-    return this.config.linkingStrategy;
   }
 }

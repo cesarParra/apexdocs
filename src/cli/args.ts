@@ -97,11 +97,6 @@ function _extractYargs(config?: CosmiconfigResult) {
         describe: "Whether to include the file's meta.xml information: Whether it is active and and the API version",
         default: false,
       },
-      documentationRootDir: {
-        type: 'string',
-        describe:
-          'Allows you to specify the root documentation directory where the files are being generated. This can be helpful when embedding the generated docs into an existing site so that the links are generated correctly.',
-      },
     })
     .parseSync();
 }
