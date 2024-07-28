@@ -1,4 +1,4 @@
-import { replaceInlineReferences } from '../references';
+import { replaceInlineReferences } from '../inline';
 import { Link } from '../types';
 
 function getFileLink(typeName: string): Link {
@@ -25,6 +25,17 @@ describe('reference utilities', () => {
     const expected = ['This is a test'];
 
     expect(result).toEqual(expected);
+  });
+
+  describe('replace inline code', () => {
+    it('replaces inline code with InlineCode', () => {
+      const text = 'This is a test `ClassName`.';
+      const result = replaceInlineReferences(text, getFileLink, getEmailLink);
+
+      const expected = ['This is a test ', { __type: 'inline-code', content: 'ClassName' }, '.'];
+
+      expect(result).toEqual(expected);
+    });
   });
 
   describe('replace inline links', () => {

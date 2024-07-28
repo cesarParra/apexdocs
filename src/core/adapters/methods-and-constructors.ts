@@ -1,7 +1,12 @@
 import { ConstructorMirror, MethodMirror, ParameterMirror, ThrowsAnnotation } from '@cparra/apex-reflection';
-import { RenderableConstructor, RenderableMethod, MethodMirrorWithInheritance, CodeBlock } from './types';
+import {
+  RenderableConstructor,
+  RenderableMethod,
+  MethodMirrorWithInheritance,
+  CodeBlock,
+  GetRenderableContentByTypeName,
+} from './types';
 import { adaptDescribable, adaptDocumentable } from './documentables';
-import { GetRenderableContentByTypeName } from './references';
 import { Documentable } from './types';
 
 export function adaptMethod(

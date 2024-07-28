@@ -1,6 +1,11 @@
-import { CodeBlock, FieldMirrorWithInheritance, PropertyMirrorWithInheritance, RenderableField } from './types';
+import {
+  CodeBlock,
+  FieldMirrorWithInheritance,
+  PropertyMirrorWithInheritance,
+  RenderableField,
+  GetRenderableContentByTypeName,
+} from './types';
 import { adaptDocumentable } from './documentables';
-import { GetRenderableContentByTypeName } from './references';
 
 export function adaptFieldOrProperty(
   field: FieldMirrorWithInheritance | PropertyMirrorWithInheritance,

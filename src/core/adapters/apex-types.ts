@@ -9,9 +9,9 @@ import {
   ClassMirrorWithInheritanceChain,
   FieldMirrorWithInheritance,
   PropertyMirrorWithInheritance,
+  GetRenderableContentByTypeName,
 } from './types';
 import { adaptDescribable, adaptDocumentable } from './documentables';
-import { GetRenderableContentByTypeName } from './references';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
 

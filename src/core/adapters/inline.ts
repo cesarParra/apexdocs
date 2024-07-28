@@ -1,6 +1,10 @@
-import { Link, RenderableContent, StringOrLink } from './types';
+import { InlineCode, Link, RenderableContent } from './types';
+import { pipe } from 'fp-ts/function';
+import { apply } from '../../util/fp';
 
-export type GetRenderableContentByTypeName = (typeName: string) => StringOrLink;
+type InlineRenderableContent = InlineCode | Link | string;
+
+type ToInlineRenderableContent = (typeName: string) => InlineRenderableContent;
 
 function defaultGetEmailByReference(email: string): Link {
   return {
@@ -12,22 +16,51 @@ function defaultGetEmailByReference(email: string): Link {
 
 export function replaceInlineReferences(
   text: string,
-  linkReplacer: GetRenderableContentByTypeName,
-  emailReplacer: GetRenderableContentByTypeName = defaultGetEmailByReference,
+  linkReplacer: ToInlineRenderableContent,
+  emailReplacer: ToInlineRenderableContent = defaultGetEmailByReference,
 ): RenderableContent[] {
-  return replaceInlineEmails(replaceInlineLinks([text], linkReplacer), emailReplacer);
+  const inlineLinks = apply(replaceInlineLinks, linkReplacer);
+  const inlineEmails = apply(replaceInlineEmails, emailReplacer);
+
+  return pipe(inlineCode([text]), inlineLinks, inlineEmails);
+}
+
+function inlineCode(renderableContents: RenderableContent[]): RenderableContent[] {
+  return renderableContents.flatMap((renderableContent) => inlineCodeContent(renderableContent));
+}
+
+// Replace string that is inline code with InlineCode
+// Inline code is any text that backticks surround
+function inlineCodeContent(renderableContent: RenderableContent): RenderableContent[] {
+  if (typeof renderableContent !== 'string') {
+    return [renderableContent];
+  }
+
+  function inlineCodeLink(text: string): InlineCode {
+    return {
+      __type: 'inline-code',
+      content: text,
+    };
+  }
+
+  const text = renderableContent;
+
+  // Matches any text surrounded by backticks
+  const codeFormatRegEx = '`([^`]*)`';
+  const matches = match(codeFormatRegEx, text);
+  return createRenderableContents(matches, text, inlineCodeLink);
 }
 
 function replaceInlineLinks(
+  getLinkByTypeName: ToInlineRenderableContent,
   renderableContents: RenderableContent[],
-  getLinkByTypeName: GetRenderableContentByTypeName,
 ): RenderableContent[] {
   return renderableContents.flatMap((renderableContent) => inlineLinkContent(renderableContent, getLinkByTypeName));
 }
 
 function inlineLinkContent(
   renderableContent: RenderableContent,
-  getLinkByTypeName: GetRenderableContentByTypeName,
+  getLinkByTypeName: ToInlineRenderableContent,
 ): RenderableContent[] {
   if (typeof renderableContent !== 'string') {
     return [renderableContent];
@@ -42,15 +75,15 @@ function inlineLinkContent(
 }
 
 export function replaceInlineEmails(
+  getLinkByTypeName: ToInlineRenderableContent,
   renderableContents: RenderableContent[],
-  getLinkByTypeName: GetRenderableContentByTypeName,
 ): RenderableContent[] {
   return renderableContents.flatMap((renderableContent) => inlineEmailContent(renderableContent, getLinkByTypeName));
 }
 
 function inlineEmailContent(
   renderableContent: RenderableContent,
-  getLinkByTypeName: GetRenderableContentByTypeName,
+  getLinkByTypeName: ToInlineRenderableContent,
 ): RenderableContent[] {
   if (typeof renderableContent !== 'string') {
     return [renderableContent];
@@ -79,7 +112,7 @@ function match(regex: string, text: string) {
   return matches;
 }
 
-function createRenderableContents(matches: RegExpExecArray[], text: string, linker: GetRenderableContentByTypeName) {
+function createRenderableContents(matches: RegExpExecArray[], text: string, linker: ToInlineRenderableContent) {
   if (matches.length === 0) {
     return [text];
   }
