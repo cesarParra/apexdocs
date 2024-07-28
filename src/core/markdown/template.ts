@@ -1,15 +1,15 @@
 import Handlebars from 'handlebars';
-import { typeDocPartial } from '../transpiler/markdown/plain-markdown/type-doc-partial';
-import { documentablePartialTemplate } from '../transpiler/markdown/plain-markdown/documentable-partial-template';
-import { methodsPartialTemplate } from '../transpiler/markdown/plain-markdown/methods-partial-template';
-import { constructorsPartialTemplate } from '../transpiler/markdown/plain-markdown/constructors-partial-template';
-import { fieldsPartialTemplate } from '../transpiler/markdown/plain-markdown/fieldsPartialTemplate';
-import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/class-template';
-import { enumMarkdownTemplate } from '../transpiler/markdown/plain-markdown/enum-template';
-import { interfaceMarkdownTemplate } from '../transpiler/markdown/plain-markdown/interface-template';
 import { CodeBlock, RenderableContent, StringOrLink } from './adapters/types';
 import { isCodeBlock, isEmptyLine, isInlineCode } from './adapters/type-utils';
-import { groupedMembersPartialTemplate } from '../transpiler/markdown/plain-markdown/grouped-members-partial-template';
+import { typeDocPartial } from '../../transpiler/markdown/plain-markdown/type-doc-partial';
+import { documentablePartialTemplate } from '../../transpiler/markdown/plain-markdown/documentable-partial-template';
+import { methodsPartialTemplate } from '../../transpiler/markdown/plain-markdown/methods-partial-template';
+import { groupedMembersPartialTemplate } from '../../transpiler/markdown/plain-markdown/grouped-members-partial-template';
+import { constructorsPartialTemplate } from '../../transpiler/markdown/plain-markdown/constructors-partial-template';
+import { fieldsPartialTemplate } from '../../transpiler/markdown/plain-markdown/fieldsPartialTemplate';
+import { classMarkdownTemplate } from '../../transpiler/markdown/plain-markdown/class-template';
+import { enumMarkdownTemplate } from '../../transpiler/markdown/plain-markdown/enum-template';
+import { interfaceMarkdownTemplate } from '../../transpiler/markdown/plain-markdown/interface-template';
 
 export type CompilationRequest = {
   template: string;

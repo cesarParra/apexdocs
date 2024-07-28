@@ -1,7 +1,7 @@
 import { typeToRenderable } from '../apex-types';
-import { InterfaceMirrorBuilder } from '../../../test-helpers/InterfaceMirrorBuilder';
-import { AnnotationBuilder } from '../../../test-helpers/AnnotationBuilder';
-import { MethodMirrorBuilder, ParameterBuilder } from '../../../test-helpers/MethodMirrorBuilder';
+import { InterfaceMirrorBuilder } from '../../../../test-helpers/InterfaceMirrorBuilder';
+import { AnnotationBuilder } from '../../../../test-helpers/AnnotationBuilder';
+import { MethodMirrorBuilder, ParameterBuilder } from '../../../../test-helpers/MethodMirrorBuilder';
 
 function linkGenerator(type: string): string {
   return type;

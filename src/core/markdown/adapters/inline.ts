@@ -1,6 +1,6 @@
 import { InlineCode, Link, RenderableContent } from './types';
 import { pipe } from 'fp-ts/function';
-import { apply } from '../../util/fp';
+import { apply } from '../../../util/fp';
 
 type InlineRenderableContent = InlineCode | Link | string;
 

@@ -1,4 +1,4 @@
-import { ClassMirrorBuilder } from '../../test-helpers/ClassMirrorBuilder';
+import { ClassMirrorBuilder } from '../../../test-helpers/ClassMirrorBuilder';
 import { createInheritanceChain } from '../inheritance-chain';
 
 describe('inheritance chain for classes', () => {

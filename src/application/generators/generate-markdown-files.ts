@@ -1,6 +1,6 @@
 import ApexBundle from '../../core/apex-bundle';
 import { Settings, TargetFile } from '../../settings';
-import { DocumentationBundle, generateDocs, ReflectionError } from '../../core/generate-docs';
+import { DocumentationBundle, generateDocs, ReflectionError } from '../../core/markdown/generate-docs';
 import { MarkdownFile } from '../../model/markdown-file';
 import { FileWriter } from '../../service/file-writer';
 import { Logger } from '../../util/logger';

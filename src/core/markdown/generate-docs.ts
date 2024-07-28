@@ -9,14 +9,14 @@ import { CompilationRequest, Template } from './template';
 import { referenceGuideTemplate } from './templates/reference-guide';
 import { adaptDescribable } from './adapters/documentables';
 import { createInheritanceChain } from './inheritance-chain';
-import ApexBundle from './apex-bundle';
-import Manifest from './manifest';
+import ApexBundle from '../apex-bundle';
+import Manifest from '../manifest';
+import MetadataProcessor from '../../service/metadata-processor';
+import { enumMarkdownTemplate } from '../../transpiler/markdown/plain-markdown/enum-template';
+import { interfaceMarkdownTemplate } from '../../transpiler/markdown/plain-markdown/interface-template';
+import { classMarkdownTemplate } from '../../transpiler/markdown/plain-markdown/class-template';
 
 // TODO: The core should never depend on things from the outside, so it should never reference "back" (../)
-import { classMarkdownTemplate } from '../transpiler/markdown/plain-markdown/class-template';
-import { interfaceMarkdownTemplate } from '../transpiler/markdown/plain-markdown/interface-template';
-import { enumMarkdownTemplate } from '../transpiler/markdown/plain-markdown/enum-template';
-import MetadataProcessor from '../service/metadata-processor';
 
 export type DocumentationBundle = {
   format: 'markdown';
