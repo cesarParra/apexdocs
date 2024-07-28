@@ -4,7 +4,6 @@ export type TypeBundle = { type: Type; isChild: boolean; parentType?: Type };
 
 export class TypesRepository {
   private static instance: TypesRepository;
-  private scopedTypes: Type[] = [];
   private allTypes: Type[] = [];
 
   public static getInstance(): TypesRepository {
@@ -51,13 +50,5 @@ export class TypesRepository {
       return undefined;
     }
     return { type: foundType, isChild: false };
-  }
-
-  public populateScoped(types: Type[]) {
-    this.scopedTypes = types;
-  }
-
-  public getFromScopedByName(typeName: string): Type | undefined {
-    return this.scopedTypes.find((currentType: Type) => currentType.name === typeName);
   }
 }

@@ -34,7 +34,6 @@ export class Apexdocs {
       const manifest = createManifest(new RawBodyParser(fileBodies), this._reflectionWithLogger);
       TypesRepository.getInstance().populateAll(manifest.types);
       const filteredTypes = this.filterByScopes(manifest);
-      TypesRepository.getInstance().populateScoped(filteredTypes);
       const processor = TypeTranspilerFactory.get(Settings.getInstance().targetGenerator);
       Transpiler.generate(filteredTypes, processor);
       const generatedFiles = processor.fileBuilder().files();
