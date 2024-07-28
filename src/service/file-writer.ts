@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { OutputFile } from '../model/outputFile';
+import { OutputFile } from '../core/outputFile';
 import { OnBeforeFileWrite, Settings, TargetFile } from '../settings';
 
 export class FileWriter {

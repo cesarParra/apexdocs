@@ -1,6 +1,6 @@
-import { ResponseObject } from '../../../model/openapi/open-api-types';
+import { ResponseObject } from '../../../core/openapi/open-api-types';
 import { Reference } from './ReferenceBuilder';
-import { ApexDocHttpResponse } from '../../../model/openapi/apex-doc-types';
+import { ApexDocHttpResponse } from '../../../core/openapi/apex-doc-types';
 import { Builder } from './Builder';
 
 export class ResponsesBuilder extends Builder<ResponseObject, ApexDocHttpResponse> {

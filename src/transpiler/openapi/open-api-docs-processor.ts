@@ -1,9 +1,9 @@
 import ProcessorTypeTranspiler from '../processor-type-transpiler';
 import { FileContainer } from '../file-container';
 import { ClassMirror, Type } from '@cparra/apex-reflection';
-import { OpenapiTypeFile } from '../../model/openapi/openapi-type-file';
+import { OpenapiTypeFile } from '../../core/openapi/openapi-type-file';
 import { Logger } from '../../util/logger';
-import { OpenApi } from '../../model/openapi/open-api';
+import { OpenApi } from '../../core/openapi/open-api';
 import { Settings } from '../../settings';
 import { MethodParser } from './parsers/MethodParser';
 import { camel2title } from '../../util/string-utils';

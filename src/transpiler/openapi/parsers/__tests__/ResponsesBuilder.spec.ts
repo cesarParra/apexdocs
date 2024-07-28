@@ -1,6 +1,6 @@
 import { ResponsesBuilder } from '../ResponsesBuilder';
 import { Reference } from '../ReferenceBuilder';
-import { ApexDocHttpResponse } from '../../../../model/openapi/apex-doc-types';
+import { ApexDocHttpResponse } from '../../../../core/openapi/apex-doc-types';
 
 jest.mock('../ReferenceBuilder', () => {
   return {

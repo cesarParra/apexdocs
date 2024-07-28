@@ -1,7 +1,7 @@
 import { ClassMirrorBuilder } from '../../../../test-helpers/ClassMirrorBuilder';
 import { MethodMirrorBuilder } from '../../../../test-helpers/MethodMirrorBuilder';
 import { AnnotationBuilder } from '../../../../test-helpers/AnnotationBuilder';
-import { OpenApi } from '../../../../model/openapi/open-api';
+import { OpenApi } from '../../../../core/openapi/open-api';
 import { MethodParser } from '../MethodParser';
 import { DocCommentBuilder } from '../../../../test-helpers/DocCommentBuilder';
 

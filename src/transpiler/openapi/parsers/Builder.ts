@@ -1,6 +1,6 @@
 import { Reference, ReferenceBuilder } from './ReferenceBuilder';
-import { ApexDocSchemaObject } from '../../../model/openapi/apex-doc-types';
-import { SchemaObject } from '../../../model/openapi/open-api-types';
+import { ApexDocSchemaObject } from '../../../core/openapi/apex-doc-types';
+import { SchemaObject } from '../../../core/openapi/open-api-types';
 
 export type ApexDocSchemaAware = {
   schema: ApexDocSchemaObject;

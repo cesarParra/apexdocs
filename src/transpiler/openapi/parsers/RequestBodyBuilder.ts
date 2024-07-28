@@ -1,6 +1,6 @@
-import { RequestBody } from '../../../model/openapi/open-api-types';
+import { RequestBody } from '../../../core/openapi/open-api-types';
 import { Reference } from './ReferenceBuilder';
-import { ApexDocHttpRequestBody } from '../../../model/openapi/apex-doc-types';
+import { ApexDocHttpRequestBody } from '../../../core/openapi/apex-doc-types';
 import { Builder } from './Builder';
 
 /**

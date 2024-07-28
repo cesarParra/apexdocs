@@ -1,6 +1,6 @@
-import { ParameterObject } from '../../../model/openapi/open-api-types';
+import { ParameterObject } from '../../../core/openapi/open-api-types';
 import { Reference } from './ReferenceBuilder';
-import { ApexDocParameterObject } from '../../../model/openapi/apex-doc-types';
+import { ApexDocParameterObject } from '../../../core/openapi/apex-doc-types';
 import { Builder } from './Builder';
 
 export class ParameterObjectBuilder extends Builder<ParameterObject, ApexDocParameterObject> {

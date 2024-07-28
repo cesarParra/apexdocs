@@ -2,7 +2,7 @@ import { TypesRepository } from '../../../../model/types-repository';
 import { ReferenceBuilder } from '../ReferenceBuilder';
 import { ClassMirrorBuilder } from '../../../../test-helpers/ClassMirrorBuilder';
 import { FieldMirrorBuilder } from '../../../../test-helpers/FieldMirrorBuilder';
-import { SchemaObjectArray, SchemaObjectObject } from '../../../../model/openapi/open-api-types';
+import { SchemaObjectArray, SchemaObjectObject } from '../../../../core/openapi/open-api-types';
 import { DocCommentBuilder } from '../../../../test-helpers/DocCommentBuilder';
 import { DocCommentAnnotationBuilder } from '../../../../test-helpers/DocCommentAnnotationBuilder';
 

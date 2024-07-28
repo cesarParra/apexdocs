@@ -1,7 +1,7 @@
 import { RequestBodyBuilder } from '../RequestBodyBuilder';
 import { Reference } from '../ReferenceBuilder';
-import { ReferenceObject } from '../../../../model/openapi/open-api-types';
-import { ApexDocHttpRequestBody } from '../../../../model/openapi/apex-doc-types';
+import { ReferenceObject } from '../../../../core/openapi/open-api-types';
+import { ApexDocHttpRequestBody } from '../../../../core/openapi/apex-doc-types';
 
 jest.mock('../ReferenceBuilder', () => {
   return {

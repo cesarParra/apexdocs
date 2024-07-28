@@ -5,11 +5,11 @@ import {
   SchemaObject,
   SchemaObjectArray,
   SchemaObjectObject,
-} from '../../../model/openapi/open-api-types';
+} from '../../../core/openapi/open-api-types';
 import { TypeBundle, TypesRepository } from '../../../model/types-repository';
 import { ClassMirror, DocCommentAnnotation, FieldMirror, PropertyMirror } from '@cparra/apex-reflection';
 import { ListObjectType, ReferencedType } from '@cparra/apex-reflection';
-import { ApexDocSchemaObject } from '../../../model/openapi/apex-doc-types';
+import { ApexDocSchemaObject } from '../../../core/openapi/apex-doc-types';
 
 type TypeBundleWithIsCollectionAndReferenceOverrides = TypeBundle & {
   originalTypeName: string;
