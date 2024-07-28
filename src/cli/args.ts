@@ -42,12 +42,6 @@ function _extractYargs(config?: CosmiconfigResult) {
         default: './docs/',
         describe: 'The directory location where documentation will be generated to.',
       },
-      recursive: {
-        type: 'boolean',
-        alias: 'r',
-        default: true,
-        describe: 'Whether .cls classes will be searched for recursively in the directory provided.',
-      },
       scope: {
         type: 'string',
         array: true,
@@ -76,15 +70,6 @@ function _extractYargs(config?: CosmiconfigResult) {
         type: 'string',
         default: 'Miscellaneous',
         describe: 'Defines the @group name to be used when a file does not specify it.',
-      },
-      sanitizeHtml: {
-        type: 'boolean',
-        default: true,
-        describe:
-          'When on, any special character within your ApexDocs is converted into its HTML code representation. ' +
-          'This is specially useful when generic objects are described within the docs, e.g. "List< Foo>", "Map<Foo, Bar>" ' +
-          'because otherwise the content within < and > would be treated as HTML tags and not shown in the output. ' +
-          'Content in @example blocks are never sanitized.',
       },
       openApiTitle: {
         type: 'string',

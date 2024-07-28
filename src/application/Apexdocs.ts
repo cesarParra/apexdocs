@@ -56,13 +56,11 @@ export class Apexdocs {
     const targetGenerator = argv.targetGenerator as GeneratorChoices;
     Settings.build({
       sourceDirectory: argv.sourceDir,
-      recursive: argv.recursive,
       scope: argv.scope,
       outputDir: argv.targetDir,
       targetGenerator: targetGenerator,
       indexOnly: argv.indexOnly,
       defaultGroupName: argv.defaultGroupName,
-      sanitizeHtml: argv.sanitizeHtml,
       openApiTitle: argv.openApiTitle,
       title: argv.title,
       namespace: argv.namespace,

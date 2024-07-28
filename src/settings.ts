@@ -24,13 +24,11 @@ export type TargetType = {
 
 export interface SettingsConfig {
   sourceDirectory: string;
-  recursive: boolean;
   scope: string[];
   outputDir: string;
   targetGenerator: GeneratorChoices;
   indexOnly: boolean;
   defaultGroupName: string;
-  sanitizeHtml: boolean;
   openApiTitle?: string;
   title: string;
   namespace?: string;
@@ -64,10 +62,6 @@ export class Settings {
     return this.config.sourceDirectory;
   }
 
-  get recursive(): boolean {
-    return this.config.recursive;
-  }
-
   get scope(): string[] {
     return this.config.scope;
   }
@@ -82,10 +76,6 @@ export class Settings {
 
   get indexOnly(): boolean {
     return this.config.indexOnly;
-  }
-
-  get sanitizeHtml(): boolean {
-    return this.config.sanitizeHtml;
   }
 
   public getDefaultGroupName(): string {

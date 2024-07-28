@@ -17,7 +17,7 @@ export class ApexFileReader {
     const directoryContents = fileSystem.readDirectory(rootPath);
     directoryContents.forEach((currentFilePath) => {
       const currentPath = fileSystem.joinPath(rootPath, currentFilePath);
-      if (this.readRecursively && fileSystem.isDirectory(currentPath)) {
+      if (fileSystem.isDirectory(currentPath)) {
         bundles = bundles.concat(this.processFiles(fileSystem, currentPath));
       }
 
@@ -43,9 +43,5 @@ export class ApexFileReader {
 
   private static get sourceDirectory() {
     return Settings.getInstance().sourceDirectory;
-  }
-
-  private static get readRecursively() {
-    return Settings.getInstance().recursive;
   }
 }
