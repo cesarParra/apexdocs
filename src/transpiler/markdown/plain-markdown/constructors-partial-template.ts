@@ -13,7 +13,7 @@ export const constructorsPartialTemplate = `
 | Name | Type | Description |
 |------|------|-------------|
 {{#each parameters.value}}
-| {{name}} | {{type}} | {{description}} |
+| {{name}} | {{link type}} | {{description}} |
 {{/each}}
 {{/if}}
 

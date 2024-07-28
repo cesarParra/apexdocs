@@ -14,7 +14,7 @@
   "apexdocs": {
     "sourceDir": "force-app",
     "targetGenerator": "plain-markdown",
-    "scope": ["global", "public", "protected", "private", "namespaceaccessible"],
+    "scope": ["global"],
     "namespace": "ns"
   }
 }

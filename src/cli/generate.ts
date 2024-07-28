@@ -4,9 +4,7 @@ import { extractArgs } from './args';
 
 function main() {
   extractArgs()
-    .then((config) => {
-      Apexdocs.generate(config);
-    })
+    .then((config) => Apexdocs.generate(config))
     .catch((error) => {
       console.error(error);
       process.exit(1);
