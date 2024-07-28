@@ -15,6 +15,7 @@ import MetadataProcessor from '../../service/metadata-processor';
 import { enumMarkdownTemplate } from './templates/enum-template';
 import { interfaceMarkdownTemplate } from './templates/interface-template';
 import { classMarkdownTemplate } from './templates/class-template';
+import { apply } from '../../util/fp';
 
 // TODO: The core should never depend on things from the outside, so it should never reference "back" (../)
 
@@ -48,24 +49,32 @@ const configDefaults: DocumentationConfig = {
 };
 
 export function generateDocs(
-  input: ApexBundle[],
+  apexBundles: ApexBundle[],
   config?: Partial<DocumentationConfig>,
 ): E.Either<ReflectionError[], DocumentationBundle> {
   const configWithDefaults = { ...configDefaults, ...config };
+
+  const filterOutOfScope = apply(filterTypesOutOfScope, configWithDefaults.scope);
+  const toRenderableBundle = apply(typesToRenderableBundle, configWithDefaults);
+
   return pipe(
-    input,
-    (input) => input.map((bundle) => reflectSourceBody(bundle)),
+    apexBundles,
+    reflectSourceCode,
     checkForReflectionErrors,
-    E.map((types) => filterTypesOutOfScope(types, configWithDefaults.scope)),
-    E.map((types) => types.map((type) => addInheritedMembers(type, types))),
+    E.map(filterOutOfScope),
+    E.map((types) => types.map((type) => addInheritedMembers(types, type))),
     E.map((types) => types.map((type) => addInheritanceChain(type, types))),
-    E.map((types) => typesToRenderableBundle(types, configWithDefaults)),
+    E.map(toRenderableBundle),
     E.map(({ references, renderables }) => ({
       referenceGuide: pipe(referencesToReferenceGuide(references, configWithDefaults.referenceGuideTemplate)),
       docs: renderables.map((renderable) => renderableToOutputDoc(Object.values(references).flat(), renderable)),
     })),
     E.map(({ referenceGuide, docs }) => ({ format: 'markdown', referenceGuide: referenceGuide, docs })),
   );
+}
+
+function reflectSourceCode(apexBundles: ApexBundle[]) {
+  return apexBundles.map(reflectSourceBody);
 }
 
 type ReferenceGuideReference = {
@@ -83,7 +92,7 @@ type RenderableBundle = {
   renderables: Renderable[];
 };
 
-function typesToRenderableBundle(types: Type[], config: DocumentationConfig) {
+function typesToRenderableBundle(config: DocumentationConfig, types: Type[]) {
   return types.reduce<RenderableBundle>(
     (acc, type) => {
       const renderable = typeToRenderable(
@@ -159,7 +168,7 @@ function referencesToReferenceGuide(
   );
 }
 
-function filterTypesOutOfScope(types: Type[], scope: string[]): Type[] {
+function filterTypesOutOfScope(scope: string[], types: Type[]): Type[] {
   return new Manifest(types).filteredByAccessModifierAndAnnotations(scope);
 }
 
@@ -246,7 +255,7 @@ function findType(repository: Type[], referenceName: string) {
   return repository.find((currentType: Type) => currentType.name.toLowerCase() === referenceName.toLowerCase());
 }
 
-function addInheritedMembers<T extends Type>(current: T, repository: Type[]): T {
+function addInheritedMembers<T extends Type>(repository: Type[], current: T): T {
   if (current.type_name === 'enum') {
     return current;
   } else if (current.type_name === 'interface') {
