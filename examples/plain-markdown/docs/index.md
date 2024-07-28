@@ -10,7 +10,7 @@ Enables access to the base URL used to access your Salesforce org.
 
 ## Usage 
 
-Use the methods of the &#x60;System.URL&#x60; class to create links to objects in your organization. Such objects can be files, images, 
+Use the methods of the `System.URL` class to create links to objects in your organization. Such objects can be files, images, 
 
 logos, or records that you want to include in external emails, in activities, or in Chatter posts. For example, you can create 
 

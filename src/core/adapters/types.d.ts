@@ -36,7 +36,9 @@ export type EmptyLine = {
 
 export type StringOrLink = string | Link;
 
-export type RenderableContent = StringOrLink | EmptyLine | CodeBlock;
+export type GetRenderableContentByTypeName = (typeName: string) => StringOrLink;
+
+export type RenderableContent = StringOrLink | EmptyLine | CodeBlock | InlineCode;
 
 type EnumValue = {
   value: string;
@@ -57,6 +59,11 @@ type CodeBlock = {
   readonly __type: 'code-block';
   language: string;
   content: string[];
+};
+
+type InlineCode = {
+  readonly __type: 'inline-code';
+  content: string;
 };
 
 type RenderableDocumentation = {
