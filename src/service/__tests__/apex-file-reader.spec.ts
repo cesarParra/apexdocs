@@ -8,14 +8,13 @@ describe('File Reader', () => {
       recursive: true,
       scope: [],
       outputDir: '',
-      targetGenerator: 'jekyll',
+      targetGenerator: 'plain-markdown',
       indexOnly: false,
       defaultGroupName: 'Misc',
       sanitizeHtml: true,
       openApiFileName: 'openapi',
       title: 'Classes',
       includeMetadata: false,
-      linkingStrategy: 'root-relative',
     } as SettingsConfig);
   });
 

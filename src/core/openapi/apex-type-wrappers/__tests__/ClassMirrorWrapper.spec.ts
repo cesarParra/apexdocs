@@ -1,7 +1,7 @@
-import { ClassMirrorBuilder } from '../../../test-helpers/ClassMirrorBuilder';
 import { ClassMirrorWrapper } from '../ClassMirrorWrapper';
-import { AnnotationBuilder } from '../../../test-helpers/AnnotationBuilder';
-import { MethodMirrorBuilder } from '../../../test-helpers/MethodMirrorBuilder';
+import { ClassMirrorBuilder } from '../../../../test-helpers/ClassMirrorBuilder';
+import { MethodMirrorBuilder } from '../../../../test-helpers/MethodMirrorBuilder';
+import { AnnotationBuilder } from '../../../../test-helpers/AnnotationBuilder';
 
 it('should return methods by annotation when they exist', function () {
   const classMirror = new ClassMirrorBuilder()
