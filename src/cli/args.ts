@@ -1,4 +1,4 @@
-import { Settings } from '../settings';
+import { Settings } from '../core/settings';
 import { cosmiconfig, CosmiconfigResult } from 'cosmiconfig';
 import * as yargs from 'yargs';
 

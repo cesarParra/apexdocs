@@ -1,7 +1,9 @@
-import Manifest from '../core/manifest';
-import { TypeParser } from './parser';
+import Manifest from './manifest';
+import { TypeParser } from './openapi/parser';
 import { ReflectionResult } from '@cparra/apex-reflection';
-import ApexBundle from '../core/apex-bundle';
+import ApexBundle from './apex-bundle';
+
+// TODO: Why do we need a "factory" like this? This could just be a function
 
 /**
  * Builds a new Manifest object, sourcing its types from the received TypeParser.

@@ -1,4 +1,4 @@
-import { Settings, SettingsConfig } from '../../settings';
+import { Settings, SettingsConfig } from '../../core/settings';
 import { ApexFileReader } from '../apex-file-reader';
 
 describe('File Reader', () => {

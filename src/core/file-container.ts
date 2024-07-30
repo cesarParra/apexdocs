@@ -1,4 +1,4 @@
-import { OutputFile } from '../core/outputFile';
+import { OutputFile } from './outputFile';
 
 export class FileContainer {
   _files: OutputFile[] = [];

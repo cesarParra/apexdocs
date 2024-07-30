@@ -1,12 +1,12 @@
 import ProcessorTypeTranspiler from '../processor-type-transpiler';
 import { FileContainer } from '../file-container';
 import { ClassMirror, Type } from '@cparra/apex-reflection';
-import { OpenapiTypeFile } from '../../core/openapi/openapi-type-file';
-import { Logger } from '../../util/logger';
-import { OpenApi } from '../../core/openapi/open-api';
-import { Settings } from '../../settings';
+import { OpenapiTypeFile } from './openapi-type-file';
+import { Logger } from '#utils/logger';
+import { OpenApi } from './open-api';
+import { Settings } from '../settings';
 import { MethodParser } from './parsers/MethodParser';
-import { camel2title } from '../../util/string-utils';
+import { camel2title } from '#utils/string-utils';
 
 export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
   protected readonly _fileContainer: FileContainer;

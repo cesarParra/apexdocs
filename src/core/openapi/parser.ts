@@ -1,7 +1,7 @@
 import { ClassMirror, InterfaceMirror, ReflectionResult, Type } from '@cparra/apex-reflection';
-import ApexBundle from '../core/apex-bundle';
-import MetadataProcessor from './metadata-processor';
-import { Logger } from '../util/logger';
+import ApexBundle from '../apex-bundle';
+import MetadataProcessor from '../metadata-processor';
+import { Logger } from '#utils/logger';
 
 export interface TypeParser {
   parse(reflect: (apexBundle: ApexBundle) => ReflectionResult): Type[];

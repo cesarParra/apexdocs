@@ -1,20 +1,20 @@
-import { ApexFileReader } from '../service/apex-file-reader';
-import { DefaultFileSystem } from '../service/file-system';
+import { ApexFileReader } from './apex-file-reader';
+import { DefaultFileSystem } from './file-system';
 import { ReflectionResult, reflect, Type } from '@cparra/apex-reflection';
 import { Logger } from '../util/logger';
-import { createManifest } from '../service/manifest-factory';
-import { RawBodyParser } from '../service/parser';
-import { Settings, TargetFile } from '../settings';
-import Transpiler from '../transpiler/transpiler';
-import { FileWriter } from '../service/file-writer';
+import { createManifest } from '../core/manifest-factory';
+import { RawBodyParser } from '../core/openapi/parser';
+import { Settings, TargetFile } from '../core/settings';
+import Transpiler from '../core/transpiler';
+import { FileWriter } from './file-writer';
 import ErrorLogger from '../util/error-logger';
 import ApexBundle from '../core/apex-bundle';
 import Manifest from '../core/manifest';
 import { TypesRepository } from '../core/openapi/types-repository';
-import { TypeTranspilerFactory } from '../transpiler/factory';
+import { TypeTranspilerFactory } from '../core/factory';
 import { generateMarkdownFiles } from './generators/generate-markdown-files';
 import { AllConfigurableOptions } from '../cli/args';
-import { GeneratorChoices } from '../transpiler/generator-choices';
+import { GeneratorChoices } from '../core/generator-choices';
 
 /**
  * Application entry-point to generate documentation out of Apex source files.

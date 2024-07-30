@@ -1,5 +1,5 @@
 import { OpenApiDocsProcessor } from '../open-api-docs-processor';
-import { Settings } from '../../../settings';
+import { Settings } from '../../settings';
 import { SettingsBuilder } from '../../../test-helpers/SettingsBuilder';
 import { DocCommentBuilder } from '../../../test-helpers/DocCommentBuilder';
 import { AnnotationBuilder } from '../../../test-helpers/AnnotationBuilder';

@@ -1,4 +1,4 @@
-import { GeneratorChoices } from './transpiler/generator-choices';
+import { GeneratorChoices } from './generator-choices';
 
 export type OnBeforeFileWrite = (file: TargetFile) => TargetFile;
 

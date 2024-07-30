@@ -1,6 +1,6 @@
 import { OutputFile } from '../outputFile';
 import { OpenApi } from './open-api';
-import { Settings } from '../../settings';
+import { Settings } from '../settings';
 
 export class OpenapiTypeFile extends OutputFile {
   constructor(public openApiModel: OpenApi) {

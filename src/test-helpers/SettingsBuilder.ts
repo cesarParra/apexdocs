@@ -1,4 +1,4 @@
-import { SettingsConfig } from '../settings';
+import { SettingsConfig } from '../core/settings';
 
 /**
  * Builder class to create SettingsConfig objects.
