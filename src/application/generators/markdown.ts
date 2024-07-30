@@ -3,11 +3,11 @@ import { Settings, TargetFile } from '../../core/settings';
 import { DocumentationBundle, generateDocs, ReflectionError } from '../../core/markdown/generate-docs';
 import { MarkdownFile } from '../../core/markdown/markdown-file';
 import { FileWriter } from '../file-writer';
-import { Logger } from '../../util/logger';
+import { Logger } from '#utils/logger';
 import { flow } from 'fp-ts/function';
 import * as E from 'fp-ts/Either';
 
-export const generateMarkdownFiles = flow(
+export default flow(
   generateDocumentationBundle,
   E.map(convertToMarkdownFiles),
   E.map(writeFilesToSystem),
