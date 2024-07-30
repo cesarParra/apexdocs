@@ -1,4 +1,4 @@
-import { SettingsConfig } from '../settings';
+import { SettingsConfig } from '../core/settings';
 
 /**
  * Builder class to create SettingsConfig objects.
@@ -8,18 +8,14 @@ export class SettingsBuilder {
   build(): SettingsConfig {
     return {
       sourceDirectory: './',
-      recursive: true,
       scope: [],
       outputDir: './',
       targetGenerator: 'openapi',
       indexOnly: false,
       defaultGroupName: 'Misc',
-      sanitizeHtml: true,
       openApiTitle: 'Apex API',
       openApiFileName: 'openapi',
-      title: 'Classes',
       includeMetadata: false,
-      linkingStrategy: 'root-relative',
     };
   }
 }

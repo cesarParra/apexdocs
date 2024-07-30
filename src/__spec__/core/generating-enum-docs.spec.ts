@@ -1,6 +1,6 @@
-import { generateDocs } from '../../core/generate-docs';
 import { assertEither, extendExpect } from './expect-extensions';
 import { apexBundleFromRawString } from './test-helpers';
+import { generateDocs } from '../../core/markdown/generate-docs';
 
 describe('Generates enum documentation', () => {
   beforeAll(() => {

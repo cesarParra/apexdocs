@@ -1,4 +1,4 @@
-import { TargetFile, TargetType } from './src/settings';
+import { TargetFile, TargetType } from './src/core/settings';
 
 export default {
   onBeforeFileWrite: (file: TargetFile): TargetFile => {

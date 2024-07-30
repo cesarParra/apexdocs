@@ -1,4 +1,4 @@
-import { Settings } from '../settings';
+import { Settings } from '../core/settings';
 import { cosmiconfig, CosmiconfigResult } from 'cosmiconfig';
 import * as yargs from 'yargs';
 
@@ -42,12 +42,6 @@ function _extractYargs(config?: CosmiconfigResult) {
         default: './docs/',
         describe: 'The directory location where documentation will be generated to.',
       },
-      recursive: {
-        type: 'boolean',
-        alias: 'r',
-        default: true,
-        describe: 'Whether .cls classes will be searched for recursively in the directory provided.',
-      },
       scope: {
         type: 'string',
         array: true,
@@ -61,11 +55,11 @@ function _extractYargs(config?: CosmiconfigResult) {
       targetGenerator: {
         type: 'string',
         alias: 'g',
-        default: 'jekyll',
-        choices: ['jekyll', 'docsify', 'plain-markdown', 'openapi'],
+        default: 'plain-markdown',
+        choices: ['plain-markdown', 'openapi'],
         describe:
           'Define the static file generator for which the documents will be created. ' +
-          'Currently supports jekyll, docsify, plain markdown, and OpenAPI v3.1.0.',
+          'Currently supports plain markdown and OpenAPI v3.1.0.',
       },
       indexOnly: {
         type: 'boolean',
@@ -77,24 +71,10 @@ function _extractYargs(config?: CosmiconfigResult) {
         default: 'Miscellaneous',
         describe: 'Defines the @group name to be used when a file does not specify it.',
       },
-      sanitizeHtml: {
-        type: 'boolean',
-        default: true,
-        describe:
-          'When on, any special character within your ApexDocs is converted into its HTML code representation. ' +
-          'This is specially useful when generic objects are described within the docs, e.g. "List< Foo>", "Map<Foo, Bar>" ' +
-          'because otherwise the content within < and > would be treated as HTML tags and not shown in the output. ' +
-          'Content in @example blocks are never sanitized.',
-      },
       openApiTitle: {
         type: 'string',
         default: 'Apex REST Api',
         describe: 'If using "openapi" as the target generator, this allows you to specify the OpenApi title value.',
-      },
-      title: {
-        type: 'string',
-        describe: "If this allows you to specify the title of the generated documentation's home file.",
-        default: 'Classes',
       },
       namespace: {
         type: 'string',
@@ -116,11 +96,6 @@ function _extractYargs(config?: CosmiconfigResult) {
         type: 'boolean',
         describe: "Whether to include the file's meta.xml information: Whether it is active and and the API version",
         default: false,
-      },
-      documentationRootDir: {
-        type: 'string',
-        describe:
-          'Allows you to specify the root documentation directory where the files are being generated. This can be helpful when embedding the generated docs into an existing site so that the links are generated correctly.',
       },
     })
     .parseSync();

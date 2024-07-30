@@ -20,11 +20,6 @@ export class InterfaceMirrorBuilder {
     return this;
   }
 
-  withDocComment(docComment: DocComment): InterfaceMirrorBuilder {
-    this.docComment = docComment;
-    return this;
-  }
-
   addMethod(method: MethodMirror): InterfaceMirrorBuilder {
     this.methods.push(method);
     return this;

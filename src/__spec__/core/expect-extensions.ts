@@ -1,5 +1,5 @@
 import * as E from 'fp-ts/Either';
-import { DocumentationBundle } from '../../core/generate-docs';
+import { DocumentationBundle } from '../../core/markdown/generate-docs';
 
 export function extendExpect() {
   expect.extend({
