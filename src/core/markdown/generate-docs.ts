@@ -17,8 +17,6 @@ import { interfaceMarkdownTemplate } from './templates/interface-template';
 import { classMarkdownTemplate } from './templates/class-template';
 import { apply } from '../../util/fp';
 
-// TODO: The core should never depend on things from the outside, so it should never reference "back" (../)
-
 export type DocumentationBundle = {
   format: 'markdown';
   referenceGuide: string; // Output file with links to all other files (e.g. index/table of contents)
@@ -55,21 +53,26 @@ export function generateDocs(
   const configWithDefaults = { ...configDefaults, ...config };
 
   const filterOutOfScope = apply(filterTypesOutOfScope, configWithDefaults.scope);
-  const toRenderableBundle = apply(typesToRenderableBundle, configWithDefaults);
+  const convertToRenderableBundle = apply(typesToRenderableBundle, configWithDefaults);
+  const addInheritedMembersToTypes = (types: Type[]) => types.map((type) => addInheritedMembers(types, type));
+  const addInheritanceChainToTypes = (types: Type[]) => types.map((type) => addInheritanceChain(type, types));
+  const convertToDocumentationBundle = ({ references, renderables }: RenderableBundle): DocumentationBundle => ({
+    format: 'markdown',
+    referenceGuide: referencesToReferenceGuide(references, configWithDefaults.referenceGuideTemplate),
+    docs: renderables.map((renderable: Renderable) =>
+      renderableToOutputDoc(Object.values(references).flat(), renderable),
+    ),
+  });
 
   return pipe(
     apexBundles,
     reflectSourceCode,
     checkForReflectionErrors,
     E.map(filterOutOfScope),
-    E.map((types) => types.map((type) => addInheritedMembers(types, type))),
-    E.map((types) => types.map((type) => addInheritanceChain(type, types))),
-    E.map(toRenderableBundle),
-    E.map(({ references, renderables }) => ({
-      referenceGuide: pipe(referencesToReferenceGuide(references, configWithDefaults.referenceGuideTemplate)),
-      docs: renderables.map((renderable) => renderableToOutputDoc(Object.values(references).flat(), renderable)),
-    })),
-    E.map(({ referenceGuide, docs }) => ({ format: 'markdown', referenceGuide: referenceGuide, docs })),
+    E.map(addInheritedMembersToTypes),
+    E.map(addInheritanceChainToTypes),
+    E.map(convertToRenderableBundle),
+    E.map(convertToDocumentationBundle),
   );
 }
 
