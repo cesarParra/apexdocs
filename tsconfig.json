@@ -9,7 +9,11 @@
     "esModuleInterop": true,
     "lib": [
       "ES2021"
-    ]
+    ],
+    "baseUrl": "./",
+    "paths": {
+      "#utils/*": ["src/util/*"],
+    }
   },
   "include": [
     "src", "jest.d.ts"

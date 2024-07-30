@@ -15,7 +15,7 @@ import MetadataProcessor from '../../service/metadata-processor';
 import { enumMarkdownTemplate } from './templates/enum-template';
 import { interfaceMarkdownTemplate } from './templates/interface-template';
 import { classMarkdownTemplate } from './templates/class-template';
-import { apply } from '../../util/fp';
+import { apply } from '#utils/fp';
 
 export type DocumentationBundle = {
   format: 'markdown';

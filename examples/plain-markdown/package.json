@@ -15,7 +15,6 @@
     "sourceDir": "force-app",
     "targetGenerator": "plain-markdown",
     "scope": ["global", "public", "protected", "private", "namespaceaccessible"],
-    "namespace": "ns",
-    "sanitizeHtml": true
+    "namespace": "ns"
   }
 }
