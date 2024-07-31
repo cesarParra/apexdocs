@@ -1,4 +1,4 @@
-import ApexBundle from '../../core/apex-bundle';
+import { ApexBundle } from '../../core/shared/types';
 
 export function apexBundleFromRawString(raw: string, rawMetadata?: string): ApexBundle {
   return {

@@ -1,7 +1,7 @@
 import Manifest from './manifest';
 import { TypeParser } from './openapi/parser';
 import { ReflectionResult } from '@cparra/apex-reflection';
-import ApexBundle from './apex-bundle';
+import { ApexBundle } from './shared/types';
 
 // TODO: Why do we need a "factory" like this? This could just be a function
 

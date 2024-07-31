@@ -9,13 +9,13 @@ import { CompilationRequest, Template } from './template';
 import { referenceGuideTemplate } from './templates/reference-guide';
 import { adaptDescribable } from './adapters/documentables';
 import { createInheritanceChain } from './inheritance-chain';
-import ApexBundle from '../apex-bundle';
 import Manifest from '../manifest';
 import MetadataProcessor from '../metadata-processor';
 import { enumMarkdownTemplate } from './templates/enum-template';
 import { interfaceMarkdownTemplate } from './templates/interface-template';
 import { classMarkdownTemplate } from './templates/class-template';
 import { apply } from '#utils/fp';
+import { ApexBundle } from '../shared/types';
 
 export type DocumentationBundle = {
   format: 'markdown';
