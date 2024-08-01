@@ -1,21 +1,21 @@
 import * as E from 'fp-ts/Either';
-import { DocumentationPageBundle } from '../../core/markdown/generate-docs';
+import { DocumentationBundle } from '../../core/shared/types';
 
 export function extendExpect() {
   expect.extend({
-    documentationBundleHasLength(received: E.Either<string[], DocumentationPageBundle>, length: number) {
+    documentationBundleHasLength(received: E.Either<string[], DocumentationBundle>, length: number) {
       return {
         pass: E.isRight(received) && received.right.docs.length === length,
         message: () => `Expected documentation bundle to have length ${length}`,
       };
     },
-    firstDocContains(doc: DocumentationPageBundle, content: string) {
+    firstDocContains(doc: DocumentationBundle, content: string) {
       return {
         pass: doc.docs[0].content.includes(content),
         message: () => `Expected documentation to contain ${content}. Got ${doc.docs[0].content}`,
       };
     },
-    firstDocContainsNot(doc: DocumentationPageBundle, content: string) {
+    firstDocContainsNot(doc: DocumentationBundle, content: string) {
       return {
         pass: !doc.docs[0].content.includes(content),
         message: () => `Expected documentation to not contain ${content}. Got ${doc.docs[0].content}`,

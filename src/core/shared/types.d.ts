@@ -48,3 +48,8 @@ export type DocPageData = {
 export type OpenApiPageData = Omit<DocPageData, 'source'>;
 
 export type PageData = DocPageData | OpenApiPageData | ReferenceGuidePageData;
+
+export type DocumentationBundle = {
+  referenceGuide: ReferenceGuidePageData;
+  docs: DocPageData[];
+};

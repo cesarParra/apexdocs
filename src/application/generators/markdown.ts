@@ -1,10 +1,10 @@
 import { Settings } from '../../core/settings';
-import { DocumentationPageBundle, generateDocs } from '../../core/markdown/generate-docs';
+import { generateDocs } from '../../core/markdown/generate-docs';
 import { FileWriter } from '../file-writer';
 import { Logger } from '#utils/logger';
 import { flow } from 'fp-ts/function';
 import * as E from 'fp-ts/Either';
-import { PageData, SourceFile } from '../../core/shared/types';
+import { DocumentationBundle, PageData, SourceFile } from '../../core/shared/types';
 import { ReflectionError } from '../../core/markdown/reflection/error-handling';
 
 export default flow(
@@ -30,7 +30,7 @@ function generateDocumentationBundle(bundles: SourceFile[]) {
   });
 }
 
-function writeFilesToSystem(files: DocumentationPageBundle) {
+function writeFilesToSystem(files: DocumentationBundle) {
   FileWriter.write([files.referenceGuide, ...files.docs], (file: PageData) => {
     Logger.logSingle(`${file.fileName} processed.`, false, 'green', false);
   });
