@@ -1,6 +1,6 @@
 import { createManifest } from '../manifest-factory';
 import { Type } from '@cparra/apex-reflection';
-import { TypeParser } from '../openapi/parser';
+import { TypeParser } from '../parser';
 
 class TestParser implements TypeParser {
   parse(): Type[] {

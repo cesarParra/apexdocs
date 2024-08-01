@@ -1,4 +1,4 @@
-import { createManifest } from '../../core/manifest-factory';
+import { createManifest } from '../../core/openapi/manifest-factory';
 import { RawBodyParser } from '../../core/openapi/parser';
 import { TypesRepository } from '../../core/openapi/types-repository';
 import { TypeTranspilerFactory } from '../../core/factory';
