@@ -1,4 +1,3 @@
-import ProcessorTypeTranspiler from '../processor-type-transpiler';
 import { FileContainer } from './file-container';
 import { ClassMirror, Type } from '@cparra/apex-reflection';
 import { OpenapiTypeFile } from './openapi-type-file';
@@ -8,12 +7,11 @@ import { Settings } from '../settings';
 import { MethodParser } from './parsers/MethodParser';
 import { camel2title } from '#utils/string-utils';
 
-export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
+export class OpenApiDocsProcessor {
   protected readonly _fileContainer: FileContainer;
   openApiModel: OpenApi;
 
   constructor() {
-    super();
     this._fileContainer = new FileContainer();
     const title = Settings.getInstance().getOpenApiTitle();
     if (!title) {

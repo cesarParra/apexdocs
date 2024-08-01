@@ -10,12 +10,12 @@ import { referenceGuideTemplate } from './templates/reference-guide';
 import { adaptDescribable } from './adapters/documentables';
 import { createInheritanceChain } from './inheritance-chain';
 import Manifest from '../manifest';
-import MetadataProcessor from '../metadata-processor';
 import { enumMarkdownTemplate } from './templates/enum-template';
 import { interfaceMarkdownTemplate } from './templates/interface-template';
 import { classMarkdownTemplate } from './templates/class-template';
 import { apply } from '#utils/fp';
 import { SourceFile } from '../shared/types';
+import { parseApexMetadata } from '../parse-apex-metadata';
 
 export type DocumentationBundle = {
   format: 'markdown';
@@ -201,7 +201,7 @@ function addFileMetadataToTypeAnnotation(type: Type, metadata: string | null): T
   return pipe(
     O.fromNullable(metadata),
     O.map((metadata) => {
-      const metadataParams = MetadataProcessor.process(metadata);
+      const metadataParams = parseApexMetadata(metadata);
       metadataParams.forEach((value, key) => {
         const declaration = `${key}: ${value}`;
         type.annotations.push({

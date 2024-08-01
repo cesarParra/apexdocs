@@ -1,5 +1,5 @@
 import { ClassMirror, InterfaceMirror, ReflectionResult, Type } from '@cparra/apex-reflection';
-import MetadataProcessor from '../metadata-processor';
+import { parseApexMetadata } from '../parse-apex-metadata';
 import { Logger } from '#utils/logger';
 import { SourceFile } from '../shared/types';
 
@@ -19,7 +19,7 @@ export class RawBodyParser implements TypeParser {
         const result = reflect(currentBundle);
         if (!!result.typeMirror && !!currentBundle.metadataContent) {
           // If successful and there is a metadata file
-          const metadataParams = MetadataProcessor.process(currentBundle.metadataContent);
+          const metadataParams = parseApexMetadata(currentBundle.metadataContent);
           metadataParams.forEach((value, key) => {
             const declaration = `${key}: ${value}`;
             result.typeMirror?.annotations.push({
