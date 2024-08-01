@@ -8,16 +8,6 @@ describe('Generates interface documentation', () => {
   });
 
   describe('documentation output', () => {
-    it('always returns markdown as the format', () => {
-      const input = `
-      public interface MyInterface {
-      }
-     `;
-
-      const result = generateDocs([apexBundleFromRawString(input)]);
-      assertEither(result, (data) => expect(data.format).toBe('markdown'));
-    });
-
     it('returns the name of the interface', () => {
       const input = `
       public interface MyInterface {
@@ -26,7 +16,7 @@ describe('Generates interface documentation', () => {
 
       const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].typeName).toBe('MyInterface'));
+      assertEither(result, (data) => expect(data.docs[0].source.name).toBe('MyInterface'));
     });
 
     it('returns the type as interface', () => {
@@ -37,7 +27,7 @@ describe('Generates interface documentation', () => {
 
       const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].type).toBe('interface'));
+      assertEither(result, (data) => expect(data.docs[0].source.type).toBe('interface'));
     });
 
     it('does not return interfaces out of scope', () => {
@@ -77,7 +67,7 @@ describe('Generates interface documentation', () => {
 
       const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].docContents).not.toContain('myMethod'));
+      assertEither(result, (data) => expect(data.docs[0].content).not.toContain('myMethod'));
     });
   });
 
@@ -426,7 +416,7 @@ describe('Generates interface documentation', () => {
         const result = generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)]);
         expect(result).documentationBundleHasLength(2);
         assertEither(result, (data) =>
-          expect(data.docs.find((doc) => doc.typeName === 'AnotherInterface')?.docContents).toContain('Inherited'),
+          expect(data.docs.find((doc) => doc.fileName === 'AnotherInterface')?.content).toContain('Inherited'),
         );
       });
     });

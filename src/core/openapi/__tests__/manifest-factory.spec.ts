@@ -12,5 +12,5 @@ it('creates a manifest from the result of a type parser', () => {
   const manifest = createManifest(new TestParser(), () => {
     return {};
   });
-  expect(manifest.types.length).toBe(0);
+  expect(manifest.parsedFiles.length).toBe(0);
 });

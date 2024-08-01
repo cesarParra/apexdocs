@@ -1,24 +1,24 @@
 import * as E from 'fp-ts/Either';
-import { DocumentationBundle } from '../../core/markdown/generate-docs';
+import { DocumentationPageBundle } from '../../core/markdown/generate-docs';
 
 export function extendExpect() {
   expect.extend({
-    documentationBundleHasLength(received: E.Either<string[], DocumentationBundle>, length: number) {
+    documentationBundleHasLength(received: E.Either<string[], DocumentationPageBundle>, length: number) {
       return {
         pass: E.isRight(received) && received.right.docs.length === length,
         message: () => `Expected documentation bundle to have length ${length}`,
       };
     },
-    firstDocContains(doc: DocumentationBundle, content: string) {
+    firstDocContains(doc: DocumentationPageBundle, content: string) {
       return {
-        pass: doc.docs[0].docContents.includes(content),
-        message: () => `Expected documentation to contain ${content}. Got ${doc.docs[0].docContents}`,
+        pass: doc.docs[0].content.includes(content),
+        message: () => `Expected documentation to contain ${content}. Got ${doc.docs[0].content}`,
       };
     },
-    firstDocContainsNot(doc: DocumentationBundle, content: string) {
+    firstDocContainsNot(doc: DocumentationPageBundle, content: string) {
       return {
-        pass: !doc.docs[0].docContents.includes(content),
-        message: () => `Expected documentation to not contain ${content}. Got ${doc.docs[0].docContents}`,
+        pass: !doc.docs[0].content.includes(content),
+        message: () => `Expected documentation to not contain ${content}. Got ${doc.docs[0].content}`,
       };
     },
   });

@@ -1,27 +1,50 @@
+import { Type } from '@cparra/apex-reflection';
+
 export type SourceFile = {
   filePath: string;
   content: string;
   metadataContent: string | null;
 };
 
+export type ParsedFile = {
+  filePath: string;
+  type: Type;
+};
+
 export type Generator = 'markdown' | 'openapi';
 
-type ReferenceGuidePageData = {
-  __type: 'reference-guide';
-  filePath: string;
-  frontmatter: Record<string, unknown> | null;
-  content: string;
+// TODO: This looks too close to the MarkdownConfig type in the index.ts file
+// Let's see if we can merge them
+export type DocumentationConfig = {
+  scope: string[];
+  outputDir: string;
+  namespace?: string;
+  sortMembersAlphabetically?: boolean;
+  defaultGroupName: string;
+  referenceGuideTemplate: string;
 };
 
-type DocPageData = {
+export type ReferenceGuidePageData = {
+  directory: string;
+  frontmatter: Record<string, unknown> | null;
+  content: string;
+  fileExtension: string;
+  fileName: string;
+};
+
+export type DocPageData = {
   source: {
     filePath: string;
-    typeName: string;
+    name: string;
     type: 'interface' | 'class' | 'enum';
   };
-  filePath: string;
+  fileName: string;
+  fileExtension: string;
+  directory: string;
   frontmatter: Record<string, unknown> | null;
   content: string;
 };
 
-type PageData = ReferenceGuidePageData | DocPageData;
+export type OpenApiPageData = Omit<DocPageData, 'source'>;
+
+export type PageData = DocPageData | OpenApiPageData | ReferenceGuidePageData;

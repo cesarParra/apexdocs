@@ -1,14 +1,13 @@
 import { createManifest } from '../../core/openapi/manifest-factory';
 import { RawBodyParser } from '../../core/openapi/parser';
 import { TypesRepository } from '../../core/openapi/types-repository';
-import { Settings, TargetFile } from '../../core/settings';
 import Transpiler from '../../core/openapi/transpiler';
 import { FileWriter } from '../file-writer';
 import { Logger } from '#utils/logger';
 import ErrorLogger from '#utils/error-logger';
 import { reflect, ReflectionResult } from '@cparra/apex-reflection';
 import Manifest from '../../core/manifest';
-import { SourceFile } from '../../core/shared/types';
+import { PageData, SourceFile } from '../../core/shared/types';
 import { OpenApiDocsProcessor } from '../../core/openapi/open-api-docs-processor';
 
 export default function openApi(fileBodies: SourceFile[]) {
@@ -19,13 +18,9 @@ export default function openApi(fileBodies: SourceFile[]) {
   Transpiler.generate(filteredTypes, processor);
   const generatedFiles = processor.fileBuilder().files();
 
-  const files: TargetFile[] = [];
-  FileWriter.write(generatedFiles, (file: TargetFile) => {
-    Logger.logSingle(`${file.name} processed.`, false, 'green', false);
-    files.push(file);
+  FileWriter.write(generatedFiles, (file: PageData) => {
+    Logger.logSingle(`${file.fileName} processed.`, false, 'green', false);
   });
-
-  Settings.getInstance().onAfterProcess(files);
 
   // Error logging
   ErrorLogger.logErrors(filteredTypes);

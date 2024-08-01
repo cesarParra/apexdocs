@@ -1,11 +1,11 @@
 import { FileContainer } from './file-container';
 import { ClassMirror, Type } from '@cparra/apex-reflection';
-import { OpenapiTypeFile } from './openapi-type-file';
 import { Logger } from '#utils/logger';
 import { OpenApi } from './open-api';
 import { Settings } from '../settings';
 import { MethodParser } from './parsers/MethodParser';
 import { camel2title } from '#utils/string-utils';
+import { createOpenApiFile } from './openapi-type-file';
 
 export class OpenApiDocsProcessor {
   protected readonly _fileContainer: FileContainer;
@@ -66,7 +66,8 @@ export class OpenApiDocsProcessor {
   }
 
   onAfterProcess: ((types: Type[]) => void) | undefined = () => {
-    this._fileContainer.pushFile(new OpenapiTypeFile(this.openApiModel));
+    const page = createOpenApiFile(Settings.getInstance().openApiFileName(), this.openApiModel);
+    this._fileContainer.pushFile(page);
   };
 
   private getEndpointPath(type: Type): string | null {

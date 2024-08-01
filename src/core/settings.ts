@@ -1,26 +1,5 @@
 import { Generator } from './shared/types';
 
-export type OnBeforeFileWrite = (file: TargetFile) => TargetFile;
-
-export type TargetFile = {
-  name: string;
-  extension: string;
-  dir: OutputDir;
-};
-
-export type OutputDir = {
-  baseDir: string;
-  fileDir: string;
-};
-
-export type TargetType = {
-  name: string;
-  typeName: 'class' | 'interface' | 'enum';
-  accessModifier: string;
-  description?: string;
-  group?: string;
-};
-
 export interface SettingsConfig {
   sourceDirectory: string;
   scope: string[];
@@ -33,9 +12,6 @@ export interface SettingsConfig {
   openApiFileName: string;
   includeMetadata: boolean;
   sortMembersAlphabetically?: boolean;
-  onAfterProcess?: (files: TargetFile[]) => void;
-  onBeforeFileWrite?: (file: TargetFile) => TargetFile;
-  frontMatterHeader?: (file: TargetType) => string[];
 }
 
 export class Settings {
@@ -86,13 +62,6 @@ export class Settings {
     return this.config.namespace;
   }
 
-  public getNamespacePrefix(): string {
-    if (!this.config.namespace) {
-      return '';
-    }
-    return `${this.config.namespace}.`;
-  }
-
   public openApiFileName(): string {
     return this.config.openApiFileName;
   }
@@ -103,25 +72,5 @@ export class Settings {
 
   public sortMembersAlphabetically(): boolean {
     return this.config.sortMembersAlphabetically ?? false;
-  }
-
-  public onAfterProcess(files: TargetFile[]): void {
-    if (this.config.onAfterProcess) {
-      this.config.onAfterProcess(files);
-    }
-  }
-
-  public onBeforeFileWrite(file: TargetFile): TargetFile {
-    if (this.config.onBeforeFileWrite) {
-      return this.config.onBeforeFileWrite(file);
-    }
-    return file;
-  }
-
-  public frontMatterHeader(file: TargetType): string[] {
-    if (this.config.frontMatterHeader) {
-      return this.config.frontMatterHeader(file);
-    }
-    return [];
   }
 }

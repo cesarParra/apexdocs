@@ -1,34 +1,26 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { OutputFile } from '../core/outputFile';
-import { OnBeforeFileWrite, Settings, TargetFile } from '../core/settings';
+import { Settings } from '../core/settings';
+import { PageData } from '../core/shared/types';
 
 export class FileWriter {
-  static write(files: OutputFile[], onWriteCallback: (file: TargetFile) => void) {
-    const onBeforeFileWrite: OnBeforeFileWrite = (file: TargetFile) => Settings.getInstance().onBeforeFileWrite(file);
+  static write(files: PageData[], onWriteCallback: (file: PageData) => void) {
     files.forEach((file) => {
-      const resolvedFile = this.getTargetLocation(file, onBeforeFileWrite);
-      const fullDir = path.join(resolvedFile.dir.baseDir, resolvedFile.dir.fileDir);
-      if (!fs.existsSync(fullDir)) {
-        fs.mkdirSync(fullDir, { recursive: true });
+      const resolvedFile = this.getTargetLocation(file);
+      if (!fs.existsSync(file.directory)) {
+        fs.mkdirSync(file.directory, { recursive: true });
       }
 
-      const filePath = path.join(fullDir, `${resolvedFile.name}${resolvedFile.extension}`);
-      fs.writeFileSync(filePath, file.body, 'utf8');
+      const filePath = path.join(file.directory, `${resolvedFile.fileName}.${resolvedFile.fileExtension}`);
+      fs.writeFileSync(filePath, file.content, 'utf8');
       onWriteCallback(resolvedFile);
     });
   }
 
-  private static getTargetLocation(file: OutputFile, onBeforeFileWrite: OnBeforeFileWrite): TargetFile {
-    const targetFile: TargetFile = {
-      name: file.fileName,
-      extension: file.fileExtension(),
-      dir: {
-        baseDir: Settings.getInstance().outputDir,
-        fileDir: file.dir,
-      },
+  private static getTargetLocation(file: PageData): PageData {
+    return {
+      ...file,
+      directory: path.join(Settings.getInstance().outputDir, file.directory),
     };
-
-    return onBeforeFileWrite(targetFile);
   }
 }

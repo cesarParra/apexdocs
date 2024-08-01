@@ -44,9 +44,6 @@ export class Apexdocs {
       openApiFileName: argv.openApiFileName,
       sortMembersAlphabetically: argv.sortMembersAlphabetically,
       includeMetadata: argv.includeMetadata,
-      onAfterProcess: argv.onAfterProcess,
-      onBeforeFileWrite: argv.onBeforeFileWrite,
-      frontMatterHeader: argv.frontMatterHeader,
     });
   }
 }

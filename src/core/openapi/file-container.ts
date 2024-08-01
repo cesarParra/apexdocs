@@ -1,13 +1,13 @@
-import { OutputFile } from '../outputFile';
+import { PageData } from '../shared/types';
 
 export class FileContainer {
-  _files: OutputFile[] = [];
+  _files: PageData[] = [];
 
-  files(): OutputFile[] {
+  files(): PageData[] {
     return this._files;
   }
 
-  pushFile(file: OutputFile): void {
+  pushFile(file: PageData): void {
     this._files.push(file);
   }
 }

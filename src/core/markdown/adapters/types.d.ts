@@ -23,6 +23,21 @@ export type MethodMirrorWithInheritance = MethodMirror & InheritanceSupport;
 
 // Renderable types
 
+export type ReferenceGuideReference = {
+  typeName: string;
+  directory: string;
+  title: Link;
+  description: RenderableContent[] | undefined;
+};
+
+export type RenderableBundle = {
+  // References are grouped by their defined @group annotation
+  references: {
+    [key: string]: ReferenceGuideReference[];
+  };
+  renderables: Renderable[];
+};
+
 export type Link = {
   readonly __type: 'link';
   title: string;
@@ -165,4 +180,4 @@ export type RenderableEnum = RenderableType & {
   values: RenderableSection<EnumValue[]>;
 };
 
-export type Renderable = RenderableClass | RenderableInterface | RenderableEnum;
+export type Renderable = (RenderableClass | RenderableInterface | RenderableEnum) & { filePath: string };

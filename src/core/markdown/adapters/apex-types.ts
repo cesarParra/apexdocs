@@ -14,19 +14,21 @@ import {
 import { adaptDescribable, adaptDocumentable } from './documentables';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
+import { ParsedFile } from '../../shared/types';
 
-type GetReturnRenderable<T extends Type> = T extends InterfaceMirror
+type GetReturnRenderable<T extends ParsedFile> = T extends InterfaceMirror
   ? RenderableInterface
   : T extends ClassMirror
     ? RenderableClass
     : RenderableEnum;
 
-export function typeToRenderable<T extends Type>(
-  type: T,
+export function typeToRenderable<T extends ParsedFile>(
+  parsedFile: T,
   linkGenerator: GetRenderableContentByTypeName,
   namespace?: string,
-): GetReturnRenderable<T> {
+): GetReturnRenderable<T> & { filePath: string; namespace?: string } {
   function getRenderable(): RenderableInterface | RenderableClass | RenderableEnum {
+    const { type } = parsedFile;
     switch (type.type_name) {
       case 'enum':
         return enumTypeToEnumSource(type as EnumMirror, linkGenerator) as RenderableEnum;
@@ -39,6 +41,7 @@ export function typeToRenderable<T extends Type>(
 
   return {
     ...(getRenderable() as GetReturnRenderable<T>),
+    filePath: parsedFile.filePath,
     namespace,
   };
 }

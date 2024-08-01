@@ -8,18 +8,6 @@ describe('Generates enum documentation', () => {
   });
 
   describe('documentation output', () => {
-    it('always returns markdown as the format', () => {
-      const input = `
-     public enum MyEnum {
-        VALUE1,
-        VALUE2
-      }
-    `;
-
-      const result = generateDocs([apexBundleFromRawString(input)]);
-      assertEither(result, (data) => expect(data.format).toBe('markdown'));
-    });
-
     it('returns the name of the enum', () => {
       const input = `
      public enum MyEnum {
@@ -30,7 +18,7 @@ describe('Generates enum documentation', () => {
 
       const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].typeName).toBe('MyEnum'));
+      assertEither(result, (data) => expect(data.docs[0].fileName).toBe('MyEnum'));
     });
 
     it('returns the type as enum', () => {
@@ -43,7 +31,7 @@ describe('Generates enum documentation', () => {
 
       const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].type).toBe('enum'));
+      assertEither(result, (data) => expect(data.docs[0].source.type).toBe('enum'));
     });
 
     it('does not return enums out of scope', () => {

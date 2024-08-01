@@ -80,8 +80,8 @@ describe('Generates a Reference Guide', () => {
     pipe(
       result,
       E.map((data) => ({
-        aGroupIndex: data.referenceGuide.indexOf('## AGroup'),
-        zGroupIndex: data.referenceGuide.indexOf('## ZGroup'),
+        aGroupIndex: data.referenceGuide.content.indexOf('## AGroup'),
+        zGroupIndex: data.referenceGuide.content.indexOf('## ZGroup'),
       })),
       E.match(
         () => fail('Expected data'),

@@ -1,13 +1,8 @@
-import { Settings } from '../core/settings';
 import { cosmiconfig, CosmiconfigResult } from 'cosmiconfig';
 import * as yargs from 'yargs';
 
-// TODO: These should not exist anymore
-type OnlyConfigurableThroughFile = {
-  onAfterProcess: Settings['onAfterProcess'];
-  onBeforeFileWrite: Settings['onBeforeFileWrite'];
-  frontMatterHeader: Settings['frontMatterHeader'];
-};
+// TODO: Fill when I have the full list of functions that can be configured through the config files.
+type OnlyConfigurableThroughFile = Record<string, unknown>;
 
 type YargsArgs = ReturnType<typeof _extractYargs>;
 

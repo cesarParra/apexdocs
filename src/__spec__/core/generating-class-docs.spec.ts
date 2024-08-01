@@ -8,19 +8,12 @@ describe('Generates interface documentation', () => {
   });
 
   describe('documentation output', () => {
-    it('always returns markdown as the format', () => {
-      const input = 'public class MyClass {}';
-
-      const result = generateDocs([apexBundleFromRawString(input)]);
-      assertEither(result, (data) => expect(data.format).toBe('markdown'));
-    });
-
     it('returns the name of the class', () => {
       const input = 'public class MyClass {}';
 
       const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].typeName).toBe('MyClass'));
+      assertEither(result, (data) => expect(data.docs[0].fileName).toBe('MyClass'));
     });
 
     it('returns the type as class', () => {
@@ -28,7 +21,7 @@ describe('Generates interface documentation', () => {
 
       const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].type).toBe('class'));
+      assertEither(result, (data) => expect(data.docs[0].source.type).toBe('class'));
     });
 
     it('does not return classes out of scope', () => {
@@ -68,7 +61,7 @@ describe('Generates interface documentation', () => {
 
       const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].docContents).not.toContain('myMethod'));
+      assertEither(result, (data) => expect(data.docs[0].content).not.toContain('myMethod'));
     });
 
     it('does not return class properties that have @ignore in the docs', () => {
@@ -82,7 +75,7 @@ describe('Generates interface documentation', () => {
 
       const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].docContents).not.toContain('myProperty'));
+      assertEither(result, (data) => expect(data.docs[0].content).not.toContain('myProperty'));
     });
 
     it('does not return class fields that have @ignore in the docs', () => {
@@ -96,7 +89,7 @@ describe('Generates interface documentation', () => {
 
       const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].docContents).not.toContain('myField'));
+      assertEither(result, (data) => expect(data.docs[0].content).not.toContain('myField'));
     });
 
     it('does not return class inner classes that have @ignore in the docs', () => {
@@ -110,7 +103,7 @@ describe('Generates interface documentation', () => {
 
       const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].docContents).not.toContain('InnerClass'));
+      assertEither(result, (data) => expect(data.docs[0].content).not.toContain('InnerClass'));
     });
 
     it('does not return class inner interfaces that have @ignore in the docs', () => {
@@ -124,7 +117,7 @@ describe('Generates interface documentation', () => {
 
       const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].docContents).not.toContain('InnerInterface'));
+      assertEither(result, (data) => expect(data.docs[0].content).not.toContain('InnerInterface'));
     });
 
     it('does not return class inner enums that have @ignore in the docs', () => {
@@ -138,7 +131,7 @@ describe('Generates interface documentation', () => {
 
       const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].docContents).not.toContain('InnerEnum'));
+      assertEither(result, (data) => expect(data.docs[0].content).not.toContain('InnerEnum'));
     });
   });
 
@@ -524,7 +517,7 @@ describe('Generates interface documentation', () => {
       const result = generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)]);
       expect(result).documentationBundleHasLength(2);
       assertEither(result, (data) =>
-        expect(data.docs.find((doc) => doc.typeName === 'AnotherClass')?.docContents).toContain('Inherited'),
+        expect(data.docs.find((doc) => doc.source.name === 'AnotherClass')?.content).toContain('Inherited'),
       );
     });
   });
