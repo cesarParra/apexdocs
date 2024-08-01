@@ -14,16 +14,15 @@ import {
 import { adaptDescribable, adaptDocumentable } from './documentables';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
-import { ParsedFile } from '../../shared/types';
 
-type GetReturnRenderable<T extends ParsedFile> = T extends InterfaceMirror
+type GetReturnRenderable<T extends Type> = T extends InterfaceMirror
   ? RenderableInterface
   : T extends ClassMirror
     ? RenderableClass
     : RenderableEnum;
 
-export function typeToRenderable<T extends ParsedFile>(
-  parsedFile: T,
+export function typeToRenderable<T extends Type>(
+  parsedFile: { filePath: string; type: T },
   linkGenerator: GetRenderableContentByTypeName,
   namespace?: string,
 ): GetReturnRenderable<T> & { filePath: string; namespace?: string } {

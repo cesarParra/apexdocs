@@ -24,8 +24,12 @@ describe('Generates a Reference Guide', () => {
     const result = generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)]);
     expect(result).documentationBundleHasLength(2);
 
-    assertEither(result, (data) => expect(data.referenceGuide).toContain('[MyEnum](./Miscellaneous/MyEnum.md)'));
-    assertEither(result, (data) => expect(data.referenceGuide).toContain('[MyClass](./Miscellaneous/MyClass.md)'));
+    assertEither(result, (data) =>
+      expect(data.referenceGuide.content).toContain('[MyEnum](./Miscellaneous/MyEnum.md)'),
+    );
+    assertEither(result, (data) =>
+      expect(data.referenceGuide.content).toContain('[MyClass](./Miscellaneous/MyClass.md)'),
+    );
   });
 
   it('groups things under Miscellaneous if no group is provided', () => {
@@ -38,7 +42,7 @@ describe('Generates a Reference Guide', () => {
 
     const result = generateDocs([apexBundleFromRawString(input)]);
     expect(result).documentationBundleHasLength(1);
-    assertEither(result, (data) => expect(data.referenceGuide).toContain('## Miscellaneous'));
+    assertEither(result, (data) => expect(data.referenceGuide.content).toContain('## Miscellaneous'));
   });
 
   it('group things under the provided group', () => {
@@ -54,7 +58,7 @@ describe('Generates a Reference Guide', () => {
 
     const result = generateDocs([apexBundleFromRawString(input)]);
     expect(result).documentationBundleHasLength(1);
-    assertEither(result, (data) => expect(data.referenceGuide).toContain('## MyGroup'));
+    assertEither(result, (data) => expect(data.referenceGuide.content).toContain('## MyGroup'));
   });
 
   it('displays groups in alphabetical order', () => {
@@ -110,9 +114,9 @@ describe('Generates a Reference Guide', () => {
 
     const result = generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)]);
     expect(result).documentationBundleHasLength(2);
-    assertEither(result, (data) => expect(data.referenceGuide).toContain('## Group1'));
-    assertEither(result, (data) => expect(data.referenceGuide).toContain('MyClass'));
-    assertEither(result, (data) => expect(data.referenceGuide).toContain('MyEnum'));
+    assertEither(result, (data) => expect(data.referenceGuide.content).toContain('## Group1'));
+    assertEither(result, (data) => expect(data.referenceGuide.content).toContain('MyClass'));
+    assertEither(result, (data) => expect(data.referenceGuide.content).toContain('MyEnum'));
   });
 
   it('returns a reference guide with descriptions', () => {
@@ -135,7 +139,7 @@ describe('Generates a Reference Guide', () => {
 
     const result = generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)]);
     expect(result).documentationBundleHasLength(2);
-    assertEither(result, (data) => expect(data.referenceGuide).toContain('This is a description'));
+    assertEither(result, (data) => expect(data.referenceGuide.content).toContain('This is a description'));
   });
 
   it('returns a reference guide with descriptions with links to all other files', () => {
@@ -159,6 +163,8 @@ describe('Generates a Reference Guide', () => {
 
     const result = generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)]);
     expect(result).documentationBundleHasLength(2);
-    assertEither(result, (data) => expect(data.referenceGuide).toContain('with a [MyClass](./Group2/MyClass.md)'));
+    assertEither(result, (data) =>
+      expect(data.referenceGuide.content).toContain('with a [MyClass](./Group2/MyClass.md)'),
+    );
   });
 });

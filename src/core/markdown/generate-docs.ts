@@ -10,6 +10,7 @@ import { checkForReflectionErrors, ReflectionError } from './reflection/error-ha
 import { addInheritanceChainToTypes } from './reflection/inheritance-chain-expanion';
 import { addInheritedMembersToTypes } from './reflection/inherited-member-expansion';
 import { convertToDocumentationBundle } from './adapters/renderable-to-page-data';
+import { filterScope } from './reflection/filter-scope';
 
 const configDefaults: DocumentationConfig = {
   scope: ['public'],
@@ -24,8 +25,7 @@ export function generateDocs(
 ): E.Either<ReflectionError[], DocumentationBundle> {
   const configWithDefaults = { ...configDefaults, ...config };
 
-  // TODO
-  //const filterOutOfScope = apply(filterTypesOutOfScope, configWithDefaults.scope);
+  const filterOutOfScope = apply(filterScope, configWithDefaults.scope);
   const convertToRenderableBundle = apply(parsedFilesToRenderableBundle, configWithDefaults);
   const convertToDocumentationBundleForTemplate = apply(
     convertToDocumentationBundle,
@@ -36,16 +36,10 @@ export function generateDocs(
     apexBundles,
     reflectSourceCode,
     checkForReflectionErrors,
-    // TODO
-    //E.map(filterOutOfScope),
+    E.map(filterOutOfScope),
     E.map(addInheritedMembersToTypes),
     E.map(addInheritanceChainToTypes),
     E.map(convertToRenderableBundle),
     E.map(convertToDocumentationBundleForTemplate),
   );
 }
-
-// TODO
-// function filterTypesOutOfScope(scope: string[], types: Type[]): Type[] {
-//   return new Manifest(types).filteredByAccessModifierAndAnnotations(scope);
-// }

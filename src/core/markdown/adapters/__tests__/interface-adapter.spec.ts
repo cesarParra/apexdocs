@@ -10,14 +10,14 @@ function linkGenerator(type: string): string {
 describe('Conversion from InterfaceMirror to InterfaceSource understandable by the templating engine', () => {
   it('converts the name', () => {
     const interfaceMirror = new InterfaceMirrorBuilder().withName('SampleInterface').build();
-    const interfaceSource = typeToRenderable(interfaceMirror, linkGenerator);
+    const interfaceSource = typeToRenderable({ filePath: '', type: interfaceMirror }, linkGenerator);
 
     expect(interfaceSource.name).toBe('SampleInterface');
   });
 
   it('converts the access modifier', () => {
     const interfaceMirror = new InterfaceMirrorBuilder().build();
-    const interfaceSource = typeToRenderable(interfaceMirror, linkGenerator);
+    const interfaceSource = typeToRenderable({ filePath: '', type: interfaceMirror }, linkGenerator);
 
     expect(interfaceSource.meta.accessModifier).toBe('public');
   });
@@ -26,7 +26,7 @@ describe('Conversion from InterfaceMirror to InterfaceSource understandable by t
     const interfaceMirror = new InterfaceMirrorBuilder()
       .addAnnotation(new AnnotationBuilder().withName('MyAnnotation').build())
       .build();
-    const interfaceSource = typeToRenderable(interfaceMirror, linkGenerator);
+    const interfaceSource = typeToRenderable({ filePath: '', type: interfaceMirror }, linkGenerator);
 
     expect(interfaceSource.doc.annotations).toEqual(['MYANNOTATION']);
   });
@@ -44,7 +44,7 @@ describe('Conversion from InterfaceMirror to InterfaceSource understandable by t
       )
       .build();
 
-    const interfaceSource = typeToRenderable(interfaceMirror, linkGenerator);
+    const interfaceSource = typeToRenderable({ filePath: '', type: interfaceMirror }, linkGenerator);
 
     expect(interfaceSource.methods.value).toHaveLength(1);
     expect(interfaceSource.methods.value[0].signature.value.content[0]).toBe('public String sampleMethod()');
@@ -72,7 +72,7 @@ describe('Conversion from InterfaceMirror to InterfaceSource understandable by t
       )
       .build();
 
-    const interfaceSource = typeToRenderable(interfaceMirror, linkGenerator);
+    const interfaceSource = typeToRenderable({ filePath: '', type: interfaceMirror }, linkGenerator);
 
     expect(interfaceSource.methods.value).toHaveLength(1);
     expect(interfaceSource.methods.value[0].signature.value.content[0]).toBe(
