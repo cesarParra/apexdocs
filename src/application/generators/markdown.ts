@@ -5,7 +5,7 @@ import { FileWriter } from '../file-writer';
 import { Logger } from '#utils/logger';
 import { flow } from 'fp-ts/function';
 import * as E from 'fp-ts/Either';
-import { ApexBundle } from '../../core/shared/types';
+import { SourceFile } from '../../core/shared/types';
 
 export default flow(
   generateDocumentationBundle,
@@ -21,7 +21,7 @@ export default flow(
   }),
 );
 
-function generateDocumentationBundle(bundles: ApexBundle[]) {
+function generateDocumentationBundle(bundles: SourceFile[]) {
   return generateDocs(bundles, {
     scope: Settings.getInstance().scope,
     outputDir: Settings.getInstance().outputDir,

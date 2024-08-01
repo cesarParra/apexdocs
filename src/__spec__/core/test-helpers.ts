@@ -1,9 +1,9 @@
-import { ApexBundle } from '../../core/shared/types';
+import { SourceFile } from '../../core/shared/types';
 
-export function apexBundleFromRawString(raw: string, rawMetadata?: string): ApexBundle {
+export function apexBundleFromRawString(raw: string, rawMetadata?: string): SourceFile {
   return {
     filePath: 'test.cls',
-    rawTypeContent: raw,
-    rawMetadataContent: rawMetadata ?? null,
+    content: raw,
+    metadataContent: rawMetadata ?? null,
   };
 }

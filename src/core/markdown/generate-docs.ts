@@ -15,7 +15,7 @@ import { enumMarkdownTemplate } from './templates/enum-template';
 import { interfaceMarkdownTemplate } from './templates/interface-template';
 import { classMarkdownTemplate } from './templates/class-template';
 import { apply } from '#utils/fp';
-import { ApexBundle } from '../shared/types';
+import { SourceFile } from '../shared/types';
 
 export type DocumentationBundle = {
   format: 'markdown';
@@ -47,7 +47,7 @@ const configDefaults: DocumentationConfig = {
 };
 
 export function generateDocs(
-  apexBundles: ApexBundle[],
+  apexBundles: SourceFile[],
   config?: Partial<DocumentationConfig>,
 ): E.Either<ReflectionError[], DocumentationBundle> {
   const configWithDefaults = { ...configDefaults, ...config };
@@ -76,7 +76,7 @@ export function generateDocs(
   );
 }
 
-function reflectSourceCode(apexBundles: ApexBundle[]) {
+function reflectSourceCode(apexBundles: SourceFile[]) {
   return apexBundles.map(reflectSourceBody);
 }
 
@@ -223,8 +223,8 @@ export class ReflectionError {
   ) {}
 }
 
-function reflectSourceBody(apexBundle: ApexBundle): E.Either<ReflectionError, Type> {
-  const { filePath, rawTypeContent: input, rawMetadataContent: metadata } = apexBundle;
+function reflectSourceBody(apexBundle: SourceFile): E.Either<ReflectionError, Type> {
+  const { filePath, content: input, metadataContent: metadata } = apexBundle;
   const result = mirrorReflection(input);
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return result.error

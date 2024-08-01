@@ -1,5 +1,5 @@
-export type ApexBundle = {
+export type SourceFile = {
   filePath: string;
-  rawTypeContent: string;
-  rawMetadataContent: string | null;
+  content: string;
+  metadataContent: string | null;
 };

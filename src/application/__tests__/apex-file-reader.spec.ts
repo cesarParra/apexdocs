@@ -87,6 +87,6 @@ describe('File Reader', () => {
       },
     });
     expect(result.length).toBe(1);
-    expect(result[0].rawTypeContent).toBe('public class MyClass{}');
+    expect(result[0].content).toBe('public class MyClass{}');
   });
 });

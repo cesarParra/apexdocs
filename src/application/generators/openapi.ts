@@ -9,9 +9,9 @@ import { Logger } from '#utils/logger';
 import ErrorLogger from '#utils/error-logger';
 import { reflect, ReflectionResult } from '@cparra/apex-reflection';
 import Manifest from '../../core/manifest';
-import { ApexBundle } from '../../core/shared/types';
+import { SourceFile } from '../../core/shared/types';
 
-export default function openApi(fileBodies: ApexBundle[]) {
+export default function openApi(fileBodies: SourceFile[]) {
   const manifest = createManifest(new RawBodyParser(fileBodies), reflectionWithLogger);
   TypesRepository.getInstance().populateAll(manifest.types);
   const filteredTypes = filterByScopes(manifest);
@@ -31,8 +31,8 @@ export default function openApi(fileBodies: ApexBundle[]) {
   ErrorLogger.logErrors(filteredTypes);
 }
 
-function reflectionWithLogger(apexBundle: ApexBundle): ReflectionResult {
-  const result = reflect(apexBundle.rawTypeContent);
+function reflectionWithLogger(apexBundle: SourceFile): ReflectionResult {
+  const result = reflect(apexBundle.content);
   if (result.error) {
     Logger.error(`${apexBundle.filePath} - Parsing error ${result.error?.message}`);
   }
