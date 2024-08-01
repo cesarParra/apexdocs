@@ -1,5 +1,5 @@
 import ProcessorTypeTranspiler from '../processor-type-transpiler';
-import { FileContainer } from '../file-container';
+import { FileContainer } from './file-container';
 import { ClassMirror, Type } from '@cparra/apex-reflection';
 import { OpenapiTypeFile } from './openapi-type-file';
 import { Logger } from '#utils/logger';

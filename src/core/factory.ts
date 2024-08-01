@@ -1,11 +1,11 @@
 import ProcessorTypeTranspiler from './processor-type-transpiler';
-import { GeneratorChoices } from './generator-choices';
 import { OpenApiDocsProcessor } from './openapi/open-api-docs-processor';
+import { Generator } from './shared/types';
 
 export class TypeTranspilerFactory {
   private static typeTranspilerCache?: ProcessorTypeTranspiler;
 
-  public static get(generator: GeneratorChoices): ProcessorTypeTranspiler {
+  public static get(generator: Generator): ProcessorTypeTranspiler {
     if (this.typeTranspilerCache) {
       return this.typeTranspilerCache;
     }
@@ -16,7 +16,7 @@ export class TypeTranspilerFactory {
       case 'openapi':
         this.typeTranspilerCache = new OpenApiDocsProcessor();
         return this.typeTranspilerCache;
-      case 'plain-markdown':
+      case 'markdown':
         throw Error('Plain Markdown processor is not supported through this factory anymore.');
       default:
         throw Error('Invalid target generator');

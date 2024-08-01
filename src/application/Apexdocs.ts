@@ -6,7 +6,7 @@ import { DefaultFileSystem } from './file-system';
 import { Logger } from '#utils/logger';
 import { Settings } from '../core/settings';
 import { AllConfigurableOptions } from '../cli/args';
-import { GeneratorChoices } from '../core/generator-choices';
+import { Generator } from '../core/shared/types';
 
 /**
  * Application entry-point to generate documentation out of Apex source files.
@@ -21,7 +21,7 @@ export class Apexdocs {
     const fileBodies = ApexFileReader.processFiles(new DefaultFileSystem());
 
     switch (Settings.getInstance().targetGenerator) {
-      case 'plain-markdown':
+      case 'markdown':
         markdown(fileBodies);
         break;
       case 'openapi':
@@ -31,7 +31,7 @@ export class Apexdocs {
   }
 
   private static initializeSettings(argv: AllConfigurableOptions) {
-    const targetGenerator = argv.targetGenerator as GeneratorChoices;
+    const targetGenerator = argv.targetGenerator as Generator;
     Settings.build({
       sourceDirectory: argv.sourceDir,
       scope: argv.scope,

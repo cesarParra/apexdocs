@@ -8,7 +8,7 @@ describe('File Reader', () => {
       recursive: true,
       scope: [],
       outputDir: '',
-      targetGenerator: 'plain-markdown',
+      targetGenerator: 'markdown',
       indexOnly: false,
       defaultGroupName: 'Misc',
       sanitizeHtml: true,

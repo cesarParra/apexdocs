@@ -1,4 +1,4 @@
-import { GeneratorChoices } from './generator-choices';
+import { Generator } from './shared/types';
 
 export type OnBeforeFileWrite = (file: TargetFile) => TargetFile;
 
@@ -25,7 +25,7 @@ export interface SettingsConfig {
   sourceDirectory: string;
   scope: string[];
   outputDir: string;
-  targetGenerator: GeneratorChoices;
+  targetGenerator: Generator;
   indexOnly: boolean;
   defaultGroupName: string;
   openApiTitle?: string;
@@ -66,7 +66,7 @@ export class Settings {
     return this.config.outputDir;
   }
 
-  get targetGenerator(): GeneratorChoices {
+  get targetGenerator(): Generator {
     return this.config.targetGenerator;
   }
 
