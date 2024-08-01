@@ -17,7 +17,7 @@
   },
   "scripts": {
     "test": "npm run build && jest",
-    "build": "rimraf ./lib && npm run lint && pkgroll --minify",
+    "build": "rimraf ./lib && npm run lint && tsc --noEmit && pkgroll --minify",
     "lint": "eslint \"./src/**/*.{js,ts}\" --quiet --fix",
     "prepare": "npm run build",
     "version": "npm run format && git add -A src",

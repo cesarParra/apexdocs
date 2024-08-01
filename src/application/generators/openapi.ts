@@ -7,9 +7,9 @@ import Transpiler from '../../core/transpiler';
 import { FileWriter } from '../file-writer';
 import { Logger } from '#utils/logger';
 import ErrorLogger from '#utils/error-logger';
-import ApexBundle from '../../core/apex-bundle';
 import { reflect, ReflectionResult } from '@cparra/apex-reflection';
 import Manifest from '../../core/manifest';
+import { ApexBundle } from '../../core/shared/types';
 
 export default function openApi(fileBodies: ApexBundle[]) {
   const manifest = createManifest(new RawBodyParser(fileBodies), reflectionWithLogger);

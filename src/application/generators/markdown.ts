@@ -1,4 +1,3 @@
-import ApexBundle from '../../core/apex-bundle';
 import { Settings, TargetFile } from '../../core/settings';
 import { DocumentationBundle, generateDocs, ReflectionError } from '../../core/markdown/generate-docs';
 import { MarkdownFile } from '../../core/markdown/markdown-file';
@@ -6,6 +5,7 @@ import { FileWriter } from '../file-writer';
 import { Logger } from '#utils/logger';
 import { flow } from 'fp-ts/function';
 import * as E from 'fp-ts/Either';
+import { ApexBundle } from '../../core/shared/types';
 
 export default flow(
   generateDocumentationBundle,

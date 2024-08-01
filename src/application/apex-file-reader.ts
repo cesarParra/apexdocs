@@ -32,7 +32,7 @@ export class ApexFileReader {
         rawMetadataContent = fileSystem.exists(metadataPath) ? fileSystem.readFile(metadataPath) : null;
       }
 
-      bundles.push({ filePath, rawTypeContent, rawMetadataContent });
+      bundles.push({ filePath: currentPath, rawTypeContent, rawMetadataContent });
     });
     return bundles;
   }
