@@ -1,27 +1,15 @@
-type MarkdownConfig = {
-  sourceDir: string;
-  targetDir?: string;
-  scope?: string[];
-  targetGenerator: 'markdown';
-  defaultGroupName?: string; // TODO: Is this needed in openApi?
-  namespace?: string; // TODO: Is this needed in openApi?
-  sortMembersAlphabetically?: boolean; // TODO: Is this needed in openApi?
-  includeMetadata?: boolean; // TODO: Is this needed in openApi?
-};
+import { SetOptional } from 'type-fest';
+import { type ConfigurationHooks, UserDefinedMarkdownConfig } from './core/shared/types';
+import { defaults } from './defaults';
 
-type UserDefinedMarkdownConfig = Omit<MarkdownConfig, 'targetGenerator'>;
+type ConfigurableMarkdownConfig = Omit<
+  SetOptional<UserDefinedMarkdownConfig, 'targetDir' | 'scope' | 'defaultGroupName' | 'includeMetadata'>,
+  'targetGenerator' | 'referenceGuideTemplate'
+>;
 
-// TODO
-// type OpenApiConfig = {
-//   sourceDir: string;
-//   targetDir?: string;
-//   targetGenerator: 'openapi';
-//   openApiTitle?: string;
-//   openApiFileName?: string;
-// };
-
-function defineMarkdownConfig(config: UserDefinedMarkdownConfig): MarkdownConfig {
+function defineMarkdownConfig(config: ConfigurableMarkdownConfig): UserDefinedMarkdownConfig {
   return {
+    ...defaults,
     ...config,
     targetGenerator: 'markdown',
   };
@@ -29,4 +17,4 @@ function defineMarkdownConfig(config: UserDefinedMarkdownConfig): MarkdownConfig
 
 // Exports
 
-export { defineMarkdownConfig };
+export { defineMarkdownConfig, ConfigurationHooks };

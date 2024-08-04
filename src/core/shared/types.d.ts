@@ -2,16 +2,31 @@ import { Type } from '@cparra/apex-reflection';
 
 export type Generator = 'markdown' | 'openapi';
 
+export type ConfigurationHooks = {
+  transformReferenceGuide: TransformReferenceGuide;
+};
+
 // TODO: This looks too close to the MarkdownConfig type in the index.ts file
 // Let's see if we can merge them
-export type DocumentationConfig = {
+export type UserDefinedMarkdownConfig = {
+  targetGenerator: 'markdown';
+  sourceDir: string;
+  targetDir: string;
   scope: string[];
-  outputDir: string;
-  namespace?: string;
-  sortMembersAlphabetically?: boolean;
-  defaultGroupName: string;
-  referenceGuideTemplate: string;
-};
+  defaultGroupName: string; // TODO: Is this needed in openApi?
+  namespace?: string; // TODO: Is this needed in openApi?
+  sortMembersAlphabetically?: boolean; // TODO: Is this needed in openApi?
+  includeMetadata: boolean; // TODO: Is this needed in openApi?
+} & Partial<ConfigurationHooks>;
+
+// TODO
+// type OpenApiConfig = {
+//   sourceDir: string;
+//   targetDir?: string;
+//   targetGenerator: 'openapi';
+//   openApiTitle?: string;
+//   openApiFileName?: string;
+// };
 
 export type SourceFile = {
   filePath: string;
@@ -53,3 +68,8 @@ export type DocumentationBundle = {
   referenceGuide: ReferenceGuidePageData;
   docs: DocPageData[];
 };
+
+// Configurable Hooks
+
+// TODO: Make Awaitable so that we can use promises in this hook
+export type TransformReferenceGuide = (referenceGuide: ReferenceGuidePageData) => Partial<ReferenceGuidePageData>;

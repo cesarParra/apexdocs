@@ -6,6 +6,7 @@ import { flow } from 'fp-ts/function';
 import * as E from 'fp-ts/Either';
 import { DocumentationBundle, PageData, SourceFile } from '../../core/shared/types';
 import { ReflectionError } from '../../core/markdown/reflection/error-handling';
+import { referenceGuideTemplate } from '../../core/markdown/templates/reference-guide';
 
 export default flow(
   generateDocumentationBundle,
@@ -23,10 +24,11 @@ export default flow(
 function generateDocumentationBundle(bundles: SourceFile[]) {
   return generateDocs(bundles, {
     scope: Settings.getInstance().scope,
-    outputDir: Settings.getInstance().outputDir,
+    targetDir: Settings.getInstance().outputDir,
     namespace: Settings.getInstance().getNamespace(),
     sortMembersAlphabetically: Settings.getInstance().sortMembersAlphabetically(),
     defaultGroupName: Settings.getInstance().getDefaultGroupName(),
+    referenceGuideTemplate: referenceGuideTemplate,
   });
 }
 

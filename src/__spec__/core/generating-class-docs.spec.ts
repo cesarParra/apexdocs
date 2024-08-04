@@ -1,6 +1,5 @@
 import { assertEither, extendExpect } from './expect-extensions';
-import { generateDocs } from '../../core/markdown/generate-docs';
-import { apexBundleFromRawString } from './test-helpers';
+import { apexBundleFromRawString, generateDocs } from './test-helpers';
 
 describe('Generates interface documentation', () => {
   beforeAll(() => {

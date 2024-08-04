@@ -1,11 +1,12 @@
-import { DocumentationConfig, ParsedFile } from '../../shared/types';
+import { ParsedFile } from '../../shared/types';
 import { Link, RenderableBundle, StringOrLink } from './types';
 import { typeToRenderable } from './apex-types';
 import { adaptDescribable } from './documentables';
 import { Type } from '@cparra/apex-reflection';
+import { MarkdownGeneratorConfig } from '../generate-docs';
 
 export function parsedFilesToRenderableBundle(
-  config: DocumentationConfig,
+  config: MarkdownGeneratorConfig,
   parsedFiles: ParsedFile[],
 ): RenderableBundle {
   return parsedFiles.reduce<RenderableBundle>(
@@ -60,7 +61,7 @@ function linkFromTypeNameGenerator(
   typeBeingDocumented: Type,
   repository: Type[],
   referenceName: string,
-  config: DocumentationConfig,
+  config: MarkdownGeneratorConfig,
 ): StringOrLink {
   const type = findType(repository, referenceName);
   if (!type) {
@@ -76,7 +77,7 @@ function linkFromTypeNameGenerator(
   };
 }
 
-function getPossibleLinkFromRoot(config: DocumentationConfig, fallback: string, type?: Type): StringOrLink {
+function getPossibleLinkFromRoot(config: MarkdownGeneratorConfig, fallback: string, type?: Type): StringOrLink {
   if (!type) {
     return fallback;
   }
@@ -89,7 +90,7 @@ function getPossibleLinkFromRoot(config: DocumentationConfig, fallback: string, 
   };
 }
 
-function getDirectoryFromRoot(config: DocumentationConfig, type?: Type): string {
+function getDirectoryFromRoot(config: MarkdownGeneratorConfig, type?: Type): string {
   if (!type) {
     return '';
   }
@@ -103,7 +104,7 @@ function findType(repository: Type[], referenceName: string) {
 function getFileLinkTuple(
   typeBeingDocumented: Type,
   referencedType: Type,
-  config: DocumentationConfig,
+  config: MarkdownGeneratorConfig,
 ): [string, string] {
   const namespacePrefix = config.namespace ? `${config.namespace}.` : '';
   const directoryRoot = `${getDirectoryRoot(typeBeingDocumented, referencedType, config)}`;
@@ -113,7 +114,7 @@ function getFileLinkTuple(
   return [fullClassName, `${directoryRoot}${fullClassName}.md`];
 }
 
-function getDirectoryRoot(typeBeingDocumented: Type, referencedType: Type, config: DocumentationConfig) {
+function getDirectoryRoot(typeBeingDocumented: Type, referencedType: Type, config: MarkdownGeneratorConfig) {
   if (getTypeGroup(typeBeingDocumented, config) === getTypeGroup(referencedType, config)) {
     // If the types the same groups then we simply link directly to that file
     return './';
@@ -123,16 +124,16 @@ function getDirectoryRoot(typeBeingDocumented: Type, referencedType: Type, confi
   }
 }
 
-function getTypeGroup(type: Type, config: DocumentationConfig): string {
+function getTypeGroup(type: Type, config: MarkdownGeneratorConfig): string {
   const groupAnnotation = type.docComment?.annotations.find((annotation) => annotation.name.toLowerCase() === 'group');
   return groupAnnotation?.body ?? config.defaultGroupName;
 }
 
-function getSanitizedGroup(classModel: Type, config: DocumentationConfig) {
+function getSanitizedGroup(classModel: Type, config: MarkdownGeneratorConfig) {
   return getTypeGroup(classModel, config).replace(/ /g, '-').replace('.', '');
 }
 
-function getLinkFromRoot(config: DocumentationConfig, type: Type): Link {
+function getLinkFromRoot(config: MarkdownGeneratorConfig, type: Type): Link {
   const namespacePrefix = config.namespace ? `${config.namespace}.` : '';
   const title = `${namespacePrefix}${type.name}`;
   return {

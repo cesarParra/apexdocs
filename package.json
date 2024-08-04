@@ -72,6 +72,7 @@
     "handlebars": "^4.7.8",
     "js-yaml": "^4.1.0",
     "log-update": "4.0.0",
+    "type-fest": "^4.23.0",
     "yargs": "^17.7.2"
   },
   "imports": {

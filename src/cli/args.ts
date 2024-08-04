@@ -1,8 +1,9 @@
 import { cosmiconfig, CosmiconfigResult } from 'cosmiconfig';
 import * as yargs from 'yargs';
+import { ConfigurationHooks } from '../core/shared/types';
+import { defaults } from '../defaults';
 
-// TODO: Fill when I have the full list of functions that can be configured through the config files.
-type OnlyConfigurableThroughFile = Record<string, unknown>;
+type OnlyConfigurableThroughFile = ConfigurationHooks;
 
 type YargsArgs = ReturnType<typeof _extractYargs>;
 
@@ -35,14 +36,14 @@ function _extractYargs(config?: CosmiconfigResult) {
       targetDir: {
         type: 'string',
         alias: 't',
-        default: './docs/',
+        default: defaults.targetDir,
         describe: 'The directory location where documentation will be generated to.',
       },
       scope: {
         type: 'string',
         array: true,
         alias: 'p',
-        default: ['global'],
+        default: defaults.scope,
         describe:
           'A list of scopes to document. Values should be separated by a space, e.g --scope global public namespaceaccessible. ' +
           'Annotations are supported and should be passed lowercased and without the @ symbol, e.g. namespaceaccessible auraenabled. ' +
@@ -51,7 +52,7 @@ function _extractYargs(config?: CosmiconfigResult) {
       targetGenerator: {
         type: 'string',
         alias: 'g',
-        default: 'markdown',
+        default: defaults.targetGenerator,
         choices: ['markdown', 'openapi'],
         describe:
           'Define the static file generator for which the documents will be created. ' +
@@ -64,7 +65,7 @@ function _extractYargs(config?: CosmiconfigResult) {
       },
       defaultGroupName: {
         type: 'string',
-        default: 'Miscellaneous',
+        default: defaults.defaultGroupName,
         describe: 'Defines the @group name to be used when a file does not specify it.',
       },
       openApiTitle: {
@@ -92,7 +93,7 @@ function _extractYargs(config?: CosmiconfigResult) {
       includeMetadata: {
         type: 'boolean',
         describe: "Whether to include the file's meta.xml information: Whether it is active and and the API version",
-        default: false,
+        default: defaults.includeMetadata,
       },
     })
     .parseSync();
