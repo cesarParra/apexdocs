@@ -2,6 +2,9 @@ import { cosmiconfig, CosmiconfigResult } from 'cosmiconfig';
 import * as yargs from 'yargs';
 import { ConfigurationHooks } from '../core/shared/types';
 import { defaults } from '../defaults';
+import { TypeScriptLoader } from 'cosmiconfig-typescript-loader';
+
+// TODO: Is there any way to get rid of all of these types and instead used the "shared" ones?
 
 type OnlyConfigurableThroughFile = ConfigurationHooks;
 
@@ -16,7 +19,12 @@ export type AllConfigurableOptions = Partial<ConfigurableThroughFile> & YargsArg
  * through cosmiconfig.
  */
 function _extractConfig(): Promise<CosmiconfigResult> {
-  return cosmiconfig('apexdocs').search();
+  // TODO: Test and confirm that we can also work with JS files
+  return cosmiconfig('apexdocs', {
+    loaders: {
+      '.ts': TypeScriptLoader(),
+    },
+  }).search();
 }
 
 /**

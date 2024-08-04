@@ -16,10 +16,12 @@ import { addInheritanceChainToTypes } from './reflection/inheritance-chain-expan
 import { addInheritedMembersToTypes } from './reflection/inherited-member-expansion';
 import { convertToDocumentationBundle } from './adapters/renderable-to-page-data';
 import { filterScope } from './reflection/filter-scope';
+import { Template } from './templates/template';
+import { hookableTemplate } from './templates/hookable';
 
 export type MarkdownGeneratorConfig = Pick<
   UserDefinedMarkdownConfig,
-  'targetDir' | 'scope' | 'namespace' | 'defaultGroupName' | 'sortMembersAlphabetically'
+  'targetDir' | 'scope' | 'namespace' | 'defaultGroupName' | 'sortMembersAlphabetically' | 'transformReferenceGuide'
 > & {
   referenceGuideTemplate: string;
 };
@@ -42,7 +44,20 @@ export function generateDocs(
     E.map(convertToRenderableBundle),
     E.map(convertToDocumentationBundleForTemplate),
     E.map((bundle) => ({
-      referenceGuide: transformReferenceGuide(bundle.referenceGuide, passThroughHook),
+      referenceGuide: transformReferenceGuide(bundle.referenceGuide, config.transformReferenceGuide),
+      docs: bundle.docs,
+    })),
+    E.map((bundle) => ({
+      referenceGuide: {
+        ...bundle.referenceGuide,
+        content: Template.getInstance().compile({
+          source: {
+            frontmatter: bundle.referenceGuide.frontmatter,
+            content: bundle.referenceGuide.content,
+          },
+          template: hookableTemplate,
+        }),
+      },
       docs: bundle.docs,
     })),
   );

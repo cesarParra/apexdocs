@@ -41,7 +41,7 @@ export type ParsedFile = {
 
 export type ReferenceGuidePageData = {
   directory: string;
-  frontmatter: Record<string, unknown> | null;
+  frontmatter: string | null; // TODO: This could also be a Record<string, unknown>, but keeping it simple for now
   content: string;
   fileExtension: string;
   fileName: string;

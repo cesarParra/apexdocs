@@ -22,7 +22,7 @@ export class Apexdocs {
 
     switch (Settings.getInstance().targetGenerator) {
       case 'markdown':
-        markdown(fileBodies);
+        markdown(fileBodies, config);
         break;
       case 'openapi':
         openApi(fileBodies);

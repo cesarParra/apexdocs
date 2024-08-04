@@ -7,6 +7,7 @@ import * as E from 'fp-ts/Either';
 import { DocumentationBundle, PageData, SourceFile } from '../../core/shared/types';
 import { ReflectionError } from '../../core/markdown/reflection/error-handling';
 import { referenceGuideTemplate } from '../../core/markdown/templates/reference-guide';
+import { AllConfigurableOptions } from '../../cli/args';
 
 export default flow(
   generateDocumentationBundle,
@@ -21,13 +22,9 @@ export default flow(
   }),
 );
 
-function generateDocumentationBundle(bundles: SourceFile[]) {
+function generateDocumentationBundle(bundles: SourceFile[], config: AllConfigurableOptions) {
   return generateDocs(bundles, {
-    scope: Settings.getInstance().scope,
-    targetDir: Settings.getInstance().outputDir,
-    namespace: Settings.getInstance().getNamespace(),
-    sortMembersAlphabetically: Settings.getInstance().sortMembersAlphabetically(),
-    defaultGroupName: Settings.getInstance().getDefaultGroupName(),
+    ...config,
     referenceGuideTemplate: referenceGuideTemplate,
   });
 }

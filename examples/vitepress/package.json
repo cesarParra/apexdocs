@@ -14,17 +14,5 @@
   },
   "dependencies": {
     "rimraf": "^5.0.7"
-  },
-  "apexdocs": {
-    "sourceDir": "force-app",
-    "targetGenerator": "plain-markdown",
-    "scope": [
-      "global",
-      "public",
-      "protected",
-      "private",
-      "namespaceaccessible"
-    ],
-    "namespace": "ns"
   }
 }
