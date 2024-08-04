@@ -51,11 +51,11 @@ function _extractYargs(config?: CosmiconfigResult) {
       targetGenerator: {
         type: 'string',
         alias: 'g',
-        default: 'plain-markdown',
-        choices: ['plain-markdown', 'openapi'],
+        default: 'markdown',
+        choices: ['markdown', 'openapi'],
         describe:
           'Define the static file generator for which the documents will be created. ' +
-          'Currently supports plain markdown and OpenAPI v3.1.0.',
+          'Currently supports markdown and OpenAPI v3.1.0.',
       },
       indexOnly: {
         type: 'boolean',

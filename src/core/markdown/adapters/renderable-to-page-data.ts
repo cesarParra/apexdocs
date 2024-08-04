@@ -57,9 +57,9 @@ function renderableToPageData(referenceGuideReference: ReferenceGuideReference[]
         name: renderable.name,
         type: renderable.type,
       },
-      fileName: renderable.name,
+      fileName: `${namespacePrefix}${renderable.name}`,
       fileExtension: 'md',
-      directory: `${namespacePrefix}${renderable.name}${reference?.directory}`,
+      directory: `${reference?.directory}`,
       frontmatter: null,
       content: docContents,
     };

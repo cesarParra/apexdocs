@@ -1,16 +1,5 @@
 import { Type } from '@cparra/apex-reflection';
 
-export type SourceFile = {
-  filePath: string;
-  content: string;
-  metadataContent: string | null;
-};
-
-export type ParsedFile = {
-  filePath: string;
-  type: Type;
-};
-
 export type Generator = 'markdown' | 'openapi';
 
 // TODO: This looks too close to the MarkdownConfig type in the index.ts file
@@ -22,6 +11,17 @@ export type DocumentationConfig = {
   sortMembersAlphabetically?: boolean;
   defaultGroupName: string;
   referenceGuideTemplate: string;
+};
+
+export type SourceFile = {
+  filePath: string;
+  content: string;
+  metadataContent: string | null;
+};
+
+export type ParsedFile = {
+  filePath: string;
+  type: Type;
 };
 
 export type ReferenceGuidePageData = {
