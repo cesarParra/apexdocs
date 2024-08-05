@@ -21,9 +21,10 @@ import { hookableTemplate } from './templates/hookable';
 
 export type MarkdownGeneratorConfig = Pick<
   UserDefinedMarkdownConfig,
-  'targetDir' | 'scope' | 'namespace' | 'defaultGroupName' | 'sortMembersAlphabetically' | 'transformReferenceGuide'
+  'targetDir' | 'scope' | 'namespace' | 'defaultGroupName' | 'transformReferenceGuide'
 > & {
   referenceGuideTemplate: string;
+  sortMembersAlphabetically: boolean;
 };
 
 export function generateDocs(

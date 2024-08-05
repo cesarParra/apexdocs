@@ -1,5 +1,6 @@
 import { assertEither, extendExpect } from './expect-extensions';
 import { apexBundleFromRawString, generateDocs } from './test-helpers';
+import * as E from 'fp-ts/Either';
 
 describe('Generates enum documentation', () => {
   beforeAll(() => {
@@ -340,6 +341,44 @@ describe('Generates enum documentation', () => {
       assertEither(result, (data) => expect(data).firstDocContains('## Values'));
       assertEither(result, (data) => expect(data).firstDocContains('VALUE1'));
       assertEither(result, (data) => expect(data).firstDocContains('VALUE2'));
+    });
+
+    it('displays values sorted when sortMembersAlphabetically is true', () => {
+      const input = `
+      public enum MyEnum {
+        VALUE2,
+        VALUE1
+      }
+      `;
+
+      const result = generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: true });
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('## Values'));
+      assertEither(result, (data) => {
+        // Expect that the index of VALUE1 is less than the index of VALUE2
+        const value1Index = data.docs[0].content.indexOf('VALUE1');
+        const value2Index = data.docs[0].content.indexOf('VALUE2');
+        expect(value1Index).toBeLessThan(value2Index);
+      });
+    });
+
+    it('does not sort values when sortMembersAlphabetically is false', () => {
+      const input = `
+      public enum MyEnum {
+        VALUE2,
+        VALUE1
+      }
+      `;
+
+      const result = generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: false });
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('## Values'));
+      assertEither(result, (data) => {
+        // Expect that the index of VALUE1 is less than the index of VALUE2
+        const value1Index = data.docs[0].content.indexOf('VALUE1');
+        const value2Index = data.docs[0].content.indexOf('VALUE2');
+        expect(value1Index).toBeGreaterThan(value2Index);
+      });
     });
   });
 });

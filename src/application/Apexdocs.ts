@@ -16,8 +16,6 @@ export class Apexdocs {
   static generate(config: UserDefinedConfig): void {
     Logger.logSingle('Initializing...', false);
 
-    // TODO: This is needed for openapi, let's figure it out
-    //this.initializeSettings(config);
     const fileBodies = ApexFileReader.processFiles(new DefaultFileSystem(), config.sourceDir, config.includeMetadata);
 
     switch (config.targetGenerator) {
@@ -29,20 +27,4 @@ export class Apexdocs {
         break;
     }
   }
-
-  // private static initializeSettings(argv: UserDefinedMarkdownConfig) {
-  //   const targetGenerator = argv.targetGenerator as Generator;
-  //   Settings.build({
-  //     sourceDirectory: argv.sourceDir,
-  //     scope: argv.scope,
-  //     outputDir: argv.targetDir,
-  //     targetGenerator: targetGenerator,
-  //     defaultGroupName: argv.defaultGroupName,
-  //     openApiTitle: argv.openApiTitle,
-  //     namespace: argv.namespace,
-  //     openApiFileName: argv.openApiFileName,
-  //     sortMembersAlphabetically: argv.sortMembersAlphabetically,
-  //     includeMetadata: argv.includeMetadata,
-  //   });
-  // }
 }

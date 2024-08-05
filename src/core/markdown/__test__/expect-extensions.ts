@@ -1,5 +1,5 @@
 import * as E from 'fp-ts/Either';
-import { DocumentationBundle } from '../../core/shared/types';
+import { DocumentationBundle } from '../../shared/types';
 
 export function extendExpect() {
   expect.extend({

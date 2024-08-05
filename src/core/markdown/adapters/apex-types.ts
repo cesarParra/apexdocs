@@ -14,6 +14,7 @@ import {
 import { adaptDescribable, adaptDocumentable } from './documentables';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
+import { MarkdownGeneratorConfig } from '../generate-docs';
 
 type GetReturnRenderable<T extends Type> = T extends InterfaceMirror
   ? RenderableInterface
@@ -24,24 +25,32 @@ type GetReturnRenderable<T extends Type> = T extends InterfaceMirror
 export function typeToRenderable<T extends Type>(
   parsedFile: { filePath: string; type: T },
   linkGenerator: GetRenderableContentByTypeName,
-  namespace?: string,
+  config: MarkdownGeneratorConfig,
 ): GetReturnRenderable<T> & { filePath: string; namespace?: string } {
   function getRenderable(): RenderableInterface | RenderableClass | RenderableEnum {
     const { type } = parsedFile;
     switch (type.type_name) {
       case 'enum':
-        return enumTypeToEnumSource(type as EnumMirror, linkGenerator) as RenderableEnum;
+        return enumTypeToEnumSource(
+          type as EnumMirror,
+          linkGenerator,
+          config.sortMembersAlphabetically,
+        ) as RenderableEnum;
       case 'interface':
         return interfaceTypeToInterfaceSource(type as InterfaceMirror, linkGenerator) as RenderableInterface;
       case 'class':
-        return classTypeToClassSource(type as ClassMirrorWithInheritanceChain, linkGenerator) as RenderableClass;
+        return classTypeToClassSource(
+          type as ClassMirrorWithInheritanceChain,
+          linkGenerator,
+          config.sortMembersAlphabetically,
+        ) as RenderableClass;
     }
   }
 
   return {
     ...(getRenderable() as GetReturnRenderable<T>),
     filePath: parsedFile.filePath,
-    namespace,
+    namespace: config.namespace,
   };
 }
 
@@ -74,6 +83,7 @@ function baseTypeAdapter(
 function enumTypeToEnumSource(
   enumType: EnumMirror,
   linkGenerator: GetRenderableContentByTypeName,
+  sortValuesAlphabetically: boolean,
   baseHeadingLevel: number = 1,
 ): RenderableEnum {
   return {
@@ -82,10 +92,17 @@ function enumTypeToEnumSource(
     values: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Values',
-      value: enumType.values.map((value) => ({
-        ...adaptDescribable(value.docComment?.descriptionLines, linkGenerator),
-        value: value.name,
-      })),
+      value: enumType.values
+        .map((value) => ({
+          ...adaptDescribable(value.docComment?.descriptionLines, linkGenerator),
+          value: value.name,
+        }))
+        .sort((a, b) => {
+          if (sortValuesAlphabetically) {
+            return a.value.localeCompare(b.value);
+          }
+          return 0;
+        }),
     },
   };
 }
@@ -110,6 +127,7 @@ function interfaceTypeToInterfaceSource(
 function classTypeToClassSource(
   classType: ClassMirrorWithInheritanceChain,
   linkGenerator: GetRenderableContentByTypeName,
+  sortMembersAlphabetically: boolean,
   baseHeadingLevel: number = 1,
 ): RenderableClass {
   return {
@@ -146,13 +164,20 @@ function classTypeToClassSource(
       headingLevel: baseHeadingLevel + 1,
       heading: 'Classes',
       value: classType.classes.map((innerClass) =>
-        classTypeToClassSource({ ...innerClass, inheritanceChain: [] }, linkGenerator, baseHeadingLevel + 2),
+        classTypeToClassSource(
+          { ...innerClass, inheritanceChain: [] },
+          linkGenerator,
+          sortMembersAlphabetically,
+          baseHeadingLevel + 2,
+        ),
       ),
     },
     innerEnums: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Enums',
-      value: classType.enums.map((innerEnum) => enumTypeToEnumSource(innerEnum, linkGenerator, baseHeadingLevel + 2)),
+      value: classType.enums.map((innerEnum) =>
+        enumTypeToEnumSource(innerEnum, linkGenerator, sortMembersAlphabetically, baseHeadingLevel + 2),
+      ),
     },
     innerInterfaces: {
       headingLevel: baseHeadingLevel + 1,

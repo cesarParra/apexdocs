@@ -21,7 +21,7 @@ export function parsedFilesToRenderableBundle(
             config,
           );
         },
-        config.namespace,
+        config,
       );
       acc.renderables.push(renderable);
 

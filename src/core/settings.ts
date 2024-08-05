@@ -30,16 +30,8 @@ export class Settings {
     return Settings.instance;
   }
 
-  get sourceDirectory(): string {
-    return this.config.sourceDirectory;
-  }
-
   get scope(): string[] {
     return this.config.scope;
-  }
-
-  get outputDir(): string {
-    return this.config.outputDir;
   }
 
   get targetGenerator(): Generator {
@@ -48,10 +40,6 @@ export class Settings {
 
   get indexOnly(): boolean {
     return this.config.indexOnly;
-  }
-
-  public getDefaultGroupName(): string {
-    return this.config.defaultGroupName;
   }
 
   public getOpenApiTitle(): string | undefined {
@@ -64,13 +52,5 @@ export class Settings {
 
   public openApiFileName(): string {
     return this.config.openApiFileName;
-  }
-
-  public includeMetadata(): boolean {
-    return this.config.includeMetadata;
-  }
-
-  public sortMembersAlphabetically(): boolean {
-    return this.config.sortMembersAlphabetically ?? false;
   }
 }

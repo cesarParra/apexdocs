@@ -1,6 +1,6 @@
-import { SourceFile } from '../../core/shared/types';
-import { generateDocs as gen, MarkdownGeneratorConfig } from '../../core/markdown/generate-docs';
-import { referenceGuideTemplate } from '../../core/markdown/templates/reference-guide';
+import { SourceFile } from '../../shared/types';
+import { generateDocs as gen, MarkdownGeneratorConfig } from '../generate-docs';
+import { referenceGuideTemplate } from '../templates/reference-guide';
 
 export function apexBundleFromRawString(raw: string, rawMetadata?: string): SourceFile {
   return {
