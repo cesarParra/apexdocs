@@ -355,7 +355,6 @@ describe('Generates enum documentation', () => {
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Values'));
       assertEither(result, (data) => {
-        // Expect that the index of VALUE1 is less than the index of VALUE2
         const value1Index = data.docs[0].content.indexOf('VALUE1');
         const value2Index = data.docs[0].content.indexOf('VALUE2');
         expect(value1Index).toBeLessThan(value2Index);
@@ -374,7 +373,6 @@ describe('Generates enum documentation', () => {
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Values'));
       assertEither(result, (data) => {
-        // Expect that the index of VALUE1 is less than the index of VALUE2
         const value1Index = data.docs[0].content.indexOf('VALUE1');
         const value2Index = data.docs[0].content.indexOf('VALUE2');
         expect(value1Index).toBeGreaterThan(value2Index);

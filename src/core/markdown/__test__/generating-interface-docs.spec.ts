@@ -308,6 +308,36 @@ describe('Generates interface documentation', () => {
         assertEither(result, (data) => expect(data).firstDocContains('## Methods'));
       });
 
+      it('displays methods sorted if sortMembersAlphabetically is true', () => {
+        const input = `
+        public interface MyInterface {
+          void myMethod();
+          void anotherMethod();
+        }
+      `;
+
+        const result = generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: true });
+        expect(result).documentationBundleHasLength(1);
+        assertEither(result, (data) => {
+          expect(data.docs[0].content.indexOf('anotherMethod')).toBeLessThan(data.docs[0].content.indexOf('myMethod'));
+        });
+      });
+
+      it('does not display methods sorted if sortMembersAlphabetically is false', () => {
+        const input = `
+        public interface MyInterface {
+          void myMethod();
+          void anotherMethod();
+        }
+      `;
+
+        const result = generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: false });
+        expect(result).documentationBundleHasLength(1);
+        assertEither(result, (data) => {
+          expect(data.docs[0].content.indexOf('myMethod')).toBeLessThan(data.docs[0].content.indexOf('anotherMethod'));
+        });
+      });
+
       it('supports having mermaid diagrams in method descriptions', () => {
         const input = `
         public interface MyInterface {

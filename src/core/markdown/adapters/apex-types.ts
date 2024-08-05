@@ -37,7 +37,11 @@ export function typeToRenderable<T extends Type>(
           config.sortMembersAlphabetically,
         ) as RenderableEnum;
       case 'interface':
-        return interfaceTypeToInterfaceSource(type as InterfaceMirror, linkGenerator) as RenderableInterface;
+        return interfaceTypeToInterfaceSource(
+          type as InterfaceMirror,
+          linkGenerator,
+          config.sortMembersAlphabetically,
+        ) as RenderableInterface;
       case 'class':
         return classTypeToClassSource(
           type as ClassMirrorWithInheritanceChain,
@@ -107,9 +111,17 @@ function enumTypeToEnumSource(
   };
 }
 
+function sortByNames<T extends { name: string }>(a: T, b: T, shouldSort: boolean): number {
+  if (shouldSort) {
+    return a.name.localeCompare(b.name);
+  }
+  return 0;
+}
+
 function interfaceTypeToInterfaceSource(
   interfaceType: InterfaceMirror,
   linkGenerator: GetRenderableContentByTypeName,
+  sortMembersAlphabetically: boolean,
   baseHeadingLevel: number = 1,
 ): RenderableInterface {
   return {
@@ -119,7 +131,9 @@ function interfaceTypeToInterfaceSource(
     methods: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Methods',
-      value: interfaceType.methods.map((method) => adaptMethod(method, linkGenerator, baseHeadingLevel + 2)),
+      value: interfaceType.methods
+        .sort((a, b) => sortByNames(a, b, sortMembersAlphabetically))
+        .map((method) => adaptMethod(method, linkGenerator, baseHeadingLevel + 2)),
     },
   };
 }
@@ -183,7 +197,7 @@ function classTypeToClassSource(
       headingLevel: baseHeadingLevel + 1,
       heading: 'Interfaces',
       value: classType.interfaces.map((innerInterface) =>
-        interfaceTypeToInterfaceSource(innerInterface, linkGenerator, baseHeadingLevel + 2),
+        interfaceTypeToInterfaceSource(innerInterface, linkGenerator, sortMembersAlphabetically, baseHeadingLevel + 2),
       ),
     },
   };
