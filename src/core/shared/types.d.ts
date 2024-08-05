@@ -13,7 +13,7 @@ export type UserDefinedMarkdownConfig = {
   scope: string[];
   defaultGroupName: string;
   namespace?: string;
-  sortMembersAlphabetically?: boolean;
+  sortMembersAlphabetically: boolean;
   includeMetadata: boolean;
 } & Partial<ConfigurableHooks>;
 

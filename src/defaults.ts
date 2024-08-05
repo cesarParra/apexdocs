@@ -4,4 +4,5 @@ export const defaults = {
   scope: ['global'],
   defaultGroupName: 'Miscellaneous',
   includeMetadata: false,
+  sortMembersAlphabetically: false,
 };

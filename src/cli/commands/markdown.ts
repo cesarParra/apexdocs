@@ -45,11 +45,10 @@ export const markdownOptions: { [key: string]: Options } = {
     describe: 'If using "openapi" as the target generator, this allows you to specify the name of the output file.',
     default: 'openapi',
   },
-  // TODO: Make sure this is being respected
   sortMembersAlphabetically: {
     type: 'boolean',
     describe: 'Whether to sort members alphabetically.',
-    default: false,
+    default: defaults.sortMembersAlphabetically,
   },
   includeMetadata: {
     type: 'boolean',
