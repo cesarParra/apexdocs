@@ -11,14 +11,14 @@ export class ApexFileReader {
   /**
    * Reads from .cls files and returns their raw body.
    */
-  static processFiles(fileSystem: FileSystem, rootPath: string = this.sourceDirectory): SourceFile[] {
+  static processFiles(fileSystem: FileSystem, rootPath: string, includeMetadata: boolean): SourceFile[] {
     let bundles: SourceFile[] = [];
 
     const directoryContents = fileSystem.readDirectory(rootPath);
     directoryContents.forEach((filePath) => {
       const currentPath = fileSystem.joinPath(rootPath, filePath);
       if (fileSystem.isDirectory(currentPath)) {
-        bundles = bundles.concat(this.processFiles(fileSystem, currentPath));
+        bundles = bundles.concat(this.processFiles(fileSystem, currentPath, includeMetadata));
       }
 
       if (!this.isApexFile(filePath)) {
@@ -28,7 +28,7 @@ export class ApexFileReader {
       const rawTypeContent = fileSystem.readFile(currentPath);
       const metadataPath = fileSystem.joinPath(rootPath, `${filePath}-meta.xml`);
       let rawMetadataContent = null;
-      if (Settings.getInstance().includeMetadata()) {
+      if (includeMetadata) {
         rawMetadataContent = fileSystem.exists(metadataPath) ? fileSystem.readFile(metadataPath) : null;
       }
 
@@ -39,9 +39,5 @@ export class ApexFileReader {
 
   private static isApexFile(currentFile: string): boolean {
     return currentFile.endsWith(APEX_FILE_EXTENSION);
-  }
-
-  private static get sourceDirectory() {
-    return Settings.getInstance().sourceDirectory;
   }
 }

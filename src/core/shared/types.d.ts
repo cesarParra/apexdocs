@@ -2,31 +2,29 @@ import { Type } from '@cparra/apex-reflection';
 
 export type Generator = 'markdown' | 'openapi';
 
-export type ConfigurationHooks = {
+export type ConfigurableHooks = {
   transformReferenceGuide: TransformReferenceGuide;
 };
 
-// TODO: This looks too close to the MarkdownConfig type in the index.ts file
-// Let's see if we can merge them
 export type UserDefinedMarkdownConfig = {
   targetGenerator: 'markdown';
   sourceDir: string;
   targetDir: string;
   scope: string[];
-  defaultGroupName: string; // TODO: Is this needed in openApi?
-  namespace?: string; // TODO: Is this needed in openApi?
-  sortMembersAlphabetically?: boolean; // TODO: Is this needed in openApi?
-  includeMetadata: boolean; // TODO: Is this needed in openApi?
-} & Partial<ConfigurationHooks>;
+  defaultGroupName: string;
+  namespace?: string;
+  sortMembersAlphabetically?: boolean;
+  includeMetadata: boolean;
+} & Partial<ConfigurableHooks>;
 
-// TODO
-// type OpenApiConfig = {
-//   sourceDir: string;
-//   targetDir?: string;
-//   targetGenerator: 'openapi';
-//   openApiTitle?: string;
-//   openApiFileName?: string;
-// };
+export type UserDefinedOpenApiConfig = {
+  targetGenerator: 'openapi';
+  sourceDir: string;
+  targetDir: string;
+  includeMetadata: boolean;
+};
+
+export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig;
 
 export type SourceFile = {
   filePath: string;

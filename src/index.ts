@@ -1,5 +1,5 @@
 import { SetOptional } from 'type-fest';
-import { type ConfigurationHooks, UserDefinedMarkdownConfig } from './core/shared/types';
+import { type ConfigurableHooks, UserDefinedMarkdownConfig } from './core/shared/types';
 import { defaults } from './defaults';
 
 type ConfigurableMarkdownConfig = Omit<
@@ -17,4 +17,4 @@ function defineMarkdownConfig(config: ConfigurableMarkdownConfig): UserDefinedMa
 
 // Exports
 
-export { defineMarkdownConfig, ConfigurationHooks };
+export { defineMarkdownConfig, ConfigurableHooks };

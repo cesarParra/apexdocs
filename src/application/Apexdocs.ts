@@ -4,9 +4,7 @@ import openApi from './generators/openapi';
 import { ApexFileReader } from './apex-file-reader';
 import { DefaultFileSystem } from './file-system';
 import { Logger } from '#utils/logger';
-import { Settings } from '../core/settings';
-import { AllConfigurableOptions } from '../cli/args';
-import { Generator } from '../core/shared/types';
+import { UserDefinedConfig } from '../core/shared/types';
 
 /**
  * Application entry-point to generate documentation out of Apex source files.
@@ -15,35 +13,36 @@ export class Apexdocs {
   /**
    * Generates documentation out of Apex source files.
    */
-  static generate(config: AllConfigurableOptions): void {
+  static generate(config: UserDefinedConfig): void {
     Logger.logSingle('Initializing...', false);
-    this.initializeSettings(config);
-    const fileBodies = ApexFileReader.processFiles(new DefaultFileSystem());
 
-    switch (Settings.getInstance().targetGenerator) {
+    // TODO: This is needed for openapi, let's figure it out
+    //this.initializeSettings(config);
+    const fileBodies = ApexFileReader.processFiles(new DefaultFileSystem(), config.sourceDir, config.includeMetadata);
+
+    switch (config.targetGenerator) {
       case 'markdown':
         markdown(fileBodies, config);
         break;
       case 'openapi':
-        openApi(fileBodies);
+        openApi(fileBodies, config);
         break;
     }
   }
 
-  private static initializeSettings(argv: AllConfigurableOptions) {
-    const targetGenerator = argv.targetGenerator as Generator;
-    Settings.build({
-      sourceDirectory: argv.sourceDir,
-      scope: argv.scope,
-      outputDir: argv.targetDir,
-      targetGenerator: targetGenerator,
-      indexOnly: argv.indexOnly,
-      defaultGroupName: argv.defaultGroupName,
-      openApiTitle: argv.openApiTitle,
-      namespace: argv.namespace,
-      openApiFileName: argv.openApiFileName,
-      sortMembersAlphabetically: argv.sortMembersAlphabetically,
-      includeMetadata: argv.includeMetadata,
-    });
-  }
+  // private static initializeSettings(argv: UserDefinedMarkdownConfig) {
+  //   const targetGenerator = argv.targetGenerator as Generator;
+  //   Settings.build({
+  //     sourceDirectory: argv.sourceDir,
+  //     scope: argv.scope,
+  //     outputDir: argv.targetDir,
+  //     targetGenerator: targetGenerator,
+  //     defaultGroupName: argv.defaultGroupName,
+  //     openApiTitle: argv.openApiTitle,
+  //     namespace: argv.namespace,
+  //     openApiFileName: argv.openApiFileName,
+  //     sortMembersAlphabetically: argv.sortMembersAlphabetically,
+  //     includeMetadata: argv.includeMetadata,
+  //   });
+  // }
 }

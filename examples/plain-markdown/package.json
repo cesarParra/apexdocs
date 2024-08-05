@@ -2,7 +2,8 @@
   "name": "plain-markdown",
   "scripts": {
     "docs:clean": "rimraf docs",
-    "docs:build": "ts-node ../../src/cli/generate.ts",
+    "docs:build": "ts-node ../../src/cli/generate.ts markdown",
+    "docs:help": "ts-node ../../src/cli/generate.ts markdown --help",
     "docs:gen": "npm run docs:clean && npm run docs:build"
   },
   "devDependencies": {
@@ -13,7 +14,6 @@
   },
   "apexdocs": {
     "sourceDir": "force-app",
-    "targetGenerator": "markdown",
     "scope": ["global", "public", "protected", "private", "namespaceaccessible"],
     "namespace": "ns"
   }

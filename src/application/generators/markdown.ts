@@ -1,36 +1,36 @@
-import { Settings } from '../../core/settings';
 import { generateDocs } from '../../core/markdown/generate-docs';
 import { FileWriter } from '../file-writer';
 import { Logger } from '#utils/logger';
-import { flow } from 'fp-ts/function';
+import { pipe } from 'fp-ts/function';
 import * as E from 'fp-ts/Either';
-import { DocumentationBundle, PageData, SourceFile } from '../../core/shared/types';
+import { DocumentationBundle, PageData, SourceFile, UserDefinedMarkdownConfig } from '../../core/shared/types';
 import { ReflectionError } from '../../core/markdown/reflection/error-handling';
 import { referenceGuideTemplate } from '../../core/markdown/templates/reference-guide';
-import { AllConfigurableOptions } from '../../cli/args';
 
-export default flow(
-  generateDocumentationBundle,
-  E.map(writeFilesToSystem),
-  E.mapLeft((errors) => {
-    const errorMessages = [
-      'Error(s) occurred while parsing files. Please review the following issues:',
-      ...errors.map(formatReflectionError),
-    ].join('\n');
+export default function generate(bundles: SourceFile[], config: UserDefinedMarkdownConfig) {
+  return pipe(
+    generateDocumentationBundle(bundles, config),
+    E.map((files) => writeFilesToSystem(files, config.targetDir)),
+    E.mapLeft((errors) => {
+      const errorMessages = [
+        'Error(s) occurred while parsing files. Please review the following issues:',
+        ...errors.map(formatReflectionError),
+      ].join('\n');
 
-    Logger.error(errorMessages);
-  }),
-);
+      Logger.error(errorMessages);
+    }),
+  );
+}
 
-function generateDocumentationBundle(bundles: SourceFile[], config: AllConfigurableOptions) {
+function generateDocumentationBundle(bundles: SourceFile[], config: UserDefinedMarkdownConfig) {
   return generateDocs(bundles, {
     ...config,
     referenceGuideTemplate: referenceGuideTemplate,
   });
 }
 
-function writeFilesToSystem(files: DocumentationBundle) {
-  FileWriter.write([files.referenceGuide, ...files.docs], (file: PageData) => {
+function writeFilesToSystem(files: DocumentationBundle, outputDir: string) {
+  FileWriter.write([files.referenceGuide, ...files.docs], outputDir, (file: PageData) => {
     Logger.logSingle(`${file.fileName} processed.`, false, 'green', false);
   });
 }

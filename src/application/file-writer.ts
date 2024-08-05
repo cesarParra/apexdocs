@@ -1,12 +1,11 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Settings } from '../core/settings';
 import { PageData } from '../core/shared/types';
 
 export class FileWriter {
-  static write(files: PageData[], onWriteCallback: (file: PageData) => void) {
+  static write(files: PageData[], outputDir: string, onWriteCallback: (file: PageData) => void) {
     files.forEach((file) => {
-      const resolvedFile = this.getTargetLocation(file);
+      const resolvedFile = this.getTargetLocation(file, outputDir);
       if (!fs.existsSync(resolvedFile.directory)) {
         fs.mkdirSync(resolvedFile.directory, { recursive: true });
       }
@@ -17,10 +16,10 @@ export class FileWriter {
     });
   }
 
-  private static getTargetLocation(file: PageData): PageData {
+  private static getTargetLocation(file: PageData, outputDir: string): PageData {
     return {
       ...file,
-      directory: path.join(Settings.getInstance().outputDir, file.directory),
+      directory: path.join(outputDir, file.directory),
     };
   }
 }

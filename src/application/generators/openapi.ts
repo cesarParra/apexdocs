@@ -7,10 +7,10 @@ import { Logger } from '#utils/logger';
 import ErrorLogger from '#utils/error-logger';
 import { reflect, ReflectionResult } from '@cparra/apex-reflection';
 import Manifest from '../../core/manifest';
-import { PageData, SourceFile } from '../../core/shared/types';
+import { PageData, SourceFile, UserDefinedOpenApiConfig } from '../../core/shared/types';
 import { OpenApiDocsProcessor } from '../../core/openapi/open-api-docs-processor';
 
-export default function openApi(fileBodies: SourceFile[]) {
+export default function openApi(fileBodies: SourceFile[], config: UserDefinedOpenApiConfig) {
   const manifest = createManifest(new RawBodyParser(fileBodies), reflectionWithLogger);
   TypesRepository.getInstance().populateAll(manifest.types);
   const filteredTypes = filterByScopes(manifest);
@@ -18,7 +18,7 @@ export default function openApi(fileBodies: SourceFile[]) {
   Transpiler.generate(filteredTypes, processor);
   const generatedFiles = processor.fileBuilder().files();
 
-  FileWriter.write(generatedFiles, (file: PageData) => {
+  FileWriter.write(generatedFiles, config.targetDir, (file: PageData) => {
     Logger.logSingle(`${file.fileName} processed.`, false, 'green', false);
   });
 
