@@ -31,23 +31,11 @@ export function typeToRenderable<T extends Type>(
     const { type } = parsedFile;
     switch (type.type_name) {
       case 'enum':
-        return enumTypeToEnumSource(
-          type as EnumMirror,
-          linkGenerator,
-          config.sortMembersAlphabetically,
-        ) as RenderableEnum;
+        return enumTypeToEnumSource(type as EnumMirror, linkGenerator) as RenderableEnum;
       case 'interface':
-        return interfaceTypeToInterfaceSource(
-          type as InterfaceMirror,
-          linkGenerator,
-          config.sortMembersAlphabetically,
-        ) as RenderableInterface;
+        return interfaceTypeToInterfaceSource(type as InterfaceMirror, linkGenerator) as RenderableInterface;
       case 'class':
-        return classTypeToClassSource(
-          type as ClassMirrorWithInheritanceChain,
-          linkGenerator,
-          config.sortMembersAlphabetically,
-        ) as RenderableClass;
+        return classTypeToClassSource(type as ClassMirrorWithInheritanceChain, linkGenerator) as RenderableClass;
     }
   }
 
@@ -87,7 +75,6 @@ function baseTypeAdapter(
 function enumTypeToEnumSource(
   enumType: EnumMirror,
   linkGenerator: GetRenderableContentByTypeName,
-  sortValuesAlphabetically: boolean,
   baseHeadingLevel: number = 1,
 ): RenderableEnum {
   return {
@@ -96,32 +83,17 @@ function enumTypeToEnumSource(
     values: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Values',
-      value: enumType.values
-        .map((value) => ({
-          ...adaptDescribable(value.docComment?.descriptionLines, linkGenerator),
-          value: value.name,
-        }))
-        .sort((a, b) => {
-          if (sortValuesAlphabetically) {
-            return a.value.localeCompare(b.value);
-          }
-          return 0;
-        }),
+      value: enumType.values.map((value) => ({
+        ...adaptDescribable(value.docComment?.descriptionLines, linkGenerator),
+        value: value.name,
+      })),
     },
   };
-}
-
-function sortByNames<T extends { name: string }>(a: T, b: T, shouldSort: boolean): number {
-  if (shouldSort) {
-    return a.name.localeCompare(b.name);
-  }
-  return 0;
 }
 
 function interfaceTypeToInterfaceSource(
   interfaceType: InterfaceMirror,
   linkGenerator: GetRenderableContentByTypeName,
-  sortMembersAlphabetically: boolean,
   baseHeadingLevel: number = 1,
 ): RenderableInterface {
   return {
@@ -131,9 +103,7 @@ function interfaceTypeToInterfaceSource(
     methods: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Methods',
-      value: interfaceType.methods
-        .sort((a, b) => sortByNames(a, b, sortMembersAlphabetically))
-        .map((method) => adaptMethod(method, linkGenerator, baseHeadingLevel + 2)),
+      value: interfaceType.methods.map((method) => adaptMethod(method, linkGenerator, baseHeadingLevel + 2)),
     },
   };
 }
@@ -141,7 +111,6 @@ function interfaceTypeToInterfaceSource(
 function classTypeToClassSource(
   classType: ClassMirrorWithInheritanceChain,
   linkGenerator: GetRenderableContentByTypeName,
-  sortMembersAlphabetically: boolean,
   baseHeadingLevel: number = 1,
 ): RenderableClass {
   return {
@@ -162,7 +131,7 @@ function classTypeToClassSource(
     ),
     fields: adaptMembers(
       'Fields',
-      (classType.fields as FieldMirrorWithInheritance[]).sort((a, b) => sortByNames(a, b, sortMembersAlphabetically)),
+      classType.fields as FieldMirrorWithInheritance[],
       adaptFieldOrProperty,
       linkGenerator,
       baseHeadingLevel + 1,
@@ -178,26 +147,19 @@ function classTypeToClassSource(
       headingLevel: baseHeadingLevel + 1,
       heading: 'Classes',
       value: classType.classes.map((innerClass) =>
-        classTypeToClassSource(
-          { ...innerClass, inheritanceChain: [] },
-          linkGenerator,
-          sortMembersAlphabetically,
-          baseHeadingLevel + 2,
-        ),
+        classTypeToClassSource({ ...innerClass, inheritanceChain: [] }, linkGenerator, baseHeadingLevel + 2),
       ),
     },
     innerEnums: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Enums',
-      value: classType.enums.map((innerEnum) =>
-        enumTypeToEnumSource(innerEnum, linkGenerator, sortMembersAlphabetically, baseHeadingLevel + 2),
-      ),
+      value: classType.enums.map((innerEnum) => enumTypeToEnumSource(innerEnum, linkGenerator, baseHeadingLevel + 2)),
     },
     innerInterfaces: {
       headingLevel: baseHeadingLevel + 1,
       heading: 'Interfaces',
       value: classType.interfaces.map((innerInterface) =>
-        interfaceTypeToInterfaceSource(innerInterface, linkGenerator, sortMembersAlphabetically, baseHeadingLevel + 2),
+        interfaceTypeToInterfaceSource(innerInterface, linkGenerator, baseHeadingLevel + 2),
       ),
     },
   };

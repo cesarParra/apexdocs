@@ -470,6 +470,40 @@ describe('Generates interface documentation', () => {
       assertEither(result, (data) => expect(data).firstDocContains('## Classes'));
     });
 
+    it('sorts inner classes when sorting members alphabetically', () => {
+      const input = `
+        public class MyClass {
+          public class ZInnerClass {}
+          public class AInnerClass {}
+        }
+      `;
+
+      const result = generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: true });
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => {
+        const aInnerClassIndex = data.docs[0].content.indexOf('AInnerClass');
+        const zInnerClassIndex = data.docs[0].content.indexOf('ZInnerClass');
+        expect(aInnerClassIndex).toBeLessThan(zInnerClassIndex);
+      });
+    });
+
+    it('does not sort inner classes when not sorting members alphabetically', () => {
+      const input = `
+        public class MyClass {
+          public class ZInnerClass {}
+          public class AInnerClass {}
+        }
+      `;
+
+      const result = generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: false });
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => {
+        const aInnerClassIndex = data.docs[0].content.indexOf('AInnerClass');
+        const zInnerClassIndex = data.docs[0].content.indexOf('ZInnerClass');
+        expect(aInnerClassIndex).toBeGreaterThan(zInnerClassIndex);
+      });
+    });
+
     it('displays the Inner Interface heading', () => {
       const input = `
         public class MyClass {
