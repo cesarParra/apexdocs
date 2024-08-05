@@ -52,5 +52,8 @@ function sortClassMembers(shouldSort: boolean, classType: ClassMirror): ClassMir
     fields: sortNamed(shouldSort, classType.fields),
     classes: sortNamed(shouldSort, classType.classes),
     enums: sortNamed(shouldSort, classType.enums),
+    interfaces: sortNamed(shouldSort, classType.interfaces),
+    methods: sortNamed(shouldSort, classType.methods),
+    properties: sortNamed(shouldSort, classType.properties),
   };
 }

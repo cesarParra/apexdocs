@@ -388,6 +388,40 @@ describe('Generates interface documentation', () => {
       assertEither(result, (data) => expect(data).firstDocContains('## Methods'));
     });
 
+    it('sorts methods when sorting members alphabetically', () => {
+      const input = `
+        public class MyClass {
+          public void zMethod() {}
+          public void aMethod() {}
+        }
+      `;
+
+      const result = generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: true });
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => {
+        const aMethodIndex = data.docs[0].content.indexOf('aMethod');
+        const zMethodIndex = data.docs[0].content.indexOf('zMethod');
+        expect(aMethodIndex).toBeLessThan(zMethodIndex);
+      });
+    });
+
+    it('does not sort methods when not sorting members alphabetically', () => {
+      const input = `
+        public class MyClass {
+          public void zMethod() {}
+          public void aMethod() {}
+        }
+      `;
+
+      const result = generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: false });
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => {
+        const aMethodIndex = data.docs[0].content.indexOf('aMethod');
+        const zMethodIndex = data.docs[0].content.indexOf('zMethod');
+        expect(aMethodIndex).toBeGreaterThan(zMethodIndex);
+      });
+    });
+
     it('displays the Property heading', () => {
       const input = `
         public class MyClass {
@@ -398,6 +432,40 @@ describe('Generates interface documentation', () => {
       const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Properties'));
+    });
+
+    it('sorts properties when sorting members alphabetically', () => {
+      const input = `
+        public class MyClass {
+          public String zProperty { get; set; }
+          public String aProperty { get; set; }
+        }
+      `;
+
+      const result = generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: true });
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => {
+        const aPropertyIndex = data.docs[0].content.indexOf('aProperty');
+        const zPropertyIndex = data.docs[0].content.indexOf('zProperty');
+        expect(aPropertyIndex).toBeLessThan(zPropertyIndex);
+      });
+    });
+
+    it('does not sort properties when not sorting members alphabetically', () => {
+      const input = `
+        public class MyClass {
+          public String zProperty { get; set; }
+          public String aProperty { get; set; }
+        }  
+      `;
+
+      const result = generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: false });
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => {
+        const aPropertyIndex = data.docs[0].content.indexOf('aProperty');
+        const zPropertyIndex = data.docs[0].content.indexOf('zProperty');
+        expect(aPropertyIndex).toBeGreaterThan(zPropertyIndex);
+      });
     });
 
     it('displays the Field heading', () => {
@@ -514,6 +582,40 @@ describe('Generates interface documentation', () => {
       const result = generateDocs([apexBundleFromRawString(input)]);
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Interfaces'));
+    });
+
+    it('sorts inner interfaces when sorting members alphabetically', () => {
+      const input = `
+        public class MyClass {
+          public interface ZInnerInterface {}
+          public interface AInnerInterface {}
+        }
+      `;
+
+      const result = generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: true });
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => {
+        const aInnerInterfaceIndex = data.docs[0].content.indexOf('AInnerInterface');
+        const zInnerInterfaceIndex = data.docs[0].content.indexOf('ZInnerInterface');
+        expect(aInnerInterfaceIndex).toBeLessThan(zInnerInterfaceIndex);
+      });
+    });
+
+    it('does not sort inner interfaces when not sorting members alphabetically', () => {
+      const input = `
+        public class MyClass {
+          public interface ZInnerInterface {}
+          public interface AInnerInterface {}
+        }
+      `;
+
+      const result = generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: false });
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => {
+        const aInnerInterfaceIndex = data.docs[0].content.indexOf('AInnerInterface');
+        const zInnerInterfaceIndex = data.docs[0].content.indexOf('ZInnerInterface');
+        expect(aInnerInterfaceIndex).toBeGreaterThan(zInnerInterfaceIndex);
+      });
     });
 
     it('displays the Inner Enum heading', () => {
