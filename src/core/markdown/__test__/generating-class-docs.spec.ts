@@ -528,6 +528,40 @@ describe('Generates interface documentation', () => {
       assertEither(result, (data) => expect(data).firstDocContains('## Enums'));
     });
 
+    it('sort inner enums when sorting members alphabetically', () => {
+      const input = `
+        public class MyClass {
+          public enum ZInnerEnum {}
+          public enum AInnerEnum {}
+        }
+      `;
+
+      const result = generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: true });
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => {
+        const aInnerEnumIndex = data.docs[0].content.indexOf('AInnerEnum');
+        const zInnerEnumIndex = data.docs[0].content.indexOf('ZInnerEnum');
+        expect(aInnerEnumIndex).toBeLessThan(zInnerEnumIndex);
+      });
+    });
+
+    it('does not sort inner enums when not sorting members alphabetically', () => {
+      const input = `
+        public class MyClass {
+          public enum ZInnerEnum {}
+          public enum AInnerEnum {}
+        }
+      `;
+
+      const result = generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: false });
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => {
+        const aInnerEnumIndex = data.docs[0].content.indexOf('AInnerEnum');
+        const zInnerEnumIndex = data.docs[0].content.indexOf('ZInnerEnum');
+        expect(aInnerEnumIndex).toBeGreaterThan(zInnerEnumIndex);
+      });
+    });
+
     it('supports having mermaid diagrams in descriptions', () => {
       const input = `
         public class MyClass {
