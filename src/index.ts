@@ -4,7 +4,7 @@ import { defaults } from './defaults';
 
 type ConfigurableMarkdownConfig = Omit<
   SetOptional<UserDefinedMarkdownConfig, 'targetDir' | 'scope' | 'defaultGroupName' | 'includeMetadata'>,
-  'targetGenerator' | 'referenceGuideTemplate'
+  'targetGenerator'
 >;
 
 function defineMarkdownConfig(config: ConfigurableMarkdownConfig): UserDefinedMarkdownConfig {

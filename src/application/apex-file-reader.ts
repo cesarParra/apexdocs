@@ -1,4 +1,3 @@
-import { Settings } from '../core/settings';
 import { FileSystem } from './file-system';
 import { SourceFile } from '../core/shared/types';
 

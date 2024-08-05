@@ -1,6 +1,5 @@
 import { assertEither, extendExpect } from './expect-extensions';
 import { apexBundleFromRawString, generateDocs } from './test-helpers';
-import * as E from 'fp-ts/Either';
 
 describe('Generates enum documentation', () => {
   beforeAll(() => {
