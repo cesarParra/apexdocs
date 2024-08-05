@@ -162,7 +162,7 @@ function classTypeToClassSource(
     ),
     fields: adaptMembers(
       'Fields',
-      classType.fields as FieldMirrorWithInheritance[],
+      (classType.fields as FieldMirrorWithInheritance[]).sort((a, b) => sortByNames(a, b, sortMembersAlphabetically)),
       adaptFieldOrProperty,
       linkGenerator,
       baseHeadingLevel + 1,

@@ -412,6 +412,40 @@ describe('Generates interface documentation', () => {
       assertEither(result, (data) => expect(data).firstDocContains('## Fields'));
     });
 
+    it('sort fields when sorting members alphabetically', () => {
+      const input = `
+        public class MyClass {
+          public String zField;
+          public String aField;
+        }
+      `;
+
+      const result = generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: true });
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => {
+        const aFieldIndex = data.docs[0].content.indexOf('aField');
+        const zFieldIndex = data.docs[0].content.indexOf('zField');
+        expect(aFieldIndex).toBeLessThan(zFieldIndex);
+      });
+    });
+
+    it('does not sort fields when not sorting members alphabetically', () => {
+      const input = `
+        public class MyClass {
+          public String zField;
+          public String aField;
+        }
+      `;
+
+      const result = generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: false });
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => {
+        const aFieldIndex = data.docs[0].content.indexOf('aField');
+        const zFieldIndex = data.docs[0].content.indexOf('zField');
+        expect(aFieldIndex).toBeGreaterThan(zFieldIndex);
+      });
+    });
+
     it('displays the Constructor heading', () => {
       const input = `
         public class MyClass {
