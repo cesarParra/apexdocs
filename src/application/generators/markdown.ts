@@ -14,8 +14,7 @@ export default function generate(bundles: SourceFile[], config: UserDefinedMarkd
     TE.mapLeft((error) => {
       if (error._tag === 'HookError') {
         Logger.error('Error(s) occurred while processing hooks. Please review the following issues:');
-        const stringifiedError = JSON.stringify(error.error, null, 2);
-        Logger.error(stringifiedError);
+        Logger.error(error.error);
         return;
       }
 

@@ -4,9 +4,11 @@ import * as TE from 'fp-ts/TaskEither';
 
 import { apply } from '#utils/fp';
 import {
+  DocPageData,
   DocumentationBundle,
   ReferenceGuidePageData,
   SourceFile,
+  TransformDocs,
   TransformReferenceGuide,
   UserDefinedMarkdownConfig,
 } from '../shared/types';
@@ -23,7 +25,7 @@ import { sortMembers } from './reflection/sort-members';
 
 export type MarkdownGeneratorConfig = Pick<
   UserDefinedMarkdownConfig,
-  'targetDir' | 'scope' | 'namespace' | 'defaultGroupName' | 'transformReferenceGuide'
+  'targetDir' | 'scope' | 'namespace' | 'defaultGroupName' | 'transformReferenceGuide' | 'transformDocs'
 > & {
   referenceGuideTemplate: string;
   sortMembersAlphabetically: boolean;
@@ -31,6 +33,7 @@ export type MarkdownGeneratorConfig = Pick<
 
 export class HookError {
   readonly _tag = 'HookError';
+
   constructor(public error: unknown) {}
 }
 
@@ -84,7 +87,7 @@ const documentationBundleHook = async (
 ): Promise<DocumentationBundle> => {
   return {
     referenceGuide: await transformReferenceGuide(bundle.referenceGuide, config.transformReferenceGuide),
-    docs: bundle.docs,
+    docs: await transformDocs(bundle.docs, config.transformDocs),
   };
 };
 
@@ -92,11 +95,12 @@ const transformReferenceGuide = async (
   referenceGuide: ReferenceGuidePageData,
   hook: TransformReferenceGuide = passThroughHook,
 ) => {
-  // TODO: Things in hooks might fail (we don't know, cause it is configurable), so let's
-  // make sure we are using the pipe function to handle errors.
-
   return {
     ...referenceGuide,
     ...(await hook(referenceGuide)),
   };
+};
+
+const transformDocs = async (docs: DocPageData[], hook: TransformDocs = passThroughHook) => {
+  return hook(docs);
 };

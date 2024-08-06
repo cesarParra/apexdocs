@@ -4,6 +4,7 @@ export type Generator = 'markdown' | 'openapi';
 
 export type ConfigurableHooks = {
   transformReferenceGuide: TransformReferenceGuide;
+  transformDocs: TransformDocs;
 };
 
 export type UserDefinedMarkdownConfig = {
@@ -37,9 +38,11 @@ export type ParsedFile = {
   type: Type;
 };
 
+type Frontmatter = string | null;
+
 export type ReferenceGuidePageData = {
   directory: string;
-  frontmatter: string | null; // TODO: This could also be a Record<string, unknown>, but keeping it simple for now
+  frontmatter: Frontmatter;
   content: string;
   fileExtension: string;
   fileName: string;
@@ -54,7 +57,7 @@ export type DocPageData = {
   fileName: string;
   fileExtension: string;
   directory: string;
-  frontmatter: Record<string, unknown> | null;
+  frontmatter: Frontmatter;
   content: string;
 };
 
@@ -72,3 +75,5 @@ export type DocumentationBundle = {
 export type TransformReferenceGuide = (
   referenceGuide: ReferenceGuidePageData,
 ) => Partial<ReferenceGuidePageData> | Promise<Partial<ReferenceGuidePageData>>;
+
+export type TransformDocs = (docs: DocPageData[]) => DocPageData[] | Promise<DocPageData[]>;

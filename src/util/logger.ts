@@ -26,14 +26,14 @@ export class Logger {
    * @param message The error message to log.
    * @param args Optional arguments.
    */
-  public static error(message: string, ...args: string[]) {
+  public static error(message: unknown, ...args: string[]) {
     this.logSingle(message, false, 'red', false);
     args.forEach(() => {
       this.logSingle(message, false, 'red', false);
     });
   }
 
-  public static logSingle(text: string, showSpinner = true, color: 'green' | 'red' = 'green', overrideConsole = true) {
+  public static logSingle(text: unknown, showSpinner = true, color: 'green' | 'red' = 'green', overrideConsole = true) {
     if (this.currentFrame > 9) {
       this.currentFrame = 0;
     }
