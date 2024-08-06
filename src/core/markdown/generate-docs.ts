@@ -6,6 +6,7 @@ import { apply } from '#utils/fp';
 import {
   DocPageData,
   DocumentationBundle,
+  PostHookDocumentationBundle,
   ReferenceGuidePageData,
   SourceFile,
   TransformDocs,
@@ -60,17 +61,19 @@ export function generateDocs(apexBundles: SourceFile[], config: MarkdownGenerato
         (error) => new HookError(error),
       ),
     ),
-    TE.map((bundle: DocumentationBundle) => ({
-      referenceGuide: {
-        ...bundle.referenceGuide,
-        content: Template.getInstance().compile({
-          source: {
-            frontmatter: bundle.referenceGuide.frontmatter,
-            content: bundle.referenceGuide.content,
-          },
-          template: hookableTemplate,
-        }),
-      },
+    TE.map((bundle: PostHookDocumentationBundle) => ({
+      referenceGuide: bundle.referenceGuide
+        ? {
+            ...bundle.referenceGuide,
+            content: Template.getInstance().compile({
+              source: {
+                frontmatter: bundle.referenceGuide.frontmatter,
+                content: bundle.referenceGuide.content,
+              },
+              template: hookableTemplate,
+            }),
+          }
+        : null,
       docs: bundle.docs,
     })),
   );
@@ -84,7 +87,7 @@ function passThroughHook<T>(value: T): T {
 const documentationBundleHook = async (
   bundle: DocumentationBundle,
   config: MarkdownGeneratorConfig,
-): Promise<DocumentationBundle> => {
+): Promise<PostHookDocumentationBundle> => {
   return {
     referenceGuide: await transformReferenceGuide(bundle.referenceGuide, config.transformReferenceGuide),
     docs: await transformDocs(bundle.docs, config.transformDocs),
@@ -95,6 +98,11 @@ const transformReferenceGuide = async (
   referenceGuide: ReferenceGuidePageData,
   hook: TransformReferenceGuide = passThroughHook,
 ) => {
+  const result = await hook(referenceGuide);
+  if (!result) {
+    return null;
+  }
+
   return {
     ...referenceGuide,
     ...(await hook(referenceGuide)),

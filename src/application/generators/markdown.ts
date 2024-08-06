@@ -2,7 +2,7 @@ import { generateDocs } from '../../core/markdown/generate-docs';
 import { FileWriter } from '../file-writer';
 import { Logger } from '#utils/logger';
 import { pipe } from 'fp-ts/function';
-import { DocumentationBundle, PageData, SourceFile, UserDefinedMarkdownConfig } from '../../core/shared/types';
+import { PageData, PostHookDocumentationBundle, SourceFile, UserDefinedMarkdownConfig } from '../../core/shared/types';
 import { ReflectionError } from '../../core/markdown/reflection/error-handling';
 import { referenceGuideTemplate } from '../../core/markdown/templates/reference-guide';
 import * as TE from 'fp-ts/TaskEither';
@@ -35,10 +35,17 @@ function generateDocumentationBundle(bundles: SourceFile[], config: UserDefinedM
   });
 }
 
-function writeFilesToSystem(files: DocumentationBundle, outputDir: string) {
-  FileWriter.write([files.referenceGuide, ...files.docs], outputDir, (file: PageData) => {
-    Logger.logSingle(`${file.fileName} processed.`, false, 'green', false);
-  });
+function writeFilesToSystem(files: PostHookDocumentationBundle, outputDir: string) {
+  FileWriter.write(
+    [files.referenceGuide, ...files.docs]
+      // Filter out any null of undefined files, which can occur if a hook removes a file from the bundle
+      // or returns null or undefined for the reference guide
+      .filter((file) => !!file),
+    outputDir,
+    (file: PageData) => {
+      Logger.logSingle(`${file.fileName} processed.`, false, 'green', false);
+    },
+  );
 }
 
 function formatReflectionError(error: ReflectionError) {

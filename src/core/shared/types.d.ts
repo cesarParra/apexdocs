@@ -70,10 +70,16 @@ export type DocumentationBundle = {
   docs: DocPageData[];
 };
 
+export type PostHookDocumentationBundle = {
+  referenceGuide: ReferenceGuidePageData | null | undefined;
+  docs: DocPageData[];
+};
+
 // Configurable Hooks
 
+// If null is received, the reference guide will be skipped
 export type TransformReferenceGuide = (
   referenceGuide: ReferenceGuidePageData,
-) => Partial<ReferenceGuidePageData> | Promise<Partial<ReferenceGuidePageData>>;
+) => Partial<ReferenceGuidePageData> | Promise<Partial<ReferenceGuidePageData>> | null;
 
 export type TransformDocs = (docs: DocPageData[]) => DocPageData[] | Promise<DocPageData[]>;
