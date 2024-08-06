@@ -1,6 +1,6 @@
 export const hookableTemplate = `
 {{#if frontmatter}}
-{{frontmatter}}
+{{{frontmatter}}}
 {{/if}}
 
 {{{content}}}

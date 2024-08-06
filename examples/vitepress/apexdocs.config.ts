@@ -1,37 +1,26 @@
 import { defineMarkdownConfig } from '../../src';
+import * as fs from 'node:fs';
 
-const indexFrontMatter = `---
-# https://vitepress.dev/reference/default-theme-home-page
-layout: home
-
-hero:
-  name: "Apexdocs Vitepress Example"
-  text: "Apexdocs Vitepress Example"
-  tagline: My great project tagline
-  actions:
-    - theme: brand
-      text: Markdown Examples
-      link: /markdown-examples
-    - theme: alt
-      text: API Examples
-      link: /api-examples
-
-features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
----`;
+function loadFileAsync(filePath: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    fs.readFile(filePath, 'utf8', (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
 
 export default defineMarkdownConfig({
   sourceDir: 'force-app',
   scope: ['global', 'public', 'protected', 'private', 'namespaceaccessible'],
-  transformReferenceGuide: (referenceGuide) => {
+  transformReferenceGuide: async (referenceGuide) => {
+    const frontMatter = await loadFileAsync('./docs/index-frontmatter.md');
     return {
       ...referenceGuide,
-      frontmatter: indexFrontMatter,
+      frontmatter: frontMatter,
     };
   },
 });

@@ -3,7 +3,10 @@ import { type ConfigurableHooks, UserDefinedMarkdownConfig } from './core/shared
 import { defaults } from './defaults';
 
 type ConfigurableMarkdownConfig = Omit<
-  SetOptional<UserDefinedMarkdownConfig, 'targetDir' | 'scope' | 'defaultGroupName' | 'includeMetadata'>,
+  SetOptional<
+    UserDefinedMarkdownConfig,
+    'targetDir' | 'scope' | 'defaultGroupName' | 'includeMetadata' | 'sortMembersAlphabetically'
+  >,
   'targetGenerator'
 >;
 

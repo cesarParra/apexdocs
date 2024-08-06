@@ -3,8 +3,8 @@
 layout: home
 
 hero:
-  name: &quot;Apexdocs Vitepress Example&quot;
-  text: &quot;Apexdocs Vitepress Example&quot;
+  name: "Apexdocs Vitepress Example"
+  text: "Apexdocs Vitepress Example"
   tagline: My great project tagline
   actions:
     - theme: brand
