@@ -69,5 +69,6 @@ export type DocumentationBundle = {
 
 // Configurable Hooks
 
-// TODO: Make Awaitable so that we can use promises in this hook
-export type TransformReferenceGuide = (referenceGuide: ReferenceGuidePageData) => Partial<ReferenceGuidePageData>;
+export type TransformReferenceGuide = (
+  referenceGuide: ReferenceGuidePageData,
+) => Partial<ReferenceGuidePageData> | Promise<Partial<ReferenceGuidePageData>>;

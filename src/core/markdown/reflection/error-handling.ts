@@ -2,6 +2,11 @@ import * as E from 'fp-ts/Either';
 import { ParsedFile } from '../../shared/types';
 import { pipe } from 'fp-ts/function';
 
+export class ReflectionErrors {
+  readonly _tag = 'ReflectionErrors';
+  constructor(public errors: ReflectionError[]) {}
+}
+
 export class ReflectionError {
   constructor(
     public file: string,
@@ -27,6 +32,6 @@ export function checkForReflectionErrors(reflectionResult: E.Either<ReflectionEr
   }
 
   return pipe(reflectionResult, reduceReflectionResultIntoSingleEither, ({ errors, parsedFiles }) =>
-    errors.length ? E.left(errors) : E.right(parsedFiles),
+    errors.length ? E.left(new ReflectionErrors(errors)) : E.right(parsedFiles),
   );
 }

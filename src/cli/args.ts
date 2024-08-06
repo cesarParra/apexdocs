@@ -9,7 +9,6 @@ import { markdownOptions } from './commands/markdown';
  * through cosmiconfig.
  */
 function _extractConfig(): Promise<CosmiconfigResult> {
-  // TODO: Test and confirm that we can also work with JS files
   return cosmiconfig('apexdocs', {
     loaders: {
       '.ts': TypeScriptLoader(),
@@ -27,7 +26,7 @@ function _extractYargs(config?: CosmiconfigResult) {
     .command('markdown', 'Generate documentation from Apex classes as a Markdown site.', (yargs) =>
       yargs.options(markdownOptions),
     )
-    .command('openapi', 'Generate an OpenApi REST specification from Apex classes.') // TODO: Implement OpenApi the same way
+    .command('openapi', 'Generate an OpenApi REST specification from Apex classes.')
     .demandCommand()
     .parseSync();
 }

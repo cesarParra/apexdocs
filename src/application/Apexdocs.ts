@@ -13,14 +13,14 @@ export class Apexdocs {
   /**
    * Generates documentation out of Apex source files.
    */
-  static generate(config: UserDefinedConfig): void {
+  static async generate(config: UserDefinedConfig): Promise<void> {
     Logger.logSingle('Initializing...', false);
 
     const fileBodies = ApexFileReader.processFiles(new DefaultFileSystem(), config.sourceDir, config.includeMetadata);
 
     switch (config.targetGenerator) {
       case 'markdown':
-        markdown(fileBodies, config);
+        await markdown(fileBodies, config);
         break;
       case 'openapi':
         openApi(fileBodies, config);

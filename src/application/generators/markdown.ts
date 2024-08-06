@@ -2,24 +2,31 @@ import { generateDocs } from '../../core/markdown/generate-docs';
 import { FileWriter } from '../file-writer';
 import { Logger } from '#utils/logger';
 import { pipe } from 'fp-ts/function';
-import * as E from 'fp-ts/Either';
 import { DocumentationBundle, PageData, SourceFile, UserDefinedMarkdownConfig } from '../../core/shared/types';
 import { ReflectionError } from '../../core/markdown/reflection/error-handling';
 import { referenceGuideTemplate } from '../../core/markdown/templates/reference-guide';
+import * as TE from 'fp-ts/TaskEither';
 
 export default function generate(bundles: SourceFile[], config: UserDefinedMarkdownConfig) {
   return pipe(
     generateDocumentationBundle(bundles, config),
-    E.map((files) => writeFilesToSystem(files, config.targetDir)),
-    E.mapLeft((errors) => {
+    TE.map((files) => writeFilesToSystem(files, config.targetDir)),
+    TE.mapLeft((error) => {
+      if (error._tag === 'HookError') {
+        Logger.error('Error(s) occurred while processing hooks. Please review the following issues:');
+        const stringifiedError = JSON.stringify(error.error, null, 2);
+        Logger.error(stringifiedError);
+        return;
+      }
+
       const errorMessages = [
         'Error(s) occurred while parsing files. Please review the following issues:',
-        ...errors.map(formatReflectionError),
+        ...error.errors.map(formatReflectionError),
       ].join('\n');
 
       Logger.error(errorMessages);
     }),
-  );
+  )();
 }
 
 function generateDocumentationBundle(bundles: SourceFile[], config: UserDefinedMarkdownConfig) {

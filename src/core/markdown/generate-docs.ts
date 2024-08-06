@@ -1,17 +1,18 @@
 import { pipe } from 'fp-ts/function';
 import * as E from 'fp-ts/Either';
+import * as TE from 'fp-ts/TaskEither';
 
 import { apply } from '#utils/fp';
 import {
-  UserDefinedMarkdownConfig,
   DocumentationBundle,
-  SourceFile,
   ReferenceGuidePageData,
+  SourceFile,
   TransformReferenceGuide,
+  UserDefinedMarkdownConfig,
 } from '../shared/types';
 import { parsedFilesToRenderableBundle } from './adapters/renderable-bundle';
 import { reflectSourceCode } from './reflection/reflect-source';
-import { checkForReflectionErrors, ReflectionError } from './reflection/error-handling';
+import { checkForReflectionErrors } from './reflection/error-handling';
 import { addInheritanceChainToTypes } from './reflection/inheritance-chain-expanion';
 import { addInheritedMembersToTypes } from './reflection/inherited-member-expansion';
 import { convertToDocumentationBundle } from './adapters/renderable-to-page-data';
@@ -28,10 +29,12 @@ export type MarkdownGeneratorConfig = Pick<
   sortMembersAlphabetically: boolean;
 };
 
-export function generateDocs(
-  apexBundles: SourceFile[],
-  config: MarkdownGeneratorConfig,
-): E.Either<ReflectionError[], DocumentationBundle> {
+export class HookError {
+  readonly _tag = 'HookError';
+  constructor(public error: unknown) {}
+}
+
+export function generateDocs(apexBundles: SourceFile[], config: MarkdownGeneratorConfig) {
   const filterOutOfScope = apply(filterScope, config.scope);
   const convertToRenderableBundle = apply(parsedFilesToRenderableBundle, config);
   const convertToDocumentationBundleForTemplate = apply(convertToDocumentationBundle, config.referenceGuideTemplate);
@@ -47,11 +50,14 @@ export function generateDocs(
     E.map(sortTypeMembers),
     E.map(convertToRenderableBundle),
     E.map(convertToDocumentationBundleForTemplate),
-    E.map((bundle) => ({
-      referenceGuide: transformReferenceGuide(bundle.referenceGuide, config.transformReferenceGuide),
-      docs: bundle.docs,
-    })),
-    E.map((bundle) => ({
+    TE.fromEither,
+    TE.flatMap((bundle) =>
+      TE.tryCatch(
+        () => documentationBundleHook(bundle, config),
+        (error) => new HookError(error),
+      ),
+    ),
+    TE.map((bundle: DocumentationBundle) => ({
       referenceGuide: {
         ...bundle.referenceGuide,
         content: Template.getInstance().compile({
@@ -72,12 +78,25 @@ function passThroughHook<T>(value: T): T {
   return value;
 }
 
-function transformReferenceGuide(
+const documentationBundleHook = async (
+  bundle: DocumentationBundle,
+  config: MarkdownGeneratorConfig,
+): Promise<DocumentationBundle> => {
+  return {
+    referenceGuide: await transformReferenceGuide(bundle.referenceGuide, config.transformReferenceGuide),
+    docs: bundle.docs,
+  };
+};
+
+const transformReferenceGuide = async (
   referenceGuide: ReferenceGuidePageData,
   hook: TransformReferenceGuide = passThroughHook,
-): ReferenceGuidePageData {
+) => {
+  // TODO: Things in hooks might fail (we don't know, cause it is configurable), so let's
+  // make sure we are using the pipe function to handle errors.
+
   return {
     ...referenceGuide,
-    ...hook(referenceGuide),
+    ...(await hook(referenceGuide)),
   };
-}
+};
