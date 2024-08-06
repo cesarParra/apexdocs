@@ -1,5 +1,5 @@
 import { SetOptional } from 'type-fest';
-import { type ConfigurableHooks, UserDefinedMarkdownConfig } from './core/shared/types';
+import { type ConfigurableHooks, Skip, UserDefinedMarkdownConfig } from './core/shared/types';
 import { defaults } from './defaults';
 
 type ConfigurableMarkdownConfig = Omit<
@@ -18,6 +18,12 @@ function defineMarkdownConfig(config: ConfigurableMarkdownConfig): UserDefinedMa
   };
 }
 
+function skip(): Skip {
+  return {
+    _tag: 'Skip',
+  };
+}
+
 // Exports
 
-export { defineMarkdownConfig, ConfigurableHooks };
+export { defineMarkdownConfig, skip, ConfigurableHooks };

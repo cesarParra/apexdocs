@@ -23,6 +23,7 @@ import { filterScope } from './reflection/filter-scope';
 import { Template } from './templates/template';
 import { hookableTemplate } from './templates/hookable';
 import { sortMembers } from './reflection/sort-members';
+import { isSkip } from '../shared/utils';
 
 export type MarkdownGeneratorConfig = Pick<
   UserDefinedMarkdownConfig,
@@ -62,8 +63,9 @@ export function generateDocs(apexBundles: SourceFile[], config: MarkdownGenerato
       ),
     ),
     TE.map((bundle: PostHookDocumentationBundle) => ({
-      referenceGuide: bundle.referenceGuide
-        ? {
+      referenceGuide: isSkip(bundle.referenceGuide)
+        ? bundle.referenceGuide
+        : {
             ...bundle.referenceGuide,
             content: Template.getInstance().compile({
               source: {
@@ -72,8 +74,7 @@ export function generateDocs(apexBundles: SourceFile[], config: MarkdownGenerato
               },
               template: hookableTemplate,
             }),
-          }
-        : null,
+          },
       docs: bundle.docs,
     })),
   );
@@ -99,8 +100,8 @@ const transformReferenceGuide = async (
   hook: TransformReferenceGuide = passThroughHook,
 ) => {
   const result = await hook(referenceGuide);
-  if (!result) {
-    return null;
+  if (isSkip(result)) {
+    return result;
   }
 
   return {

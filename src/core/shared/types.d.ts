@@ -70,8 +70,12 @@ export type DocumentationBundle = {
   docs: DocPageData[];
 };
 
+export type Skip = {
+  readonly _tag: 'Skip';
+};
+
 export type PostHookDocumentationBundle = {
-  referenceGuide: ReferenceGuidePageData | null | undefined;
+  referenceGuide: ReferenceGuidePageData | Skip;
   docs: DocPageData[];
 };
 

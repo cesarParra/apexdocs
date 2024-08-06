@@ -6,6 +6,7 @@ import { PageData, PostHookDocumentationBundle, SourceFile, UserDefinedMarkdownC
 import { ReflectionError } from '../../core/markdown/reflection/error-handling';
 import { referenceGuideTemplate } from '../../core/markdown/templates/reference-guide';
 import * as TE from 'fp-ts/TaskEither';
+import { isSkip } from '../../core/shared/utils';
 
 export default function generate(bundles: SourceFile[], config: UserDefinedMarkdownConfig) {
   return pipe(
@@ -38,9 +39,8 @@ function generateDocumentationBundle(bundles: SourceFile[], config: UserDefinedM
 function writeFilesToSystem(files: PostHookDocumentationBundle, outputDir: string) {
   FileWriter.write(
     [files.referenceGuide, ...files.docs]
-      // Filter out any null of undefined files, which can occur if a hook removes a file from the bundle
-      // or returns null or undefined for the reference guide
-      .filter((file) => !!file),
+      // Filter out any files that should be skipped
+      .filter((file) => !isSkip(file)) as PageData[],
     outputDir,
     (file: PageData) => {
       Logger.logSingle(`${file.fileName} processed.`, false, 'green', false);
