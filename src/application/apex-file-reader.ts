@@ -1,6 +1,5 @@
-import { Settings } from '../core/settings';
 import { FileSystem } from './file-system';
-import ApexBundle from '../core/apex-bundle';
+import { SourceFile } from '../core/shared/types';
 
 const APEX_FILE_EXTENSION = '.cls';
 
@@ -11,37 +10,33 @@ export class ApexFileReader {
   /**
    * Reads from .cls files and returns their raw body.
    */
-  static processFiles(fileSystem: FileSystem, rootPath: string = this.sourceDirectory): ApexBundle[] {
-    let bundles: ApexBundle[] = [];
+  static processFiles(fileSystem: FileSystem, rootPath: string, includeMetadata: boolean): SourceFile[] {
+    let bundles: SourceFile[] = [];
 
     const directoryContents = fileSystem.readDirectory(rootPath);
-    directoryContents.forEach((currentFilePath) => {
-      const currentPath = fileSystem.joinPath(rootPath, currentFilePath);
+    directoryContents.forEach((filePath) => {
+      const currentPath = fileSystem.joinPath(rootPath, filePath);
       if (fileSystem.isDirectory(currentPath)) {
-        bundles = bundles.concat(this.processFiles(fileSystem, currentPath));
+        bundles = bundles.concat(this.processFiles(fileSystem, currentPath, includeMetadata));
       }
 
-      if (!this.isApexFile(currentFilePath)) {
+      if (!this.isApexFile(filePath)) {
         return;
       }
 
-      const rawApexFile = fileSystem.readFile(currentPath);
-      const metadataPath = fileSystem.joinPath(rootPath, `${currentFilePath}-meta.xml`);
-      let rawMetadataFile = null;
-      if (Settings.getInstance().includeMetadata()) {
-        rawMetadataFile = fileSystem.exists(metadataPath) ? fileSystem.readFile(metadataPath) : null;
+      const rawTypeContent = fileSystem.readFile(currentPath);
+      const metadataPath = fileSystem.joinPath(rootPath, `${filePath}-meta.xml`);
+      let rawMetadataContent = null;
+      if (includeMetadata) {
+        rawMetadataContent = fileSystem.exists(metadataPath) ? fileSystem.readFile(metadataPath) : null;
       }
 
-      bundles.push(new ApexBundle(currentFilePath, rawApexFile, rawMetadataFile));
+      bundles.push({ filePath: currentPath, content: rawTypeContent, metadataContent: rawMetadataContent });
     });
     return bundles;
   }
 
   private static isApexFile(currentFile: string): boolean {
     return currentFile.endsWith(APEX_FILE_EXTENSION);
-  }
-
-  private static get sourceDirectory() {
-    return Settings.getInstance().sourceDirectory;
   }
 }

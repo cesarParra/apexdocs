@@ -1,19 +1,17 @@
-import ProcessorTypeTranspiler from '../processor-type-transpiler';
-import { FileContainer } from '../file-container';
+import { FileContainer } from './file-container';
 import { ClassMirror, Type } from '@cparra/apex-reflection';
-import { OpenapiTypeFile } from './openapi-type-file';
 import { Logger } from '#utils/logger';
 import { OpenApi } from './open-api';
 import { Settings } from '../settings';
 import { MethodParser } from './parsers/MethodParser';
 import { camel2title } from '#utils/string-utils';
+import { createOpenApiFile } from './openapi-type-file';
 
-export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
+export class OpenApiDocsProcessor {
   protected readonly _fileContainer: FileContainer;
   openApiModel: OpenApi;
 
   constructor() {
-    super();
     this._fileContainer = new FileContainer();
     const title = Settings.getInstance().getOpenApiTitle();
     if (!title) {
@@ -68,7 +66,8 @@ export class OpenApiDocsProcessor extends ProcessorTypeTranspiler {
   }
 
   onAfterProcess: ((types: Type[]) => void) | undefined = () => {
-    this._fileContainer.pushFile(new OpenapiTypeFile(this.openApiModel));
+    const page = createOpenApiFile(Settings.getInstance().openApiFileName(), this.openApiModel);
+    this._fileContainer.pushFile(page);
   };
 
   private getEndpointPath(type: Type): string | null {

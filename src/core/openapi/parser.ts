@@ -1,25 +1,25 @@
 import { ClassMirror, InterfaceMirror, ReflectionResult, Type } from '@cparra/apex-reflection';
-import ApexBundle from '../apex-bundle';
-import MetadataProcessor from '../metadata-processor';
+import { parseApexMetadata } from '../parse-apex-metadata';
 import { Logger } from '#utils/logger';
+import { SourceFile } from '../shared/types';
 
 export interface TypeParser {
-  parse(reflect: (apexBundle: ApexBundle) => ReflectionResult): Type[];
+  parse(reflect: (apexBundle: SourceFile) => ReflectionResult): Type[];
 }
 
 type NameAware = { name: string };
 
 export class RawBodyParser implements TypeParser {
-  constructor(public typeBundles: ApexBundle[]) {}
+  constructor(public typeBundles: SourceFile[]) {}
 
-  parse(reflect: (apexBundle: ApexBundle) => ReflectionResult): Type[] {
+  parse(reflect: (apexBundle: SourceFile) => ReflectionResult): Type[] {
     const types = this.typeBundles
       .map((currentBundle) => {
         Logger.log(`Parsing file: ${currentBundle.filePath}`);
         const result = reflect(currentBundle);
-        if (!!result.typeMirror && !!currentBundle.rawMetadataContent) {
+        if (!!result.typeMirror && !!currentBundle.metadataContent) {
           // If successful and there is a metadata file
-          const metadataParams = MetadataProcessor.process(currentBundle.rawMetadataContent);
+          const metadataParams = parseApexMetadata(currentBundle.metadataContent);
           metadataParams.forEach((value, key) => {
             const declaration = `${key}: ${value}`;
             result.typeMirror?.annotations.push({

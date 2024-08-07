@@ -1,51 +1,51 @@
-import ApexBundle from '../../core/apex-bundle';
-import { Settings, TargetFile } from '../../core/settings';
-import { DocumentationBundle, generateDocs, ReflectionError } from '../../core/markdown/generate-docs';
-import { MarkdownFile } from '../../core/markdown/markdown-file';
+import { generateDocs } from '../../core/markdown/generate-docs';
 import { FileWriter } from '../file-writer';
 import { Logger } from '#utils/logger';
-import { flow } from 'fp-ts/function';
-import * as E from 'fp-ts/Either';
+import { pipe } from 'fp-ts/function';
+import { PageData, PostHookDocumentationBundle, SourceFile, UserDefinedMarkdownConfig } from '../../core/shared/types';
+import { ReflectionError } from '../../core/markdown/reflection/error-handling';
+import { referenceGuideTemplate } from '../../core/markdown/templates/reference-guide';
+import * as TE from 'fp-ts/TaskEither';
+import { isSkip } from '../../core/shared/utils';
 
-export default flow(
-  generateDocumentationBundle,
-  E.map(convertToMarkdownFiles),
-  E.map(writeFilesToSystem),
-  E.mapLeft((errors) => {
-    const errorMessages = [
-      'Error(s) occurred while parsing files. Please review the following issues:',
-      ...errors.map(formatReflectionError),
-    ].join('\n');
+export default function generate(bundles: SourceFile[], config: UserDefinedMarkdownConfig) {
+  return pipe(
+    generateDocumentationBundle(bundles, config),
+    TE.map((files) => writeFilesToSystem(files, config.targetDir)),
+    TE.mapLeft((error) => {
+      if (error._tag === 'HookError') {
+        Logger.error('Error(s) occurred while processing hooks. Please review the following issues:');
+        Logger.error(error.error);
+        return;
+      }
 
-    Logger.error(errorMessages);
-  }),
-);
+      const errorMessages = [
+        'Error(s) occurred while parsing files. Please review the following issues:',
+        ...error.errors.map(formatReflectionError),
+      ].join('\n');
 
-function generateDocumentationBundle(bundles: ApexBundle[]) {
+      Logger.error(errorMessages);
+    }),
+  )();
+}
+
+function generateDocumentationBundle(bundles: SourceFile[], config: UserDefinedMarkdownConfig) {
   return generateDocs(bundles, {
-    scope: Settings.getInstance().scope,
-    outputDir: Settings.getInstance().outputDir,
-    namespace: Settings.getInstance().getNamespace(),
-    sortMembersAlphabetically: Settings.getInstance().sortMembersAlphabetically(),
-    defaultGroupName: Settings.getInstance().getDefaultGroupName(),
+    ...config,
+    referenceGuideTemplate: referenceGuideTemplate,
   });
 }
 
-function convertToMarkdownFiles(docBundle: DocumentationBundle): MarkdownFile[] {
-  return [
-    new MarkdownFile('index', '').addText(docBundle.referenceGuide),
-    ...docBundle.docs.map((doc) =>
-      new MarkdownFile(`${Settings.getInstance().getNamespacePrefix()}${doc.typeName}`, doc.directory).addText(
-        doc.docContents,
-      ),
-    ),
-  ];
-}
-
-function writeFilesToSystem(files: MarkdownFile[]) {
-  FileWriter.write(files, (file: TargetFile) => {
-    Logger.logSingle(`${file.name} processed.`, false, 'green', false);
-  });
+function writeFilesToSystem(files: PostHookDocumentationBundle, outputDir: string) {
+  FileWriter.write(
+    [files.referenceGuide, ...files.docs]
+      // Filter out any files that should be skipped
+      .filter((file) => !isSkip(file)) as PageData[],
+    outputDir,
+    (file: PageData) => {
+      Logger.logSingle(`${file.fileName} processed.`, false, 'green', false);
+    },
+  );
 }
 
 function formatReflectionError(error: ReflectionError) {

@@ -1,0 +1,18 @@
+{
+  "name": "vitepress-example",
+  "scripts": {
+    "docs:clean": "rimraf --glob 'docs/!(.vitepress|index-frontmatter.md|api-examples.md|markdown-examples.md)'",
+    "apexdocs:build": "npm run docs:clean && ts-node ../../src/cli/generate.ts markdown",
+    "docs:build": "vitepress build docs",
+    "docs:gen": "npm run docs:clean && npm run docs:build",
+    "docs:dev": "vitepress dev docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "vitepress": "^1.3.1"
+  },
+  "dependencies": {
+    "rimraf": "^5.0.7"
+  }
+}

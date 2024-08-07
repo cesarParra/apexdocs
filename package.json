@@ -13,11 +13,11 @@
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "apexdocs-generate": "./dist/cli/generate.js"
+    "apexdocs": "./dist/cli/generate.js"
   },
   "scripts": {
     "test": "npm run build && jest",
-    "build": "rimraf ./lib && npm run lint && pkgroll --minify",
+    "build": "rimraf ./lib && npm run lint && tsc --noEmit && pkgroll",
     "lint": "eslint \"./src/**/*.{js,ts}\" --quiet --fix",
     "prepare": "npm run build",
     "version": "npm run format && git add -A src",
@@ -67,11 +67,13 @@
     "@types/yargs": "^17.0.32",
     "chalk": "^4.1.2",
     "cosmiconfig": "^9.0.0",
+    "cosmiconfig-typescript-loader": "^5.0.0",
     "fast-xml-parser": "^4.4.0",
     "fp-ts": "^2.16.8",
     "handlebars": "^4.7.8",
     "js-yaml": "^4.1.0",
     "log-update": "4.0.0",
+    "type-fest": "^4.23.0",
     "yargs": "^17.7.2"
   },
   "imports": {
