@@ -38,22 +38,33 @@ export default defineMarkdownConfig({
   },
   transformDocs: async (docs) => {
     // Update sidebar
-    console.log(docs[0].directory);
     const sidebar = [
       {
         text: 'API Reference',
         items: [
           {
-            text: 'Classes',
-            items: docs.filter((doc) => doc.source.type === 'class').map(toSidebarLink),
+            text: 'Grouped By Type',
+            items: [
+              {
+                text: 'Classes',
+                items: docs.filter((doc) => doc.source.type === 'class').map(toSidebarLink),
+              },
+              {
+                text: 'Interfaces',
+                items: docs.filter((doc) => doc.source.type === 'interface').map(toSidebarLink),
+              },
+              {
+                text: 'Enums',
+                items: docs.filter((doc) => doc.source.type === 'enum').map(toSidebarLink),
+              },
+            ],
           },
           {
-            text: 'Interfaces',
-            items: docs.filter((doc) => doc.source.type === 'interface').map(toSidebarLink),
-          },
-          {
-            text: 'Enums',
-            items: docs.filter((doc) => doc.source.type === 'enum').map(toSidebarLink),
+            text: 'Grouped by Group',
+            items: Array.from(extractGroups(docs)).map(([groupName, groupDocs]) => ({
+              text: groupName,
+              items: groupDocs.map(toSidebarLink),
+            })),
           },
         ],
       },
@@ -79,4 +90,19 @@ function toSidebarLink(doc: DocPageData) {
       // remove the leading "./"
       .replace(/^\.\//, ''),
   };
+}
+
+function extractGroups(docs: DocPageData[]) {
+  const groups = new Map<string, DocPageData[]>();
+  for (const doc of docs) {
+    if (!doc.group) {
+      continue;
+    }
+
+    const groupDocs = groups.get(doc.group) ?? [];
+    groupDocs.push(doc);
+    groups.set(doc.group, groupDocs);
+  }
+
+  return groups;
 }

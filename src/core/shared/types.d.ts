@@ -55,6 +55,7 @@ export type DocPageData = {
     name: string;
     type: 'interface' | 'class' | 'enum';
   };
+  group: string | null;
   fileName: string;
   fileExtension: string;
   directory: string;

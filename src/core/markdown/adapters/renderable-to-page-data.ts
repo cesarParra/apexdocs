@@ -62,6 +62,7 @@ function renderableToPageData(referenceGuideReference: ReferenceGuideReference[]
       directory: `${reference?.directory}`,
       frontmatter: null,
       content: docContents,
+      group: renderable.doc.group ?? 'Miscellaneous',
     };
   }
 

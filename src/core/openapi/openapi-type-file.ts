@@ -9,5 +9,6 @@ export function createOpenApiFile(fileName: string, openApiModel: OpenApi): Open
     directory: '',
     content,
     frontmatter: null,
+    group: null,
   };
 }
