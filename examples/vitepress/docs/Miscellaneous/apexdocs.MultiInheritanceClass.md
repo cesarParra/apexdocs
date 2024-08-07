@@ -4,9 +4,12 @@ title: MultiInheritanceClass
 
 # MultiInheritanceClass Class
 
+## Namespace
+apexdocs
+
 **Inheritance**
 
-[SampleClass](../SampleGroup/SampleClass.md) < [BaseClass](./BaseClass.md)
+[apexdocs.SampleClass](../SampleGroup/apexdocs.SampleClass.md) < [apexdocs.BaseClass](./apexdocs.BaseClass.md)
 
 ## Fields
 ### `sampleEnumFromBase`
@@ -19,7 +22,7 @@ public sampleEnumFromBase
 ```
 
 #### Type
-[SampleEnum](../Sample-Enums/SampleEnum.md)
+[apexdocs.SampleEnum](../Sample-Enums/apexdocs.SampleEnum.md)
 
 ## Properties
 ### Group Name

@@ -1,11 +1,13 @@
 import { pipe } from 'fp-ts/function';
 import * as E from 'fp-ts/Either';
 import * as TE from 'fp-ts/TaskEither';
+import yaml from 'js-yaml';
 
 import { apply } from '#utils/fp';
 import {
   DocPageData,
   DocumentationBundle,
+  Frontmatter,
   PostHookDocumentationBundle,
   ReferenceGuidePageData,
   SourceFile,
@@ -76,7 +78,7 @@ export function generateDocs(apexBundles: SourceFile[], config: MarkdownGenerato
             ...bundle.referenceGuide,
             content: Template.getInstance().compile({
               source: {
-                frontmatter: bundle.referenceGuide.frontmatter,
+                frontmatter: toFrontmatterString(bundle.referenceGuide.frontmatter),
                 content: bundle.referenceGuide.content,
               },
               template: hookableTemplate,
@@ -86,7 +88,7 @@ export function generateDocs(apexBundles: SourceFile[], config: MarkdownGenerato
         ...doc,
         content: Template.getInstance().compile({
           source: {
-            frontmatter: doc.frontmatter,
+            frontmatter: toFrontmatterString(doc.frontmatter),
             content: doc.content,
           },
           template: hookableTemplate,
@@ -94,6 +96,19 @@ export function generateDocs(apexBundles: SourceFile[], config: MarkdownGenerato
       })),
     })),
   );
+}
+
+function toFrontmatterString(frontmatter: Frontmatter): string {
+  if (typeof frontmatter === 'string') {
+    return frontmatter;
+  }
+
+  if (!frontmatter) {
+    return '';
+  }
+
+  const yamlString = yaml.dump(frontmatter);
+  return `---\n${yamlString}---\n`;
 }
 
 // Configurable hooks

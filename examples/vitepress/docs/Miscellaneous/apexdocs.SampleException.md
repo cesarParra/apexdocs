@@ -10,7 +10,7 @@ This is a sample exception.
 
 You can use the exception the following way. 
 
-You can also take a look at [SampleClass](../SampleGroup/SampleClass.md) to see how it is used. 
+You can also take a look at [apexdocs.SampleClass](../SampleGroup/apexdocs.SampleClass.md) to see how it is used. 
 
 This is a dangerous HTML tag: &lt;script&gt;alert(&#x27;Hello&#x27;);&lt;/script&gt; 
 
@@ -21,6 +21,9 @@ try {
   System.debug('Caught exception');
 }
 ```
+
+## Namespace
+apexdocs
 
 **Inheritance**
 

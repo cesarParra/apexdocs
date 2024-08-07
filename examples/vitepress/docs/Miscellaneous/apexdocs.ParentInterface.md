@@ -4,6 +4,9 @@ title: ParentInterface
 
 # ParentInterface Interface
 
+## Namespace
+apexdocs
+
 ## Methods
 ### `sampleParentMethod()`
 

@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: "Apexdocs Vitepress Example"
-  text: "Apexdocs Vitepress Example"
+  text: "API Documentation"
   tagline: My great project tagline
   actions:
     - theme: brand
@@ -13,37 +13,29 @@ hero:
     - theme: alt
       text: API Examples
       link: /api-examples
-
-features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
 ---
 
 # Apex Reference Guide
 
 ## Miscellaneous
 
-### [BaseClass](./Miscellaneous/BaseClass.md)
+### [apexdocs.BaseClass](./Miscellaneous/apexdocs.BaseClass.md)
 
-### [MultiInheritanceClass](./Miscellaneous/MultiInheritanceClass.md)
+### [apexdocs.MultiInheritanceClass](./Miscellaneous/apexdocs.MultiInheritanceClass.md)
 
-### [ParentInterface](./Miscellaneous/ParentInterface.md)
+### [apexdocs.ParentInterface](./Miscellaneous/apexdocs.ParentInterface.md)
 
-### [ReferencedEnum](./Miscellaneous/ReferencedEnum.md)
+### [apexdocs.ReferencedEnum](./Miscellaneous/apexdocs.ReferencedEnum.md)
 
-### [SampleException](./Miscellaneous/SampleException.md)
+### [apexdocs.SampleException](./Miscellaneous/apexdocs.SampleException.md)
 
 This is a sample exception.
 
-### [SampleInterface](./Miscellaneous/SampleInterface.md)
+### [apexdocs.SampleInterface](./Miscellaneous/apexdocs.SampleInterface.md)
 
 This is a sample interface
 
-### [Url](./Miscellaneous/Url.md)
+### [apexdocs.Url](./Miscellaneous/apexdocs.Url.md)
 
 Represents a uniform resource locator (URL) and provides access to parts of the URL. 
 
@@ -127,15 +119,15 @@ that inputs are valid, RFC-compliant URL or URI strings.
 
 ## Sample Enums
 
-### [SampleEnum](./Sample-Enums/SampleEnum.md)
+### [apexdocs.SampleEnum](./Sample-Enums/apexdocs.SampleEnum.md)
 
-This is a sample enum. This references [ReferencedEnum](./Miscellaneous/ReferencedEnum.md) . 
+This is a sample enum. This references [apexdocs.ReferencedEnum](./Miscellaneous/apexdocs.ReferencedEnum.md) . 
 
 This description has several lines
 
 ## SampleGroup
 
-### [SampleClass](./SampleGroup/SampleClass.md)
+### [apexdocs.SampleClass](./SampleGroup/apexdocs.SampleClass.md)
 
 aliquip ex sunt officia ullamco anim deserunt magna aliquip nisi eiusmod in sit officia veniam ex 
 

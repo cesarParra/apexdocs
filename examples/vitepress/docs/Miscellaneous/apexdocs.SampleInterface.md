@@ -12,9 +12,12 @@ This is a sample interface
 
 **Date** 2020-01-01
 
-**See** [SampleEnum](../Sample-Enums/SampleEnum.md)
+**See** [apexdocs.SampleEnum](../Sample-Enums/apexdocs.SampleEnum.md)
 
-**See** [ReferencedEnum](./ReferencedEnum.md)
+**See** [apexdocs.ReferencedEnum](./apexdocs.ReferencedEnum.md)
+
+## Namespace
+apexdocs
 
 ## Diagram
 ```mermaid
@@ -31,7 +34,7 @@ sampleInterface.sampleMethod();
 ```
 
 **Extends**
-[ParentInterface](./ParentInterface.md)
+[apexdocs.ParentInterface](./apexdocs.ParentInterface.md)
 
 ## Methods
 ### `sampleMethod()`
@@ -59,7 +62,7 @@ public String sampleMethod()
 Some return value
 
 #### Throws
-[SampleException](./SampleException.md): This is a sample exception
+[apexdocs.SampleException](./apexdocs.SampleException.md): This is a sample exception
 
 AnotherSampleException: This is another sample exception
 
@@ -98,10 +101,10 @@ public SampleEnum sampleMethodWithParams(String param1, Integer param2, SampleEn
 |------|------|-------------|
 | param1 | String | This is the first parameter |
 | param2 | Integer | This is the second parameter |
-| theEnum | [SampleEnum](../Sample-Enums/SampleEnum.md) | This is an enum parameter |
+| theEnum | [apexdocs.SampleEnum](../Sample-Enums/apexdocs.SampleEnum.md) | This is an enum parameter |
 
 #### Return Type
-**[SampleEnum](../Sample-Enums/SampleEnum.md)**
+**[apexdocs.SampleEnum](../Sample-Enums/apexdocs.SampleEnum.md)**
 
 Some return value
 

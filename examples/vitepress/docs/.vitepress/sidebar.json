@@ -1,0 +1,58 @@
+[
+  {
+    "text": "API Reference",
+    "items": [
+      {
+        "text": "Classes",
+        "items": [
+          {
+            "text": "BaseClass",
+            "link": "Miscellaneous/apexdocs.BaseClass"
+          },
+          {
+            "text": "MultiInheritanceClass",
+            "link": "Miscellaneous/apexdocs.MultiInheritanceClass"
+          },
+          {
+            "text": "SampleClass",
+            "link": "SampleGroup/apexdocs.SampleClass"
+          },
+          {
+            "text": "SampleException",
+            "link": "Miscellaneous/apexdocs.SampleException"
+          },
+          {
+            "text": "Url",
+            "link": "Miscellaneous/apexdocs.Url"
+          }
+        ]
+      },
+      {
+        "text": "Interfaces",
+        "items": [
+          {
+            "text": "ParentInterface",
+            "link": "Miscellaneous/apexdocs.ParentInterface"
+          },
+          {
+            "text": "SampleInterface",
+            "link": "Miscellaneous/apexdocs.SampleInterface"
+          }
+        ]
+      },
+      {
+        "text": "Enums",
+        "items": [
+          {
+            "text": "ReferencedEnum",
+            "link": "Miscellaneous/apexdocs.ReferencedEnum"
+          },
+          {
+            "text": "SampleEnum",
+            "link": "Sample-Enums/apexdocs.SampleEnum"
+          }
+        ]
+      }
+    ]
+  }
+]

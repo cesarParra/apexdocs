@@ -4,6 +4,9 @@ title: ReferencedEnum
 
 # ReferencedEnum Enum
 
+## Namespace
+apexdocs
+
 ## Values
 | Value | Description |
 |-------|-------------|

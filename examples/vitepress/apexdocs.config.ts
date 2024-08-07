@@ -1,4 +1,4 @@
-import { defineMarkdownConfig } from '../../src';
+import { defineMarkdownConfig, DocPageData } from '../../src';
 import * as fs from 'node:fs';
 
 function loadFileAsync(filePath: string): Promise<string> {
@@ -13,9 +13,22 @@ function loadFileAsync(filePath: string): Promise<string> {
   });
 }
 
+function writeFileAsync(filePath: string, data: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    fs.writeFile(filePath, data, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
 export default defineMarkdownConfig({
   sourceDir: 'force-app',
   scope: ['global', 'public', 'protected', 'private', 'namespaceaccessible'],
+  namespace: 'apexdocs',
   transformReferenceGuide: async (referenceGuide) => {
     const frontMatter = await loadFileAsync('./docs/index-frontmatter.md');
     return {
@@ -23,11 +36,47 @@ export default defineMarkdownConfig({
       frontmatter: frontMatter,
     };
   },
+  transformDocs: async (docs) => {
+    // Update sidebar
+    console.log(docs[0].directory);
+    const sidebar = [
+      {
+        text: 'API Reference',
+        items: [
+          {
+            text: 'Classes',
+            items: docs.filter((doc) => doc.source.type === 'class').map(toSidebarLink),
+          },
+          {
+            text: 'Interfaces',
+            items: docs.filter((doc) => doc.source.type === 'interface').map(toSidebarLink),
+          },
+          {
+            text: 'Enums',
+            items: docs.filter((doc) => doc.source.type === 'enum').map(toSidebarLink),
+          },
+        ],
+      },
+    ];
+    await writeFileAsync('./docs/.vitepress/sidebar.json', JSON.stringify(sidebar, null, 2));
+
+    return docs;
+  },
   transformDocPage: async (docPage) => {
-    const frontMatter = 'masaca';
     return {
       ...docPage,
-      frontmatter: frontMatter,
+      frontmatter: {
+        title: docPage.source.name,
+      },
     };
   },
 });
+
+function toSidebarLink(doc: DocPageData) {
+  return {
+    text: doc.source.name,
+    link: `${doc.directory}/${doc.fileName}`
+      // remove the leading "./"
+      .replace(/^\.\//, ''),
+  };
+}

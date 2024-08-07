@@ -5,6 +5,9 @@ title: BaseClass
 # BaseClass Class
 `abstract`
 
+## Namespace
+apexdocs
+
 ## Fields
 ### `sampleEnumFromBase`
 
@@ -14,4 +17,4 @@ public sampleEnumFromBase
 ```
 
 #### Type
-[SampleEnum](../Sample-Enums/SampleEnum.md)
+[apexdocs.SampleEnum](../Sample-Enums/apexdocs.SampleEnum.md)

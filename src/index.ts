@@ -1,5 +1,11 @@
 import { SetOptional } from 'type-fest';
-import { type ConfigurableHooks, Skip, UserDefinedMarkdownConfig } from './core/shared/types';
+import type {
+  ConfigurableHooks,
+  Skip,
+  UserDefinedMarkdownConfig,
+  ReferenceGuidePageData,
+  DocPageData,
+} from './core/shared/types';
 import { defaults } from './defaults';
 
 type ConfigurableMarkdownConfig = Omit<
@@ -26,4 +32,4 @@ function skip(): Skip {
 
 // Exports
 
-export { defineMarkdownConfig, skip, ConfigurableHooks };
+export { defineMarkdownConfig, skip, ConfigurableHooks, ReferenceGuidePageData, DocPageData };

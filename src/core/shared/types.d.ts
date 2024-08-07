@@ -39,7 +39,7 @@ export type ParsedFile = {
   type: Type;
 };
 
-type Frontmatter = string | null;
+type Frontmatter = string | Record<string, unknown> | null;
 
 export type ReferenceGuidePageData = {
   directory: string;
@@ -82,7 +82,6 @@ export type PostHookDocumentationBundle = {
 
 // Configurable Hooks
 
-// If null is received, the reference guide will be skipped
 export type TransformReferenceGuide = (
   referenceGuide: ReferenceGuidePageData,
 ) => Partial<ReferenceGuidePageData> | Skip | Promise<Partial<ReferenceGuidePageData> | Skip>;

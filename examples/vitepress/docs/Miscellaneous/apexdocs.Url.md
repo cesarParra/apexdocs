@@ -84,6 +84,9 @@ that inputs are valid, RFC-compliant URL or URI strings.
 
 * [URL Class](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_classes_url.htm)
 
+## Namespace
+apexdocs
+
 ## Constructors
 ### `Url(spec)`
 
@@ -123,7 +126,7 @@ global Url(Url context, String spec)
 #### Parameters
 | Name | Type | Description |
 |------|------|-------------|
-| context | [Url](./Url.md) | The context in which to parse the specification. |
+| context | [apexdocs.Url](./apexdocs.Url.md) | The context in which to parse the specification. |
 | spec | String | The string to parse as a URL. |
 
 ---
@@ -194,7 +197,7 @@ global static Url getCurrentRequestUrl()
 ```
 
 #### Return Type
-**[Url](./Url.md)**
+**[apexdocs.Url](./apexdocs.Url.md)**
 
 The URL of the entire request.
 
@@ -304,7 +307,7 @@ global static Url getOrgDomainUrl()
 ```
 
 #### Return Type
-**[Url](./Url.md)**
+**[apexdocs.Url](./apexdocs.Url.md)**
 
 getOrgDomainUrl() always returns the login URL for your org, regardless of context. Use that URL when making API calls to your org.
 

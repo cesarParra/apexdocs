@@ -11,6 +11,9 @@ deserunt ea officia exercitation laboris enim in duis quis enim eiusmod eu amet 
 
 **Group** SampleGroup
 
+## Namespace
+apexdocs
+
 ## Example
 ```apex
 SampleClass sample = new SampleClass();
@@ -19,12 +22,12 @@ sample.doSomething();
 
 **Inheritance**
 
-[BaseClass](../Miscellaneous/BaseClass.md)
+[apexdocs.BaseClass](../Miscellaneous/apexdocs.BaseClass.md)
 
 **Implements**
 
-[SampleInterface](../Miscellaneous/SampleInterface.md), 
-[ParentInterface](../Miscellaneous/ParentInterface.md)
+[apexdocs.SampleInterface](../Miscellaneous/apexdocs.SampleInterface.md), 
+[apexdocs.ParentInterface](../Miscellaneous/apexdocs.ParentInterface.md)
 
 ## Fields
 ### Group Name
@@ -51,7 +54,7 @@ public sampleEnumFromBase
 ```
 
 ##### Type
-[SampleEnum](../Sample-Enums/SampleEnum.md)
+[apexdocs.SampleEnum](../Sample-Enums/apexdocs.SampleEnum.md)
 
 ## Properties
 ### Group Name
