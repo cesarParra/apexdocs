@@ -8,11 +8,13 @@ export const classMarkdownTemplate = `
 
 {{#if extends.length}}
 **Inheritance**
+
 {{#each extends}}{{link this}}{{#unless @last}} < {{/unless}}{{/each}}
 {{/if}}
 
 {{#if implements}}
 **Implements**
+
 {{#each implements}}
 {{link this}}{{#unless @last}}, {{/unless}}
 {{/each}}

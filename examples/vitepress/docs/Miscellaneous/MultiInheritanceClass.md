@@ -1,6 +1,9 @@
+masaca
+
 # MultiInheritanceClass Class
 
 **Inheritance**
+
 [SampleClass](../SampleGroup/SampleClass.md) < [BaseClass](./BaseClass.md)
 
 ## Fields

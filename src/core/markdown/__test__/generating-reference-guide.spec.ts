@@ -2,6 +2,7 @@ import { assertEither, extendExpect } from './expect-extensions';
 import { pipe } from 'fp-ts/function';
 import * as E from 'fp-ts/Either';
 import { apexBundleFromRawString, generateDocs } from './test-helpers';
+import { ReferenceGuidePageData } from '../../shared/types';
 
 describe('Generates a Reference Guide', () => {
   beforeAll(() => {
@@ -24,10 +25,12 @@ describe('Generates a Reference Guide', () => {
     expect(result).documentationBundleHasLength(2);
 
     assertEither(result, (data) =>
-      expect(data.referenceGuide.content).toContain('[MyEnum](./Miscellaneous/MyEnum.md)'),
+      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('[MyEnum](./Miscellaneous/MyEnum.md)'),
     );
     assertEither(result, (data) =>
-      expect(data.referenceGuide.content).toContain('[MyClass](./Miscellaneous/MyClass.md)'),
+      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain(
+        '[MyClass](./Miscellaneous/MyClass.md)',
+      ),
     );
   });
 
@@ -41,7 +44,9 @@ describe('Generates a Reference Guide', () => {
 
     const result = await generateDocs([apexBundleFromRawString(input)])();
     expect(result).documentationBundleHasLength(1);
-    assertEither(result, (data) => expect(data.referenceGuide.content).toContain('## Miscellaneous'));
+    assertEither(result, (data) =>
+      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('## Miscellaneous'),
+    );
   });
 
   it('group things under the provided group', async () => {
@@ -57,7 +62,9 @@ describe('Generates a Reference Guide', () => {
 
     const result = await generateDocs([apexBundleFromRawString(input)])();
     expect(result).documentationBundleHasLength(1);
-    assertEither(result, (data) => expect(data.referenceGuide.content).toContain('## MyGroup'));
+    assertEither(result, (data) =>
+      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('## MyGroup'),
+    );
   });
 
   it('displays groups in alphabetical order', async () => {
@@ -83,8 +90,8 @@ describe('Generates a Reference Guide', () => {
     pipe(
       result,
       E.map((data) => ({
-        aGroupIndex: data.referenceGuide.content.indexOf('## AGroup'),
-        zGroupIndex: data.referenceGuide.content.indexOf('## ZGroup'),
+        aGroupIndex: (data.referenceGuide as ReferenceGuidePageData).content.indexOf('## AGroup'),
+        zGroupIndex: (data.referenceGuide as ReferenceGuidePageData).content.indexOf('## ZGroup'),
       })),
       E.match(
         () => fail('Expected data'),
@@ -113,9 +120,13 @@ describe('Generates a Reference Guide', () => {
 
     const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
     expect(result).documentationBundleHasLength(2);
-    assertEither(result, (data) => expect(data.referenceGuide.content).toContain('## Group1'));
-    assertEither(result, (data) => expect(data.referenceGuide.content).toContain('MyClass'));
-    assertEither(result, (data) => expect(data.referenceGuide.content).toContain('MyEnum'));
+    assertEither(result, (data) =>
+      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('## Group1'),
+    );
+    assertEither(result, (data) =>
+      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('MyClass'),
+    );
+    assertEither(result, (data) => expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('MyEnum'));
   });
 
   it('returns a reference guide with descriptions', async () => {
@@ -138,7 +149,9 @@ describe('Generates a Reference Guide', () => {
 
     const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
     expect(result).documentationBundleHasLength(2);
-    assertEither(result, (data) => expect(data.referenceGuide.content).toContain('This is a description'));
+    assertEither(result, (data) =>
+      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('This is a description'),
+    );
   });
 
   it('returns a reference guide with descriptions with links to all other files', async () => {
@@ -163,7 +176,9 @@ describe('Generates a Reference Guide', () => {
     const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
     expect(result).documentationBundleHasLength(2);
     assertEither(result, (data) =>
-      expect(data.referenceGuide.content).toContain('with a [MyClass](./Group2/MyClass.md)'),
+      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain(
+        'with a [MyClass](./Group2/MyClass.md)',
+      ),
     );
   });
 });

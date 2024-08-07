@@ -23,4 +23,11 @@ export default defineMarkdownConfig({
       frontmatter: frontMatter,
     };
   },
+  transformDocPage: async (docPage) => {
+    const frontMatter = 'masaca';
+    return {
+      ...docPage,
+      frontmatter: frontMatter,
+    };
+  },
 });

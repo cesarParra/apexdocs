@@ -5,6 +5,7 @@ export type Generator = 'markdown' | 'openapi';
 export type ConfigurableHooks = {
   transformReferenceGuide: TransformReferenceGuide;
   transformDocs: TransformDocs;
+  transformDocPage: TransformDocPage;
 };
 
 export type UserDefinedMarkdownConfig = {
@@ -84,6 +85,8 @@ export type PostHookDocumentationBundle = {
 // If null is received, the reference guide will be skipped
 export type TransformReferenceGuide = (
   referenceGuide: ReferenceGuidePageData,
-) => Partial<ReferenceGuidePageData> | Promise<Partial<ReferenceGuidePageData>> | null;
+) => Partial<ReferenceGuidePageData> | Skip | Promise<Partial<ReferenceGuidePageData> | Skip>;
 
 export type TransformDocs = (docs: DocPageData[]) => DocPageData[] | Promise<DocPageData[]>;
+
+export type TransformDocPage = (doc: DocPageData) => Partial<DocPageData> | Promise<Partial<DocPageData>>;

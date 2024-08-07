@@ -1,3 +1,5 @@
+masaca
+
 # SampleException Class
 
 This is a sample exception.
@@ -19,4 +21,5 @@ try {
 ```
 
 **Inheritance**
+
 Exception

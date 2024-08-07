@@ -9,6 +9,7 @@ import {
   PostHookDocumentationBundle,
   ReferenceGuidePageData,
   SourceFile,
+  TransformDocPage,
   TransformDocs,
   TransformReferenceGuide,
   UserDefinedMarkdownConfig,
@@ -27,7 +28,13 @@ import { isSkip } from '../shared/utils';
 
 export type MarkdownGeneratorConfig = Pick<
   UserDefinedMarkdownConfig,
-  'targetDir' | 'scope' | 'namespace' | 'defaultGroupName' | 'transformReferenceGuide' | 'transformDocs'
+  | 'targetDir'
+  | 'scope'
+  | 'namespace'
+  | 'defaultGroupName'
+  | 'transformReferenceGuide'
+  | 'transformDocs'
+  | 'transformDocPage'
 > & {
   referenceGuideTemplate: string;
   sortMembersAlphabetically: boolean;
@@ -75,7 +82,16 @@ export function generateDocs(apexBundles: SourceFile[], config: MarkdownGenerato
               template: hookableTemplate,
             }),
           },
-      docs: bundle.docs,
+      docs: bundle.docs.map((doc) => ({
+        ...doc,
+        content: Template.getInstance().compile({
+          source: {
+            frontmatter: doc.frontmatter,
+            content: doc.content,
+          },
+          template: hookableTemplate,
+        }),
+      })),
     })),
   );
 }
@@ -91,7 +107,7 @@ const documentationBundleHook = async (
 ): Promise<PostHookDocumentationBundle> => {
   return {
     referenceGuide: await transformReferenceGuide(bundle.referenceGuide, config.transformReferenceGuide),
-    docs: await transformDocs(bundle.docs, config.transformDocs),
+    docs: await transformDocs(bundle.docs, config.transformDocs, config.transformDocPage),
   };
 };
 
@@ -110,6 +126,18 @@ const transformReferenceGuide = async (
   };
 };
 
-const transformDocs = async (docs: DocPageData[], hook: TransformDocs = passThroughHook) => {
-  return hook(docs);
+const transformDocs = async (
+  docs: DocPageData[],
+  transformDocsHook: TransformDocs = passThroughHook,
+  transformDocPageHook: TransformDocPage = passThroughHook,
+): Promise<Awaited<DocPageData[]>> => {
+  const transformed = await transformDocsHook(docs);
+  return Promise.all(transformed.map((doc) => transformDocPage(doc, transformDocPageHook)));
+};
+
+const transformDocPage = async (doc: DocPageData, hook: TransformDocPage = passThroughHook) => {
+  return {
+    ...doc,
+    ...(await hook(doc)),
+  };
 };

@@ -20,7 +20,7 @@
  * The following example creates a link to a Salesforce record. The full URL is created by concatenating the Salesforce base
  * URL with the record ID.
  *
- * ```ape
+ * ```apex
  * Account acct = [SELECT Id FROM Account WHERE Name = 'Acme' LIMIT 1];
  * String fullRecordURL = URL.getOrgDomainURL().toExternalForm() + '/' + acct.Id;
  * ```

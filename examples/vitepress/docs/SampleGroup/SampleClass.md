@@ -1,3 +1,5 @@
+masaca
+
 # SampleClass Class
 `virtual`
 
@@ -14,9 +16,11 @@ sample.doSomething();
 ```
 
 **Inheritance**
+
 [BaseClass](../Miscellaneous/BaseClass.md)
 
 **Implements**
+
 [SampleInterface](../Miscellaneous/SampleInterface.md), 
 [ParentInterface](../Miscellaneous/ParentInterface.md)
 
