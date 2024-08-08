@@ -88,7 +88,6 @@ sampleInterface.sampleMethod();
 `DEPRECATED`
 
 This is a sample method with parameters 
-
 Sometimes it won&#x27;t be possible to find a NonExistent link.
 
 #### Signature
