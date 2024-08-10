@@ -53,7 +53,7 @@ public sampleEnumFromBase
 ```
 
 ##### Type
-[apexdocs.SampleEnum](../Sample-Enums/apexdocs.SampleEnum.md)
+[apexdocs.SampleEnum](../Miscellaneous/apexdocs.SampleEnum.md)
 
 ## Properties
 ### Group Name

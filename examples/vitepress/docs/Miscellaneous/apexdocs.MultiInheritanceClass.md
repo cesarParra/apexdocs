@@ -22,7 +22,7 @@ public sampleEnumFromBase
 ```
 
 #### Type
-[apexdocs.SampleEnum](../Sample-Enums/apexdocs.SampleEnum.md)
+[apexdocs.SampleEnum](./apexdocs.SampleEnum.md)
 
 ## Properties
 ### Group Name

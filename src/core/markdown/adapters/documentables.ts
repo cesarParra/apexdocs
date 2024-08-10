@@ -10,6 +10,7 @@ export function adaptDescribable(
   description?: RenderableContent[];
 } {
   function describableToRenderableContent(describable: Describable): RenderableContent[] | undefined {
+    console.log(describable);
     if (!describable) {
       return;
     }

@@ -61,7 +61,7 @@
     ]
   },
   "dependencies": {
-    "@cparra/apex-reflection": "2.9.5",
+    "@cparra/apex-reflection": "2.11.1",
     "@types/js-yaml": "^4.0.9",
     "@types/yargs": "^17.0.32",
     "chalk": "^4.1.2",
