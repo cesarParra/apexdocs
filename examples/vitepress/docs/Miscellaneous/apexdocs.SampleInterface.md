@@ -12,7 +12,7 @@ This is a sample interface
 
 **Date** 2020-01-01
 
-**See** [apexdocs.SampleEnum](./apexdocs.SampleEnum.md)
+**See** [apexdocs.SampleEnum](../Sample-Enums/apexdocs.SampleEnum.md)
 
 **See** [apexdocs.ReferencedEnum](./apexdocs.ReferencedEnum.md)
 
@@ -87,6 +87,9 @@ sampleInterface.sampleMethod();
 `NAMESPACEACCESSIBLE`
 `DEPRECATED`
 
+This is a sample method with parameters 
+Sometimes it won&#x27;t be possible to find a NonExistent link.
+
 #### Signature
 ```apex
 public SampleEnum sampleMethodWithParams(String param1, Integer param2, SampleEnum theEnum)
@@ -95,12 +98,14 @@ public SampleEnum sampleMethodWithParams(String param1, Integer param2, SampleEn
 #### Parameters
 | Name | Type | Description |
 |------|------|-------------|
-| param1 | String |  |
-| param2 | Integer |  |
-| theEnum | [apexdocs.SampleEnum](./apexdocs.SampleEnum.md) |  |
+| param1 | String | This is the first parameter |
+| param2 | Integer | This is the second parameter |
+| theEnum | [apexdocs.SampleEnum](../Sample-Enums/apexdocs.SampleEnum.md) | This is an enum parameter |
 
 #### Return Type
-**[apexdocs.SampleEnum](./apexdocs.SampleEnum.md)**
+**[apexdocs.SampleEnum](../Sample-Enums/apexdocs.SampleEnum.md)**
+
+Some return value
 
 ---
 

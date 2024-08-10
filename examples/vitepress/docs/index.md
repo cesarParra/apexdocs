@@ -27,9 +27,9 @@ hero:
 
 ### [apexdocs.ReferencedEnum](./Miscellaneous/apexdocs.ReferencedEnum.md)
 
-### [apexdocs.SampleEnum](./Miscellaneous/apexdocs.SampleEnum.md)
-
 ### [apexdocs.SampleException](./Miscellaneous/apexdocs.SampleException.md)
+
+This is a sample exception.
 
 ### [apexdocs.SampleInterface](./Miscellaneous/apexdocs.SampleInterface.md)
 
@@ -110,6 +110,14 @@ that inputs are valid, RFC-compliant URL or URI strings.
  
 **See Also** 
 * [URL Class](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_classes_url.htm)
+
+## Sample Enums
+
+### [apexdocs.SampleEnum](./Sample-Enums/apexdocs.SampleEnum.md)
+
+This is a sample enum. This references [apexdocs.ReferencedEnum](./Miscellaneous/apexdocs.ReferencedEnum.md) . 
+ 
+This description has several lines
 
 ## SampleGroup
 

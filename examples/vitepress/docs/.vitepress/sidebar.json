@@ -52,7 +52,7 @@
               },
               {
                 "text": "SampleEnum",
-                "link": "Miscellaneous/apexdocs.SampleEnum"
+                "link": "Sample-Enums/apexdocs.SampleEnum"
               }
             ]
           }
@@ -81,10 +81,6 @@
                 "link": "Miscellaneous/apexdocs.ReferencedEnum"
               },
               {
-                "text": "SampleEnum",
-                "link": "Miscellaneous/apexdocs.SampleEnum"
-              },
-              {
                 "text": "SampleException",
                 "link": "Miscellaneous/apexdocs.SampleException"
               },
@@ -104,6 +100,15 @@
               {
                 "text": "SampleClass",
                 "link": "SampleGroup/apexdocs.SampleClass"
+              }
+            ]
+          },
+          {
+            "text": "Sample Enums",
+            "items": [
+              {
+                "text": "SampleEnum",
+                "link": "Sample-Enums/apexdocs.SampleEnum"
               }
             ]
           }
