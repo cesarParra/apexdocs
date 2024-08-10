@@ -261,11 +261,13 @@ describe('Generates interface documentation', () => {
         const input = `
           /**
             * @mermaid
+            * \`\`\`mermaid
             * graph TD
             *   A[Square Rect] -- Link text --> B((Circle))
             *   A --> C(Round Rect)
             *   B --> D{Rhombus}
             *   C --> D
+            * \`\`\`
             */
           public interface MyInterface {}
           `;
@@ -280,11 +282,13 @@ describe('Generates interface documentation', () => {
         const input = `
           /**
             * @example
+            * \`\`\`apex
             * public class MyClass {
             *   public void myMethod() {
             *     System.debug('Hello, World!');
             *   }
             * }
+            * \`\`\`
             */
           public interface MyInterface {}`;
 
@@ -343,11 +347,13 @@ describe('Generates interface documentation', () => {
         public interface MyInterface {
           /**
             * @mermaid
+            * \`\`\`mermaid
             * graph TD
             *   A[Square Rect] -- Link text --> B((Circle))
             *   A --> C(Round Rect)
             *   B --> D{Rhombus}
             *   C --> D
+            * \`\`\`
             */
           void myMethod();
         }

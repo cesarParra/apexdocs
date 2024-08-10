@@ -84,8 +84,7 @@ type RenderableDocumentation = {
   annotations?: Annotation[];
   description?: RenderableContent[];
   customTags?: CustomTag[];
-  mermaid: RenderableSection<CodeBlock | undefined>;
-  example: RenderableSection<CodeBlock | undefined>;
+  example: RenderableSection<RenderableContent[] | undefined>;
   group?: string;
   author?: string;
   date?: string;

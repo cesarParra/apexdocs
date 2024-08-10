@@ -14,10 +14,8 @@ deserunt ea officia exercitation laboris enim in duis quis enim eiusmod eu amet 
 apexdocs
 
 ## Example
-```apex
-SampleClass sample = new SampleClass();
+SampleClass sample &#x3D; new SampleClass(); 
 sample.doSomething();
-```
 
 **Inheritance**
 
@@ -121,10 +119,8 @@ public virtual String sayHello()
 A string value.
 
 ##### Example
-```apex
-SampleClass sample = new SampleClass();
+SampleClass sample &#x3D; new SampleClass(); 
 sample.doSomething();
-```
 
 ## Classes
 ### SomeInnerClass Class

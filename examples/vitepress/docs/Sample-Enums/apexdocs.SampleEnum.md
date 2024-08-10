@@ -15,6 +15,12 @@ This description has several lines
 Test. I can also have a [apexdocs.ReferencedEnum](../Miscellaneous/apexdocs.ReferencedEnum.md) here. 
 And it can be multiline.
 
+**Mermaid** 
+
+graph TD 
+A[SampleEnum] --&gt;|references| B[ReferencedEnum] 
+B --&gt;|referenced by| A
+
 **Group** Sample Enums
 
 **Author** John Doe
@@ -25,13 +31,6 @@ And it can be multiline.
 
 ## Namespace
 apexdocs
-
-## Diagram
-```mermaid
-graph TD
- A[SampleEnum] -->|references| B[ReferencedEnum]
- B -->|referenced by| A
-```
 
 ## Values
 | Value | Description |

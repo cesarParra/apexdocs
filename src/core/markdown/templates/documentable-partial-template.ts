@@ -21,6 +21,6 @@ export const documentablePartialTemplate = `
 
 {{#if doc.example.value}}
 {{ heading doc.example.headingLevel doc.example.heading }}
-{{code doc.example.value}}
+{{{renderContent doc.example.value}}}
 {{/if}}
 `.trim();

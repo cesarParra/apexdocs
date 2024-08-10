@@ -72,7 +72,5 @@ public virtual String sayHello()
 A string value.
 
 ##### Example
-```apex
-SampleClass sample = new SampleClass();
+SampleClass sample &#x3D; new SampleClass(); 
 sample.doSomething();
-```

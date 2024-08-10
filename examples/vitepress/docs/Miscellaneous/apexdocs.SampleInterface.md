@@ -8,6 +8,13 @@ title: SampleInterface
 
 This is a sample interface
 
+**Mermaid** 
+
+graph TD 
+A[SampleInterface] --&gt;|extends| B[ParentInterface] 
+B --&gt;|extends| C[GrandParentInterface] 
+C --&gt;|extends| D[GreatGrandParentInterface]
+
 **Author** John Doe
 
 **Date** 2020-01-01
@@ -19,19 +26,9 @@ This is a sample interface
 ## Namespace
 apexdocs
 
-## Diagram
-```mermaid
-graph TD
-   A[SampleInterface] -->|extends| B[ParentInterface]
-   B -->|extends| C[GrandParentInterface]
-   C -->|extends| D[GreatGrandParentInterface]
-```
-
 ## Example
-```apex
-SampleInterface sampleInterface = new SampleInterface();
+SampleInterface sampleInterface &#x3D; new SampleInterface(); 
 sampleInterface.sampleMethod();
-```
 
 **Extends**
 [apexdocs.ParentInterface](./apexdocs.ParentInterface.md)
@@ -51,6 +48,13 @@ This is a custom tag
 
 This is another custom tag
 
+**Mermaid** 
+
+graph TD 
+A[SampleInterface] --&gt;|extends| B[ParentInterface] 
+B --&gt;|extends| C[GrandParentInterface] 
+C --&gt;|extends| D[GreatGrandParentInterface]
+
 #### Signature
 ```apex
 public String sampleMethod()
@@ -66,19 +70,9 @@ Some return value
 
 AnotherSampleException: This is another sample exception
 
-#### Diagram
-```mermaid
-graph TD
-  A[SampleInterface] -->|extends| B[ParentInterface]
-  B -->|extends| C[GrandParentInterface]
-  C -->|extends| D[GreatGrandParentInterface]
-```
-
 #### Example
-```apex
-SampleInterface sampleInterface = new SampleInterface();
+SampleInterface sampleInterface &#x3D; new SampleInterface(); 
 sampleInterface.sampleMethod();
-```
 
 ---
 

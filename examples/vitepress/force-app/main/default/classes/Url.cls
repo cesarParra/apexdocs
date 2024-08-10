@@ -2,7 +2,7 @@
  * @description Represents a uniform resource locator (URL) and provides access to parts of the URL.
  * Enables access to the base URL used to access your Salesforce org.
  *
- * ## Usage
+ * @usage
  * Use the methods of the `System.URL` class to create links to objects in your organization. Such objects can be files, images,
  * logos, or records that you want to include in external emails, in activities, or in Chatter posts. For example, you can create
  * a link to a file uploaded as an attachment to a Chatter post by concatenating the Salesforce base URL with the file ID:
@@ -25,7 +25,7 @@
  * String fullRecordURL = URL.getOrgDomainURL().toExternalForm() + '/' + acct.Id;
  * ```
  *
- * ## Example
+ * @example
  * In this example, the base URL and the full request URL of the current Salesforce server instance are retrieved. Next, a URL
  * pointing to a specific account object is created. Finally, components of the base and full URL are obtained. This example
  * prints out all the results to the debug log output.
@@ -56,7 +56,7 @@
  * System.debug('Query: ' + URL.getCurrentRequestUrl().getQuery());
  * ```
  *
- * ## Version Behavior Changes
+ * @version-behavior-changes
  * In API version 41.0 and later, Apex URL objects are represented by the java.net.URI type, not the java.net.URL type.
  *
  * The API version in which the URL object was instantiated determines the behavior of subsequent method calls to the
@@ -177,7 +177,9 @@ global class Url {
      * You don't need a RemoteSiteSetting for your org to interact with the Salesforce APIs using domain URLs retrieved with this method.
      *
      * @example
-     * // This example uses the Salesforce REST API to get organization limit values. For information on limits, see Limits in the REST API Developer Guide.
+     * This example uses the Salesforce REST API to get organization limit values. For information on limits, see Limits in the REST API Developer Guide.
+     *
+     * ```apex
      * Http h = new Http();
      * HttpRequest req = new HttpRequest();
      * req.setEndpoint(Url.getOrgDomainUrl().toExternalForm()
@@ -185,6 +187,7 @@ global class Url {
      * req.setMethod('GET');
      * req.setHeader('Authorization', 'Bearer ' + UserInfo.getSessionId());
      * HttpResponse res = h.send(req);
+     * ```
      *
      * @see-also
      * * [Lightning Aura Components Developer Guide: Making API Calls from Apex](https://developer.salesforce.com/docs/atlas.en-us.250.0.lightning.meta/lightning/apex_api_calls.htm)
