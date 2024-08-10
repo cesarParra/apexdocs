@@ -7,13 +7,12 @@ title: SampleEnum
 `NAMESPACEACCESSIBLE`
 
 This is a sample enum. This references [apexdocs.ReferencedEnum](../Miscellaneous/apexdocs.ReferencedEnum.md) . 
-
+ 
 This description has several lines
 
 **Some Custom** 
 
 Test. I can also have a [apexdocs.ReferencedEnum](../Miscellaneous/apexdocs.ReferencedEnum.md) here. 
-
 And it can be multiline.
 
 **Group** Sample Enums

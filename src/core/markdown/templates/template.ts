@@ -90,7 +90,7 @@ const resolveRenderableContent = (description?: RenderableContent[]): string => 
 
   function reduceDescription(acc: string, curr: RenderableContent) {
     if (isEmptyLine(curr)) {
-      return acc + '\n\n';
+      return acc + '\n';
     }
     if (isCodeBlock(curr)) {
       return acc + convertCodeBlock(curr) + '\n';

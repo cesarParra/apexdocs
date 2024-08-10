@@ -13,8 +13,8 @@
  *         WHERE Title = 'myfile'];
  * // Create a link to the file.
  * String fullFileURL = URL.getOrgDomainURL().toExternalForm() +
- * '/' + doc.id;
- * system.debug(fullFileURL);
+ *         '/' + doc.id;
+ * System.debug(fullFileURL);
  * ```
  *
  * The following example creates a link to a Salesforce record. The full URL is created by concatenating the Salesforce base
@@ -58,6 +58,7 @@
  *
  * ## Version Behavior Changes
  * In API version 41.0 and later, Apex URL objects are represented by the java.net.URI type, not the java.net.URL type.
+ *
  * The API version in which the URL object was instantiated determines the behavior of subsequent method calls to the
  * specific instance. Salesforce strongly encourages you to use API 41.0 and later versions for fully RFC-compliant URL
  * parsing that includes proper handling of edge cases of complex URL structures. API 41.0 and later versions also enforce

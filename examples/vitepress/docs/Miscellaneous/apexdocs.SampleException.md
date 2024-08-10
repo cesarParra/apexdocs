@@ -9,11 +9,9 @@ This is a sample exception.
 **Usage** 
 
 You can use the exception the following way. 
-
 You can also take a look at [apexdocs.SampleClass](../SampleGroup/apexdocs.SampleClass.md) to see how it is used. 
-
 This is a dangerous HTML tag: &lt;script&gt;alert(&#x27;Hello&#x27;);&lt;/script&gt; 
-
+ 
 ```apex
 try {
    throw new SampleException();
