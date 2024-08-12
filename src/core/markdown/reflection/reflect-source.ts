@@ -1,4 +1,4 @@
-import { ParsedFile, SourceFile } from '../../shared/types';
+import { ParsedFile, UnparsedSourceFile } from '../../shared/types';
 import * as E from 'fp-ts/Either';
 import { reflect as mirrorReflection, Type } from '@cparra/apex-reflection';
 import { pipe } from 'fp-ts/function';
@@ -6,17 +6,21 @@ import * as O from 'fp-ts/Option';
 import { parseApexMetadata } from '../../parse-apex-metadata';
 import { ReflectionError } from './error-handling';
 
-export function reflectSourceCode(apexBundles: SourceFile[]) {
+export function reflectSourceCode(apexBundles: UnparsedSourceFile[]) {
   return apexBundles.map(reflectSourceBody);
 }
 
-function reflectSourceBody(apexBundle: SourceFile): E.Either<ReflectionError, ParsedFile> {
+function reflectSourceBody(apexBundle: UnparsedSourceFile): E.Either<ReflectionError, ParsedFile> {
   const { filePath, content: input, metadataContent: metadata } = apexBundle;
   const result = mirrorReflection(input);
   return result.error
     ? E.left(new ReflectionError(filePath, result.error.message))
     : E.right({
-        filePath,
+        source: {
+          filePath,
+          name: result.typeMirror!.name,
+          type: result.typeMirror!.type_name,
+        },
         type: addFileMetadataToTypeAnnotation(result.typeMirror!, metadata),
       });
 }

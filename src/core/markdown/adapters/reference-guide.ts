@@ -14,9 +14,9 @@ export function parsedFilesToReferenceGuide(
 
 function parsedFileToDocPageReference(config: MarkdownGeneratorConfig, parsedFile: ParsedFile): DocPageReference {
   return {
-    name: parsedFile.type.name,
+    source: parsedFile.source,
     displayName: parsedFile.type.name,
-    linkFromRoot: `${slugify(getTypeGroup(parsedFile.type, config))}${parsedFile.type.name}.md`,
+    pathFromRoot: `${slugify(getTypeGroup(parsedFile.type, config))}/${parsedFile.type.name}.md`,
   };
 }
 

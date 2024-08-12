@@ -1,18 +1,18 @@
 import { ClassMirror, InterfaceMirror, ReflectionResult, Type } from '@cparra/apex-reflection';
 import { parseApexMetadata } from '../parse-apex-metadata';
 import { Logger } from '#utils/logger';
-import { SourceFile } from '../shared/types';
+import { UnparsedSourceFile } from '../shared/types';
 
 export interface TypeParser {
-  parse(reflect: (apexBundle: SourceFile) => ReflectionResult): Type[];
+  parse(reflect: (apexBundle: UnparsedSourceFile) => ReflectionResult): Type[];
 }
 
 type NameAware = { name: string };
 
 export class RawBodyParser implements TypeParser {
-  constructor(public typeBundles: SourceFile[]) {}
+  constructor(public typeBundles: UnparsedSourceFile[]) {}
 
-  parse(reflect: (apexBundle: SourceFile) => ReflectionResult): Type[] {
+  parse(reflect: (apexBundle: UnparsedSourceFile) => ReflectionResult): Type[] {
     const types = this.typeBundles
       .map((currentBundle) => {
         Logger.log(`Parsing file: ${currentBundle.filePath}`);

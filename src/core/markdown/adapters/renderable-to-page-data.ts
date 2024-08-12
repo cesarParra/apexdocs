@@ -11,11 +11,9 @@ export const convertToDocumentationBundle = (
   { references, renderables }: RenderableBundle,
 ): DocumentationBundle => ({
   referenceGuide: {
-    directory: '',
     frontmatter: null,
     content: referencesToReferenceGuideContent(references, referenceGuideTemplate),
-    fileExtension: 'md',
-    fileName: 'index',
+    filePath: 'index.md',
   },
   docs: renderables.map((renderable: Renderable) => renderableToPageData(Object.values(references).flat(), renderable)),
 });
@@ -45,11 +43,9 @@ function referencesToReferenceGuideContent(
 
 function renderableToPageData(referenceGuideReference: ReferenceGuideReference[], renderable: Renderable): DocPageData {
   function buildDocOutput(renderable: Renderable, docContents: string): DocPageData {
-    const reference = referenceGuideReference.find(
-      (ref) => ref.typeName.toLowerCase() === renderable.name.toLowerCase(),
-    );
-
-    const namespacePrefix = renderable.namespace ? `${renderable.namespace}.` : '';
+    const reference: ReferenceGuideReference = referenceGuideReference.find(
+      (ref) => ref.reference.source.name.toLowerCase() === renderable.name.toLowerCase(),
+    )!;
 
     return {
       source: {
@@ -57,9 +53,7 @@ function renderableToPageData(referenceGuideReference: ReferenceGuideReference[]
         name: renderable.name,
         type: renderable.type,
       },
-      fileName: `${namespacePrefix}${renderable.name}`,
-      fileExtension: 'md',
-      directory: `${reference?.directory}`,
+      filePath: reference!.reference.pathFromRoot,
       frontmatter: null,
       content: docContents,
       group: renderable.doc.group ?? 'Miscellaneous',

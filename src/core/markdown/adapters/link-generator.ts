@@ -2,6 +2,8 @@ import { Type } from '@cparra/apex-reflection';
 import { MarkdownGeneratorConfig } from '../generate-docs';
 import { StringOrLink } from './types';
 
+// TODO: Not needed anymore?
+
 export function linkFromTypeNameGenerator(
   typeBeingDocumented: Type,
   repository: Type[],

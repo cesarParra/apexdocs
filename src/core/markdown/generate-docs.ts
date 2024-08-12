@@ -10,7 +10,7 @@ import {
   Frontmatter,
   PostHookDocumentationBundle,
   ReferenceGuidePageData,
-  SourceFile,
+  UnparsedSourceFile,
   TransformDocPage,
   TransformDocs,
   TransformReferenceGuide,
@@ -27,6 +27,7 @@ import { Template } from './templates/template';
 import { hookableTemplate } from './templates/hookable';
 import { sortMembers } from './reflection/sort-members';
 import { isSkip } from '../shared/utils';
+import { parsedFilesToReferenceGuide } from './adapters/reference-guide';
 
 export type MarkdownGeneratorConfig = Pick<
   UserDefinedMarkdownConfig,
@@ -48,8 +49,9 @@ export class HookError {
   constructor(public error: unknown) {}
 }
 
-export function generateDocs(apexBundles: SourceFile[], config: MarkdownGeneratorConfig) {
+export function generateDocs(apexBundles: UnparsedSourceFile[], config: MarkdownGeneratorConfig) {
   const filterOutOfScope = apply(filterScope, config.scope);
+  const convertToReferences = apply(parsedFilesToReferenceGuide, config);
   const convertToRenderableBundle = apply(parsedFilesToRenderableBundle, config);
   const convertToDocumentationBundleForTemplate = apply(convertToDocumentationBundle, config.referenceGuideTemplate);
   const sortTypeMembers = apply(sortMembers, config.sortMembersAlphabetically);
@@ -58,11 +60,18 @@ export function generateDocs(apexBundles: SourceFile[], config: MarkdownGenerato
     apexBundles,
     reflectSourceCode,
     checkForReflectionErrors,
+    // ParsedFile[] -> ParsedFile[]
     E.map(filterOutOfScope),
+    // ParsedFile[] -> ParsedFile[]
     E.map(addInheritedMembersToTypes),
+    // ParsedFile[] -> ParsedFile[]
     E.map(addInheritanceChainToTypes),
+    // ParsedFile[] -> ParsedFile[]
     E.map(sortTypeMembers),
-    E.map(convertToRenderableBundle),
+    E.bindTo('parsedFiles'),
+    // ParsedFile[] -> {parsedFiles: ParsedFile[], references: Record<string, DocPageReference>}
+    E.bind('references', ({ parsedFiles }) => E.right(convertToReferences(parsedFiles))),
+    E.map(({ parsedFiles, references }) => convertToRenderableBundle(parsedFiles, references)),
     E.map(convertToDocumentationBundleForTemplate),
     TE.fromEither,
     TE.flatMap((bundle) =>

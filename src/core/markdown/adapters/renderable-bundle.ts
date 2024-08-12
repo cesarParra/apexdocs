@@ -1,47 +1,32 @@
 import { DocPageReference, ParsedFile } from '../../shared/types';
-import { Link, RenderableBundle, StringOrLink } from './types';
+import { Link, ReferenceGuideReference, RenderableBundle, StringOrLink } from './types';
 import { typeToRenderable } from './apex-types';
 import { adaptDescribable } from './documentables';
-import { Type } from '@cparra/apex-reflection';
 import { MarkdownGeneratorConfig } from '../generate-docs';
-import { findType, getSanitizedGroup, getTypeGroup, linkFromTypeNameGenerator } from './link-generator';
+import { getTypeGroup } from './link-generator';
+import { apply } from '#utils/fp';
 
 export function parsedFilesToRenderableBundle(
   config: MarkdownGeneratorConfig,
   parsedFiles: ParsedFile[],
   references: Record<string, DocPageReference>,
 ): RenderableBundle {
+  const referenceFinder = apply(linkGenerator, references);
+
+  // TODO: Separate the creation of the references from the renderables
   return parsedFiles.reduce<RenderableBundle>(
     (acc, parsedFile) => {
-      const renderable = typeToRenderable(
-        parsedFile,
-        (referenceName) => {
-          return linkFromTypeNameGenerator(
-            parsedFile.type,
-            parsedFiles.map((file) => file.type),
-            referenceName,
-            config,
-          );
-        },
-        config,
-      );
+      const findLinkFromDoc = apply(referenceFinder, ReferencedFrom.DOC);
+      const renderable = typeToRenderable(parsedFile, findLinkFromDoc, config);
       acc.renderables.push(renderable);
 
       const descriptionLines = parsedFile.type.docComment?.descriptionLines;
-      const reference = {
-        typeName: parsedFile.type.name,
-        directory: getDirectoryFromRoot(config, parsedFile.type),
-        title: getLinkFromRoot(config, parsedFile.type),
-        description: adaptDescribable(descriptionLines, (referenceName) =>
-          getPossibleLinkFromRoot(
-            config,
-            referenceName,
-            findType(
-              parsedFiles.map((file) => file.type),
-              referenceName,
-            ),
-          ),
-        ).description,
+
+      const findLinkFromHome = apply(referenceFinder, ReferencedFrom.HOME);
+      const reference: ReferenceGuideReference = {
+        reference: references[parsedFile.type.name],
+        title: findLinkFromHome(parsedFile.type.name) as Link,
+        description: adaptDescribable(descriptionLines, findLinkFromHome).description ?? null,
       };
 
       const group = getTypeGroup(parsedFile.type, config);
@@ -59,32 +44,20 @@ export function parsedFilesToRenderableBundle(
   );
 }
 
-function getPossibleLinkFromRoot(config: MarkdownGeneratorConfig, fallback: string, type?: Type): StringOrLink {
-  if (!type) {
-    return fallback;
-  }
-  const namespacePrefix = config.namespace ? `${config.namespace}.` : '';
-  const title = `${namespacePrefix}${type.name}`;
-  return {
-    __type: 'link',
-    title: title,
-    url: `${getDirectoryFromRoot(config, type)}/${title}.md`,
-  };
+enum ReferencedFrom {
+  // When the reference is from the home file (reference guide, index page)
+  HOME = '',
+  // When the reference is from a doc page, which can be a sibling or a child of the home file
+  DOC = '../',
 }
 
-function getDirectoryFromRoot(config: MarkdownGeneratorConfig, type?: Type): string {
-  if (!type) {
-    return '';
-  }
-  return `./${getSanitizedGroup(type, config)}`;
-}
-
-function getLinkFromRoot(config: MarkdownGeneratorConfig, type: Type): Link {
-  const namespacePrefix = config.namespace ? `${config.namespace}.` : '';
-  const title = `${namespacePrefix}${type.name}`;
-  return {
-    __type: 'link',
-    title: title,
-    url: `${getDirectoryFromRoot(config, type)}/${title}.md`,
-  };
-}
+const linkGenerator = (
+  references: Record<string, DocPageReference>,
+  referenceFrom: ReferencedFrom,
+  referenceName: string,
+): StringOrLink => {
+  const reference: DocPageReference | undefined = references[referenceName];
+  return reference
+    ? { __type: 'link', title: reference.displayName, url: `${referenceFrom}${reference.pathFromRoot}` }
+    : referenceName;
+};

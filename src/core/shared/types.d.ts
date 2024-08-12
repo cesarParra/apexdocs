@@ -28,47 +28,44 @@ export type UserDefinedOpenApiConfig = {
 
 export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig;
 
-export type SourceFile = {
+export type UnparsedSourceFile = {
   filePath: string;
   content: string;
   metadataContent: string | null;
 };
 
-export type ParsedFile = {
+export type SourceFileMetadata = {
   filePath: string;
+  name: string;
+  type: 'interface' | 'class' | 'enum';
+};
+
+export type ParsedFile = {
+  source: SourceFileMetadata;
   type: Type;
+};
+
+export type DocPageReference = {
+  source: SourceFileMetadata;
+  // The name under which the type should be displayed in the documentation.
+  // By default, this will match the source.name, but it can be configured by the user.
+  displayName: string;
+  // The location of the file relative to the root of the documentation.
+  pathFromRoot: string;
 };
 
 type Frontmatter = string | Record<string, unknown> | null;
 
-export type DocPageReference = {
-  // The name of the type, which in Apex is always unique.
-  name: string;
-  // The name under which the type should be displayed in the documentation.
-  // By default, this will match the name, but it can be configured by the user.
-  displayName: string;
-  // The location of the file relative to the root of the documentation.
-  readonly linkFromRoot: string;
-};
-
 export type ReferenceGuidePageData = {
-  directory: string;
   frontmatter: Frontmatter;
   content: string;
-  fileExtension: string;
-  fileName: string;
+  filePath: string;
 };
 
 export type DocPageData = {
-  source: {
-    filePath: string;
-    name: string;
-    type: 'interface' | 'class' | 'enum';
-  };
+  source: SourceFileMetadata;
   group: string | null;
-  fileName: string;
-  fileExtension: string;
-  directory: string;
+  filePath: string;
   frontmatter: Frontmatter;
   content: string;
 };
@@ -92,6 +89,8 @@ export type PostHookDocumentationBundle = {
 };
 
 // Configurable Hooks
+
+// TODO: For these hooks, at this stage the path where files are written is not changeable, so let's create new types that account for that.
 
 export type TransformReferenceGuide = (
   referenceGuide: ReferenceGuidePageData,

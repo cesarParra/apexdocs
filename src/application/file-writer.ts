@@ -6,20 +6,20 @@ export class FileWriter {
   static write(files: PageData[], outputDir: string, onWriteCallback: (file: PageData) => void) {
     files.forEach((file) => {
       const resolvedFile = this.getTargetLocation(file, outputDir);
-      if (!fs.existsSync(resolvedFile.directory)) {
-        fs.mkdirSync(resolvedFile.directory, { recursive: true });
-      }
-
-      const filePath = path.join(resolvedFile.directory, `${resolvedFile.fileName}.${resolvedFile.fileExtension}`);
-      fs.writeFileSync(filePath, resolvedFile.content, 'utf8');
+      console.log('output dir', outputDir, path.join(outputDir, file.filePath));
+      console.log('dir name', path.dirname(resolvedFile.filePath));
+      console.log('full path', resolvedFile.filePath);
+      fs.mkdirSync(path.dirname(resolvedFile.filePath), { recursive: true });
+      fs.writeFileSync(resolvedFile.filePath, resolvedFile.content, 'utf8');
       onWriteCallback(resolvedFile);
     });
   }
 
   private static getTargetLocation(file: PageData, outputDir: string): PageData {
+    console.log('joining', outputDir, file.filePath, path.join(outputDir, file.filePath));
     return {
       ...file,
-      directory: path.join(outputDir, file.directory),
+      filePath: path.join(outputDir, file.filePath),
     };
   }
 }

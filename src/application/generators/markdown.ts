@@ -2,13 +2,18 @@ import { generateDocs } from '../../core/markdown/generate-docs';
 import { FileWriter } from '../file-writer';
 import { Logger } from '#utils/logger';
 import { pipe } from 'fp-ts/function';
-import { PageData, PostHookDocumentationBundle, SourceFile, UserDefinedMarkdownConfig } from '../../core/shared/types';
+import {
+  PageData,
+  PostHookDocumentationBundle,
+  UnparsedSourceFile,
+  UserDefinedMarkdownConfig,
+} from '../../core/shared/types';
 import { ReflectionError } from '../../core/markdown/reflection/error-handling';
 import { referenceGuideTemplate } from '../../core/markdown/templates/reference-guide';
 import * as TE from 'fp-ts/TaskEither';
 import { isSkip } from '../../core/shared/utils';
 
-export default function generate(bundles: SourceFile[], config: UserDefinedMarkdownConfig) {
+export default function generate(bundles: UnparsedSourceFile[], config: UserDefinedMarkdownConfig) {
   return pipe(
     generateDocumentationBundle(bundles, config),
     TE.map((files) => writeFilesToSystem(files, config.targetDir)),
@@ -29,7 +34,7 @@ export default function generate(bundles: SourceFile[], config: UserDefinedMarkd
   )();
 }
 
-function generateDocumentationBundle(bundles: SourceFile[], config: UserDefinedMarkdownConfig) {
+function generateDocumentationBundle(bundles: UnparsedSourceFile[], config: UserDefinedMarkdownConfig) {
   return generateDocs(bundles, {
     ...config,
     referenceGuideTemplate: referenceGuideTemplate,
@@ -43,7 +48,7 @@ function writeFilesToSystem(files: PostHookDocumentationBundle, outputDir: strin
       .filter((file) => !isSkip(file)) as PageData[],
     outputDir,
     (file: PageData) => {
-      Logger.logSingle(`${file.fileName} processed.`, false, 'green', false);
+      Logger.logSingle(`${file.filePath} processed.`, false, 'green', false);
     },
   );
 }

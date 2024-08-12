@@ -1,5 +1,5 @@
 import { FileSystem } from './file-system';
-import { SourceFile } from '../core/shared/types';
+import { UnparsedSourceFile } from '../core/shared/types';
 
 const APEX_FILE_EXTENSION = '.cls';
 
@@ -10,8 +10,8 @@ export class ApexFileReader {
   /**
    * Reads from .cls files and returns their raw body.
    */
-  static processFiles(fileSystem: FileSystem, rootPath: string, includeMetadata: boolean): SourceFile[] {
-    let bundles: SourceFile[] = [];
+  static processFiles(fileSystem: FileSystem, rootPath: string, includeMetadata: boolean): UnparsedSourceFile[] {
+    let bundles: UnparsedSourceFile[] = [];
 
     const directoryContents = fileSystem.readDirectory(rootPath);
     directoryContents.forEach((filePath) => {
