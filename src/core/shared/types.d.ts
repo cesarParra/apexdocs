@@ -41,6 +41,16 @@ export type ParsedFile = {
 
 type Frontmatter = string | Record<string, unknown> | null;
 
+export type DocPageReference = {
+  // The name of the type, which in Apex is always unique.
+  name: string;
+  // The name under which the type should be displayed in the documentation.
+  // By default, this will match the name, but it can be configured by the user.
+  displayName: string;
+  // The location of the file relative to the root of the documentation.
+  readonly linkFromRoot: string;
+};
+
 export type ReferenceGuidePageData = {
   directory: string;
   frontmatter: Frontmatter;

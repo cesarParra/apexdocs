@@ -25,7 +25,7 @@ type GetReturnRenderable<T extends Type> = T extends InterfaceMirror
 export function typeToRenderable<T extends Type>(
   parsedFile: { filePath: string; type: T },
   linkGenerator: GetRenderableContentByTypeName,
-  config: MarkdownGeneratorConfig,
+  config: MarkdownGeneratorConfig, // TODO: Do we still need to be passing this just to send it back?
 ): GetReturnRenderable<T> & { filePath: string; namespace?: string } {
   function getRenderable(): RenderableInterface | RenderableClass | RenderableEnum {
     const { type } = parsedFile;
