@@ -3,8 +3,8 @@ import { Link, ReferenceGuideReference, RenderableBundle, StringOrLink } from '.
 import { typeToRenderable } from './apex-types';
 import { adaptDescribable } from './documentables';
 import { MarkdownGeneratorConfig } from '../generate-docs';
-import { getTypeGroup } from './link-generator';
 import { apply } from '#utils/fp';
+import { Type } from '@cparra/apex-reflection';
 
 export function parsedFilesToRenderableBundle(
   config: MarkdownGeneratorConfig,
@@ -61,3 +61,8 @@ const linkGenerator = (
     ? { __type: 'link', title: reference.displayName, url: `${referenceFrom}${reference.pathFromRoot}` }
     : referenceName;
 };
+
+function getTypeGroup(type: Type, config: MarkdownGeneratorConfig): string {
+  const groupAnnotation = type.docComment?.annotations.find((annotation) => annotation.name.toLowerCase() === 'group');
+  return groupAnnotation?.body ?? config.defaultGroupName;
+}
