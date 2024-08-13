@@ -189,7 +189,9 @@ describe('Generates interface documentation', () => {
         const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
         expect(result).documentationBundleHasLength(2);
         assertEither(result, (data) =>
-          expect(data).firstDocContains('This is a description with a [InterfaceRef](./InterfaceRef.md) reference'),
+          expect(data).firstDocContains(
+            'This is a description with a [InterfaceRef](../miscellaneous/InterfaceRef.md) reference',
+          ),
         );
       });
 
@@ -223,7 +225,9 @@ describe('Generates interface documentation', () => {
         const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
         expect(result).documentationBundleHasLength(2);
         assertEither(result, (data) => expect(data).firstDocContains('See'));
-        assertEither(result, (data) => expect(data).firstDocContains('[InterfaceRef](./InterfaceRef.md)'));
+        assertEither(result, (data) =>
+          expect(data).firstDocContains('[InterfaceRef](../miscellaneous/InterfaceRef.md)'),
+        );
       });
 
       it('displays sees without links when the reference is not found', async () => {
@@ -451,7 +455,7 @@ describe('Generates interface documentation', () => {
         const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
         expect(result).documentationBundleHasLength(2);
         assertEither(result, (data) =>
-          expect(data.docs.find((doc) => doc.fileName === 'AnotherInterface')?.content).toContain('Inherited'),
+          expect(data.docs.find((doc) => doc.filePath.includes('AnotherInterface'))?.content).toContain('Inherited'),
         );
       });
     });

@@ -15,7 +15,7 @@ import { adaptDescribable, adaptDocumentable } from './documentables';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
 import { MarkdownGeneratorConfig } from '../generate-docs';
-import { ParsedFile } from '../../shared/types';
+import { SourceFileMetadata } from '../../shared/types';
 
 type GetReturnRenderable<T extends Type> = T extends InterfaceMirror
   ? RenderableInterface
@@ -24,7 +24,7 @@ type GetReturnRenderable<T extends Type> = T extends InterfaceMirror
     : RenderableEnum;
 
 export function typeToRenderable<T extends Type>(
-  parsedFile: ParsedFile,
+  parsedFile: { source: SourceFileMetadata; type: T },
   linkGenerator: GetRenderableContentByTypeName,
   config: MarkdownGeneratorConfig, // TODO: Do we still need to be passing this just to send it back?
 ): GetReturnRenderable<T> & { filePath: string; namespace?: string } {
