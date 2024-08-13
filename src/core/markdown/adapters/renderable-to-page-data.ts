@@ -8,14 +8,16 @@ import { classMarkdownTemplate } from '../templates/class-template';
 
 export const convertToDocumentationBundle = (
   referenceGuideTemplate: string,
-  { references, renderables }: RenderableBundle,
+  { referencesByGroup, renderables }: RenderableBundle,
 ): DocumentationBundle => ({
   referenceGuide: {
     frontmatter: null,
-    content: referencesToReferenceGuideContent(references, referenceGuideTemplate),
+    content: referencesToReferenceGuideContent(referencesByGroup, referenceGuideTemplate),
     filePath: 'index.md',
   },
-  docs: renderables.map((renderable: Renderable) => renderableToPageData(Object.values(references).flat(), renderable)),
+  docs: renderables.map((renderable: Renderable) =>
+    renderableToPageData(Object.values(referencesByGroup).flat(), renderable),
+  ),
 });
 
 function referencesToReferenceGuideContent(

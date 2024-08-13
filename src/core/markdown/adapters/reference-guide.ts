@@ -27,9 +27,9 @@ function getTypeGroup(type: Type, config: MarkdownGeneratorConfig): string {
 
 function slugify(text: string): string {
   return text
-    .toLowerCase() // Convert to lowercase
+    .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '') // Remove non-alphanumeric characters except spaces and hyphens
-    .trim() // Remove leading and trailing spaces
+    .trim()
     .replace(/\s+/g, '-') // Replace spaces with hyphens
     .replace(/-+/g, '-'); // Replace multiple hyphens with a single hyphen
 }

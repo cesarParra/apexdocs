@@ -1,5 +1,5 @@
 import { DocPageReference, ParsedFile } from '../../shared/types';
-import { Link, ReferenceGuideReference, RenderableBundle, StringOrLink } from './types';
+import { Link, ReferenceGuideReference, Renderable, RenderableBundle, StringOrLink } from './types';
 import { typeToRenderable } from './apex-types';
 import { adaptDescribable } from './documentables';
 import { MarkdownGeneratorConfig } from '../generate-docs';
@@ -13,35 +13,46 @@ export function parsedFilesToRenderableBundle(
 ): RenderableBundle {
   const referenceFinder = apply(linkGenerator, references);
 
-  // TODO: Separate the creation of the references from the renderables
-  return parsedFiles.reduce<RenderableBundle>(
-    (acc, parsedFile) => {
+  function toReferenceGuide(parsedFiles: ParsedFile[]): Record<string, ReferenceGuideReference[]> {
+    return parsedFiles.reduce<Record<string, ReferenceGuideReference[]>>(
+      addToReferenceGuide(apply(referenceFinder, ReferencedFrom.HOME), config, references),
+      {},
+    );
+  }
+
+  function toRenderables(parsedFiles: ParsedFile[]): Renderable[] {
+    return parsedFiles.reduce<Renderable[]>((acc, parsedFile) => {
       const findLinkFromDoc = apply(referenceFinder, ReferencedFrom.DOC);
       const renderable = typeToRenderable(parsedFile, findLinkFromDoc, config);
-      acc.renderables.push(renderable);
-
-      const descriptionLines = parsedFile.type.docComment?.descriptionLines;
-
-      const findLinkFromHome = apply(referenceFinder, ReferencedFrom.HOME);
-      const reference: ReferenceGuideReference = {
-        reference: references[parsedFile.type.name],
-        title: findLinkFromHome(parsedFile.type.name) as Link,
-        description: adaptDescribable(descriptionLines, findLinkFromHome).description ?? null,
-      };
-
-      const group = getTypeGroup(parsedFile.type, config);
-      if (!acc.references[group]) {
-        acc.references[group] = [];
-      }
-      acc.references[group].push(reference);
-
+      acc.push(renderable);
       return acc;
-    },
-    {
-      references: {},
-      renderables: [],
-    },
-  );
+    }, []);
+  }
+
+  return {
+    referencesByGroup: toReferenceGuide(parsedFiles),
+    renderables: toRenderables(parsedFiles),
+  };
+}
+
+function addToReferenceGuide(
+  findLinkFromHome: (referenceName: string) => string | Link,
+  config: MarkdownGeneratorConfig,
+  references: Record<string, DocPageReference>,
+) {
+  return (acc: Record<string, ReferenceGuideReference[]>, parsedFile: ParsedFile) => {
+    const group: string = getTypeGroup(parsedFile.type, config);
+    if (!acc[group]) {
+      acc[group] = [];
+    }
+    acc[group].push({
+      reference: references[parsedFile.type.name],
+      title: findLinkFromHome(parsedFile.type.name) as Link,
+      description: adaptDescribable(parsedFile.type.docComment?.descriptionLines, findLinkFromHome).description ?? null,
+    });
+
+    return acc;
+  };
 }
 
 enum ReferencedFrom {

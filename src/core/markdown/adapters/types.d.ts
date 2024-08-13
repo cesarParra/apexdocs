@@ -32,9 +32,7 @@ export type ReferenceGuideReference = {
 
 export type RenderableBundle = {
   // References are grouped by their defined @group annotation
-  references: {
-    [key: string]: ReferenceGuideReference[];
-  };
+  referencesByGroup: Record<string, ReferenceGuideReference[]>;
   renderables: Renderable[];
 };
 
