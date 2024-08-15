@@ -6,6 +6,7 @@ export type ConfigurableHooks = {
   transformReferenceGuide: TransformReferenceGuide;
   transformDocs: TransformDocs;
   transformDocPage: TransformDocPage;
+  transformReference: TransformReference;
 };
 
 export type UserDefinedMarkdownConfig = {
@@ -91,6 +92,10 @@ export type PostHookDocumentationBundle = {
 // Configurable Hooks
 
 // TODO: For these hooks, at this stage the path where files are written is not changeable, so let's create new types that account for that.
+
+export type TransformReference = (
+  reference: DocPageReference,
+) => Partial<DocPageReference> | Promise<Partial<DocPageReference>>;
 
 export type TransformReferenceGuide = (
   referenceGuide: ReferenceGuidePageData,

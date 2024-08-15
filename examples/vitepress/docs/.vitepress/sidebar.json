@@ -10,23 +10,23 @@
             "items": [
               {
                 "text": "BaseClass",
-                "link": "Miscellaneous/apexdocs.BaseClass"
+                "link": "BaseClass/page.md"
               },
               {
                 "text": "MultiInheritanceClass",
-                "link": "Miscellaneous/apexdocs.MultiInheritanceClass"
+                "link": "MultiInheritanceClass/page.md"
               },
               {
                 "text": "SampleClass",
-                "link": "SampleGroup/apexdocs.SampleClass"
+                "link": "SampleClass/page.md"
               },
               {
                 "text": "SampleException",
-                "link": "Miscellaneous/apexdocs.SampleException"
+                "link": "SampleException/page.md"
               },
               {
                 "text": "Url",
-                "link": "Miscellaneous/apexdocs.Url"
+                "link": "Url/page.md"
               }
             ]
           },
@@ -35,11 +35,11 @@
             "items": [
               {
                 "text": "ParentInterface",
-                "link": "Miscellaneous/apexdocs.ParentInterface"
+                "link": "ParentInterface/page.md"
               },
               {
                 "text": "SampleInterface",
-                "link": "Miscellaneous/apexdocs.SampleInterface"
+                "link": "SampleInterface/page.md"
               }
             ]
           },
@@ -48,11 +48,11 @@
             "items": [
               {
                 "text": "ReferencedEnum",
-                "link": "Miscellaneous/apexdocs.ReferencedEnum"
+                "link": "ReferencedEnum/page.md"
               },
               {
                 "text": "SampleEnum",
-                "link": "Sample-Enums/apexdocs.SampleEnum"
+                "link": "SampleEnum/page.md"
               }
             ]
           }
@@ -66,31 +66,31 @@
             "items": [
               {
                 "text": "BaseClass",
-                "link": "Miscellaneous/apexdocs.BaseClass"
+                "link": "BaseClass/page.md"
               },
               {
                 "text": "MultiInheritanceClass",
-                "link": "Miscellaneous/apexdocs.MultiInheritanceClass"
+                "link": "MultiInheritanceClass/page.md"
               },
               {
                 "text": "ParentInterface",
-                "link": "Miscellaneous/apexdocs.ParentInterface"
+                "link": "ParentInterface/page.md"
               },
               {
                 "text": "ReferencedEnum",
-                "link": "Miscellaneous/apexdocs.ReferencedEnum"
+                "link": "ReferencedEnum/page.md"
               },
               {
                 "text": "SampleException",
-                "link": "Miscellaneous/apexdocs.SampleException"
+                "link": "SampleException/page.md"
               },
               {
                 "text": "SampleInterface",
-                "link": "Miscellaneous/apexdocs.SampleInterface"
+                "link": "SampleInterface/page.md"
               },
               {
                 "text": "Url",
-                "link": "Miscellaneous/apexdocs.Url"
+                "link": "Url/page.md"
               }
             ]
           },
@@ -99,7 +99,7 @@
             "items": [
               {
                 "text": "SampleClass",
-                "link": "SampleGroup/apexdocs.SampleClass"
+                "link": "SampleClass/page.md"
               }
             ]
           },
@@ -108,7 +108,7 @@
             "items": [
               {
                 "text": "SampleEnum",
-                "link": "Sample-Enums/apexdocs.SampleEnum"
+                "link": "SampleEnum/page.md"
               }
             ]
           }

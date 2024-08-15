@@ -1,4 +1,4 @@
-import { defineMarkdownConfig, DocPageData } from '../../src';
+import { defineMarkdownConfig, DocPageData, DocPageReference } from '../../src';
 import * as fs from 'node:fs';
 
 function loadFileAsync(filePath: string): Promise<string> {
@@ -29,6 +29,12 @@ export default defineMarkdownConfig({
   sourceDir: 'force-app',
   scope: ['global', 'public', 'protected', 'private', 'namespaceaccessible'],
   namespace: 'apexdocs',
+  transformReference: (reference: DocPageReference) => {
+    return {
+      ...reference,
+      pathFromRoot: `${reference.source.name}/page.md`,
+    };
+  },
   transformReferenceGuide: async (referenceGuide) => {
     const frontMatter = await loadFileAsync('./docs/index-frontmatter.md');
     return {
@@ -86,9 +92,7 @@ export default defineMarkdownConfig({
 function toSidebarLink(doc: DocPageData) {
   return {
     text: doc.source.name,
-    link: `${doc.directory}/${doc.fileName}`
-      // remove the leading "./"
-      .replace(/^\.\//, ''),
+    link: doc.filePath,
   };
 }
 
