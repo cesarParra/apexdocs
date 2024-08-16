@@ -5,13 +5,14 @@ import { adaptDescribable } from './documentables';
 import { MarkdownGeneratorConfig } from '../generate-docs';
 import { apply } from '#utils/fp';
 import { Type } from '@cparra/apex-reflection';
+import * as path from 'path';
 
 export function parsedFilesToRenderableBundle(
   config: MarkdownGeneratorConfig,
   parsedFiles: ParsedFile[],
   references: Record<string, DocPageReference>,
 ): RenderableBundle {
-  const referenceFinder = apply(linkGenerator, references);
+  const referenceFinder = apply(linkGenerator, references, config.documentationRootDir);
 
   function toReferenceGuide(parsedFiles: ParsedFile[]): Record<string, ReferenceGuideReference[]> {
     return parsedFiles.reduce<Record<string, ReferenceGuideReference[]>>(
@@ -54,11 +55,20 @@ function addToReferenceGuide(
   };
 }
 
-const linkGenerator = (references: Record<string, DocPageReference>, referenceName: string): StringOrLink => {
+const linkGenerator = (
+  references: Record<string, DocPageReference>,
+  documentationRootDir: string,
+  referenceName: string,
+): StringOrLink => {
   const reference: DocPageReference | undefined = references[referenceName];
+
   return reference
     ? // Starting the path with a "/" will ensure the link will always be relative to the root of the site.
-      { __type: 'link', title: reference.displayName, url: `/${reference.pathFromRoot}` }
+      {
+        __type: 'link',
+        title: reference.displayName,
+        url: path.join('/', documentationRootDir, reference.pathFromRoot),
+      }
     : referenceName;
 };
 

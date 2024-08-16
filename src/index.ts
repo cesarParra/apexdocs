@@ -12,7 +12,12 @@ import { defaults } from './defaults';
 type ConfigurableMarkdownConfig = Omit<
   SetOptional<
     UserDefinedMarkdownConfig,
-    'targetDir' | 'scope' | 'defaultGroupName' | 'includeMetadata' | 'sortMembersAlphabetically'
+    | 'targetDir'
+    | 'scope'
+    | 'defaultGroupName'
+    | 'includeMetadata'
+    | 'sortMembersAlphabetically'
+    | 'documentationRootDir'
   >,
   'targetGenerator'
 >;

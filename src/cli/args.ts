@@ -26,7 +26,7 @@ function _extractYargs(config?: CosmiconfigResult) {
     .command('markdown', 'Generate documentation from Apex classes as a Markdown site.', (yargs) =>
       yargs.options(markdownOptions),
     )
-    .command('openapi', 'Generate an OpenApi REST specification from Apex classes.')
+    .command('openapi', 'Generate an OpenApi REST specification from Apex classes.') // TODO: Add OpenApi specific options
     .demandCommand()
     .parseSync();
 }

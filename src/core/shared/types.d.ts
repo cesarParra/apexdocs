@@ -21,6 +21,7 @@ export type UserDefinedMarkdownConfig = {
   namespace?: string;
   sortMembersAlphabetically: boolean;
   includeMetadata: boolean;
+  documentationRootDir: string;
 } & Partial<ConfigurableHooks>;
 
 export type UserDefinedOpenApiConfig = {

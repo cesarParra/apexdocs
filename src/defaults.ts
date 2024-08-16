@@ -5,4 +5,5 @@ export const defaults = {
   defaultGroupName: 'Miscellaneous',
   includeMetadata: false,
   sortMembersAlphabetically: false,
+  documentationRootDir: '',
 };
