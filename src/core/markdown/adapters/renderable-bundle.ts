@@ -15,15 +15,14 @@ export function parsedFilesToRenderableBundle(
 
   function toReferenceGuide(parsedFiles: ParsedFile[]): Record<string, ReferenceGuideReference[]> {
     return parsedFiles.reduce<Record<string, ReferenceGuideReference[]>>(
-      addToReferenceGuide(apply(referenceFinder, ReferencedFrom.HOME), config, references),
+      addToReferenceGuide(referenceFinder, config, references),
       {},
     );
   }
 
   function toRenderables(parsedFiles: ParsedFile[]): Renderable[] {
     return parsedFiles.reduce<Renderable[]>((acc, parsedFile) => {
-      const findLinkFromDoc = apply(referenceFinder, ReferencedFrom.DOC);
-      const renderable = typeToRenderable(parsedFile, findLinkFromDoc, config);
+      const renderable = typeToRenderable(parsedFile, referenceFinder, config);
       acc.push(renderable);
       return acc;
     }, []);
@@ -55,21 +54,11 @@ function addToReferenceGuide(
   };
 }
 
-enum ReferencedFrom {
-  // When the reference is from the home file (reference guide, index page)
-  HOME = '',
-  // When the reference is from a doc page, which can be a sibling or a child of the home file
-  DOC = '../',
-}
-
-const linkGenerator = (
-  references: Record<string, DocPageReference>,
-  referenceFrom: ReferencedFrom,
-  referenceName: string,
-): StringOrLink => {
+const linkGenerator = (references: Record<string, DocPageReference>, referenceName: string): StringOrLink => {
   const reference: DocPageReference | undefined = references[referenceName];
   return reference
-    ? { __type: 'link', title: reference.displayName, url: `${referenceFrom}${reference.pathFromRoot}` }
+    ? // Starting the path with a "/" will ensure the link will always be relative to the root of the site.
+      { __type: 'link', title: reference.displayName, url: `/${reference.pathFromRoot}` }
     : referenceName;
 };
 

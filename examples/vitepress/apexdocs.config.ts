@@ -29,6 +29,7 @@ export default defineMarkdownConfig({
   sourceDir: 'force-app',
   scope: ['global', 'public', 'protected', 'private', 'namespaceaccessible'],
   namespace: 'apexdocs',
+  // TODO: Get rid of this, I was just testing stuff
   transformReference: (reference: DocPageReference) => {
     return {
       ...reference,
