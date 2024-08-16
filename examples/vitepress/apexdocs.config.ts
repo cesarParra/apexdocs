@@ -1,4 +1,4 @@
-import { defineMarkdownConfig, DocPageData, DocPageReference } from '../../src';
+import { defineMarkdownConfig, DocPageData } from '../../src';
 import * as fs from 'node:fs';
 
 function loadFileAsync(filePath: string): Promise<string> {
@@ -29,13 +29,6 @@ export default defineMarkdownConfig({
   sourceDir: 'force-app',
   scope: ['global', 'public', 'protected', 'private', 'namespaceaccessible'],
   namespace: 'apexdocs',
-  // TODO: Get rid of this, I was just testing stuff
-  transformReference: (reference: DocPageReference) => {
-    return {
-      ...reference,
-      pathFromRoot: `${reference.source.name}/page.md`,
-    };
-  },
   transformReferenceGuide: async (referenceGuide) => {
     const frontMatter = await loadFileAsync('./docs/index-frontmatter.md');
     return {

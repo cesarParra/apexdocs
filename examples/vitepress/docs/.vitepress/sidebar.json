@@ -10,23 +10,23 @@
             "items": [
               {
                 "text": "BaseClass",
-                "link": "BaseClass/page.md"
+                "link": "miscellaneous/BaseClass.md"
               },
               {
                 "text": "MultiInheritanceClass",
-                "link": "MultiInheritanceClass/page.md"
+                "link": "miscellaneous/MultiInheritanceClass.md"
               },
               {
                 "text": "SampleClass",
-                "link": "SampleClass/page.md"
+                "link": "samplegroup/SampleClass.md"
               },
               {
                 "text": "SampleException",
-                "link": "SampleException/page.md"
+                "link": "miscellaneous/SampleException.md"
               },
               {
                 "text": "Url",
-                "link": "Url/page.md"
+                "link": "miscellaneous/Url.md"
               }
             ]
           },
@@ -35,11 +35,11 @@
             "items": [
               {
                 "text": "ParentInterface",
-                "link": "ParentInterface/page.md"
+                "link": "miscellaneous/ParentInterface.md"
               },
               {
                 "text": "SampleInterface",
-                "link": "SampleInterface/page.md"
+                "link": "miscellaneous/SampleInterface.md"
               }
             ]
           },
@@ -48,11 +48,11 @@
             "items": [
               {
                 "text": "ReferencedEnum",
-                "link": "ReferencedEnum/page.md"
+                "link": "miscellaneous/ReferencedEnum.md"
               },
               {
                 "text": "SampleEnum",
-                "link": "SampleEnum/page.md"
+                "link": "sample-enums/SampleEnum.md"
               }
             ]
           }
@@ -66,31 +66,31 @@
             "items": [
               {
                 "text": "BaseClass",
-                "link": "BaseClass/page.md"
+                "link": "miscellaneous/BaseClass.md"
               },
               {
                 "text": "MultiInheritanceClass",
-                "link": "MultiInheritanceClass/page.md"
+                "link": "miscellaneous/MultiInheritanceClass.md"
               },
               {
                 "text": "ParentInterface",
-                "link": "ParentInterface/page.md"
+                "link": "miscellaneous/ParentInterface.md"
               },
               {
                 "text": "ReferencedEnum",
-                "link": "ReferencedEnum/page.md"
+                "link": "miscellaneous/ReferencedEnum.md"
               },
               {
                 "text": "SampleException",
-                "link": "SampleException/page.md"
+                "link": "miscellaneous/SampleException.md"
               },
               {
                 "text": "SampleInterface",
-                "link": "SampleInterface/page.md"
+                "link": "miscellaneous/SampleInterface.md"
               },
               {
                 "text": "Url",
-                "link": "Url/page.md"
+                "link": "miscellaneous/Url.md"
               }
             ]
           },
@@ -99,7 +99,7 @@
             "items": [
               {
                 "text": "SampleClass",
-                "link": "SampleClass/page.md"
+                "link": "samplegroup/SampleClass.md"
               }
             ]
           },
@@ -108,7 +108,7 @@
             "items": [
               {
                 "text": "SampleEnum",
-                "link": "SampleEnum/page.md"
+                "link": "sample-enums/SampleEnum.md"
               }
             ]
           }

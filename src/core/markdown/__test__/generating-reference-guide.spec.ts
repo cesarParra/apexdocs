@@ -25,10 +25,10 @@ describe('Generates a Reference Guide', () => {
     expect(result).documentationBundleHasLength(2);
 
     assertEither(result, (data) =>
-      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('[MyEnum](miscellaneous/MyEnum.md)'),
+      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('[MyEnum](/miscellaneous/MyEnum.md)'),
     );
     assertEither(result, (data) =>
-      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('[MyClass](miscellaneous/MyClass.md)'),
+      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('[MyClass](/miscellaneous/MyClass.md)'),
     );
   });
 
@@ -174,7 +174,7 @@ describe('Generates a Reference Guide', () => {
     const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
     expect(result).documentationBundleHasLength(2);
     assertEither(result, (data) =>
-      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('with a [MyClass](group2/MyClass.md)'),
+      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('with a [MyClass](/group2/MyClass.md)'),
     );
   });
 });
