@@ -14,7 +14,7 @@ export const convertToDocumentationBundle = (
   referenceGuide: {
     frontmatter: null,
     content: referencesToReferenceGuideContent(referencesByGroup, referenceGuideTemplate),
-    filePath: 'index.md',
+    outputDocPath: 'index.md',
   },
   docs: renderables.map((renderable: Renderable) =>
     renderableToPageData(Object.values(referencesByGroup).flat(), renderable),
@@ -56,7 +56,7 @@ function renderableToPageData(referenceGuideReference: ReferenceGuideReference[]
         name: renderable.name,
         type: renderable.type,
       },
-      filePath: reference!.reference.pathFromRoot,
+      outputDocPath: reference!.reference.outputDocPath,
       frontmatter: null,
       content: docContents,
       group: renderable.doc.group ?? defaults.defaultGroupName,

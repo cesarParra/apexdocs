@@ -86,7 +86,7 @@ export default defineMarkdownConfig({
 function toSidebarLink(doc: DocPageData) {
   return {
     text: doc.source.name,
-    link: doc.filePath,
+    link: doc.outputDocPath,
   };
 }
 

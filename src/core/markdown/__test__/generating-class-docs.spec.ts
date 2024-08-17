@@ -12,7 +12,7 @@ describe('Generates interface documentation', () => {
 
       const result = await generateDocs([apexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].filePath).toContain('MyClass'));
+      assertEither(result, (data) => expect(data.docs[0].outputDocPath).toContain('MyClass'));
     });
 
     it('returns the type as class', async () => {

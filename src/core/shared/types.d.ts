@@ -55,8 +55,13 @@ export type DocPageReference = {
   // The name under which the type should be displayed in the documentation.
   // By default, this will match the source.name, but it can be configured by the user.
   displayName: string;
-  // The location of the file relative to the root of the documentation.
-  pathFromRoot: string;
+  // The location where the file will be written.
+  outputDocPath: string;
+  // The path to the file relative to the documentation root directory. This is used when linking to the file.
+  // Usually the value will be the same as outputDocPath. However, some site generators may have a different way of
+  // organizing the files, so this allows for the flexibility of having a path from linking that is different from
+  // the path where the file is written.
+  referencePath: string;
 };
 
 type Frontmatter = string | Record<string, unknown> | null;
@@ -64,13 +69,13 @@ type Frontmatter = string | Record<string, unknown> | null;
 export type ReferenceGuidePageData = {
   frontmatter: Frontmatter;
   content: string;
-  filePath: string;
+  outputDocPath: string;
 };
 
 export type DocPageData = {
   source: SourceFileMetadata;
   group: string | null;
-  filePath: string;
+  outputDocPath: string;
   frontmatter: Frontmatter;
   content: string;
 };
@@ -100,7 +105,7 @@ export type PostHookDocumentationBundle = {
 
 type ConfigurableDocPageReference = Omit<DocPageReference, 'source'>;
 
-type ConfigurableDocPageData = Omit<DocPageData, 'source' | 'filePath'>;
+type ConfigurableDocPageData = Omit<DocPageData, 'source' | 'outputDocPath'>;
 
 /**
  * Allows changing where the files are written to.

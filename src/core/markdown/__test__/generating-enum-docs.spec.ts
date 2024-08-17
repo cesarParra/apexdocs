@@ -17,7 +17,7 @@ describe('Generates enum documentation', () => {
 
       const result = await generateDocs([apexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].filePath).toContain('MyEnum'));
+      assertEither(result, (data) => expect(data.docs[0].outputDocPath).toContain('MyEnum'));
     });
 
     it('returns the type as enum', async () => {

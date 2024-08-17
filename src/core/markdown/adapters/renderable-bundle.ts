@@ -67,7 +67,7 @@ const linkGenerator = (
       {
         __type: 'link',
         title: reference.displayName,
-        url: path.join('/', documentationRootDir, reference.pathFromRoot),
+        url: path.join('/', documentationRootDir, reference.referencePath),
       }
     : referenceName;
 };

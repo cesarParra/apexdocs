@@ -453,7 +453,9 @@ describe('Generates interface documentation', () => {
         const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
         expect(result).documentationBundleHasLength(2);
         assertEither(result, (data) =>
-          expect(data.docs.find((doc) => doc.filePath.includes('AnotherInterface'))?.content).toContain('Inherited'),
+          expect(data.docs.find((doc) => doc.outputDocPath.includes('AnotherInterface'))?.content).toContain(
+            'Inherited',
+          ),
         );
       });
     });

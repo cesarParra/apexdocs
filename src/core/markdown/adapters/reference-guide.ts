@@ -13,10 +13,12 @@ export function parsedFilesToReferenceGuide(
 }
 
 function parsedFileToDocPageReference(config: MarkdownGeneratorConfig, parsedFile: ParsedFile): DocPageReference {
+  const path = `${slugify(getTypeGroup(parsedFile.type, config))}/${parsedFile.type.name}.md`;
   return {
     source: parsedFile.source,
     displayName: parsedFile.type.name,
-    pathFromRoot: `${slugify(getTypeGroup(parsedFile.type, config))}/${parsedFile.type.name}.md`,
+    outputDocPath: path,
+    referencePath: path,
   };
 }
 

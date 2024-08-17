@@ -48,7 +48,7 @@ function writeFilesToSystem(files: PostHookDocumentationBundle, outputDir: strin
       .filter((file) => !isSkip(file)) as PageData[],
     outputDir,
     (file: PageData) => {
-      Logger.logSingle(`${file.filePath} processed.`, false, 'green', false);
+      Logger.logSingle(`${file.outputDocPath} processed.`, false, 'green', false);
     },
   );
 }

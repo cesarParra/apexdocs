@@ -19,7 +19,7 @@ export default function openApi(fileBodies: UnparsedSourceFile[], config: UserDe
   const generatedFiles = processor.fileBuilder().files();
 
   FileWriter.write(generatedFiles, config.targetDir, (file: PageData) => {
-    Logger.logSingle(`${file.filePath} processed.`, false, 'green', false);
+    Logger.logSingle(`${file.outputDocPath} processed.`, false, 'green', false);
   });
 
   // Error logging
