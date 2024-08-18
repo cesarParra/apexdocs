@@ -46,7 +46,8 @@ export const markdownOptions: { [key: string]: Options } = {
   },
   documentationRootDir: {
     type: 'string',
-    describe: 'The root directory of the documentation. This is used to generate the correct relative paths.',
+    describe:
+      'The root directory of the documentation. This is used to create the correct relative paths when generating links between documents.',
     default: defaults.documentationRootDir,
   },
 };
