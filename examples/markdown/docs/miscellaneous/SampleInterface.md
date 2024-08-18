@@ -6,10 +6,12 @@ This is a sample interface
 
 **Mermaid** 
 
-graph TD 
-A[SampleInterface] --&gt;|extends| B[ParentInterface] 
-B --&gt;|extends| C[GrandParentInterface] 
-C --&gt;|extends| D[GreatGrandParentInterface]
+```mermaid
+graph TD
+   A[SampleInterface] -->|extends| B[ParentInterface]
+   B -->|extends| C[GrandParentInterface]
+   C -->|extends| D[GreatGrandParentInterface]
+```
 
 **Author** John Doe
 
@@ -23,8 +25,10 @@ C --&gt;|extends| D[GreatGrandParentInterface]
 ns
 
 ## Example
-SampleInterface sampleInterface &#x3D; new SampleInterface(); 
+```apex
+SampleInterface sampleInterface = new SampleInterface();
 sampleInterface.sampleMethod();
+```
 
 **Extends**
 [ParentInterface](ParentInterface.md)
