@@ -5,7 +5,7 @@ ns
 
 **Inheritance**
 
-[SampleClass](../samplegroup/SampleClass.md) < [BaseClass](../miscellaneous/BaseClass.md)
+[SampleClass](../samplegroup/SampleClass.md) < [BaseClass](BaseClass.md)
 
 ## Fields
 ### `sampleEnumFromBase`

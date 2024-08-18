@@ -17,7 +17,7 @@ C --&gt;|extends| D[GreatGrandParentInterface]
 
 **See** [SampleEnum](../sample-enums/SampleEnum.md)
 
-**See** [ReferencedEnum](../miscellaneous/ReferencedEnum.md)
+**See** [ReferencedEnum](ReferencedEnum.md)
 
 ## Namespace
 ns
@@ -27,7 +27,7 @@ SampleInterface sampleInterface &#x3D; new SampleInterface();
 sampleInterface.sampleMethod();
 
 **Extends**
-[ParentInterface](../miscellaneous/ParentInterface.md)
+[ParentInterface](ParentInterface.md)
 
 ## Methods
 ### `sampleMethod()`
@@ -62,7 +62,7 @@ public String sampleMethod()
 Some return value
 
 #### Throws
-[SampleException](../miscellaneous/SampleException.md): This is a sample exception
+[SampleException](SampleException.md): This is a sample exception
 
 AnotherSampleException: This is another sample exception
 
