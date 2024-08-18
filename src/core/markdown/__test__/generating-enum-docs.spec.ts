@@ -211,7 +211,7 @@ describe('Generates enum documentation', () => {
       expect(result).documentationBundleHasLength(2);
       assertEither(result, (data) => expect(data).firstDocContains('Description'));
       assertEither(result, (data) =>
-        expect(data).firstDocContains('This is a description with a [EnumRef](/miscellaneous/EnumRef.md) reference'),
+        expect(data).firstDocContains('This is a description with a [EnumRef](EnumRef.md) reference'),
       );
     });
 
@@ -245,7 +245,7 @@ describe('Generates enum documentation', () => {
       const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
       expect(result).documentationBundleHasLength(2);
       assertEither(result, (data) => expect(data).firstDocContains('See'));
-      assertEither(result, (data) => expect(data).firstDocContains('[EnumRef](/miscellaneous/EnumRef.md)'));
+      assertEither(result, (data) => expect(data).firstDocContains('[EnumRef](EnumRef.md)'));
     });
 
     it('displays sees without links when the reference is not found', async () => {
