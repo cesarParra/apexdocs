@@ -16,14 +16,14 @@ export function parsedFilesToRenderableBundle(
 
   function toReferenceGuide(parsedFiles: ParsedFile[]): Record<string, ReferenceGuideReference[]> {
     return parsedFiles.reduce<Record<string, ReferenceGuideReference[]>>(
-      addToReferenceGuide(referenceFinder, config, references),
+      addToReferenceGuide(apply(referenceFinder, '__base__'), config, references),
       {},
     );
   }
 
   function toRenderables(parsedFiles: ParsedFile[]): Renderable[] {
     return parsedFiles.reduce<Renderable[]>((acc, parsedFile) => {
-      const renderable = typeToRenderable(parsedFile, referenceFinder, config);
+      const renderable = typeToRenderable(parsedFile, apply(referenceFinder, parsedFile.source.name), config);
       acc.push(renderable);
       return acc;
     }, []);
@@ -58,18 +58,38 @@ function addToReferenceGuide(
 const linkGenerator = (
   references: Record<string, DocPageReference>,
   documentationRootDir: string,
+  from: string, // The name of the file for which the reference is being generated
   referenceName: string,
 ): StringOrLink => {
-  const reference: DocPageReference | undefined = references[referenceName];
+  const referenceTo: DocPageReference | undefined = references[referenceName];
+  // When linking from the base path (e.g. the reference guide/index page), the reference path is the same as the output
+  // path.
+  if (referenceTo && from === '__base__') {
+    return {
+      __type: 'link',
+      title: referenceTo.displayName,
+      url: path.join(documentationRootDir, referenceTo.referencePath),
+    };
+  }
 
-  return reference
-    ? // Starting the path with a "/" will ensure the link will always be relative to the root of the site.
-      {
-        __type: 'link',
-        title: reference.displayName,
-        url: path.join('/', documentationRootDir, reference.referencePath),
-      }
-    : referenceName;
+  const referenceFrom: DocPageReference | undefined = references[from];
+
+  if (!referenceFrom || !referenceTo) {
+    return referenceName;
+  }
+
+  // Gets the directory of the file that is being linked from.
+  // This is used to calculate the relative path to the file
+  // being linked to.
+  const fromPath = path.parse(path.join('/', documentationRootDir, referenceFrom.referencePath)).dir;
+  const toPath = path.join('/', documentationRootDir, referenceTo.referencePath);
+  const relativePath = path.relative(fromPath, toPath);
+
+  return {
+    __type: 'link',
+    title: referenceTo.displayName,
+    url: relativePath,
+  };
 };
 
 function getTypeGroup(type: Type, config: MarkdownGeneratorConfig): string {
