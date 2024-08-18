@@ -15,13 +15,21 @@ const defaultMarkdownGeneratorConfig: MarkdownGeneratorConfig = {
   defaultGroupName: 'Miscellaneous',
   referenceGuideTemplate: '',
   sortMembersAlphabetically: false,
+  documentationRootDir: '',
 };
 
 describe('Conversion from InterfaceMirror to InterfaceSource understandable by the templating engine', () => {
   it('converts the name', () => {
     const interfaceMirror = new InterfaceMirrorBuilder().withName('SampleInterface').build();
     const interfaceSource = typeToRenderable(
-      { filePath: '', type: interfaceMirror },
+      {
+        source: {
+          filePath: '',
+          type: 'interface',
+          name: 'SampleInterface',
+        },
+        type: interfaceMirror,
+      },
       linkGenerator,
       defaultMarkdownGeneratorConfig,
     );
@@ -32,7 +40,14 @@ describe('Conversion from InterfaceMirror to InterfaceSource understandable by t
   it('converts the access modifier', () => {
     const interfaceMirror = new InterfaceMirrorBuilder().build();
     const interfaceSource = typeToRenderable(
-      { filePath: '', type: interfaceMirror },
+      {
+        source: {
+          filePath: '',
+          type: 'interface',
+          name: 'SampleInterface',
+        },
+        type: interfaceMirror,
+      },
       linkGenerator,
       defaultMarkdownGeneratorConfig,
     );
@@ -45,7 +60,14 @@ describe('Conversion from InterfaceMirror to InterfaceSource understandable by t
       .addAnnotation(new AnnotationBuilder().withName('MyAnnotation').build())
       .build();
     const interfaceSource = typeToRenderable(
-      { filePath: '', type: interfaceMirror },
+      {
+        source: {
+          filePath: '',
+          type: 'interface',
+          name: 'SampleInterface',
+        },
+        type: interfaceMirror,
+      },
       linkGenerator,
       defaultMarkdownGeneratorConfig,
     );
@@ -67,7 +89,14 @@ describe('Conversion from InterfaceMirror to InterfaceSource understandable by t
       .build();
 
     const interfaceSource = typeToRenderable(
-      { filePath: '', type: interfaceMirror },
+      {
+        source: {
+          filePath: '',
+          type: 'interface',
+          name: 'SampleInterface',
+        },
+        type: interfaceMirror,
+      },
       linkGenerator,
       defaultMarkdownGeneratorConfig,
     );
@@ -99,7 +128,14 @@ describe('Conversion from InterfaceMirror to InterfaceSource understandable by t
       .build();
 
     const interfaceSource = typeToRenderable(
-      { filePath: '', type: interfaceMirror },
+      {
+        source: {
+          filePath: '',
+          type: 'interface',
+          name: 'SampleInterface',
+        },
+        type: interfaceMirror,
+      },
       linkGenerator,
       defaultMarkdownGeneratorConfig,
     );

@@ -1,10 +1,15 @@
+---
+title: MultiInheritanceClass
+---
+
 # MultiInheritanceClass Class
 
 ## Namespace
-ns
+apexdocs
 
 **Inheritance**
-[ns.SampleClass](../SampleGroup/ns.SampleClass.md) < [ns.BaseClass](./ns.BaseClass.md)
+
+[SampleClass](../samplegroup/SampleClass.md) < [BaseClass](BaseClass.md)
 
 ## Fields
 ### `sampleEnumFromBase`
@@ -17,7 +22,7 @@ public sampleEnumFromBase
 ```
 
 #### Type
-[ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md)
+[SampleEnum](../sample-enums/SampleEnum.md)
 
 ## Properties
 ### Group Name
@@ -67,7 +72,5 @@ public virtual String sayHello()
 A string value.
 
 ##### Example
-```apex
-SampleClass sample = new SampleClass();
+SampleClass sample &#x3D; new SampleClass(); 
 sample.doSomething();
-```

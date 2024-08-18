@@ -10,11 +10,14 @@ import {
   Frontmatter,
   PostHookDocumentationBundle,
   ReferenceGuidePageData,
-  SourceFile,
+  UnparsedSourceFile,
   TransformDocPage,
   TransformDocs,
   TransformReferenceGuide,
   UserDefinedMarkdownConfig,
+  DocPageReference,
+  TransformReference,
+  ParsedFile,
 } from '../shared/types';
 import { parsedFilesToRenderableBundle } from './adapters/renderable-bundle';
 import { reflectSourceCode } from './reflection/reflect-source';
@@ -27,6 +30,7 @@ import { Template } from './templates/template';
 import { hookableTemplate } from './templates/hookable';
 import { sortMembers } from './reflection/sort-members';
 import { isSkip } from '../shared/utils';
+import { parsedFilesToReferenceGuide } from './adapters/reference-guide';
 
 export type MarkdownGeneratorConfig = Pick<
   UserDefinedMarkdownConfig,
@@ -37,6 +41,8 @@ export type MarkdownGeneratorConfig = Pick<
   | 'transformReferenceGuide'
   | 'transformDocs'
   | 'transformDocPage'
+  | 'transformReference'
+  | 'documentationRootDir'
 > & {
   referenceGuideTemplate: string;
   sortMembersAlphabetically: boolean;
@@ -48,8 +54,9 @@ export class HookError {
   constructor(public error: unknown) {}
 }
 
-export function generateDocs(apexBundles: SourceFile[], config: MarkdownGeneratorConfig) {
+export function generateDocs(apexBundles: UnparsedSourceFile[], config: MarkdownGeneratorConfig) {
   const filterOutOfScope = apply(filterScope, config.scope);
+  const convertToReferences = apply(parsedFilesToReferenceGuide, config);
   const convertToRenderableBundle = apply(parsedFilesToRenderableBundle, config);
   const convertToDocumentationBundleForTemplate = apply(convertToDocumentationBundle, config.referenceGuideTemplate);
   const sortTypeMembers = apply(sortMembers, config.sortMembersAlphabetically);
@@ -62,59 +69,70 @@ export function generateDocs(apexBundles: SourceFile[], config: MarkdownGenerato
     E.map(addInheritedMembersToTypes),
     E.map(addInheritanceChainToTypes),
     E.map(sortTypeMembers),
-    E.map(convertToRenderableBundle),
-    E.map(convertToDocumentationBundleForTemplate),
+    E.bindTo('parsedFiles'),
+    E.bind('references', ({ parsedFiles }) => E.right(convertToReferences(parsedFiles))),
     TE.fromEither,
-    TE.flatMap((bundle) =>
-      TE.tryCatch(
-        () => documentationBundleHook(bundle, config),
-        (error) => new HookError(error),
-      ),
-    ),
-    TE.map((bundle: PostHookDocumentationBundle) => ({
-      referenceGuide: isSkip(bundle.referenceGuide)
-        ? bundle.referenceGuide
-        : {
-            ...bundle.referenceGuide,
-            content: Template.getInstance().compile({
-              source: {
-                frontmatter: toFrontmatterString(bundle.referenceGuide.frontmatter),
-                content: bundle.referenceGuide.content,
-              },
-              template: hookableTemplate,
-            }),
-          },
-      docs: bundle.docs.map((doc) => ({
-        ...doc,
-        content: Template.getInstance().compile({
-          source: {
-            frontmatter: toFrontmatterString(doc.frontmatter),
-            content: doc.content,
-          },
-          template: hookableTemplate,
-        }),
-      })),
-    })),
+    TE.flatMap(({ parsedFiles, references }) => transformReferenceHook(config)({ references, parsedFiles })),
+    TE.map(({ parsedFiles, references }) => convertToRenderableBundle(parsedFiles, references)),
+    TE.map(convertToDocumentationBundleForTemplate),
+    TE.flatMap(transformDocumentationBundleHook(config)),
+    TE.map(postHookCompile),
   );
 }
 
-function toFrontmatterString(frontmatter: Frontmatter): string {
-  if (typeof frontmatter === 'string') {
-    return frontmatter;
+function transformReferenceHook(config: MarkdownGeneratorConfig) {
+  async function _execute(
+    references: Record<string, DocPageReference>,
+    parsedFiles: ParsedFile[],
+    transformReference?: TransformReference | undefined,
+  ): Promise<{
+    references: Record<string, DocPageReference>;
+    parsedFiles: ParsedFile[];
+  }> {
+    return {
+      references: await execTransformReferenceHook(Object.values(references), transformReference),
+      parsedFiles,
+    };
   }
 
-  if (!frontmatter) {
-    return '';
-  }
+  return ({ references, parsedFiles }: { references: Record<string, DocPageReference>; parsedFiles: ParsedFile[] }) =>
+    TE.tryCatch(
+      () => _execute(references, parsedFiles, config.transformReference),
+      (error) => new HookError(error),
+    );
+}
 
-  const yamlString = yaml.dump(frontmatter);
-  return `---\n${yamlString}---\n`;
+function transformDocumentationBundleHook(config: MarkdownGeneratorConfig) {
+  return (bundle: DocumentationBundle) =>
+    TE.tryCatch(
+      () => documentationBundleHook(bundle, config),
+      (error) => new HookError(error),
+    );
 }
 
 // Configurable hooks
 function passThroughHook<T>(value: T): T {
   return value;
 }
+
+const execTransformReferenceHook = async (
+  references: DocPageReference[],
+  hook: TransformReference = passThroughHook,
+): Promise<Record<string, DocPageReference>> => {
+  const hooked = references.map<Promise<DocPageReference>>(async (reference) => {
+    const hookedResult = await hook(reference);
+    return {
+      ...reference,
+      ...hookedResult,
+    };
+  });
+  const awaited = await Promise.all(hooked);
+
+  return awaited.reduce<Record<string, DocPageReference>>((acc, reference) => {
+    acc[reference.source.name] = reference;
+    return acc;
+  }, {});
+};
 
 const documentationBundleHook = async (
   bundle: DocumentationBundle,
@@ -156,3 +174,43 @@ const transformDocPage = async (doc: DocPageData, hook: TransformDocPage = passT
     ...(await hook(doc)),
   };
 };
+
+function postHookCompile(bundle: PostHookDocumentationBundle) {
+  return {
+    referenceGuide: isSkip(bundle.referenceGuide)
+      ? bundle.referenceGuide
+      : {
+          ...bundle.referenceGuide,
+          content: Template.getInstance().compile({
+            source: {
+              frontmatter: toFrontmatterString(bundle.referenceGuide.frontmatter),
+              content: bundle.referenceGuide.content,
+            },
+            template: hookableTemplate,
+          }),
+        },
+    docs: bundle.docs.map((doc) => ({
+      ...doc,
+      content: Template.getInstance().compile({
+        source: {
+          frontmatter: toFrontmatterString(doc.frontmatter),
+          content: doc.content,
+        },
+        template: hookableTemplate,
+      }),
+    })),
+  };
+}
+
+function toFrontmatterString(frontmatter: Frontmatter): string {
+  if (typeof frontmatter === 'string') {
+    return frontmatter;
+  }
+
+  if (!frontmatter) {
+    return '';
+  }
+
+  const yamlString = yaml.dump(frontmatter);
+  return `---\n${yamlString}---\n`;
+}

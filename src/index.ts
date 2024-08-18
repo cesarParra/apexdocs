@@ -5,13 +5,19 @@ import type {
   UserDefinedMarkdownConfig,
   ReferenceGuidePageData,
   DocPageData,
+  DocPageReference,
 } from './core/shared/types';
 import { defaults } from './defaults';
 
 type ConfigurableMarkdownConfig = Omit<
   SetOptional<
     UserDefinedMarkdownConfig,
-    'targetDir' | 'scope' | 'defaultGroupName' | 'includeMetadata' | 'sortMembersAlphabetically'
+    | 'targetDir'
+    | 'scope'
+    | 'defaultGroupName'
+    | 'includeMetadata'
+    | 'sortMembersAlphabetically'
+    | 'documentationRootDir'
   >,
   'targetGenerator'
 >;
@@ -32,4 +38,4 @@ function skip(): Skip {
 
 // Exports
 
-export { defineMarkdownConfig, skip, ConfigurableHooks, ReferenceGuidePageData, DocPageData };
+export { defineMarkdownConfig, skip, ConfigurableHooks, ReferenceGuidePageData, DocPageData, DocPageReference };

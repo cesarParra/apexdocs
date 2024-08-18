@@ -86,9 +86,7 @@ export default defineMarkdownConfig({
 function toSidebarLink(doc: DocPageData) {
   return {
     text: doc.source.name,
-    link: `${doc.directory}/${doc.fileName}`
-      // remove the leading "./"
-      .replace(/^\.\//, ''),
+    link: doc.outputDocPath,
   };
 }
 

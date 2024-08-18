@@ -5,21 +5,17 @@ import { PageData } from '../core/shared/types';
 export class FileWriter {
   static write(files: PageData[], outputDir: string, onWriteCallback: (file: PageData) => void) {
     files.forEach((file) => {
-      const resolvedFile = this.getTargetLocation(file, outputDir);
-      if (!fs.existsSync(resolvedFile.directory)) {
-        fs.mkdirSync(resolvedFile.directory, { recursive: true });
-      }
-
-      const filePath = path.join(resolvedFile.directory, `${resolvedFile.fileName}.${resolvedFile.fileExtension}`);
-      fs.writeFileSync(filePath, resolvedFile.content, 'utf8');
-      onWriteCallback(resolvedFile);
+      const { outputDocPath, content } = this.getTargetLocation(file, outputDir);
+      fs.mkdirSync(path.dirname(outputDocPath), { recursive: true });
+      fs.writeFileSync(outputDocPath, content, 'utf8');
+      onWriteCallback(file);
     });
   }
 
   private static getTargetLocation(file: PageData, outputDir: string): PageData {
     return {
       ...file,
-      directory: path.join(outputDir, file.directory),
+      outputDocPath: path.join(outputDir, file.outputDocPath),
     };
   }
 }

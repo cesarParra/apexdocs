@@ -5,13 +5,17 @@
  * @see SampleEnum
  * @see ReferencedEnum
  * @mermaid
+ * ```mermaid
  * graph TD
  *    A[SampleInterface] -->|extends| B[ParentInterface]
  *    B -->|extends| C[GrandParentInterface]
  *    C -->|extends| D[GreatGrandParentInterface]
+ * ```
  * @example
+ * ```apex
  * SampleInterface sampleInterface = new SampleInterface();
  * sampleInterface.sampleMethod();
+ * ```
  */
 @NamespaceAccessible
 public interface SampleInterface extends ParentInterface {

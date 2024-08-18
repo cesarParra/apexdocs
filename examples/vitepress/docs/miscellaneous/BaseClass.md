@@ -17,4 +17,4 @@ public sampleEnumFromBase
 ```
 
 #### Type
-[apexdocs.SampleEnum](../Sample-Enums/apexdocs.SampleEnum.md)
+[SampleEnum](../sample-enums/SampleEnum.md)

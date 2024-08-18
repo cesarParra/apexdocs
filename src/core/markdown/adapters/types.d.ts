@@ -7,6 +7,7 @@ import {
   MethodMirror,
   PropertyMirror,
 } from '@cparra/apex-reflection';
+import { DocPageReference } from '../../shared/types';
 
 export type Describable = string[] | undefined;
 
@@ -24,17 +25,14 @@ export type MethodMirrorWithInheritance = MethodMirror & InheritanceSupport;
 // Renderable types
 
 export type ReferenceGuideReference = {
-  typeName: string;
-  directory: string;
+  reference: DocPageReference;
   title: Link;
-  description: RenderableContent[] | undefined;
+  description: RenderableContent[] | null;
 };
 
 export type RenderableBundle = {
   // References are grouped by their defined @group annotation
-  references: {
-    [key: string]: ReferenceGuideReference[];
-  };
+  referencesByGroup: Record<string, ReferenceGuideReference[]>;
   renderables: Renderable[];
 };
 

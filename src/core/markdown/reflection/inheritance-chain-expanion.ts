@@ -3,7 +3,7 @@ import { createInheritanceChain } from './inheritance-chain';
 import { ParsedFile } from '../../shared/types';
 import { parsedFilesToTypes } from '../utils';
 
-export const addInheritanceChainToTypes = (parsedFiles: ParsedFile[]) =>
+export const addInheritanceChainToTypes = (parsedFiles: ParsedFile[]): ParsedFile[] =>
   parsedFiles.map((parsedFile) => ({
     ...parsedFile,
     type: addInheritanceChain(parsedFile.type, parsedFilesToTypes(parsedFiles)),

@@ -15,6 +15,7 @@ import { adaptDescribable, adaptDocumentable } from './documentables';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
 import { MarkdownGeneratorConfig } from '../generate-docs';
+import { SourceFileMetadata } from '../../shared/types';
 
 type GetReturnRenderable<T extends Type> = T extends InterfaceMirror
   ? RenderableInterface
@@ -23,7 +24,7 @@ type GetReturnRenderable<T extends Type> = T extends InterfaceMirror
     : RenderableEnum;
 
 export function typeToRenderable<T extends Type>(
-  parsedFile: { filePath: string; type: T },
+  parsedFile: { source: SourceFileMetadata; type: T },
   linkGenerator: GetRenderableContentByTypeName,
   config: MarkdownGeneratorConfig,
 ): GetReturnRenderable<T> & { filePath: string; namespace?: string } {
@@ -41,7 +42,7 @@ export function typeToRenderable<T extends Type>(
 
   return {
     ...(getRenderable() as GetReturnRenderable<T>),
-    filePath: parsedFile.filePath,
+    filePath: parsedFile.source.filePath,
     namespace: config.namespace,
   };
 }

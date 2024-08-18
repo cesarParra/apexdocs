@@ -19,12 +19,12 @@ sample.doSomething();
 
 **Inheritance**
 
-[apexdocs.BaseClass](../Miscellaneous/apexdocs.BaseClass.md)
+[BaseClass](../miscellaneous/BaseClass.md)
 
 **Implements**
 
-[apexdocs.SampleInterface](../Miscellaneous/apexdocs.SampleInterface.md), 
-[apexdocs.ParentInterface](../Miscellaneous/apexdocs.ParentInterface.md)
+[SampleInterface](../miscellaneous/SampleInterface.md), 
+[ParentInterface](../miscellaneous/ParentInterface.md)
 
 ## Fields
 ### Group Name
@@ -51,7 +51,7 @@ public sampleEnumFromBase
 ```
 
 ##### Type
-[apexdocs.SampleEnum](../Sample-Enums/apexdocs.SampleEnum.md)
+[SampleEnum](../sample-enums/SampleEnum.md)
 
 ## Properties
 ### Group Name

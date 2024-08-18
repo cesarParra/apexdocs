@@ -1,144 +1,98 @@
-import { ParsedFile } from '../../shared/types';
-import { Link, RenderableBundle, StringOrLink } from './types';
+import { DocPageReference, ParsedFile } from '../../shared/types';
+import { Link, ReferenceGuideReference, Renderable, RenderableBundle, StringOrLink } from './types';
 import { typeToRenderable } from './apex-types';
 import { adaptDescribable } from './documentables';
-import { Type } from '@cparra/apex-reflection';
 import { MarkdownGeneratorConfig } from '../generate-docs';
+import { apply } from '#utils/fp';
+import { Type } from '@cparra/apex-reflection';
+import * as path from 'path';
 
 export function parsedFilesToRenderableBundle(
   config: MarkdownGeneratorConfig,
   parsedFiles: ParsedFile[],
+  references: Record<string, DocPageReference>,
 ): RenderableBundle {
-  return parsedFiles.reduce<RenderableBundle>(
-    (acc, parsedFile) => {
-      const renderable = typeToRenderable(
-        parsedFile,
-        (referenceName) => {
-          return linkFromTypeNameGenerator(
-            parsedFile.type,
-            parsedFiles.map((file) => file.type),
-            referenceName,
-            config,
-          );
-        },
-        config,
-      );
-      acc.renderables.push(renderable);
+  const referenceFinder = apply(linkGenerator, references, config.documentationRootDir);
 
-      const descriptionLines = parsedFile.type.docComment?.descriptionLines;
-      const reference = {
-        typeName: parsedFile.type.name,
-        directory: getDirectoryFromRoot(config, parsedFile.type),
-        title: getLinkFromRoot(config, parsedFile.type),
-        description: adaptDescribable(descriptionLines, (referenceName) =>
-          getPossibleLinkFromRoot(
-            config,
-            referenceName,
-            findType(
-              parsedFiles.map((file) => file.type),
-              referenceName,
-            ),
-          ),
-        ).description,
-      };
+  function toReferenceGuide(parsedFiles: ParsedFile[]): Record<string, ReferenceGuideReference[]> {
+    return parsedFiles.reduce<Record<string, ReferenceGuideReference[]>>(
+      addToReferenceGuide(apply(referenceFinder, '__base__'), config, references),
+      {},
+    );
+  }
 
-      const group = getTypeGroup(parsedFile.type, config);
-      if (!acc.references[group]) {
-        acc.references[group] = [];
-      }
-      acc.references[group].push(reference);
-
+  function toRenderables(parsedFiles: ParsedFile[]): Renderable[] {
+    return parsedFiles.reduce<Renderable[]>((acc, parsedFile) => {
+      const renderable = typeToRenderable(parsedFile, apply(referenceFinder, parsedFile.source.name), config);
+      acc.push(renderable);
       return acc;
-    },
-    {
-      references: {},
-      renderables: [],
-    },
-  );
+    }, []);
+  }
+
+  return {
+    referencesByGroup: toReferenceGuide(parsedFiles),
+    renderables: toRenderables(parsedFiles),
+  };
 }
 
-function linkFromTypeNameGenerator(
-  typeBeingDocumented: Type,
-  repository: Type[],
-  referenceName: string,
+function addToReferenceGuide(
+  findLinkFromHome: (referenceName: string) => string | Link,
   config: MarkdownGeneratorConfig,
-): StringOrLink {
-  const type = findType(repository, referenceName);
-  if (!type) {
-    // If the type is not found, we return the type name as a string.
+  references: Record<string, DocPageReference>,
+) {
+  return (acc: Record<string, ReferenceGuideReference[]>, parsedFile: ParsedFile) => {
+    const group: string = getTypeGroup(parsedFile.type, config);
+    if (!acc[group]) {
+      acc[group] = [];
+    }
+    acc[group].push({
+      reference: references[parsedFile.type.name],
+      title: findLinkFromHome(parsedFile.type.name) as Link,
+      description: adaptDescribable(parsedFile.type.docComment?.descriptionLines, findLinkFromHome).description ?? null,
+    });
+
+    return acc;
+  };
+}
+
+const linkGenerator = (
+  references: Record<string, DocPageReference>,
+  documentationRootDir: string,
+  from: string, // The name of the file for which the reference is being generated
+  referenceName: string,
+): StringOrLink => {
+  const referenceTo: DocPageReference | undefined = references[referenceName];
+  // When linking from the base path (e.g. the reference guide/index page), the reference path is the same as the output
+  // path.
+  if (referenceTo && from === '__base__') {
+    return {
+      __type: 'link',
+      title: referenceTo.displayName,
+      url: path.join(documentationRootDir, referenceTo.referencePath),
+    };
+  }
+
+  const referenceFrom: DocPageReference | undefined = references[from];
+
+  if (!referenceFrom || !referenceTo) {
     return referenceName;
   }
 
-  const [fullClassName, fileLink] = getFileLinkTuple(typeBeingDocumented, type, config);
+  // Gets the directory of the file that is being linked from.
+  // This is used to calculate the relative path to the file
+  // being linked to.
+  const fromPath = path.parse(path.join('/', documentationRootDir, referenceFrom.referencePath)).dir;
+  const toPath = path.join('/', documentationRootDir, referenceTo.referencePath);
+  const relativePath = path.relative(fromPath, toPath);
+
   return {
     __type: 'link',
-    title: fullClassName,
-    url: fileLink,
+    title: referenceTo.displayName,
+    url: relativePath,
   };
-}
-
-function getPossibleLinkFromRoot(config: MarkdownGeneratorConfig, fallback: string, type?: Type): StringOrLink {
-  if (!type) {
-    return fallback;
-  }
-  const namespacePrefix = config.namespace ? `${config.namespace}.` : '';
-  const title = `${namespacePrefix}${type.name}`;
-  return {
-    __type: 'link',
-    title: title,
-    url: `${getDirectoryFromRoot(config, type)}/${title}.md`,
-  };
-}
-
-function getDirectoryFromRoot(config: MarkdownGeneratorConfig, type?: Type): string {
-  if (!type) {
-    return '';
-  }
-  return `./${getSanitizedGroup(type, config)}`;
-}
-
-function findType(repository: Type[], referenceName: string) {
-  return repository.find((currentType: Type) => currentType.name.toLowerCase() === referenceName.toLowerCase());
-}
-
-function getFileLinkTuple(
-  typeBeingDocumented: Type,
-  referencedType: Type,
-  config: MarkdownGeneratorConfig,
-): [string, string] {
-  const namespacePrefix = config.namespace ? `${config.namespace}.` : '';
-  const directoryRoot = `${getDirectoryRoot(typeBeingDocumented, referencedType, config)}`;
-  // TODO: Instead of adding a "." to the name when there is a namespace, maybe we want to create a folder for everything
-  // within that namespace and put the files in there.
-  const fullClassName = `${namespacePrefix}${referencedType.name}`;
-  return [fullClassName, `${directoryRoot}${fullClassName}.md`];
-}
-
-function getDirectoryRoot(typeBeingDocumented: Type, referencedType: Type, config: MarkdownGeneratorConfig) {
-  if (getTypeGroup(typeBeingDocumented, config) === getTypeGroup(referencedType, config)) {
-    // If the types the same groups then we simply link directly to that file
-    return './';
-  } else {
-    // If the types have different groups, then we have to go up a directory
-    return `../${getSanitizedGroup(referencedType, config)}/`;
-  }
-}
+};
 
 function getTypeGroup(type: Type, config: MarkdownGeneratorConfig): string {
   const groupAnnotation = type.docComment?.annotations.find((annotation) => annotation.name.toLowerCase() === 'group');
   return groupAnnotation?.body ?? config.defaultGroupName;
-}
-
-function getSanitizedGroup(classModel: Type, config: MarkdownGeneratorConfig) {
-  return getTypeGroup(classModel, config).replace(/ /g, '-').replace('.', '');
-}
-
-function getLinkFromRoot(config: MarkdownGeneratorConfig, type: Type): Link {
-  const namespacePrefix = config.namespace ? `${config.namespace}.` : '';
-  const title = `${namespacePrefix}${type.name}`;
-  return {
-    __type: 'link',
-    title: title,
-    url: `${getDirectoryFromRoot(config, type)}/${title}.md`,
-  };
 }

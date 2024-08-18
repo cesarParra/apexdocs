@@ -2,7 +2,6 @@
 `virtual`
 
 aliquip ex sunt officia ullamco anim deserunt magna aliquip nisi eiusmod in sit officia veniam ex 
-
 deserunt ea officia exercitation laboris enim in duis quis enim eiusmod eu amet cupidatat.
 
 **Group** SampleGroup
@@ -11,17 +10,17 @@ deserunt ea officia exercitation laboris enim in duis quis enim eiusmod eu amet 
 ns
 
 ## Example
-```apex
-SampleClass sample = new SampleClass();
+SampleClass sample &#x3D; new SampleClass(); 
 sample.doSomething();
-```
 
 **Inheritance**
-[ns.BaseClass](../Miscellaneous/ns.BaseClass.md)
+
+[BaseClass](../miscellaneous/BaseClass.md)
 
 **Implements**
-[ns.SampleInterface](../Miscellaneous/ns.SampleInterface.md), 
-[ns.ParentInterface](../Miscellaneous/ns.ParentInterface.md)
+
+[SampleInterface](../miscellaneous/SampleInterface.md), 
+[ParentInterface](../miscellaneous/ParentInterface.md)
 
 ## Fields
 ### Group Name
@@ -48,7 +47,7 @@ public sampleEnumFromBase
 ```
 
 ##### Type
-[ns.SampleEnum](../Sample-Enums/ns.SampleEnum.md)
+[SampleEnum](../sample-enums/SampleEnum.md)
 
 ## Properties
 ### Group Name
@@ -116,10 +115,8 @@ public virtual String sayHello()
 A string value.
 
 ##### Example
-```apex
-SampleClass sample = new SampleClass();
+SampleClass sample &#x3D; new SampleClass(); 
 sample.doSomething();
-```
 
 ## Classes
 ### SomeInnerClass Class

@@ -17,7 +17,7 @@ describe('Generates enum documentation', () => {
 
       const result = await generateDocs([apexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].fileName).toBe('MyEnum'));
+      assertEither(result, (data) => expect(data.docs[0].outputDocPath).toContain('MyEnum'));
     });
 
     it('returns the type as enum', async () => {
@@ -211,7 +211,7 @@ describe('Generates enum documentation', () => {
       expect(result).documentationBundleHasLength(2);
       assertEither(result, (data) => expect(data).firstDocContains('Description'));
       assertEither(result, (data) =>
-        expect(data).firstDocContains('This is a description with a [EnumRef](./EnumRef.md) reference'),
+        expect(data).firstDocContains('This is a description with a [EnumRef](EnumRef.md) reference'),
       );
     });
 
@@ -245,7 +245,7 @@ describe('Generates enum documentation', () => {
       const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
       expect(result).documentationBundleHasLength(2);
       assertEither(result, (data) => expect(data).firstDocContains('See'));
-      assertEither(result, (data) => expect(data).firstDocContains('[EnumRef](./EnumRef.md)'));
+      assertEither(result, (data) => expect(data).firstDocContains('[EnumRef](EnumRef.md)'));
     });
 
     it('displays sees without links when the reference is not found', async () => {
