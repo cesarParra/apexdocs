@@ -19,12 +19,12 @@ sample.doSomething();
 
 **Inheritance**
 
-BaseClass
+[BaseClass](../miscellaneous/BaseClass.md)
 
 **Implements**
 
-SampleInterface, 
-ParentInterface
+[SampleInterface](../miscellaneous/SampleInterface.md), 
+[ParentInterface](../miscellaneous/ParentInterface.md)
 
 ## Fields
 ### Group Name
@@ -51,7 +51,7 @@ public sampleEnumFromBase
 ```
 
 ##### Type
-SampleEnum
+[SampleEnum](../sample-enums/SampleEnum.md)
 
 ## Properties
 ### Group Name

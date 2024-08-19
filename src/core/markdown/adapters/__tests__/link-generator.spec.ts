@@ -96,4 +96,35 @@ describe('Generates links', () => {
       expect(result).toEqual('displayName');
     });
   });
+
+  describe('none', () => {
+    it('returns the path as is when the reference is found', () => {
+      const references = {
+        referenceName: {
+          referencePath: 'referencePath',
+          displayName: 'displayName',
+        },
+      };
+      const from = '__base__';
+      const referenceName = 'referenceName';
+
+      const result = generateLink('none')(references, from, referenceName);
+
+      expect(result).toEqual({
+        __type: 'link',
+        title: 'displayName',
+        url: 'referencePath',
+      });
+    });
+
+    it('returns the name of the reference when the reference is not found', () => {
+      const references = {};
+      const from = '__base__';
+      const referenceName = 'referenceName';
+
+      const result = generateLink('none')(references, from, referenceName);
+
+      expect(result).toEqual('referenceName');
+    });
+  });
 });

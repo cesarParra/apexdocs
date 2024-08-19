@@ -1,5 +1,6 @@
 import { StringOrLink } from './types';
 import path from 'path';
+import { LinkingStrategy } from '../../shared/types';
 
 export type LinkingStrategyFn = (
   references: Record<string, { referencePath: string; displayName: string } | undefined>,
@@ -7,16 +8,14 @@ export type LinkingStrategyFn = (
   referenceName: string,
 ) => StringOrLink;
 
-export const generateLink = (strategy: 'relative' | 'no-link' | 'none'): LinkingStrategyFn => {
+export const generateLink = (strategy: LinkingStrategy): LinkingStrategyFn => {
   switch (strategy) {
     case 'relative':
       return generateRelativeLink;
     case 'no-link':
       return generateNoLink;
     case 'none':
-      throw new Error('Linking strategy "none" is not supported');
-    default:
-      return generateNoLink;
+      return returnReferenceAsIs;
   }
 };
 
@@ -63,4 +62,21 @@ const generateNoLink = (
 ): StringOrLink => {
   const referenceTo = references[referenceName];
   return referenceTo ? referenceTo.displayName : referenceName;
+};
+
+const returnReferenceAsIs = (
+  references: Record<string, { referencePath: string; displayName: string } | undefined>,
+  _from: string,
+  referenceName: string,
+): StringOrLink => {
+  const referenceTo = references[referenceName];
+  if (!referenceTo) {
+    return referenceName;
+  }
+
+  return {
+    __type: 'link',
+    title: referenceTo.displayName,
+    url: referenceTo.referencePath,
+  };
 };

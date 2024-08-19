@@ -6,13 +6,13 @@ title: SampleEnum
 
 `NAMESPACEACCESSIBLE`
 
-This is a sample enum. This references ReferencedEnum . 
+This is a sample enum. This references [ReferencedEnum](../miscellaneous/ReferencedEnum.md) . 
  
 This description has several lines
 
 **Some Custom** 
 
-Test. I can also have a ReferencedEnum here. 
+Test. I can also have a [ReferencedEnum](../miscellaneous/ReferencedEnum.md) here. 
 And it can be multiline.
 
 **Mermaid** 
@@ -27,7 +27,7 @@ B --&gt;|referenced by| A
 
 **Date** 2022-01-01
 
-**See** ReferencedEnum
+**See** [ReferencedEnum](../miscellaneous/ReferencedEnum.md)
 
 ## Namespace
 apexdocs
