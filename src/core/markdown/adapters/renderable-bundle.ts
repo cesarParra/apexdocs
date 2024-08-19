@@ -12,7 +12,7 @@ export function parsedFilesToRenderableBundle(
   parsedFiles: ParsedFile[],
   references: Record<string, DocPageReference>,
 ): RenderableBundle {
-  const referenceFinder = apply(generateLink, references);
+  const referenceFinder = apply(generateLink(config.linkingStrategy), references);
 
   function toReferenceGuide(parsedFiles: ParsedFile[]): Record<string, ReferenceGuideReference[]> {
     return parsedFiles.reduce<Record<string, ReferenceGuideReference[]>>(

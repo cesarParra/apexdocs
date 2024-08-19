@@ -42,6 +42,7 @@ export type MarkdownGeneratorConfig = Pick<
   | 'transformDocs'
   | 'transformDocPage'
   | 'transformReference'
+  | 'linkingStrategy'
 > & {
   referenceGuideTemplate: string;
   sortMembersAlphabetically: boolean;

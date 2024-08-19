@@ -19,9 +19,9 @@ C --&gt;|extends| D[GreatGrandParentInterface]
 
 **Date** 2020-01-01
 
-**See** [SampleEnum](../sample-enums/SampleEnum.md)
+**See** SampleEnum
 
-**See** [ReferencedEnum](ReferencedEnum.md)
+**See** ReferencedEnum
 
 ## Namespace
 apexdocs
@@ -31,7 +31,7 @@ SampleInterface sampleInterface &#x3D; new SampleInterface();
 sampleInterface.sampleMethod();
 
 **Extends**
-[ParentInterface](ParentInterface.md)
+ParentInterface
 
 ## Methods
 ### `sampleMethod()`
@@ -66,7 +66,7 @@ public String sampleMethod()
 Some return value
 
 #### Throws
-[SampleException](SampleException.md): This is a sample exception
+SampleException: This is a sample exception
 
 AnotherSampleException: This is another sample exception
 
@@ -94,10 +94,10 @@ public SampleEnum sampleMethodWithParams(String param1, Integer param2, SampleEn
 |------|------|-------------|
 | param1 | String | This is the first parameter |
 | param2 | Integer | This is the second parameter |
-| theEnum | [SampleEnum](../sample-enums/SampleEnum.md) | This is an enum parameter |
+| theEnum | SampleEnum | This is an enum parameter |
 
 #### Return Type
-**[SampleEnum](../sample-enums/SampleEnum.md)**
+**SampleEnum**
 
 Some return value
 

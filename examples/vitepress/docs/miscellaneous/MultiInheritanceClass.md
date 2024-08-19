@@ -9,7 +9,7 @@ apexdocs
 
 **Inheritance**
 
-[SampleClass](../samplegroup/SampleClass.md) < [BaseClass](BaseClass.md)
+SampleClass < BaseClass
 
 ## Fields
 ### `sampleEnumFromBase`
@@ -22,7 +22,7 @@ public sampleEnumFromBase
 ```
 
 #### Type
-[SampleEnum](../sample-enums/SampleEnum.md)
+SampleEnum
 
 ## Properties
 ### Group Name

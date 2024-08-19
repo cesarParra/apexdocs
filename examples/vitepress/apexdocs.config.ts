@@ -29,6 +29,12 @@ export default defineMarkdownConfig({
   sourceDir: 'force-app',
   scope: ['global', 'public', 'protected', 'private', 'namespaceaccessible'],
   namespace: 'apexdocs',
+  linkingStrategy: 'no-link',
+  transformReference: (reference) => {
+    return {
+      referencePath: `https://github.com/cesarParra/apexdocs/blob/develop/examples/markdown/force-app/classes/${reference.source.name}.cls`,
+    };
+  },
   transformReferenceGuide: async (referenceGuide) => {
     const frontMatter = await loadFileAsync('./docs/index-frontmatter.md');
     return {

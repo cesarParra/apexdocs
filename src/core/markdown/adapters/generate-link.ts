@@ -1,11 +1,34 @@
 import { StringOrLink } from './types';
 import path from 'path';
 
-export const generateLink = (
+export type LinkingStrategyFn = (
+  references: Record<string, { referencePath: string; displayName: string } | undefined>,
+  from: string,
+  referenceName: string,
+) => StringOrLink;
+
+export const generateLink = (strategy: 'relative' | 'no-link' | 'none'): LinkingStrategyFn => {
+  switch (strategy) {
+    case 'relative':
+      return generateRelativeLink;
+    case 'no-link':
+      return generateNoLink;
+    case 'none':
+      throw new Error('Linking strategy "none" is not supported');
+    default:
+      return generateNoLink;
+  }
+};
+
+const generateRelativeLink = (
   references: Record<string, { referencePath: string; displayName: string } | undefined>,
   from: string, // The name of the file for which the reference is being generated
   referenceName: string,
 ): StringOrLink => {
+  function getRelativePath(fromPath: string, toPath: string) {
+    return path.relative(path.parse(path.join('/', fromPath)).dir, path.join('/', toPath));
+  }
+
   const referenceTo = references[referenceName];
   if (!referenceTo) {
     return referenceName;
@@ -23,7 +46,7 @@ export const generateLink = (
   const referenceFrom = references[from];
 
   if (!referenceFrom) {
-    return referenceName;
+    return referenceTo.displayName;
   }
 
   return {
@@ -33,6 +56,11 @@ export const generateLink = (
   };
 };
 
-function getRelativePath(fromPath: string, toPath: string) {
-  return path.relative(path.parse(path.join('/', fromPath)).dir, path.join('/', toPath));
-}
+const generateNoLink = (
+  references: Record<string, { referencePath: string; displayName: string } | undefined>,
+  _from: string,
+  referenceName: string,
+): StringOrLink => {
+  const referenceTo = references[referenceName];
+  return referenceTo ? referenceTo.displayName : referenceName;
+};

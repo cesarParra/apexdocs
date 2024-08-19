@@ -44,4 +44,10 @@ export const markdownOptions: { [key: string]: Options } = {
     describe: "Whether to include the file's meta.xml information: Whether it is active and and the API version",
     default: defaults.includeMetadata,
   },
+  linkingStrategy: {
+    type: 'string',
+    describe: 'The strategy to use when linking to other documentation pages.',
+    choices: ['relative', 'no-link', 'none'],
+    default: defaults.linkingStrategy,
+  },
 };

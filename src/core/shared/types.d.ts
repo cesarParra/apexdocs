@@ -12,6 +12,17 @@ export type ConfigurableHooks = {
   transformReference: TransformReference;
 };
 
+type LinkingStrategy =
+  // Links will be generated using relative paths.
+  | 'relative'
+  // No links will be generated.
+  // If the reference is found, the display name will be used.
+  // Otherwise, the name
+  // of the reference itself will be used.
+  | 'no-link'
+  // No logic will be applied, the reference path will be used as is.
+  | 'none';
+
 export type UserDefinedMarkdownConfig = {
   targetGenerator: 'markdown';
   sourceDir: string;
@@ -21,6 +32,7 @@ export type UserDefinedMarkdownConfig = {
   namespace?: string;
   sortMembersAlphabetically: boolean;
   includeMetadata: boolean;
+  linkingStrategy: LinkingStrategy;
 } & Partial<ConfigurableHooks>;
 
 export type UserDefinedOpenApiConfig = {
