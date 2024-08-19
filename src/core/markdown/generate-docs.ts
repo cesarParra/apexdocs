@@ -42,7 +42,6 @@ export type MarkdownGeneratorConfig = Pick<
   | 'transformDocs'
   | 'transformDocPage'
   | 'transformReference'
-  | 'documentationRootDir'
 > & {
   referenceGuideTemplate: string;
   sortMembersAlphabetically: boolean;

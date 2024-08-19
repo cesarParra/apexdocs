@@ -18,6 +18,5 @@ export function generateDocs(apexBundles: UnparsedSourceFile[], config?: Partial
     sortMembersAlphabetically: true,
     referenceGuideTemplate: referenceGuideTemplate,
     ...config,
-    documentationRootDir: '',
   });
 }

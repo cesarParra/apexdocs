@@ -44,10 +44,4 @@ export const markdownOptions: { [key: string]: Options } = {
     describe: "Whether to include the file's meta.xml information: Whether it is active and and the API version",
     default: defaults.includeMetadata,
   },
-  documentationRootDir: {
-    type: 'string',
-    describe:
-      'The root directory of the documentation. This is used to create the correct relative paths when generating links between documents.',
-    default: defaults.documentationRootDir,
-  },
 };
