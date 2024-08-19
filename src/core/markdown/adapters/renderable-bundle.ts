@@ -1,18 +1,18 @@
 import { DocPageReference, ParsedFile } from '../../shared/types';
-import { Link, ReferenceGuideReference, Renderable, RenderableBundle, StringOrLink } from './types';
+import { Link, ReferenceGuideReference, Renderable, RenderableBundle } from './types';
 import { typeToRenderable } from './apex-types';
 import { adaptDescribable } from './documentables';
 import { MarkdownGeneratorConfig } from '../generate-docs';
 import { apply } from '#utils/fp';
 import { Type } from '@cparra/apex-reflection';
-import * as path from 'path';
+import { generateLink } from './generate-link';
 
 export function parsedFilesToRenderableBundle(
   config: MarkdownGeneratorConfig,
   parsedFiles: ParsedFile[],
   references: Record<string, DocPageReference>,
 ): RenderableBundle {
-  const referenceFinder = apply(linkGenerator, references, config.documentationRootDir);
+  const referenceFinder = apply(generateLink(config.linkingStrategy), references);
 
   function toReferenceGuide(parsedFiles: ParsedFile[]): Record<string, ReferenceGuideReference[]> {
     return parsedFiles.reduce<Record<string, ReferenceGuideReference[]>>(
@@ -54,43 +54,6 @@ function addToReferenceGuide(
     return acc;
   };
 }
-
-const linkGenerator = (
-  references: Record<string, DocPageReference>,
-  documentationRootDir: string,
-  from: string, // The name of the file for which the reference is being generated
-  referenceName: string,
-): StringOrLink => {
-  const referenceTo: DocPageReference | undefined = references[referenceName];
-  // When linking from the base path (e.g. the reference guide/index page), the reference path is the same as the output
-  // path.
-  if (referenceTo && from === '__base__') {
-    return {
-      __type: 'link',
-      title: referenceTo.displayName,
-      url: path.join(documentationRootDir, referenceTo.referencePath),
-    };
-  }
-
-  const referenceFrom: DocPageReference | undefined = references[from];
-
-  if (!referenceFrom || !referenceTo) {
-    return referenceName;
-  }
-
-  // Gets the directory of the file that is being linked from.
-  // This is used to calculate the relative path to the file
-  // being linked to.
-  const fromPath = path.parse(path.join('/', documentationRootDir, referenceFrom.referencePath)).dir;
-  const toPath = path.join('/', documentationRootDir, referenceTo.referencePath);
-  const relativePath = path.relative(fromPath, toPath);
-
-  return {
-    __type: 'link',
-    title: referenceTo.displayName,
-    url: relativePath,
-  };
-};
 
 function getTypeGroup(type: Type, config: MarkdownGeneratorConfig): string {
   const groupAnnotation = type.docComment?.annotations.find((annotation) => annotation.name.toLowerCase() === 'group');

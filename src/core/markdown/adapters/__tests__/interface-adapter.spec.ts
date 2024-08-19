@@ -15,7 +15,7 @@ const defaultMarkdownGeneratorConfig: MarkdownGeneratorConfig = {
   defaultGroupName: 'Miscellaneous',
   referenceGuideTemplate: '',
   sortMembersAlphabetically: false,
-  documentationRootDir: '',
+  linkingStrategy: 'relative',
 };
 
 describe('Conversion from InterfaceMirror to InterfaceSource understandable by the templating engine', () => {
