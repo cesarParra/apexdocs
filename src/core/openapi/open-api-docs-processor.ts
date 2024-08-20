@@ -25,7 +25,7 @@ export class OpenApiDocsProcessor {
   }
 
   onProcess(type: Type): void {
-    Logger.logSingle(`Processing ${type.name}`, false, 'green', false);
+    Logger.logSingle(`Processing ${type.name}`, 'green');
 
     const endpointPath = this.getEndpointPath(type);
     if (!endpointPath) {
