@@ -1,13 +1,9 @@
 import chalk from 'chalk';
-import logUpdate from 'log-update';
-
 /**
  * Logs messages to the console.
  */
 export class Logger {
   static currentFrame = 0;
-
-  static frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
 
   /**
    * Logs a message with optional arguments.
@@ -27,31 +23,22 @@ export class Logger {
    * @param args Optional arguments.
    */
   public static error(message: unknown, ...args: string[]) {
-    this.logSingle(message, false, 'red', false);
+    this.logSingle(message, 'red');
     args.forEach(() => {
-      this.logSingle(message, false, 'red', false);
+      this.logSingle(message, 'red');
     });
   }
 
-  public static logSingle(text: unknown, showSpinner = true, color: 'green' | 'red' = 'green', overrideConsole = true) {
+  public static logSingle(text: unknown, color: 'green' | 'red' = 'green') {
     if (this.currentFrame > 9) {
       this.currentFrame = 0;
     }
-    const spinner = showSpinner ? `${this.frames[this.currentFrame++]}` : '';
-    let logMessage;
-    if (color === 'green') {
-      logMessage = `${chalk.green(new Date().toLocaleString() + ': ')}${text}\n`;
-    } else {
-      logMessage = `${chalk.red(new Date().toLocaleString() + ': ')}${text}\n`;
-    }
-    if (overrideConsole) {
-      logUpdate(`${spinner} ${logMessage}`);
-    } else {
-      process.stdout.write(`${spinner} ${logMessage}`);
-    }
+
+    const logMessage = `${this.getChalkFn(color)(new Date().toLocaleString() + ': ')}${text}\n`;
+    process.stdout.write(logMessage);
   }
 
-  public static clear() {
-    logUpdate.clear();
+  private static getChalkFn(color: 'green' | 'red') {
+    return color === 'green' ? chalk.green : chalk.red;
   }
 }

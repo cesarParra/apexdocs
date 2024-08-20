@@ -19,7 +19,7 @@ export default function openApi(fileBodies: UnparsedSourceFile[], config: UserDe
   const generatedFiles = processor.fileBuilder().files();
 
   FileWriter.write(generatedFiles, config.targetDir, (file: PageData) => {
-    Logger.logSingle(`${file.outputDocPath} processed.`, false, 'green', false);
+    Logger.logSingle(`${file.outputDocPath} processed.`, 'green');
   });
 
   // Error logging
@@ -48,9 +48,8 @@ function filterByScopes(manifest: Manifest) {
   const filteredLogMessage = `Filtered ${
     manifest.types.length - filteredTypes.length
   } file(s), only keeping classes annotated as @RestResource.`;
-  Logger.clear();
 
-  Logger.logSingle(filteredLogMessage, false, 'green', false);
-  Logger.logSingle(`Creating documentation for ${filteredTypes.length} file(s)`, false, 'green', false);
+  Logger.logSingle(filteredLogMessage, 'green');
+  Logger.logSingle(`Creating documentation for ${filteredTypes.length} file(s)`, 'green');
   return filteredTypes;
 }

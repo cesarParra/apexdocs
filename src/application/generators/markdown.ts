@@ -13,13 +13,27 @@ import { referenceGuideTemplate } from '../../core/markdown/templates/reference-
 import * as TE from 'fp-ts/TaskEither';
 import { isSkip } from '../../core/shared/utils';
 
+class FileWritingError {
+  readonly _tag = 'FileWritingError';
+  constructor(
+    public message: string,
+    public error: unknown,
+  ) {}
+}
+
 export default function generate(bundles: UnparsedSourceFile[], config: UserDefinedMarkdownConfig) {
   return pipe(
     generateDocumentationBundle(bundles, config),
-    TE.map((files) => writeFilesToSystem(files, config.targetDir)),
+    TE.flatMap((files) => writeFilesToSystem(files, config.targetDir)),
     TE.mapLeft((error) => {
       if (error._tag === 'HookError') {
         Logger.error('Error(s) occurred while processing hooks. Please review the following issues:');
+        Logger.error(error.error);
+        return;
+      }
+
+      if (error._tag === 'FileWritingError') {
+        Logger.error(error.message);
         Logger.error(error.error);
         return;
       }
@@ -42,15 +56,17 @@ function generateDocumentationBundle(bundles: UnparsedSourceFile[], config: User
 }
 
 function writeFilesToSystem(files: PostHookDocumentationBundle, outputDir: string) {
-  FileWriter.write(
-    [files.referenceGuide, ...files.docs]
-      // Filter out any files that should be skipped
-      .filter((file) => !isSkip(file)) as PageData[],
-    outputDir,
-    (file: PageData) => {
-      Logger.logSingle(`${file.outputDocPath} processed.`, false, 'green', false);
-    },
-  );
+  try {
+    FileWriter.write(
+      [files.referenceGuide, ...files.docs]
+        // Filter out any files that should be skipped
+        .filter((file) => !isSkip(file)) as PageData[],
+      outputDir,
+    );
+    return TE.right(undefined);
+  } catch (error) {
+    return TE.left(new FileWritingError('An error occurred while writing files to the system.', error));
+  }
 }
 
 function formatReflectionError(error: ReflectionError) {
