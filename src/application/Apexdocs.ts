@@ -17,7 +17,11 @@ export class Apexdocs {
     Logger.logSingle(`Generating ${config.targetGenerator} documentation...`);
 
     try {
-      const fileBodies = ApexFileReader.processFiles(new DefaultFileSystem(), config.sourceDir, config.includeMetadata);
+      const fileBodies = await ApexFileReader.processFiles(
+        new DefaultFileSystem(),
+        config.sourceDir,
+        config.includeMetadata,
+      );
 
       switch (config.targetGenerator) {
         case 'markdown':

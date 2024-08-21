@@ -18,12 +18,12 @@ describe('File Reader', () => {
     } as SettingsConfig);
   });
 
-  it('returns an empty list when there are no files in the directory', () => {
-    const result = ApexFileReader.processFiles(
+  it('returns an empty list when there are no files in the directory', async () => {
+    const result = await ApexFileReader.processFiles(
       {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        isDirectory(_: string): boolean {
-          return false;
+        isDirectory(_: string): Promise<boolean> {
+          return Promise.resolve(false);
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         joinPath(_: string): string {
@@ -47,11 +47,11 @@ describe('File Reader', () => {
     expect(result.length).toBe(0);
   });
 
-  it('returns an empty list when there are no Apex files in the directory', () => {
-    const result = ApexFileReader.processFiles(
+  it('returns an empty list when there are no Apex files in the directory', async () => {
+    const result = await ApexFileReader.processFiles(
       {
-        isDirectory(): boolean {
-          return false;
+        isDirectory(): Promise<boolean> {
+          return Promise.resolve(false);
         },
         joinPath(): string {
           return '';
@@ -72,12 +72,12 @@ describe('File Reader', () => {
     expect(result.length).toBe(0);
   });
 
-  it('returns the file contents for an Apex file', () => {
-    const result = ApexFileReader.processFiles(
+  it('returns the file contents for an Apex file', async () => {
+    const result = await ApexFileReader.processFiles(
       {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        isDirectory(_: string): boolean {
-          return false;
+        isDirectory(_: string): Promise<boolean> {
+          return Promise.resolve(false);
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         joinPath(_: string): string {
