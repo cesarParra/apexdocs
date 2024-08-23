@@ -18,24 +18,24 @@ describe('File Reader', () => {
     } as SettingsConfig);
   });
 
-  it('returns an empty list when there are no files in the directory', () => {
-    const result = ApexFileReader.processFiles(
+  it('returns an empty list when there are no files in the directory', async () => {
+    const result = await ApexFileReader.processFiles(
       {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        isDirectory(_: string): boolean {
-          return false;
+        isDirectory(_: string): Promise<boolean> {
+          return Promise.resolve(false);
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         joinPath(_: string): string {
           return '';
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        readDirectory(_: string): string[] {
-          return [];
+        readDirectory(_: string): Promise<string[]> {
+          return Promise.resolve([]);
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        readFile(_: string): string {
-          return '';
+        readFile(_: string): Promise<string> {
+          return Promise.resolve('');
         },
         exists(): boolean {
           return true;
@@ -47,20 +47,20 @@ describe('File Reader', () => {
     expect(result.length).toBe(0);
   });
 
-  it('returns an empty list when there are no Apex files in the directory', () => {
-    const result = ApexFileReader.processFiles(
+  it('returns an empty list when there are no Apex files in the directory', async () => {
+    const result = await ApexFileReader.processFiles(
       {
-        isDirectory(): boolean {
-          return false;
+        isDirectory(): Promise<boolean> {
+          return Promise.resolve(false);
         },
         joinPath(): string {
           return '';
         },
-        readDirectory(): string[] {
-          return ['SomeFile.md'];
+        readDirectory(): Promise<string[]> {
+          return Promise.resolve(['SomeFile.md']);
         },
-        readFile(): string {
-          return '';
+        readFile(): Promise<string> {
+          return Promise.resolve('');
         },
         exists(): boolean {
           return true;
@@ -72,24 +72,24 @@ describe('File Reader', () => {
     expect(result.length).toBe(0);
   });
 
-  it('returns the file contents for an Apex file', () => {
-    const result = ApexFileReader.processFiles(
+  it('returns the file contents for an Apex file', async () => {
+    const result = await ApexFileReader.processFiles(
       {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        isDirectory(_: string): boolean {
-          return false;
+        isDirectory(_: string): Promise<boolean> {
+          return Promise.resolve(false);
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         joinPath(_: string): string {
-          return '';
+          return 'SomeApexFile.cls';
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        readDirectory(_: string): string[] {
-          return ['SomeApexFile.cls'];
+        readDirectory(_: string): Promise<string[]> {
+          return Promise.resolve(['SomeApexFile.cls']);
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        readFile(_: string): string {
-          return 'public class MyClass{}';
+        readFile(_: string): Promise<string> {
+          return Promise.resolve('public class MyClass{}');
         },
         exists(): boolean {
           return true;
