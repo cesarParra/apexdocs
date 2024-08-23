@@ -135,7 +135,8 @@ System.debug(result);
 ### Other
 ##### `public static void call()`
 
-Calls the method. This methods allows you to call it.
+Calls the method.
+This methods allows you to call it.
 
 ---
 ## Enums

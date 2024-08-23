@@ -1,6 +1,6 @@
 {
   "name": "@cparra/apexdocs",
-  "version": "2.24.0",
+  "version": "2.25.0",
   "description": "Library with CLI capabilities to generate documentation for Salesforce Apex classes.",
   "keywords": [
     "apex",
@@ -43,7 +43,8 @@
     "@types/yargs": "^15.0.3",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@typescript-eslint/parser": "^5.41.0",
-    "docsify": "^4.13.0",
+    "docsify": "^4.13.1",
+    "docsify-cli": "^4.4.4",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
@@ -66,7 +67,7 @@
     ]
   },
   "dependencies": {
-    "@cparra/apex-reflection": "2.8.0",
+    "@cparra/apex-reflection": "2.12.1",
     "chalk": "^4.1.2",
     "cosmiconfig": "^9.0.0",
     "fast-xml-parser": "^4.0.1",

@@ -21,6 +21,7 @@ it('detects when new types are added', () => {
     name: 'CommonEnum',
     type_name: 'enum',
     access_modifier: 'public',
+    values: [],
   } as EnumMirror;
 
   const originalManifest = new Manifest([commonType]);
@@ -30,6 +31,7 @@ it('detects when new types are added', () => {
     name: 'NewEnum',
     type_name: 'enum',
     access_modifier: 'public',
+    values: [],
   } as EnumMirror;
   const newManifest = new Manifest([addedType, commonType]);
 
@@ -44,6 +46,7 @@ it('detects when types are deleted', () => {
     name: 'CommonEnum',
     type_name: 'enum',
     access_modifier: 'public',
+    values: [],
   } as EnumMirror;
 
   const deletedType = {
@@ -51,6 +54,7 @@ it('detects when types are deleted', () => {
     name: 'OldEnum',
     type_name: 'enum',
     access_modifier: 'public',
+    values: [],
   } as EnumMirror;
   const originalManifest = new Manifest([commonType, deletedType]);
   const newManifest = new Manifest([commonType]);
@@ -66,6 +70,7 @@ it('does not add enums that have no changes', () => {
     name: 'CommonEnum',
     type_name: 'enum',
     access_modifier: 'public',
+    values: [],
   } as EnumMirror;
 
   const modifiedEnum = {
@@ -73,6 +78,7 @@ it('does not add enums that have no changes', () => {
     name: 'CommonEnum',
     type_name: 'enum',
     access_modifier: 'public',
+    values: [],
   } as EnumMirror;
 
   const originalManifest = new Manifest([originalEnum]);
@@ -88,6 +94,7 @@ it('detects changes to access modifiers within an enum', () => {
     name: 'CommonEnum',
     type_name: 'enum',
     access_modifier: 'public',
+    values: [],
   } as EnumMirror;
 
   const modifiedEnum = {
@@ -95,6 +102,7 @@ it('detects changes to access modifiers within an enum', () => {
     name: 'CommonEnum',
     type_name: 'enum',
     access_modifier: 'private',
+    values: [],
   } as EnumMirror;
 
   const originalManifest = new Manifest([originalEnum]);
