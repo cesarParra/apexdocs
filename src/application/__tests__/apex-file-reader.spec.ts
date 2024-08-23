@@ -30,12 +30,12 @@ describe('File Reader', () => {
           return '';
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        readDirectory(_: string): string[] {
-          return [];
+        readDirectory(_: string): Promise<string[]> {
+          return Promise.resolve([]);
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        readFile(_: string): string {
-          return '';
+        readFile(_: string): Promise<string> {
+          return Promise.resolve('');
         },
         exists(): boolean {
           return true;
@@ -56,11 +56,11 @@ describe('File Reader', () => {
         joinPath(): string {
           return '';
         },
-        readDirectory(): string[] {
-          return ['SomeFile.md'];
+        readDirectory(): Promise<string[]> {
+          return Promise.resolve(['SomeFile.md']);
         },
-        readFile(): string {
-          return '';
+        readFile(): Promise<string> {
+          return Promise.resolve('');
         },
         exists(): boolean {
           return true;
@@ -81,15 +81,15 @@ describe('File Reader', () => {
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         joinPath(_: string): string {
-          return '';
+          return 'SomeApexFile.cls';
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        readDirectory(_: string): string[] {
-          return ['SomeApexFile.cls'];
+        readDirectory(_: string): Promise<string[]> {
+          return Promise.resolve(['SomeApexFile.cls']);
         },
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        readFile(_: string): string {
-          return 'public class MyClass{}';
+        readFile(_: string): Promise<string> {
+          return Promise.resolve('public class MyClass{}');
         },
         exists(): boolean {
           return true;
