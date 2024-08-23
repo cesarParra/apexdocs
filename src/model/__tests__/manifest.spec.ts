@@ -6,6 +6,7 @@ const sampleEnum: EnumMirror = {
   name: 'SampleEnum',
   type_name: 'enum',
   access_modifier: 'public',
+  values: [],
 };
 
 it('holds a list of types', () => {

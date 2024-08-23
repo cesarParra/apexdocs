@@ -51,7 +51,7 @@ export default class Manifest {
         };
       }
 
-      typesToReturn.push(filteredClass);
+      typesToReturn.push(filteredClass as ClassMirror);
     }
 
     return typesToReturn;
