@@ -18,7 +18,8 @@ This is a sample HTTP Get method
 |`InnerClass`|A SampleRestResourceWithInnerClass.InnerClass Object.|
 
 
-**Http Response** statusCode: 200 schema: SampleRestResourceWithInnerClass.InnerClass
+**Http Response** statusCode: 200
+schema: SampleRestResourceWithInnerClass.InnerClass
 
 ---
 ## Classes
