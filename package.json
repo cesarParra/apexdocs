@@ -67,7 +67,7 @@
     ]
   },
   "dependencies": {
-    "@cparra/apex-reflection": "2.12.1-alpha.0",
+    "@cparra/apex-reflection": "2.12.1",
     "chalk": "^4.1.2",
     "cosmiconfig": "^9.0.0",
     "fast-xml-parser": "^4.0.1",

@@ -32,6 +32,7 @@
       <sourceFolder url="file://$MODULE_DIR$/node_modules/expand-brackets/node_modules/debug/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/node_modules/performance-now/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/node_modules/istanbul-reports/lib/html-spa/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/dist" />
       <excludeFolder url="file://$MODULE_DIR$/lib" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
