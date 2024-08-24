@@ -1,5 +1,4 @@
 import { pipe } from 'fp-ts/function';
-//import * as E from 'fp-ts/Either';
 import * as TE from 'fp-ts/TaskEither';
 import yaml from 'js-yaml';
 
@@ -20,8 +19,7 @@ import {
   ParsedFile,
 } from '../shared/types';
 import { parsedFilesToRenderableBundle } from './adapters/renderable-bundle';
-import { myPipeSeq /*reflectSourceCode*/ } from './reflection/reflect-source';
-//import { checkForReflectionErrors } from './reflection/error-handling';
+import { reflectSourceCode } from './reflection/reflect-source';
 import { addInheritanceChainToTypes } from './reflection/inheritance-chain-expanion';
 import { addInheritedMembersToTypes } from './reflection/inherited-member-expansion';
 import { convertToDocumentationBundle } from './adapters/renderable-to-page-data';
@@ -63,8 +61,7 @@ export function generateDocs(apexBundles: UnparsedSourceFile[], config: Markdown
 
   return pipe(
     apexBundles,
-    myPipeSeq,
-    //checkForReflectionErrors,
+    reflectSourceCode,
     TE.map(filterOutOfScope),
     TE.map(addInheritedMembersToTypes),
     TE.map(addInheritanceChainToTypes),

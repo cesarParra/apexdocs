@@ -1,5 +1,4 @@
 import { ParsedFile, UnparsedSourceFile } from '../../shared/types';
-//import * as E from 'fp-ts/Either';
 import * as TE from 'fp-ts/TaskEither';
 import * as T from 'fp-ts/Task';
 import * as A from 'fp-ts/lib/Array';
@@ -37,7 +36,7 @@ async function reflectAsync(rawSource: string): Promise<Type> {
   });
 }
 
-export function myPipeSeq(apexBundles: UnparsedSourceFile[]) {
+export function reflectSourceCode(apexBundles: UnparsedSourceFile[]) {
   const semiGroupReflectionError: Semigroup<ReflectionErrors> = {
     concat: (x, y) => new ReflectionErrors([...x.errors, ...y.errors]),
   };
@@ -78,27 +77,6 @@ function addMetadata(rawMetadataContent: string | null, parsedFile: ParsedFile) 
     type: addFileMetadataToTypeAnnotation(parsedFile.type, rawMetadataContent),
   };
 }
-
-// TODO: Not Async below
-
-// export function reflectSourceCode(apexBundles: UnparsedSourceFile[]) {
-//   return apexBundles.map(reflectSourceBody);
-// }
-//
-// function reflectSourceBody(apexBundle: UnparsedSourceFile): E.Either<ReflectionError, ParsedFile> {
-//   const { filePath, content: input, metadataContent: metadata } = apexBundle;
-//   const result = mirrorReflection(input);
-//   return result.error
-//     ? E.left(new ReflectionError(filePath, result.error.message))
-//     : E.right({
-//         source: {
-//           filePath,
-//           name: result.typeMirror!.name,
-//           type: result.typeMirror!.type_name,
-//         },
-//         type: addFileMetadataToTypeAnnotation(result.typeMirror!, metadata),
-//       });
-// }
 
 function addFileMetadataToTypeAnnotation(type: Type, metadata: string | null): Type {
   return pipe(
