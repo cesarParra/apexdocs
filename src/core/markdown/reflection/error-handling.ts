@@ -4,6 +4,7 @@ import { pipe } from 'fp-ts/function';
 
 export class ReflectionErrors {
   readonly _tag = 'ReflectionErrors';
+
   constructor(public errors: ReflectionError[]) {}
 }
 
@@ -15,23 +16,31 @@ export class ReflectionError {
 }
 
 export function checkForReflectionErrors(reflectionResult: E.Either<ReflectionError, ParsedFile>[]) {
-  function reduceReflectionResultIntoSingleEither(results: E.Either<ReflectionError, ParsedFile>[]): {
-    errors: ReflectionError[];
-    parsedFiles: ParsedFile[];
-  } {
-    return results.reduce<{ errors: ReflectionError[]; parsedFiles: ParsedFile[] }>(
-      (acc, result) => {
-        E.isLeft(result) ? acc.errors.push(result.left) : acc.parsedFiles.push(result.right);
-        return acc;
-      },
-      {
-        errors: [],
-        parsedFiles: [],
-      },
-    );
-  }
+  return pipe(reflectionResult, reduceReflectionResultIntoSingleEither, toEither);
+}
 
-  return pipe(reflectionResult, reduceReflectionResultIntoSingleEither, ({ errors, parsedFiles }) =>
-    errors.length ? E.left(new ReflectionErrors(errors)) : E.right(parsedFiles),
+function reduceReflectionResultIntoSingleEither(results: E.Either<ReflectionError, ParsedFile>[]): {
+  errors: ReflectionError[];
+  parsedFiles: ParsedFile[];
+} {
+  return results.reduce<{ errors: ReflectionError[]; parsedFiles: ParsedFile[] }>(
+    (acc, result) => {
+      E.isLeft(result) ? acc.errors.push(result.left) : acc.parsedFiles.push(result.right);
+      return acc;
+    },
+    {
+      errors: [],
+      parsedFiles: [],
+    },
   );
+}
+
+function toEither({
+  errors,
+  parsedFiles,
+}: {
+  errors: ReflectionError[];
+  parsedFiles: ParsedFile[];
+}): E.Either<ReflectionErrors, ParsedFile[]> {
+  return errors.length ? E.left(new ReflectionErrors(errors)) : E.right(parsedFiles);
 }
