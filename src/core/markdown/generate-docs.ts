@@ -19,7 +19,7 @@ import {
   ParsedFile,
 } from '../shared/types';
 import { parsedFilesToRenderableBundle } from './adapters/renderable-bundle';
-import { reflectSourceCode } from './reflection/reflect-source';
+import { reflectBundles } from './reflection/reflect-source';
 import { addInheritanceChainToTypes } from './reflection/inheritance-chain-expanion';
 import { addInheritedMembersToTypes } from './reflection/inherited-member-expansion';
 import { convertToDocumentationBundle } from './adapters/renderable-to-page-data';
@@ -61,7 +61,7 @@ export function generateDocs(apexBundles: UnparsedSourceFile[], config: Markdown
 
   return pipe(
     apexBundles,
-    reflectSourceCode,
+    reflectBundles,
     TE.map(filterOutOfScope),
     TE.map(addInheritedMembersToTypes),
     TE.map(addInheritanceChainToTypes),
