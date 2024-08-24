@@ -1,5 +1,5 @@
 import { pipe } from 'fp-ts/function';
-import * as E from 'fp-ts/Either';
+//import * as E from 'fp-ts/Either';
 import * as TE from 'fp-ts/TaskEither';
 import yaml from 'js-yaml';
 
@@ -20,8 +20,8 @@ import {
   ParsedFile,
 } from '../shared/types';
 import { parsedFilesToRenderableBundle } from './adapters/renderable-bundle';
-import { reflectSourceCode } from './reflection/reflect-source';
-import { checkForReflectionErrors } from './reflection/error-handling';
+import { myPipeSeq /*reflectSourceCode*/ } from './reflection/reflect-source';
+//import { checkForReflectionErrors } from './reflection/error-handling';
 import { addInheritanceChainToTypes } from './reflection/inheritance-chain-expanion';
 import { addInheritedMembersToTypes } from './reflection/inherited-member-expansion';
 import { convertToDocumentationBundle } from './adapters/renderable-to-page-data';
@@ -63,15 +63,14 @@ export function generateDocs(apexBundles: UnparsedSourceFile[], config: Markdown
 
   return pipe(
     apexBundles,
-    reflectSourceCode,
-    checkForReflectionErrors,
-    E.map(filterOutOfScope),
-    E.map(addInheritedMembersToTypes),
-    E.map(addInheritanceChainToTypes),
-    E.map(sortTypeMembers),
-    E.bindTo('parsedFiles'),
-    E.bind('references', ({ parsedFiles }) => E.right(convertToReferences(parsedFiles))),
-    TE.fromEither,
+    myPipeSeq,
+    //checkForReflectionErrors,
+    TE.map(filterOutOfScope),
+    TE.map(addInheritedMembersToTypes),
+    TE.map(addInheritanceChainToTypes),
+    TE.map(sortTypeMembers),
+    TE.bindTo('parsedFiles'),
+    TE.bind('references', ({ parsedFiles }) => TE.right(convertToReferences(parsedFiles))),
     TE.flatMap(({ parsedFiles, references }) => transformReferenceHook(config)({ references, parsedFiles })),
     TE.map(({ parsedFiles, references }) => convertToRenderableBundle(parsedFiles, references)),
     TE.map(convertToDocumentationBundleForTemplate),
