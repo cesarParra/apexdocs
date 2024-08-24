@@ -98,7 +98,6 @@ export function adaptDocumentable(
         .map((currentAnnotation) => currentAnnotation.body) ?? []
     );
   }
-
   return {
     ...adaptDescribable(documentable.docComment?.descriptionLines, linkGenerator),
     annotations: documentable.annotations.map((annotation) => annotation.type.toUpperCase()),

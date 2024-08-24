@@ -8,10 +8,10 @@ import {
   UnparsedSourceFile,
   UserDefinedMarkdownConfig,
 } from '../../core/shared/types';
-import { ReflectionError } from '../../core/markdown/reflection/error-handling';
 import { referenceGuideTemplate } from '../../core/markdown/templates/reference-guide';
 import * as TE from 'fp-ts/TaskEither';
 import { isSkip } from '../../core/shared/utils';
+import { ReflectionError } from '../../core/markdown/reflection/reflect-source';
 
 class FileWritingError {
   readonly _tag = 'FileWritingError';

@@ -1,45 +1,123 @@
 import { ParsedFile, UnparsedSourceFile } from '../../shared/types';
+import * as TE from 'fp-ts/TaskEither';
 import * as E from 'fp-ts/Either';
-import { reflect as mirrorReflection, Type } from '@cparra/apex-reflection';
+import * as T from 'fp-ts/Task';
+import * as A from 'fp-ts/lib/Array';
+import { Annotation, reflect as mirrorReflection, Type } from '@cparra/apex-reflection';
 import { pipe } from 'fp-ts/function';
 import * as O from 'fp-ts/Option';
 import { parseApexMetadata } from '../../parse-apex-metadata';
-import { ReflectionError } from './error-handling';
+import { ParsingError } from '@cparra/apex-reflection';
+import { apply } from '#utils/fp';
+import { Semigroup } from 'fp-ts/Semigroup';
 
-export function reflectSourceCode(apexBundles: UnparsedSourceFile[]) {
-  return apexBundles.map(reflectSourceBody);
+export class ReflectionErrors {
+  readonly _tag = 'ReflectionErrors';
+
+  constructor(public errors: ReflectionError[]) {}
 }
 
-function reflectSourceBody(apexBundle: UnparsedSourceFile): E.Either<ReflectionError, ParsedFile> {
-  const { filePath, content: input, metadataContent: metadata } = apexBundle;
-  const result = mirrorReflection(input);
-  return result.error
-    ? E.left(new ReflectionError(filePath, result.error.message))
-    : E.right({
-        source: {
-          filePath,
-          name: result.typeMirror!.name,
-          type: result.typeMirror!.type_name,
-        },
-        type: addFileMetadataToTypeAnnotation(result.typeMirror!, metadata),
-      });
+export class ReflectionError {
+  constructor(
+    public file: string,
+    public message: string,
+  ) {}
 }
 
-function addFileMetadataToTypeAnnotation(type: Type, metadata: string | null): Type {
+async function reflectAsync(rawSource: string): Promise<Type> {
+  return new Promise((resolve, reject) => {
+    const result = mirrorReflection(rawSource);
+    if (result.typeMirror) {
+      return resolve(result.typeMirror);
+    } else if (result.error) {
+      return reject(result.error);
+    } else {
+      return reject(new Error('Unknown error'));
+    }
+  });
+}
+
+export function reflectBundles(apexBundles: UnparsedSourceFile[]) {
+  const semiGroupReflectionError: Semigroup<ReflectionErrors> = {
+    concat: (x, y) => new ReflectionErrors([...x.errors, ...y.errors]),
+  };
+  const Ap = TE.getApplicativeTaskValidation(T.ApplyPar, semiGroupReflectionError);
+
+  return pipe(apexBundles, A.traverse(Ap)(reflectBundle));
+}
+
+function reflectBundle(apexBundle: UnparsedSourceFile): TE.TaskEither<ReflectionErrors, ParsedFile> {
+  const convertToParsedFile: (typeMirror: Type) => ParsedFile = apply(toParsedFile, apexBundle.filePath);
+  const withMetadata = apply(addMetadata, apexBundle.metadataContent);
+
+  return pipe(apexBundle, reflectAsTask, TE.map(convertToParsedFile), TE.flatMap(withMetadata));
+}
+
+function reflectAsTask(apexBundle: UnparsedSourceFile): TE.TaskEither<ReflectionErrors, Type> {
+  return TE.tryCatch(
+    () => reflectAsync(apexBundle.content),
+    (error) =>
+      new ReflectionErrors([new ReflectionError(apexBundle.filePath, (error as ParsingError | Error).message)]),
+  );
+}
+
+function toParsedFile(filePath: string, typeMirror: Type): ParsedFile {
+  return {
+    source: {
+      filePath: filePath,
+      name: typeMirror.name,
+      type: typeMirror.type_name,
+    },
+    type: typeMirror,
+  };
+}
+
+function addMetadata(
+  rawMetadataContent: string | null,
+  parsedFile: ParsedFile,
+): TE.TaskEither<ReflectionErrors, ParsedFile> {
+  return TE.fromEither(
+    pipe(
+      parsedFile.type,
+      (type) => addFileMetadataToTypeAnnotation(type, rawMetadataContent),
+      E.map((type) => ({ ...parsedFile, type })),
+      E.mapLeft((error) => errorToReflectionErrors(error, parsedFile.source.filePath)),
+    ),
+  );
+}
+
+function errorToReflectionErrors(error: Error, filePath: string): ReflectionErrors {
+  return new ReflectionErrors([new ReflectionError(filePath, error.message)]);
+}
+
+function addFileMetadataToTypeAnnotation(type: Type, metadata: string | null): E.Either<Error, Type> {
+  const concatAnnotationToType = apply(concatAnnotations, type);
+
   return pipe(
     O.fromNullable(metadata),
-    O.map((metadata) => {
-      const metadataParams = parseApexMetadata(metadata);
-      metadataParams.forEach((value, key) => {
-        const declaration = `${key}: ${value}`;
-        type.annotations.push({
-          rawDeclaration: declaration,
-          name: declaration,
-          type: declaration,
-        });
-      });
-      return type;
-    }),
-    O.getOrElse(() => type),
+    O.map(concatAnnotationToType),
+    O.getOrElse(() => E.right(type)),
   );
+}
+
+function concatAnnotations(type: Type, metadataInput: string): E.Either<Error, Type> {
+  return pipe(
+    metadataInput,
+    parseApexMetadata,
+    E.map((metadataMap) => ({
+      ...type,
+      annotations: [...type.annotations, ...mapToAnnotations(metadataMap)],
+    })),
+  );
+}
+
+function mapToAnnotations(metadata: Map<string, string>): Annotation[] {
+  return Array.from(metadata.entries()).map(([key, value]) => {
+    const declaration = `${key}: ${value}`;
+    return {
+      name: declaration,
+      type: declaration,
+      rawDeclaration: declaration,
+    };
+  });
 }

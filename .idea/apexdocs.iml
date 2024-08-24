@@ -35,6 +35,7 @@
       <sourceFolder url="file://$MODULE_DIR$/node_modules/istanbul-reports/lib/html-spa/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/dist" />
       <excludeFolder url="file://$MODULE_DIR$/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/coverage" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
