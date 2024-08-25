@@ -1,9 +1,9 @@
-import { Settings, SettingsConfig } from '../../core/settings';
+import { OpenApiSettings, SettingsConfig } from '../../core/openApiSettings';
 import { ApexFileReader } from '../apex-file-reader';
 
 describe('File Reader', () => {
   beforeEach(() => {
-    Settings.build({
+    OpenApiSettings.build({
       sourceDirectory: '',
       recursive: true,
       scope: [],

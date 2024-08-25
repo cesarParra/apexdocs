@@ -40,4 +40,9 @@ export const openApiOptions: { [key: string]: Options } = {
     default: 'Apex REST API',
     describe: 'The title of the OpenApi file.',
   },
+  apiVersion: {
+    type: 'string',
+    default: '1.0.0',
+    describe: 'The version of the OpenApi file.',
+  },
 };

@@ -44,6 +44,7 @@ export type UserDefinedOpenApiConfig = {
   namespace?: string;
   sortMembersAlphabetically: boolean;
   title: string;
+  apiVersion: string;
 };
 
 export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig;

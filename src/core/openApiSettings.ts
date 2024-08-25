@@ -6,22 +6,23 @@ export interface SettingsConfig {
   namespace?: string;
   sortMembersAlphabetically?: boolean;
   openApiTitle?: string;
+  version: string;
 }
 
-export class Settings {
-  private static instance: Settings;
+export class OpenApiSettings {
+  private static instance: OpenApiSettings;
 
   private constructor(public config: SettingsConfig) {}
 
   public static build(config: SettingsConfig) {
-    Settings.instance = new Settings(config);
+    OpenApiSettings.instance = new OpenApiSettings(config);
   }
 
-  public static getInstance(): Settings {
-    if (!Settings.instance) {
+  public static getInstance(): OpenApiSettings {
+    if (!OpenApiSettings.instance) {
       throw new Error('Settings has not been initialized');
     }
-    return Settings.instance;
+    return OpenApiSettings.instance;
   }
 
   public getOpenApiTitle(): string | undefined {
@@ -34,5 +35,9 @@ export class Settings {
 
   public openApiFileName(): string {
     return this.config.openApiFileName;
+  }
+
+  public getVersion(): string {
+    return this.config.version;
   }
 }

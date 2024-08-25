@@ -2,7 +2,7 @@ import { FileContainer } from './file-container';
 import { ClassMirror, Type } from '@cparra/apex-reflection';
 import { Logger } from '#utils/logger';
 import { OpenApi } from './open-api';
-import { Settings } from '../settings';
+import { OpenApiSettings } from '../openApiSettings';
 import { MethodParser } from './parsers/MethodParser';
 import { camel2title } from '#utils/string-utils';
 import { createOpenApiFile } from './openapi-type-file';
@@ -13,11 +13,15 @@ export class OpenApiDocsProcessor {
 
   constructor() {
     this._fileContainer = new FileContainer();
-    const title = Settings.getInstance().getOpenApiTitle();
+    const title = OpenApiSettings.getInstance().getOpenApiTitle();
     if (!title) {
       throw Error('No OpenApi title was provided.');
     }
-    this.openApiModel = new OpenApi(title, '1.0.0', Settings.getInstance().getNamespace());
+    this.openApiModel = new OpenApi(
+      title,
+      OpenApiSettings.getInstance().getVersion(),
+      OpenApiSettings.getInstance().getNamespace(),
+    );
   }
 
   fileBuilder(): FileContainer {
@@ -66,7 +70,7 @@ export class OpenApiDocsProcessor {
   }
 
   onAfterProcess: ((types: Type[]) => void) | undefined = () => {
-    const page = createOpenApiFile(Settings.getInstance().openApiFileName(), this.openApiModel);
+    const page = createOpenApiFile(OpenApiSettings.getInstance().openApiFileName(), this.openApiModel);
     this._fileContainer.pushFile(page);
   };
 

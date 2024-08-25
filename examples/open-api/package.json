@@ -2,7 +2,8 @@
   "name": "openapi-example",
   "scripts": {
     "docs:clean": "rimraf docs",
-    "apexdocs:build": "npm run docs:clean && ts-node ../../src/cli/generate.ts openapi"
+    "docs:gen": "ts-node ../../src/cli/generate.ts openapi",
+    "apexdocs:build": "npm run docs:clean && npm run docs:gen"
   },
   "devDependencies": {
     "ts-node": "^10.9.2"
@@ -11,6 +12,9 @@
     "rimraf": "^5.0.7"
   },
   "apexdocs": {
-    "sourceDir": "force-app"
+    "sourceDir": "force-app",
+    "title": "Open API Example",
+    "namespace": "openapi",
+    "apiVersion": "3.0.0"
   }
 }
