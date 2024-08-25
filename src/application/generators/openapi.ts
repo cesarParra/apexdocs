@@ -2,13 +2,15 @@ import { createManifest } from '../../core/openapi/manifest-factory';
 import { RawBodyParser } from '../../core/openapi/parser';
 import { TypesRepository } from '../../core/openapi/types-repository';
 import Transpiler from '../../core/openapi/transpiler';
-import { FileWriter } from '../file-writer';
 import { Logger } from '#utils/logger';
 import ErrorLogger from '#utils/error-logger';
 import { reflect, ReflectionResult } from '@cparra/apex-reflection';
 import Manifest from '../../core/manifest';
 import { PageData, UnparsedSourceFile, UserDefinedOpenApiConfig } from '../../core/shared/types';
 import { OpenApiDocsProcessor } from '../../core/openapi/open-api-docs-processor';
+import { writeFiles } from '../file-writer';
+import { pipe } from 'fp-ts/function';
+import * as TE from 'fp-ts/TaskEither';
 
 export default function openApi(fileBodies: UnparsedSourceFile[], config: UserDefinedOpenApiConfig) {
   const manifest = createManifest(new RawBodyParser(fileBodies), reflectionWithLogger);
@@ -18,11 +20,14 @@ export default function openApi(fileBodies: UnparsedSourceFile[], config: UserDe
   Transpiler.generate(filteredTypes, processor);
   const generatedFiles = processor.fileBuilder().files();
 
-  FileWriter.write(generatedFiles, config.targetDir, (file: PageData) => {
-    Logger.logSingle(`${file.outputDocPath} processed.`, 'green');
-  });
+  pipe(
+    writeFiles(generatedFiles, config.targetDir, (file: PageData) => {
+      Logger.logSingle(`${file.outputDocPath} processed.`, 'green');
+    }),
+    TE.mapError((error) => Logger.error(error)),
+  );
 
-  // Error logging
+  // Logs any errors that the types might have in their doc comment's error field
   ErrorLogger.logErrors(filteredTypes);
 }
 
