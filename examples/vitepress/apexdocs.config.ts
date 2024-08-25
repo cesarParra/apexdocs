@@ -29,6 +29,12 @@ export default defineMarkdownConfig({
   sourceDir: 'force-app',
   scope: ['global', 'public', 'protected', 'private', 'namespaceaccessible'],
   namespace: 'apexdocs',
+  transformReference: (reference) => {
+    return {
+      // remove the trailing .md
+      referencePath: reference.referencePath.replace(/\.md$/, ''),
+    };
+  },
   transformReferenceGuide: async (referenceGuide) => {
     const frontMatter = await loadFileAsync('./docs/index-frontmatter.md');
     return {
