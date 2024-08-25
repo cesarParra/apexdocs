@@ -1,12 +1,12 @@
 import { OpenApiDocsProcessor } from '../open-api-docs-processor';
-import { Settings } from '../../settings';
+import { OpenApiSettings } from '../../openApiSettings';
 import { SettingsBuilder } from '../../../test-helpers/SettingsBuilder';
 import { DocCommentBuilder } from '../../../test-helpers/DocCommentBuilder';
 import { AnnotationBuilder } from '../../../test-helpers/AnnotationBuilder';
 import { ClassMirrorBuilder } from '../../../test-helpers/ClassMirrorBuilder';
 
 beforeEach(() => {
-  Settings.build(new SettingsBuilder().build());
+  OpenApiSettings.build(new SettingsBuilder().build());
 });
 
 it('should add a path based on the @UrlResource annotation on the class', function () {

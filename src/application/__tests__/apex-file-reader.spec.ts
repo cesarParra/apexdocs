@@ -1,23 +1,6 @@
-import { Settings, SettingsConfig } from '../../core/settings';
 import { ApexFileReader } from '../apex-file-reader';
 
 describe('File Reader', () => {
-  beforeEach(() => {
-    Settings.build({
-      sourceDirectory: '',
-      recursive: true,
-      scope: [],
-      outputDir: '',
-      targetGenerator: 'markdown',
-      indexOnly: false,
-      defaultGroupName: 'Misc',
-      sanitizeHtml: true,
-      openApiFileName: 'openapi',
-      title: 'Classes',
-      includeMetadata: false,
-    } as SettingsConfig);
-  });
-
   it('returns an empty list when there are no files in the directory', async () => {
     const result = await ApexFileReader.processFiles(
       {

@@ -23,7 +23,7 @@ export class Apexdocs {
       const fileBodies = await ApexFileReader.processFiles(
         new DefaultFileSystem(),
         config.sourceDir,
-        config.includeMetadata,
+        config.targetGenerator === 'markdown' ? config.includeMetadata : false,
       );
 
       switch (config.targetGenerator) {
@@ -31,8 +31,7 @@ export class Apexdocs {
           await generateMarkdownDocumentation(fileBodies, config)();
           break;
         case 'openapi':
-          openApi(fileBodies, config);
-          Logger.logSingle('✔️ Documentation generated successfully!');
+          await openApi(fileBodies, config);
           break;
       }
     } catch (error) {

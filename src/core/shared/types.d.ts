@@ -39,7 +39,10 @@ export type UserDefinedOpenApiConfig = {
   targetGenerator: 'openapi';
   sourceDir: string;
   targetDir: string;
-  includeMetadata: boolean;
+  fileName: string;
+  namespace?: string;
+  title: string;
+  apiVersion: string;
 };
 
 export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig;

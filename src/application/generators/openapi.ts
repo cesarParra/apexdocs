@@ -11,8 +11,18 @@ import { OpenApiDocsProcessor } from '../../core/openapi/open-api-docs-processor
 import { writeFiles } from '../file-writer';
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
+import { OpenApiSettings } from '../../core/openApiSettings';
 
-export default function openApi(fileBodies: UnparsedSourceFile[], config: UserDefinedOpenApiConfig) {
+export default async function openApi(fileBodies: UnparsedSourceFile[], config: UserDefinedOpenApiConfig) {
+  OpenApiSettings.build({
+    sourceDirectory: config.sourceDir,
+    outputDir: config.targetDir,
+    openApiFileName: config.fileName,
+    openApiTitle: config.title,
+    namespace: config.namespace,
+    version: config.apiVersion,
+  });
+
   const manifest = createManifest(new RawBodyParser(fileBodies), reflectionWithLogger);
   TypesRepository.getInstance().populateAll(manifest.types);
   const filteredTypes = filterByScopes(manifest);
@@ -20,12 +30,13 @@ export default function openApi(fileBodies: UnparsedSourceFile[], config: UserDe
   Transpiler.generate(filteredTypes, processor);
   const generatedFiles = processor.fileBuilder().files();
 
-  pipe(
+  await pipe(
     writeFiles(generatedFiles, config.targetDir, (file: PageData) => {
       Logger.logSingle(`${file.outputDocPath} processed.`, 'green');
     }),
+    TE.map(() => Logger.logSingle('✔️ Documentation generated successfully!')),
     TE.mapError((error) => Logger.error(error)),
-  );
+  )();
 
   // Logs any errors that the types might have in their doc comment's error field
   ErrorLogger.logErrors(filteredTypes);
