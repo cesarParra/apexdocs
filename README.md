@@ -87,7 +87,7 @@ the following formats:
 
 - A `package.json` property, e.g. `{ "apexdocs": { "sourceDir": "src", "targetDir": "docs" } }`
 - A `.apexdocsrc` file, written in YAML or JSON, with optional extensions: `.yaml/.yml/.json/.js`
-- An `apexdocs.config.js` file that exports an object
+- An `apexdocs.config.js` (or `.mjs`) file that exports an object
 - A `apexdocs.config.ts` file that exports an object
 
 The configuration file should be placed in the root directory of your project.

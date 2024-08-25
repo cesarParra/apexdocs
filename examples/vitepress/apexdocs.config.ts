@@ -35,10 +35,9 @@ export default defineMarkdownConfig({
       referencePath: reference.referencePath.replace(/\.md$/, ''),
     };
   },
-  transformReferenceGuide: async (referenceGuide) => {
+  transformReferenceGuide: async () => {
     const frontMatter = await loadFileAsync('./docs/index-frontmatter.md');
     return {
-      ...referenceGuide,
       frontmatter: frontMatter,
     };
   },
