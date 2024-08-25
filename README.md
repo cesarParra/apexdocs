@@ -1,13 +1,13 @@
 # ApexDocs
 
-<p align="center">
+<div align="center">
   <b>ApexDocs is a Node.js library with CLI capabilities to generate documentation for Salesforce Apex classes.</b>
-</p>
 
 [![CI](https://github.com/cesarParra/apexdocs/actions/workflows/ci.yaml/badge.svg)](https://github.com/cesarParra/apexdocs/actions/workflows/ci.yaml)
 [![License](https://img.shields.io/github/license/cesarParra/apexdocs)](https://github.com/cesarParra/apexdocs/blob/master/LICENSE)
 [![npm](https://img.shields.io/npm/dm/@cparra/apexdocs)](https://www.npmjs.com/package/@cparra/apexdocs)
-## Description
+</div>
+
 
 ApexDocs is a non-opinionated documentation generator for Salesforce Apex classes.
 It can output documentation in Markdown
@@ -15,13 +15,13 @@ format,
 which allows you to use the Static Site Generator of your choice to create a documentation site that fits your needs,
 hosted in any static web hosting service.
 
-## Installation
+## 💿 Installation
 
 ```bash
 npm i -g @cparra/apexdocs
 ```
 
-## Quick Start
+## ⚡ Quick Start
 
 ### CLI
 
@@ -42,7 +42,7 @@ annotated with `@RestResource`:
 apexdocs openapi -s force-app
 ```
 
-#### Features
+## 🚀 Features
 
 * Generate documentation for Salesforce Apex classes as markdown files
 * Generate an OpenApi REST specification based on `@RestResource` classes
@@ -55,7 +55,7 @@ apexdocs openapi -s force-app
 * Custom tag support
 * And much, much more!
 
-### Demo
+## 👀 Demo
 
 ApexDocs currently supports generating markdown files for Jekyll and Docsify sites, as well as generating plain markdown
 files.
@@ -66,19 +66,7 @@ files.
 - [Nimble AMS Docs](https://nimbleuser.github.io/nams-api-docs/#/api-reference/)
 - [Yet Another Salesforce Logger](https://cesarparra.github.io/yet-another-salesforce-logger/#/)
 
-### [Docsify](https://docsify.js.org/)
-
-Demo
-
-- [Docsify](https://cesarparra.github.io/apexdocs/)
-
-### [Jekyll](https://jekyllrb.com/)
-
-Demo
-
-- [Jekyll](https://cesarparra.github.io/apexdocs-docsify-example/)
-
-## Advanced Usage
+## 🔬 Advanced Usage
 
 ### Available Commands
 
@@ -118,7 +106,7 @@ If you are just interested in the Apex parsing capabilities, you can use the
 standalone [Apex Reflection Library](https://www.npmjs.com/package/@cparra/apex-reflection)
 which is what gets used by this library behind the scenes to generate the documentation files.
 
-## Documentation Guide
+## 📖 Documentation Guide
 
 ApexDocs picks up blocks of comments throughout your `.cls` files. The block must begin with `/**` and end with `*/`.
 
@@ -334,7 +322,7 @@ public class MyClass {
 }
  ```
 
-## Generating OpenApi REST Definitions
+## 📄 Generating OpenApi REST Definitions
 
 ApexDocs supports generating OpenApi 3.1.0 REST definitions based on any `@RestResource` classes in your source code.
 
@@ -649,13 +637,13 @@ Please be aware of the following when using ApexDocs to create an OpenApi defini
   Instead, use the `@http-response` ApexDoc annotation to specify the return value, and `@http-parameter` to specify any
   expected parameter.
 
-## Typescript
+## 👨‍💻 Typescript
 
 ApexDocs provides all necessary type definitions.
 
 ---
 
-## 2.X
+## ⏮️ 2.X
 
 Looking for documentation for version 2.X? // TODO: Add link to the 2.X branch
 
