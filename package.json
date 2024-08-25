@@ -17,6 +17,7 @@
   },
   "scripts": {
     "test": "npm run build && jest",
+    "test:cov": "npm run build && jest --coverage",
     "build": "rimraf ./lib && npm run lint && tsc --noEmit && pkgroll",
     "lint": "eslint \"./src/**/*.{js,ts}\" --quiet --fix",
     "prepare": "npm run build",

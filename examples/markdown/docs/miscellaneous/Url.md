@@ -299,11 +299,13 @@ global static Url getOrgDomainUrl()
 getOrgDomainUrl() always returns the login URL for your org, regardless of context. Use that URL when making API calls to your org.
 
 #### Example
-// This example uses the Salesforce REST API to get organization limit values. For information on limits, see Limits in the REST API Developer Guide. 
-Http h &#x3D; new Http(); 
-HttpRequest req &#x3D; new HttpRequest(); 
-req.setEndpoint(Url.getOrgDomainUrl().toExternalForm() 
-+ &#x27;/services/data/v44.0/limits&#x27;); 
-req.setMethod(&#x27;GET&#x27;); 
-req.setHeader(&#x27;Authorization&#x27;, &#x27;Bearer &#x27; + UserInfo.getSessionId()); 
-HttpResponse res &#x3D; h.send(req);
+This example uses the Salesforce REST API to get organization limit values. For information on limits, see Limits in the REST API Developer Guide. 
+```apex
+Http h = new Http();
+HttpRequest req = new HttpRequest();
+req.setEndpoint(Url.getOrgDomainUrl().toExternalForm()
+   + '/services/data/v44.0/limits');
+req.setMethod('GET');
+req.setHeader('Authorization', 'Bearer ' + UserInfo.getSessionId());
+HttpResponse res = h.send(req);
+```

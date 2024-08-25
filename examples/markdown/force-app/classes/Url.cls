@@ -176,7 +176,8 @@ global class Url {
      * You don't need a RemoteSiteSetting for your org to interact with the Salesforce APIs using domain URLs retrieved with this method.
      *
      * @example
-     * // This example uses the Salesforce REST API to get organization limit values. For information on limits, see Limits in the REST API Developer Guide.
+     * This example uses the Salesforce REST API to get organization limit values. For information on limits, see Limits in the REST API Developer Guide.
+     * ```apex
      * Http h = new Http();
      * HttpRequest req = new HttpRequest();
      * req.setEndpoint(Url.getOrgDomainUrl().toExternalForm()
@@ -184,6 +185,7 @@ global class Url {
      * req.setMethod('GET');
      * req.setHeader('Authorization', 'Bearer ' + UserInfo.getSessionId());
      * HttpResponse res = h.send(req);
+     * ```
      *
      * @see-also
      * * [Lightning Aura Components Developer Guide: Making API Calls from Apex](https://developer.salesforce.com/docs/atlas.en-us.250.0.lightning.meta/lightning/apex_api_calls.htm)

@@ -4,8 +4,9 @@
   <b>ApexDocs is a Node.js library with CLI capabilities to generate documentation for Salesforce Apex classes.</b>
 </p>
 
+[![CI](https://github.com/cesarParra/apexdocs/actions/workflows/ci.yaml/badge.svg)](https://github.com/cesarParra/apexdocs/actions/workflows/ci.yaml)
 [![License](https://img.shields.io/github/license/cesarParra/apexdocs)](https://github.com/cesarParra/apexdocs/blob/master/LICENSE)
-
+[![npm](https://img.shields.io/npm/dm/@cparra/apexdocs)](https://www.npmjs.com/package/@cparra/apexdocs)
 ## Description
 
 ApexDocs is a non-opinionated documentation generator for Salesforce Apex classes.
@@ -26,18 +27,19 @@ npm i -g @cparra/apexdocs
 
 #### Markdown
 
+Run the following command to generate markdown files for your global Salesforce Apex classes:
+
 ```bash
-apexdocs markdown
-    -s src
-    -t docs
+apexdocs markdown -s force-app
 ```
 
 #### OpenApi
 
+Run the following command to generate an OpenApi REST specification for your Salesforce Apex classes
+annotated with `@RestResource`:
+
 ```bash
-apexdocs openapi
-    -s src
-    -t docs
+apexdocs openapi -s force-app
 ```
 
 #### Features
