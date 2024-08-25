@@ -40,9 +40,7 @@ export type UserDefinedOpenApiConfig = {
   sourceDir: string;
   targetDir: string;
   fileName: string;
-  defaultGroupName: string;
   namespace?: string;
-  sortMembersAlphabetically: boolean;
   title: string;
   apiVersion: string;
 };

@@ -9,7 +9,6 @@ export class SettingsBuilder {
     return {
       sourceDirectory: './',
       outputDir: './',
-      defaultGroupName: 'Misc',
       openApiTitle: 'Apex API',
       openApiFileName: 'openapi',
       version: '1.0.0',

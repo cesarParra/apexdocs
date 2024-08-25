@@ -18,9 +18,7 @@ export default async function openApi(fileBodies: UnparsedSourceFile[], config: 
     sourceDirectory: config.sourceDir,
     outputDir: config.targetDir,
     openApiFileName: config.fileName,
-    defaultGroupName: config.defaultGroupName,
     openApiTitle: config.title,
-    sortMembersAlphabetically: config.sortMembersAlphabetically,
     namespace: config.namespace,
     version: config.apiVersion,
   });

@@ -2,9 +2,7 @@ export interface SettingsConfig {
   sourceDirectory: string;
   outputDir: string;
   openApiFileName: string;
-  defaultGroupName: string;
   namespace?: string;
-  sortMembersAlphabetically?: boolean;
   openApiTitle?: string;
   version: string;
 }

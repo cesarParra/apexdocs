@@ -19,21 +19,9 @@ export const openApiOptions: { [key: string]: Options } = {
     default: 'openapi',
     describe: 'The name of the OpenApi file to be generated.',
   },
-  // TODO: How does this get used in OpenApi?
-  defaultGroupName: {
-    type: 'string',
-    default: defaults.defaultGroupName,
-    describe: 'Defines the @group name to be used when a file does not specify it.',
-  },
   namespace: {
     type: 'string',
     describe: 'The package namespace, if any. This will be added to the API file Server Url.',
-  },
-  // TODO: Is this used in OpenApi?
-  sortMembersAlphabetically: {
-    type: 'boolean',
-    describe: 'Whether to sort members alphabetically.',
-    default: defaults.sortMembersAlphabetically,
   },
   title: {
     type: 'string',
