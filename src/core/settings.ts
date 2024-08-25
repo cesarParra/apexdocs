@@ -1,17 +1,11 @@
-import { Generator } from './shared/types';
-
 export interface SettingsConfig {
   sourceDirectory: string;
-  scope: string[];
   outputDir: string;
-  targetGenerator: Generator;
-  indexOnly: boolean;
-  defaultGroupName: string;
-  openApiTitle?: string;
-  namespace?: string;
   openApiFileName: string;
-  includeMetadata: boolean;
+  defaultGroupName: string;
+  namespace?: string;
   sortMembersAlphabetically?: boolean;
+  openApiTitle?: string;
 }
 
 export class Settings {
@@ -28,18 +22,6 @@ export class Settings {
       throw new Error('Settings has not been initialized');
     }
     return Settings.instance;
-  }
-
-  get scope(): string[] {
-    return this.config.scope;
-  }
-
-  get targetGenerator(): Generator {
-    return this.config.targetGenerator;
-  }
-
-  get indexOnly(): boolean {
-    return this.config.indexOnly;
   }
 
   public getOpenApiTitle(): string | undefined {

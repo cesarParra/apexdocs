@@ -23,7 +23,7 @@ export class Apexdocs {
       const fileBodies = await ApexFileReader.processFiles(
         new DefaultFileSystem(),
         config.sourceDir,
-        config.includeMetadata,
+        config.targetGenerator === 'markdown' ? config.includeMetadata : false,
       );
 
       switch (config.targetGenerator) {

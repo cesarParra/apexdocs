@@ -1,5 +1,4 @@
 import { Type } from '@cparra/apex-reflection';
-import { Settings } from '../settings';
 import { OpenApiDocsProcessor } from './open-api-docs-processor';
 
 export default class Transpiler {
@@ -9,10 +8,6 @@ export default class Transpiler {
       if (apexTypeA.name > apexTypeB.name) return 1;
       return 0;
     });
-
-    if (Settings.getInstance().indexOnly) {
-      return;
-    }
 
     sortedTypes.forEach((currentType) => {
       processor.onProcess(currentType);

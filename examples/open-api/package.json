@@ -1,0 +1,16 @@
+{
+  "name": "openapi-example",
+  "scripts": {
+    "docs:clean": "rimraf docs",
+    "apexdocs:build": "npm run docs:clean && ts-node ../../src/cli/generate.ts openapi"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2"
+  },
+  "dependencies": {
+    "rimraf": "^5.0.7"
+  },
+  "apexdocs": {
+    "sourceDir": "force-app"
+  }
+}

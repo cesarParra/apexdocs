@@ -3,6 +3,7 @@ import * as yargs from 'yargs';
 import { UserDefinedMarkdownConfig } from '../core/shared/types';
 import { TypeScriptLoader } from 'cosmiconfig-typescript-loader';
 import { markdownOptions } from './commands/markdown';
+import { openApiOptions } from './commands/openapi';
 
 /**
  * Extracts configuration from a configuration file or the package.json
@@ -26,7 +27,9 @@ function _extractYargs(config?: CosmiconfigResult) {
     .command('markdown', 'Generate documentation from Apex classes as a Markdown site.', (yargs) =>
       yargs.options(markdownOptions),
     )
-    .command('openapi', 'Generate an OpenApi REST specification from Apex classes.') // TODO: Add OpenApi specific options
+    .command('openapi', 'Generate an OpenApi REST specification from Apex classes.', () =>
+      yargs.options(openApiOptions),
+    )
     .demandCommand()
     .parseSync();
 }

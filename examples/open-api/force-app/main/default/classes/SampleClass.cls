@@ -1,3 +1,4 @@
+
 /**
  * @description This is a class description. This class relates to {@link SampleInterface}
  *              But this {@link ClassThatDoesNotExist} does not exist.

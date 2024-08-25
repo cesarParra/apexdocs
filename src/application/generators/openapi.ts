@@ -11,8 +11,18 @@ import { OpenApiDocsProcessor } from '../../core/openapi/open-api-docs-processor
 import { writeFiles } from '../file-writer';
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
+import { Settings } from '../../core/settings';
 
 export default function openApi(fileBodies: UnparsedSourceFile[], config: UserDefinedOpenApiConfig) {
+  Settings.build({
+    sourceDirectory: config.sourceDir,
+    outputDir: config.targetDir,
+    openApiFileName: config.fileName,
+    defaultGroupName: config.defaultGroupName,
+    openApiTitle: config.title,
+    sortMembersAlphabetically: config.sortMembersAlphabetically,
+  });
+
   const manifest = createManifest(new RawBodyParser(fileBodies), reflectionWithLogger);
   TypesRepository.getInstance().populateAll(manifest.types);
   const filteredTypes = filterByScopes(manifest);
