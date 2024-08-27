@@ -1,7 +1,5 @@
 import { Type } from '@cparra/apex-reflection';
 
-export type Generator = 'markdown' | 'openapi';
-
 /**
  * The configurable hooks that can be used to modify the output of the generator.
  */
