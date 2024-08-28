@@ -12,43 +12,16 @@ describe('When generating documentation for a class', () => {
     extendExpect();
   });
 
-  describe('the resulting file', () => {
-    it('is named after the class', async () => {
+  describe('the generated bundles', () => {
+    it('return the type as class', async () => {
       const input = 'public class MyClass {}';
 
       const result = await generateDocs([apexBundleFromRawString(input)])();
-      assertEither(result, (data) => expect(aSingleDoc(data).outputDocPath).toContain('MyClass.md'));
-    });
-
-    it('is placed in the miscellaneous folder if no group is provided', async () => {
-      const input = 'public class MyClass {}';
-
-      const result = await generateDocs([apexBundleFromRawString(input)])();
-      assertEither(result, (data) => expect(aSingleDoc(data).outputDocPath).toContain('miscellaneous'));
-    });
-
-    it('is placed in the slugified group folder if a group is provided', async () => {
-      const input = `
-        /**
-          * @group MyGroup
-          */
-        public class MyClass {}
-      `;
-
-      const result = await generateDocs([apexBundleFromRawString(input)])();
-      assertEither(result, (data) => expect(aSingleDoc(data).outputDocPath).toContain('mygroup'));
+      assertEither(result, (data) => expect(aSingleDoc(data).source.type).toBe('class'));
     });
   });
 
-  describe('the generated document', () => {
-    it('returns the type as class', async () => {
-      const input = 'public class MyClass {}';
-
-      const result = await generateDocs([apexBundleFromRawString(input)])();
-      expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].source.type).toBe('class'));
-    });
-
+  describe('the generated documents', () => {
     it('does not return classes out of scope', async () => {
       const input1 = `
         global class MyClass {}

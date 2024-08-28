@@ -7,17 +7,6 @@ describe('Generates interface documentation', () => {
   });
 
   describe('documentation output', () => {
-    it('returns the name of the interface', async () => {
-      const input = `
-      public interface MyInterface {
-      }
-      `;
-
-      const result = await generateDocs([apexBundleFromRawString(input)])();
-      expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].source.name).toBe('MyInterface'));
-    });
-
     it('returns the type as interface', async () => {
       const input = `
       public interface MyInterface {

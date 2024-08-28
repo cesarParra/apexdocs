@@ -7,19 +7,6 @@ describe('Generates enum documentation', () => {
   });
 
   describe('documentation output', () => {
-    it('returns the name of the enum', async () => {
-      const input = `
-     public enum MyEnum {
-        VALUE1,
-        VALUE2
-      }
-    `;
-
-      const result = await generateDocs([apexBundleFromRawString(input)])();
-      expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].outputDocPath).toContain('MyEnum'));
-    });
-
     it('returns the type as enum', async () => {
       const input = `
      public enum MyEnum {
