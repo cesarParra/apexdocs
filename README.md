@@ -77,11 +77,43 @@ Here are some live projects using ApexDocs:
 
 `markdown`
 
-// TODO -> Define the flags for this command
+#### Flags
+
+| Flag                          | Alias | Description                                                                                                                            | Default         | Required |
+|-------------------------------|-------|----------------------------------------------------------------------------------------------------------------------------------------|-----------------|----------|
+| `--sourceDir`                 | `-s`  | The directory where the source files are located.                                                                                      | N/A             | Yes      |
+| `--targetDir`                 | `-t`  | The directory where the generated files will be placed.                                                                                | `docs`          | No       |
+| `--scope`                     | `-p`  | A list of scopes to document. Values should be separated by a space, e.g --scope global public namespaceaccessible.                    | `global`        | No       |
+| `--defaultGroupName`          | N/A   | The default group name to use when a group is not specified.                                                                           | `Miscellaneous` | No       |
+| `--namespace`                 | N/A   | The package namespace, if any. If provided, it will be added to the generated files.                                                   | N/A             | No       |
+| `--sortMembersAlphabetically` | N/A   | Sorts the members of a class, interface or enum alphabetically. If false, the members will be displayed in the same order as the code. | `false`         | No       |
+| `--includeMetadata `          | N/A   | Whether to include the file's meta.xml information: Whether it is active and and the API version                                       | `false`         | No       |
+| `--linkingStrategy`           | N/A   | The strategy to use when linking to other classes. Possible values are `relative`, `no-link`, and `none`                               | `relative`      | No       |
+
+#### Sample Usage
+
+```bash
+apexdocs markdown -s force-app -t docs -p global public namespaceaccessible -n MyNamespace
+```
 
 `openapi`
 
-// TODO -> Define the flags for this command
+#### Flags
+
+| Flag           | Alias | Description                                                                   | Default         | Required |
+|----------------|-------|-------------------------------------------------------------------------------|-----------------|----------|
+| `--sourceDir`  | `-s`  | The directory where the source files are located.                             | N/A             | Yes      |
+| `--targetDir`  | `-t`  | The directory where the generated files will be placed.                       | `docs`          | No       |
+| `--fileName`   | N/A   | The name of the OpenApi file.                                                 | `openapi.json`  | No       |
+| `--namespace`  | N/A   | The package namespace, if any. This will be added to the API file Server Url. | N/A             | No       |
+| `--title`      | N/A   | The title of the OpenApi file.                                                | `Apex REST API` | No       |
+| `--apiVersion` | N/A   | The version of the API.                                                       | `1.0.0`         | No       |
+
+#### Sample Usage
+
+```bash
+apexdocs openapi -s force-app -t docs -n MyNamespace --title "My Custom OpenApi Title"
+```
 
 ### Defining a configuration file
 
@@ -350,7 +382,8 @@ in the specified `--targetDir`.
 
 ApexDocs will automatically parse your source code and generate the OpenApi definition based on the HTTP related Apex
 annotations (`RestResource`, `HttpDelete`, `HttpGet`, `HttpPatch`, `HttpPost`, `HttpGet`). The different HTTP
-annotations will be used to generate a file that complies with the [OpenApi Specification v3.1.0](https://spec.openapis.org/oas/v3.1.0)
+annotations will be used to generate a file that complies with
+the [OpenApi Specification v3.1.0](https://spec.openapis.org/oas/v3.1.0)
 
 Besides these annotations, the ApexDocs tool will also use any information provided through your code's Apexdocs,
 relying on

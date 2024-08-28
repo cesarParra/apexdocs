@@ -30,9 +30,7 @@ export const markdownOptions: { [key: string]: Options } = {
   },
   namespace: {
     type: 'string',
-    describe:
-      'The package namespace, if any. If this value is provided the namespace will be added as a prefix to all of the parsed files. ' +
-      "If generating an OpenApi definition, it will be added to the file's Server Url.",
+    describe: 'The package namespace, if any. If provided, it will be added to the generated files.',
   },
   sortMembersAlphabetically: {
     type: 'boolean',
