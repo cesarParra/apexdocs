@@ -1,20 +1,46 @@
 import { assertEither, extendExpect } from './expect-extensions';
 import { apexBundleFromRawString, generateDocs } from './test-helpers';
+import { DocPageData, PostHookDocumentationBundle } from '../../shared/types';
 
-describe('Generates interface documentation', () => {
+function aSingleDoc(result: PostHookDocumentationBundle): DocPageData {
+  expect(result.docs).toHaveLength(1);
+  return result.docs[0];
+}
+
+describe('When generating documentation for a class', () => {
   beforeAll(() => {
     extendExpect();
   });
 
-  describe('documentation output', () => {
-    it('returns the name of the class', async () => {
+  describe('the resulting file', () => {
+    it('is named after the class', async () => {
       const input = 'public class MyClass {}';
 
       const result = await generateDocs([apexBundleFromRawString(input)])();
-      expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].outputDocPath).toContain('MyClass'));
+      assertEither(result, (data) => expect(aSingleDoc(data).outputDocPath).toContain('MyClass.md'));
     });
 
+    it('is placed in the miscellaneous folder if no group is provided', async () => {
+      const input = 'public class MyClass {}';
+
+      const result = await generateDocs([apexBundleFromRawString(input)])();
+      assertEither(result, (data) => expect(aSingleDoc(data).outputDocPath).toContain('miscellaneous'));
+    });
+
+    it('is placed in the slugified group folder if a group is provided', async () => {
+      const input = `
+        /**
+          * @group MyGroup
+          */
+        public class MyClass {}
+      `;
+
+      const result = await generateDocs([apexBundleFromRawString(input)])();
+      assertEither(result, (data) => expect(aSingleDoc(data).outputDocPath).toContain('mygroup'));
+    });
+  });
+
+  describe('the generated document', () => {
     it('returns the type as class', async () => {
       const input = 'public class MyClass {}';
 
