@@ -85,4 +85,16 @@ describe('When generating documentation', () => {
       }
     });
   });
+
+  describe('the generated bundle', () => {
+    it('does not return files out of scope', async () => {
+      const input1 = 'global class MyClass {}';
+      const input2 = 'public class AnotherClass {}';
+
+      const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)], {
+        scope: ['global'],
+      })();
+      expect(result).documentationBundleHasLength(1);
+    });
+  });
 });

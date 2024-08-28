@@ -7,21 +7,6 @@ describe('When generating documentation for a class', () => {
   });
 
   describe('the generated bundle', () => {
-    it('does not return classes out of scope', async () => {
-      const input1 = `
-        global class MyClass {}
-      `;
-
-      const input2 = `
-        public class AnotherClass {}
-      `;
-
-      const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)], {
-        scope: ['global'],
-      })();
-      expect(result).documentationBundleHasLength(1);
-    });
-
     it('does not return classes that have an @ignore in the docs', async () => {
       const input = `
       /**

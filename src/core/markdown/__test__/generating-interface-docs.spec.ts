@@ -7,21 +7,6 @@ describe('Generates interface documentation', () => {
   });
 
   describe('documentation output', () => {
-    it('does not return interfaces out of scope', async () => {
-      const input1 = `
-        global interface MyInterface {}
-      `;
-
-      const input2 = `
-        public interface AnotherInterface {}
-      `;
-
-      const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)], {
-        scope: ['global'],
-      })();
-      expect(result).documentationBundleHasLength(1);
-    });
-
     it('does not return interfaces that have an @ignore in the docs', async () => {
       const input = `
       /**

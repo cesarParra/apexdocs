@@ -7,27 +7,6 @@ describe('Generates enum documentation', () => {
   });
 
   describe('documentation output', () => {
-    it('does not return enums out of scope', async () => {
-      const input1 = `
-     global enum MyEnum {
-        VALUE1,
-        VALUE2
-      }
-    `;
-
-      const input2 = `
-      public enum MyEnum {
-          VALUE1,
-          VALUE2
-        }
-      `;
-
-      const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)], {
-        scope: ['global'],
-      })();
-      expect(result).documentationBundleHasLength(1);
-    });
-
     it('does not return enums that have an @ignore in the docs', async () => {
       const input = `
       /**
