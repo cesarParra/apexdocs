@@ -89,6 +89,32 @@ Here are some live projects using ApexDocs:
 | `--includeMetadata `          | N/A   | Whether to include the file's meta.xml information: Whether it is active and and the API version                                       | `false`         | No       |
 | `--linkingStrategy`           | N/A   | The strategy to use when linking to other classes. Possible values are `relative`, `no-link`, and `none`                               | `relative`      | No       |
 
+#### Linking Strategy
+
+The linking strategy determines how ApexDocs will link to other classes in your documentation. For example,
+if I have class `A` that links through class `B` (e.g. through an `{@link B}` tag, the `@see` tag,
+takes it as a param, returns it from a method, etc.), the linking strategy will determine how the link to class `B` is
+created.
+
+These are the possible values for the `linkingStrategy` flag:
+
+- `relative`
+
+Create a relative link to the class file.
+So if both classes are in the same directory, the link will be created as
+`[B](B.md)`.
+If the classes are in different directories, the link will be created as `[B](../path/to/B.md)`
+
+- `no-link`
+
+Does not create a link at all. The class name will be displayed as plain text.
+
+- `none`
+
+Does not apply any kind of logic. Instead, the links will be determined by the path to the file
+from the root of the documentation site OR by whatever path you have returned in the `transformReference` hook
+for the file.
+
 ### Sample Usage
 
 ```bash
