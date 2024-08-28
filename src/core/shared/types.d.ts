@@ -115,9 +115,9 @@ export type ConfigurableHooks = {
   transformReference: TransformReference;
 };
 
-type ConfigurableDocPageReference = Omit<DocPageReference, 'source'>;
+export type ConfigurableDocPageReference = Omit<DocPageReference, 'source'>;
 
-type ConfigurableDocPageData = Omit<DocPageData, 'source' | 'outputDocPath'>;
+export type ConfigurableDocPageData = Omit<DocPageData, 'source' | 'outputDocPath'>;
 
 /**
  * Allows changing where the files are written to.

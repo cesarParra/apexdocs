@@ -1,5 +1,3 @@
-// TODO: Can I get rid of type-fest now that we are not using this?
-//import { SetOptional } from 'type-fest';
 import type {
   ConfigurableHooks,
   Skip,
