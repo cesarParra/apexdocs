@@ -8,6 +8,11 @@ import type {
   DocPageData,
   DocPageReference,
   ConfigurableDocPageData,
+  TransformReferenceGuide,
+  TransformDocs,
+  TransformDocPage,
+  TransformReference,
+  ConfigurableDocPageReference,
 } from './core/shared/types';
 import { defaults } from './defaults';
 
@@ -32,10 +37,15 @@ function skip(): Skip {
 export {
   defineMarkdownConfig,
   skip,
+  TransformReferenceGuide,
+  TransformDocs,
+  TransformDocPage,
+  TransformReference,
   ConfigurableHooks,
   ReferenceGuidePageData,
   DocPageData,
   DocPageReference,
   Skip,
   ConfigurableDocPageData,
+  ConfigurableDocPageReference,
 };

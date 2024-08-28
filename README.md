@@ -186,7 +186,7 @@ guide page should be skipped.
 **Type**
 
 ```typescript
-(referenceGuide: ReferenceGuidePageData) => Partial<ReferenceGuidePageData> | Skip | Promise<Partial<ReferenceGuidePageData> | Skip>;
+type TransformReferenceGuide = (referenceGuide: ReferenceGuidePageData) => Partial<ReferenceGuidePageData> | Skip | Promise<Partial<ReferenceGuidePageData> | Skip>;
 ```
 
 Example: Updating the frontmatter
@@ -225,7 +225,7 @@ If you want to modify the contents or frontmatter of the docs, use the `transfor
 **Type**
 
 ```typescript
-(docs: DocPageData[]) => DocPageData[] | Promise<DocPageData[]>
+type TransformDocs = (docs: DocPageData[]) => DocPageData[] | Promise<DocPageData[]>
 ```
 
 Example
@@ -240,11 +240,55 @@ export default {
 
 #### **transformDocPage**
 
-TODO
+Allows changing the frontmatter and content of the doc page.
+
+**Type**
+
+```typescript
+type TransformDocPage = (
+  doc: DocPageData,
+) => Partial<ConfigurableDocPageData> | Promise<Partial<ConfigurableDocPageData>>
+```
+
+Example
+
+```typescript
+export default {
+  transformDocPage: (doc) => {
+    return {
+      frontmatter: { example: 'example' }
+    };
+  }
+};
+```
 
 #### **transformReference**
 
-TODO
+Allows changing where the files are written to and how files are linked to each other.
+
+**Type**
+
+```typescript
+type TransformReference = (
+        reference: DocPageReference,
+) => Partial<ConfigurableDocPageReference> | Promise<ConfigurableDocPageReference>;
+```
+
+Example
+
+```typescript
+export default {
+  // Notice how we are setting the linking strategy to none, so that nothing is done
+  // to the links by the tool when it tries to link to other classes
+  linkingStrategy: 'none',
+  transformReference: (reference) => {
+    return {
+      // Link to the class in Github instead to its doc page.
+      referencePath: `https://github.com/MyOrg/MyRepo/blob/main/src/classes/${reference.name}.cls`
+    };
+  }
+};
+```
 
 ## ⤵︎ Importing to your project
 
