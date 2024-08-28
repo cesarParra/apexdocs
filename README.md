@@ -180,14 +180,14 @@ All hooks can be async functions, allowing you to make asynchronous operations, 
 
 #### **transformReferenceGuide**
 
+Allows changing the Allows changing the frontmatter and content of the reference guide, or even if creating a reference
+guide page should be skipped.
+
 **Type**
 
 ```typescript
 (referenceGuide: ReferenceGuidePageData) => Partial<ReferenceGuidePageData> | Skip | Promise<Partial<ReferenceGuidePageData> | Skip>;
 ```
-
-Allows changing the Allows changing the frontmatter and content of the reference guide, or even if creating a reference
-guide page should be skipped.
 
 Example: Updating the frontmatter
 
@@ -217,7 +217,26 @@ export default defineMarkdownConfig({
 
 #### **transformDocs**
 
-TODO
+The main purpose of this hook is to allow you to skip the generation of specific pages,
+by returning a filtered array of `DocPageData` objects.
+
+If you want to modify the contents or frontmatter of the docs, use the `transformDocPage` hook instead.
+
+**Type**
+
+```typescript
+(docs: DocPageData[]) => DocPageData[] | Promise<DocPageData[]>
+```
+
+Example
+
+```typescript
+export default {
+  transformDocs: (docs) => {
+    return docs.filter(doc => doc.name !== 'MyClass');
+  }
+};
+```
 
 #### **transformDocPage**
 

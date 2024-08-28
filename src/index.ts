@@ -7,6 +7,7 @@ import type {
   ReferenceGuidePageData,
   DocPageData,
   DocPageReference,
+  ConfigurableDocPageData,
 } from './core/shared/types';
 import { defaults } from './defaults';
 
@@ -28,4 +29,13 @@ function skip(): Skip {
 
 // Exports
 
-export { defineMarkdownConfig, skip, ConfigurableHooks, ReferenceGuidePageData, DocPageData, DocPageReference, Skip };
+export {
+  defineMarkdownConfig,
+  skip,
+  ConfigurableHooks,
+  ReferenceGuidePageData,
+  DocPageData,
+  DocPageReference,
+  Skip,
+  ConfigurableDocPageData,
+};
