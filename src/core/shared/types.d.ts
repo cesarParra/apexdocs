@@ -113,7 +113,7 @@ export type PostHookDocumentationBundle = {
   docs: DocPageData[];
 };
 
-// Configurable Hooks
+// CONFIGURABLE HOOKS
 
 type ConfigurableDocPageReference = Omit<DocPageReference, 'source'>;
 

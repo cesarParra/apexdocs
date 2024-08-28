@@ -67,7 +67,7 @@ with some of these tools.
 
 Here are some live projects using ApexDocs:
 
-- [Expression](https://cesarparra.github.io/expression/)
+- [Expression (API)](https://cesarparra.github.io/expression/)
 - [Nimble AMS Docs](https://nimbleuser.github.io/nams-api-docs/#/api-reference/)
 - [Yet Another Salesforce Logger](https://cesarparra.github.io/yet-another-salesforce-logger/#/)
 
@@ -118,16 +118,19 @@ apexdocs openapi -s force-app -t docs -n MyNamespace --title "My Custom OpenApi 
 ### Defining a configuration file
 
 You can also use a configuration file to define the parameters that will be used when generating the documentation.
-Apexdocs
-uses [cosmiconfig](https://www.npmjs.com/package/cosmiconfig) to load the configuration file, which means it supports
-the following formats:
+
+Configuration files are the main way to integrate the generated documentation with the Static Site Generator of your
+choice and your build process, as well as configuring any custom behavior and the output of the generated files.
+
+Apexdocs uses [cosmiconfig](https://www.npmjs.com/package/cosmiconfig) to load the configuration file, which means it
+supports the following formats (plus anything else supported by cosmiconfig):
 
 - A `package.json` property, e.g. `{ "apexdocs": { "sourceDir": "src", "targetDir": "docs" } }`
 - A `.apexdocsrc` file, written in YAML or JSON, with optional extensions: `.yaml/.yml/.json/.js`
 - An `apexdocs.config.js` (or `.mjs`) file that exports an object
 - A `apexdocs.config.ts` file that exports an object
 
-The configuration file should be placed in the root directory of your project.
+**The configuration file should be placed in the root directory of your project.**
 
 **Note that when using a configuration file, you can still override any of the parameters by passing them through the
 CLI.**
@@ -137,11 +140,21 @@ allow you to override some of the default behavior:
 
 // TODO
 
+### Guides and Samples (TODO - Create Github Wiki)
+
+* Integrate with Vitepress
+* Integrate with Docsify
+* Skip the Reference Guide (index.md) file
+* Add frontmatter to the generated files
+* Filter out files
+
 ### Importing to your project
 
 If you are just interested in the Apex parsing capabilities, you can use the
 standalone [Apex Reflection Library](https://www.npmjs.com/package/@cparra/apex-reflection)
 which is what gets used by this library behind the scenes to generate the documentation files.
+
+---
 
 ## 📖 Documentation Guide
 
@@ -676,9 +689,5 @@ Please be aware of the following when using ApexDocs to create an OpenApi defini
 ApexDocs provides all necessary type definitions.
 
 ---
-
-## ⏮️ 2.X
-
-Looking for documentation for version 2.X? // TODO: Add link to the 2.X branch
 
 
