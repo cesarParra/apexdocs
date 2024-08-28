@@ -1,4 +1,3 @@
-import { SetOptional } from 'type-fest';
 import type {
   ConfigurableHooks,
   Skip,
@@ -6,18 +5,18 @@ import type {
   ReferenceGuidePageData,
   DocPageData,
   DocPageReference,
+  ConfigurableDocPageData,
+  TransformReferenceGuide,
+  TransformDocs,
+  TransformDocPage,
+  TransformReference,
+  ConfigurableDocPageReference,
 } from './core/shared/types';
 import { defaults } from './defaults';
 
-type ConfigurableMarkdownConfig = Omit<
-  SetOptional<
-    UserDefinedMarkdownConfig,
-    'targetDir' | 'scope' | 'defaultGroupName' | 'includeMetadata' | 'sortMembersAlphabetically' | 'linkingStrategy'
-  >,
-  'targetGenerator'
->;
+type ConfigurableMarkdownConfig = Omit<Partial<UserDefinedMarkdownConfig>, 'targetGenerator'>;
 
-function defineMarkdownConfig(config: ConfigurableMarkdownConfig): UserDefinedMarkdownConfig {
+function defineMarkdownConfig(config: ConfigurableMarkdownConfig): Partial<UserDefinedMarkdownConfig> {
   return {
     ...defaults,
     ...config,
@@ -33,4 +32,18 @@ function skip(): Skip {
 
 // Exports
 
-export { defineMarkdownConfig, skip, ConfigurableHooks, ReferenceGuidePageData, DocPageData, DocPageReference };
+export {
+  defineMarkdownConfig,
+  skip,
+  TransformReferenceGuide,
+  TransformDocs,
+  TransformDocPage,
+  TransformReference,
+  ConfigurableHooks,
+  ReferenceGuidePageData,
+  DocPageData,
+  DocPageReference,
+  Skip,
+  ConfigurableDocPageData,
+  ConfigurableDocPageReference,
+};

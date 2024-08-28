@@ -1,15 +1,5 @@
 import { Type } from '@cparra/apex-reflection';
 
-/**
- * The configurable hooks that can be used to modify the output of the generator.
- */
-export type ConfigurableHooks = {
-  transformReferenceGuide: TransformReferenceGuide;
-  transformDocs: TransformDocs;
-  transformDocPage: TransformDocPage;
-  transformReference: TransformReference;
-};
-
 type LinkingStrategy =
   // Links will be generated using relative paths.
   | 'relative'
@@ -22,8 +12,8 @@ type LinkingStrategy =
   | 'none';
 
 export type UserDefinedMarkdownConfig = {
-  targetGenerator: 'markdown';
   sourceDir: string;
+  targetGenerator: 'markdown';
   targetDir: string;
   scope: string[];
   defaultGroupName: string;
@@ -113,11 +103,21 @@ export type PostHookDocumentationBundle = {
   docs: DocPageData[];
 };
 
-// Configurable Hooks
+// CONFIGURABLE HOOKS
 
-type ConfigurableDocPageReference = Omit<DocPageReference, 'source'>;
+/**
+ * The configurable hooks that can be used to modify the output of the generator.
+ */
+export type ConfigurableHooks = {
+  transformReferenceGuide: TransformReferenceGuide;
+  transformDocs: TransformDocs;
+  transformDocPage: TransformDocPage;
+  transformReference: TransformReference;
+};
 
-type ConfigurableDocPageData = Omit<DocPageData, 'source' | 'outputDocPath'>;
+export type ConfigurableDocPageReference = Omit<DocPageReference, 'source'>;
+
+export type ConfigurableDocPageData = Omit<DocPageData, 'source' | 'outputDocPath'>;
 
 /**
  * Allows changing where the files are written to.
