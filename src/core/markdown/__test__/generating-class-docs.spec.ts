@@ -1,27 +1,12 @@
 import { assertEither, extendExpect } from './expect-extensions';
 import { apexBundleFromRawString, generateDocs } from './test-helpers';
-import { DocPageData, PostHookDocumentationBundle } from '../../shared/types';
-
-function aSingleDoc(result: PostHookDocumentationBundle): DocPageData {
-  expect(result.docs).toHaveLength(1);
-  return result.docs[0];
-}
 
 describe('When generating documentation for a class', () => {
   beforeAll(() => {
     extendExpect();
   });
 
-  describe('the generated bundles', () => {
-    it('return the type as class', async () => {
-      const input = 'public class MyClass {}';
-
-      const result = await generateDocs([apexBundleFromRawString(input)])();
-      assertEither(result, (data) => expect(aSingleDoc(data).source.type).toBe('class'));
-    });
-  });
-
-  describe('the generated documents', () => {
+  describe('the generated bundle', () => {
     it('does not return classes out of scope', async () => {
       const input1 = `
         global class MyClass {}

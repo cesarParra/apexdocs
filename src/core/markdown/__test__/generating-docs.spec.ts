@@ -70,4 +70,19 @@ describe('When generating documentation', () => {
       }
     });
   });
+
+  describe('the generated bundles', () => {
+    it('return the type', async () => {
+      const properties: [string, string][] = [
+        ['public class MyClass {}', 'class'],
+        ['public interface MyInterface {}', 'interface'],
+        ['public enum MyEnum {}', 'enum'],
+      ];
+
+      for (const [input, expected] of properties) {
+        const result = await generateDocs([apexBundleFromRawString(input)])();
+        assertEither(result, (data) => expect(aSingleDoc(data).source.type).toBe(expected));
+      }
+    });
+  });
 });
