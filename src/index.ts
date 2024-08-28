@@ -1,4 +1,5 @@
-import { SetOptional } from 'type-fest';
+// TODO: Can I get rid of type-fest now that we are not using this?
+//import { SetOptional } from 'type-fest';
 import type {
   ConfigurableHooks,
   Skip,
@@ -9,15 +10,9 @@ import type {
 } from './core/shared/types';
 import { defaults } from './defaults';
 
-type ConfigurableMarkdownConfig = Omit<
-  SetOptional<
-    UserDefinedMarkdownConfig,
-    'targetDir' | 'scope' | 'defaultGroupName' | 'includeMetadata' | 'sortMembersAlphabetically' | 'linkingStrategy'
-  >,
-  'targetGenerator'
->;
+type ConfigurableMarkdownConfig = Omit<Partial<UserDefinedMarkdownConfig>, 'targetGenerator'>;
 
-function defineMarkdownConfig(config: ConfigurableMarkdownConfig): UserDefinedMarkdownConfig {
+function defineMarkdownConfig(config: ConfigurableMarkdownConfig): Partial<UserDefinedMarkdownConfig> {
   return {
     ...defaults,
     ...config,

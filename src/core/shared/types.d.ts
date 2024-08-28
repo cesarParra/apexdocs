@@ -22,8 +22,8 @@ type LinkingStrategy =
   | 'none';
 
 export type UserDefinedMarkdownConfig = {
-  targetGenerator: 'markdown';
   sourceDir: string;
+  targetGenerator: 'markdown';
   targetDir: string;
   scope: string[];
   defaultGroupName: string;

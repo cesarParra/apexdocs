@@ -67,9 +67,10 @@ with some of these tools.
 
 Here are some live projects using ApexDocs:
 
+- [Apex Recipes](https://github.com/trailheadapps/apex-recipes)
+- [Salesforce Commerce Apex Reference](https://developer.salesforce.com/docs/commerce/salesforce-commerce/references/comm-apex-reference/cart-reference.html)
 - [Expression (API)](https://cesarparra.github.io/expression/)
 - [Nimble AMS Docs](https://nimbleuser.github.io/nams-api-docs/#/api-reference/)
-- [Yet Another Salesforce Logger](https://cesarparra.github.io/yet-another-salesforce-logger/#/)
 
 ## 🔬 Advanced Usage
 
@@ -122,6 +123,8 @@ You can also use a configuration file to define the parameters that will be used
 Configuration files are the main way to integrate the generated documentation with the Static Site Generator of your
 choice and your build process, as well as configuring any custom behavior and the output of the generated files.
 
+#### Overview
+
 Apexdocs uses [cosmiconfig](https://www.npmjs.com/package/cosmiconfig) to load the configuration file, which means it
 supports the following formats (plus anything else supported by cosmiconfig):
 
@@ -135,10 +138,45 @@ supports the following formats (plus anything else supported by cosmiconfig):
 **Note that when using a configuration file, you can still override any of the parameters by passing them through the
 CLI.**
 
+#### Configuration file
+
+When defining a configuration file, it is recommended to use ES modules syntax. The config file should `default`
+export an object with the parameters you want to use.:
+
+```javascript
+export default {
+  sourceDir: 'force-app',
+  targetDir: 'docs',
+  scope: ['global', 'public'],
+  ...
+}
+```
+
+Every property in the configuration file is optional, and if not provided, either the value provided through the
+CLI will be used, or the default value will be used.
+
+#### Config Intellisense
+
+Using the `defineMarkdownConfig` helper will provide Typescript-powered intellisense
+for the configuration file options. This should work with both Javascript and Typescript files.
+
+```typescript
+import {defineMarkdownConfig} from "@cparra/apexdocs";
+
+export default defineMarkdownConfig({
+  sourceDir: 'force-app',
+  targetDir: 'docs',
+  scope: ['global', 'public'],
+  ...
+});
+```
+
+#### Configuration Hooks
+
 When defining a `.js` or `.ts` configuration file, your object export can also contain the following functions that will
 allow you to override some of the default behavior:
 
-// TODO
+📒 Note: The extension hook functions are only available when generating Markdown files (not OpenApi).
 
 ### Guides and Samples (TODO - Create Github Wiki)
 
