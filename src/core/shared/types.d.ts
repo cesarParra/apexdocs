@@ -1,15 +1,5 @@
 import { Type } from '@cparra/apex-reflection';
 
-/**
- * The configurable hooks that can be used to modify the output of the generator.
- */
-export type ConfigurableHooks = {
-  transformReferenceGuide: TransformReferenceGuide;
-  transformDocs: TransformDocs;
-  transformDocPage: TransformDocPage;
-  transformReference: TransformReference;
-};
-
 type LinkingStrategy =
   // Links will be generated using relative paths.
   | 'relative'
@@ -114,6 +104,16 @@ export type PostHookDocumentationBundle = {
 };
 
 // CONFIGURABLE HOOKS
+
+/**
+ * The configurable hooks that can be used to modify the output of the generator.
+ */
+export type ConfigurableHooks = {
+  transformReferenceGuide: TransformReferenceGuide;
+  transformDocs: TransformDocs;
+  transformDocPage: TransformDocPage;
+  transformReference: TransformReference;
+};
 
 type ConfigurableDocPageReference = Omit<DocPageReference, 'source'>;
 

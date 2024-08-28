@@ -67,18 +67,16 @@ with some of these tools.
 
 Here are some live projects using ApexDocs:
 
-- [Apex Recipes](https://github.com/trailheadapps/apex-recipes)
+- [Trailhead Apex Recipes](https://github.com/trailheadapps/apex-recipes)
 - [Salesforce Commerce Apex Reference](https://developer.salesforce.com/docs/commerce/salesforce-commerce/references/comm-apex-reference/cart-reference.html)
 - [Expression (API)](https://cesarparra.github.io/expression/)
 - [Nimble AMS Docs](https://nimbleuser.github.io/nams-api-docs/#/api-reference/)
 
-## 🔬 Advanced Usage
-
-### Available Commands
+## ▶️ Available Commands
 
 `markdown`
 
-#### Flags
+### Flags
 
 | Flag                          | Alias | Description                                                                                                                            | Default         | Required |
 |-------------------------------|-------|----------------------------------------------------------------------------------------------------------------------------------------|-----------------|----------|
@@ -91,7 +89,7 @@ Here are some live projects using ApexDocs:
 | `--includeMetadata `          | N/A   | Whether to include the file's meta.xml information: Whether it is active and and the API version                                       | `false`         | No       |
 | `--linkingStrategy`           | N/A   | The strategy to use when linking to other classes. Possible values are `relative`, `no-link`, and `none`                               | `relative`      | No       |
 
-#### Sample Usage
+### Sample Usage
 
 ```bash
 apexdocs markdown -s force-app -t docs -p global public namespaceaccessible -n MyNamespace
@@ -99,7 +97,7 @@ apexdocs markdown -s force-app -t docs -p global public namespaceaccessible -n M
 
 `openapi`
 
-#### Flags
+### Flags
 
 | Flag           | Alias | Description                                                                   | Default         | Required |
 |----------------|-------|-------------------------------------------------------------------------------|-----------------|----------|
@@ -110,20 +108,20 @@ apexdocs markdown -s force-app -t docs -p global public namespaceaccessible -n M
 | `--title`      | N/A   | The title of the OpenApi file.                                                | `Apex REST API` | No       |
 | `--apiVersion` | N/A   | The version of the API.                                                       | `1.0.0`         | No       |
 
-#### Sample Usage
+### Sample Usage
 
 ```bash
 apexdocs openapi -s force-app -t docs -n MyNamespace --title "My Custom OpenApi Title"
 ```
 
-### Defining a configuration file
+## 🔬 Defining a configuration file
 
 You can also use a configuration file to define the parameters that will be used when generating the documentation.
 
 Configuration files are the main way to integrate the generated documentation with the Static Site Generator of your
 choice and your build process, as well as configuring any custom behavior and the output of the generated files.
 
-#### Overview
+### Overview
 
 Apexdocs uses [cosmiconfig](https://www.npmjs.com/package/cosmiconfig) to load the configuration file, which means it
 supports the following formats (plus anything else supported by cosmiconfig):
@@ -138,7 +136,7 @@ supports the following formats (plus anything else supported by cosmiconfig):
 **Note that when using a configuration file, you can still override any of the parameters by passing them through the
 CLI.**
 
-#### Configuration file
+### Configuration file
 
 When defining a configuration file, it is recommended to use ES modules syntax. The config file should `default`
 export an object with the parameters you want to use.:
@@ -155,7 +153,7 @@ export default {
 Every property in the configuration file is optional, and if not provided, either the value provided through the
 CLI will be used, or the default value will be used.
 
-#### Config Intellisense
+### Config Intellisense
 
 Using the `defineMarkdownConfig` helper will provide Typescript-powered intellisense
 for the configuration file options. This should work with both Javascript and Typescript files.
@@ -171,28 +169,70 @@ export default defineMarkdownConfig({
 });
 ```
 
-#### Configuration Hooks
+### Configuration Hooks
 
-When defining a `.js` or `.ts` configuration file, your object export can also contain the following functions that will
-allow you to override some of the default behavior:
+When defining a `.js` or `.ts` configuration file, your object export can also make use
+of different hooks that will be called at different stages of the documentation generation process.
+
+All hooks can be async functions, allowing you to make asynchronous operations, like calling an external API.
 
 📒 Note: The extension hook functions are only available when generating Markdown files (not OpenApi).
 
-### Guides and Samples (TODO - Create Github Wiki)
+#### **transformReferenceGuide**
 
-* Integrate with Vitepress
-* Integrate with Docsify
-* Skip the Reference Guide (index.md) file
-* Add frontmatter to the generated files
-* Filter out files
+**Type**
 
-### Importing to your project
+```typescript
+(referenceGuide: ReferenceGuidePageData) => Partial<ReferenceGuidePageData> | Skip | Promise<Partial<ReferenceGuidePageData> | Skip>;
+```
+
+Allows changing the Allows changing the frontmatter and content of the reference guide, or even if creating a reference
+guide page should be skipped.
+
+Example: Updating the frontmatter
+
+```typescript
+export default {
+  transformReferenceGuide: (referenceGuide) => {
+    return {
+      // The frontmatter can either be an object, of the frontmatter string itself
+      frontmatter: { example: 'example' }
+    };
+  }
+};
+```
+
+Example: skipping the reference guide
+
+```typescript
+// The skip function is imported from the package
+import {defineMarkdownConfig, skip} from "@cparra/apexdocs";
+
+export default defineMarkdownConfig({
+  transformReferenceGuide: (referenceGuide) => {
+    return skip();
+  }
+});
+```
+
+#### **transformDocs**
+
+TODO
+
+#### **transformDocPage**
+
+TODO
+
+#### **transformReference**
+
+TODO
+
+## ⤵︎ Importing to your project
 
 If you are just interested in the Apex parsing capabilities, you can use the
 standalone [Apex Reflection Library](https://www.npmjs.com/package/@cparra/apex-reflection)
 which is what gets used by this library behind the scenes to generate the documentation files.
 
----
 
 ## 📖 Documentation Guide
 

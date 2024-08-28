@@ -28,4 +28,4 @@ function skip(): Skip {
 
 // Exports
 
-export { defineMarkdownConfig, skip, ConfigurableHooks, ReferenceGuidePageData, DocPageData, DocPageReference };
+export { defineMarkdownConfig, skip, ConfigurableHooks, ReferenceGuidePageData, DocPageData, DocPageReference, Skip };
