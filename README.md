@@ -159,7 +159,7 @@ Using the `defineMarkdownConfig` helper will provide Typescript-powered intellis
 for the configuration file options. This should work with both Javascript and Typescript files.
 
 ```typescript
-import {defineMarkdownConfig} from "@cparra/apexdocs";
+import { defineMarkdownConfig } from "@cparra/apexdocs";
 
 export default defineMarkdownConfig({
   sourceDir: 'force-app',
@@ -206,7 +206,7 @@ Example: skipping the reference guide
 
 ```typescript
 // The skip function is imported from the package
-import {defineMarkdownConfig, skip} from "@cparra/apexdocs";
+import { defineMarkdownConfig, skip } from "@cparra/apexdocs";
 
 export default defineMarkdownConfig({
   transformReferenceGuide: (referenceGuide) => {
@@ -270,7 +270,7 @@ Allows changing where the files are written to and how files are linked to each 
 
 ```typescript
 type TransformReference = (
-        reference: DocPageReference,
+  reference: DocPageReference,
 ) => Partial<ConfigurableDocPageReference> | Promise<ConfigurableDocPageReference>;
 ```
 
@@ -296,6 +296,9 @@ If you are just interested in the Apex parsing capabilities, you can use the
 standalone [Apex Reflection Library](https://www.npmjs.com/package/@cparra/apex-reflection)
 which is what gets used by this library behind the scenes to generate the documentation files.
 
+### 👨‍💻 Typescript
+
+If using Typescript, ApexDocs provides all necessary type definitions.
 
 ## 📖 Documentation Guide
 
@@ -315,6 +318,7 @@ of the tag. For example `@custom-tag`
 | `@group`       | The group to which the file belongs to. |
 | `@author`      | The author of the file.                 |
 | `@date`        | The date the file was created.          |
+| `@example`     | Example of how the code can be used.    |
 
 **Example**
 
@@ -381,21 +385,41 @@ The following tags are supported on the method level:
 **Example**
 
 ```apex
-/**
- * @description This is my method description.
- * @param action The action to execute.
- * @return The result of the operation.
- * @example
- * Object result = SampleClass.call('exampleAction');
- */
-public static Object call(String action) {
-}
+   /**
+    * @description This is my method description.
+    * @param action The action to execute.
+    * @return The result of the operation.
+    * @example
+    * ```
+    * Object result = SampleClass.call('exampleAction');
+    * ```
+    public static Object call(String action) {
+    }
 ```
 
 ### Code Blocks
 
-// TODO -> Define how code can be added
-// TODO -> Remember to mention that mermaid diagrams are supported using the same technique
+Code blocks can be added to *almost any tag by using the triple backtick syntax. This is useful when you want to display
+code
+snippets with sample usage or examples.
+
+*The non-supported tags are the single line tags, like `@param`, `@return`, `@throws`, `@exception`, `@see`, etc*
+
+After the triple backticks, you can optionally specify the language of the code block. This defaults to `apex`,
+but it can be useful to override this when displaying code in other languages, such as `javascript` or `soql`.
+
+Example
+
+```apex
+   /**
+    * @description This is my method description.
+    * @sample-usage
+    * This is how you can use this method:
+    * ```
+    * Object result = SampleClass.call('exampleAction');
+    * ```
+    */
+```
 
 ### Custom Tags
 
@@ -456,9 +480,27 @@ public static Object doSomething(ExampleClass param1) {
 }
 ```
 
----
+#### Email linking
 
 Email addresses can also be inlined linked by using the `{@email EMAIL_ADDRESS}` syntax.
+
+### Markdown formatting
+
+You can use Markdown syntax to format your documentation.
+For example, to create bold text, you can use `**bold text**`, and to create a list you can use the `*` character.
+
+**Example**
+
+```apex
+/**
+ * @description This is a description with **bold text**.
+ * Which contains a list:
+ * 
+ * **See Also**
+ * * [Title](https://example.com)
+ * * [Title 2](https://example.com)
+ */
+```
 
 ### Grouping Declarations Within A Class
 
@@ -824,11 +866,5 @@ Please be aware of the following when using ApexDocs to create an OpenApi defini
   definition file.
   Instead, use the `@http-response` ApexDoc annotation to specify the return value, and `@http-parameter` to specify any
   expected parameter.
-
-## 👨‍💻 Typescript
-
-ApexDocs provides all necessary type definitions.
-
----
 
 
