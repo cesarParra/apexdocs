@@ -8,7 +8,6 @@
 [![npm](https://img.shields.io/npm/dm/@cparra/apexdocs)](https://www.npmjs.com/package/@cparra/apexdocs)
 </div>
 
-
 ApexDocs is a non-opinionated documentation generator for Salesforce Apex classes.
 It can output documentation in Markdown
 format,
@@ -44,10 +43,9 @@ apexdocs openapi -s force-app
 
 ## 🚀 Features
 
-* Generate documentation for Salesforce Apex classes as markdown files
+* Generate documentation for Salesforce Apex classes as Markdown files
 * Generate an OpenApi REST specification based on `@RestResource` classes
 * Support for grouping blocks of related code within a class
-* Support for HTML tags
 * Support for ignoring files and members from being documented
 * Namespace support
 * Configuration file support
@@ -57,10 +55,17 @@ apexdocs openapi -s force-app
 
 ## 👀 Demo
 
-ApexDocs currently supports generating markdown files for Jekyll and Docsify sites, as well as generating plain markdown
-files.
+ApexDocs generates Markdown files, which can be integrated into any Static Site Generation engine,
+(e.g. Jekyll, Vitepress, Hugo, Docosaurus, etc.) to create a documentation site that fits your needs.
+
+This repo contains several example implementations in the `examples` directory, showcasing how to integrate
+with some of these tools.
+
+* [Examples](./examples)
 
 ### In the wild
+
+Here are some live projects using ApexDocs:
 
 - [Expression](https://cesarparra.github.io/expression/)
 - [Nimble AMS Docs](https://nimbleuser.github.io/nams-api-docs/#/api-reference/)
@@ -268,10 +273,6 @@ public static Object doSomething(ExampleClass param1) {
 ---
 
 Email addresses can also be inlined linked by using the `{@email EMAIL_ADDRESS}` syntax.
-
-### HTML support
-
-// TODO: Define the new behavior
 
 ### Grouping Declarations Within A Class
 
