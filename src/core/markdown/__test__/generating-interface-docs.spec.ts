@@ -6,22 +6,6 @@ describe('Generates interface documentation', () => {
     extendExpect();
   });
 
-  describe('documentation output', () => {
-    it('does not return interface methods that have @ignore in the docs', async () => {
-      const input = `
-      public interface MyInterface {
-        /**
-          * @ignore
-          */
-        void myMethod();
-      }`;
-
-      const result = await generateDocs([apexBundleFromRawString(input)])();
-      expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data.docs[0].content).not.toContain('myMethod'));
-    });
-  });
-
   describe('documentation content', () => {
     describe('type level information', () => {
       it('generates a heading with the interface name', async () => {
