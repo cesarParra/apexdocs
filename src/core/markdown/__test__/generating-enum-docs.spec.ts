@@ -6,23 +6,6 @@ describe('Generates enum documentation', () => {
     extendExpect();
   });
 
-  describe('documentation output', () => {
-    it('does not return enums that have an @ignore in the docs', async () => {
-      const input = `
-      /**
-        * @ignore
-        */
-      public enum MyEnum {
-        VALUE1,
-        VALUE2
-      }
-      `;
-
-      const result = await generateDocs([apexBundleFromRawString(input)])();
-      expect(result).documentationBundleHasLength(0);
-    });
-  });
-
   describe('documentation content', () => {
     it('generates a heading with the enum name', async () => {
       const input = `

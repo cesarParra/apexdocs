@@ -7,17 +7,6 @@ describe('When generating documentation for a class', () => {
   });
 
   describe('the generated bundle', () => {
-    it('does not return classes that have an @ignore in the docs', async () => {
-      const input = `
-      /**
-        * @ignore
-        */
-      public class MyClass {}`;
-
-      const result = await generateDocs([apexBundleFromRawString(input)])();
-      expect(result).documentationBundleHasLength(0);
-    });
-
     it('does not return class methods that have @ignore in the docs', async () => {
       const input = `
       public class MyClass {

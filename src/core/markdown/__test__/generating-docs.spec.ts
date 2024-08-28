@@ -96,5 +96,16 @@ describe('When generating documentation', () => {
       })();
       expect(result).documentationBundleHasLength(1);
     });
+
+    it('does not return files that have an @ignore in the docs', async () => {
+      const input = `
+      /**
+        * @ignore
+        */
+      public class MyClass {}`;
+
+      const result = await generateDocs([apexBundleFromRawString(input)])();
+      expect(result).documentationBundleHasLength(0);
+    });
   });
 });
