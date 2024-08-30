@@ -34,7 +34,6 @@ export default async function openApi(fileBodies: UnparsedSourceFile[], config: 
     writeFiles(generatedFiles, config.targetDir, (file: PageData) => {
       Logger.logSingle(`${file.outputDocPath} processed.`, 'green');
     }),
-    TE.map(() => Logger.logSingle('✔️ Documentation generated successfully!')),
     TE.mapError((error) => Logger.error(error)),
   )();
 

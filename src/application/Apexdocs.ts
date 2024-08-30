@@ -7,6 +7,7 @@ import { Logger } from '#utils/logger';
 import { UnparsedSourceFile, UserDefinedConfig, UserDefinedMarkdownConfig } from '../core/shared/types';
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
+import * as E from 'fp-ts/Either';
 import { ReflectionError } from '../core/markdown/reflection/reflect-source';
 
 /**
@@ -16,7 +17,7 @@ export class Apexdocs {
   /**
    * Generates documentation out of Apex source files.
    */
-  static async generate(config: UserDefinedConfig): Promise<void> {
+  static async generate(config: UserDefinedConfig): Promise<E.Either<unknown[], string>> {
     Logger.logSingle(`Generating ${config.targetGenerator} documentation...`);
 
     try {
@@ -28,41 +29,37 @@ export class Apexdocs {
 
       switch (config.targetGenerator) {
         case 'markdown':
-          await generateMarkdownDocumentation(fileBodies, config)();
-          break;
+          return await generateMarkdownDocumentation(fileBodies, config)();
         case 'openapi':
           await openApi(fileBodies, config);
-          break;
+          return E.right('✔️ Documentation generated successfully!');
       }
     } catch (error) {
-      Logger.logSingle(`❌ An error occurred while generating the documentation: ${error}`, 'red');
+      return E.left([error]);
     }
   }
 }
 
-function generateMarkdownDocumentation(fileBodies: UnparsedSourceFile[], config: UserDefinedMarkdownConfig) {
+function generateMarkdownDocumentation(
+  fileBodies: UnparsedSourceFile[],
+  config: UserDefinedMarkdownConfig,
+): TE.TaskEither<unknown[], string> {
   return pipe(
     markdown(fileBodies, config),
-    TE.map(() => Logger.logSingle('✔️ Documentation generated successfully!')),
+    TE.map(() => '✔️ Documentation generated successfully!'),
     TE.mapLeft((error) => {
       if (error._tag === 'HookError') {
-        Logger.error('Error(s) occurred while processing hooks. Please review the following issues:');
-        Logger.error(error.error);
-        return;
+        return ['Error(s) occurred while processing hooks. Please review the following issues:', error.error];
       }
 
       if (error._tag === 'FileWritingError') {
-        Logger.error(error.message);
-        Logger.error(error.error);
-        return;
+        return ['Error(s) occurred while writing files. Please review the following issues:', error.error];
       }
 
-      const errorMessages = [
+      return [
         'Error(s) occurred while parsing files. Please review the following issues:',
         ...error.errors.map(formatReflectionError),
-      ].join('\n');
-
-      Logger.error(errorMessages);
+      ];
     }),
   );
 }
