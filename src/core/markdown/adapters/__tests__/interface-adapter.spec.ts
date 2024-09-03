@@ -16,6 +16,7 @@ const defaultMarkdownGeneratorConfig: MarkdownGeneratorConfig = {
   referenceGuideTemplate: '',
   sortMembersAlphabetically: false,
   linkingStrategy: 'relative',
+  excludeTags: [],
 };
 
 describe('Conversion from InterfaceMirror to InterfaceSource understandable by the templating engine', () => {

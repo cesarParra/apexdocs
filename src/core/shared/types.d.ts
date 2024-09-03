@@ -16,11 +16,12 @@ export type UserDefinedMarkdownConfig = {
   targetGenerator: 'markdown';
   targetDir: string;
   scope: string[];
-  defaultGroupName: string;
   namespace?: string;
+  defaultGroupName: string;
   sortMembersAlphabetically: boolean;
   includeMetadata: boolean;
   linkingStrategy: LinkingStrategy;
+  excludeTags: string[];
 } & Partial<ConfigurableHooks>;
 
 export type UserDefinedOpenApiConfig = {
