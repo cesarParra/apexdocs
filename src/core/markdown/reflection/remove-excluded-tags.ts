@@ -36,7 +36,7 @@ const removeExcludedTagsFromAnnotations = (
 ): DocComment | undefined => {
   return pipe(
     O.fromNullable(docComment?.annotations),
-    O.map((annotations) => annotations.filter((annotation) => !excludedTags.includes(annotation.name))),
+    O.map((annotations) => annotations.filter((annotation) => !includesIgnoreCase(excludedTags, annotation.name))),
     O.fold(
       () => undefined,
       (updatedDocComment) =>
@@ -49,11 +49,16 @@ const removeExcludedTagsFromAnnotations = (
 };
 
 const removeExampleTag = (excludedTags: string[], docComment: DocComment | undefined): DocComment | undefined => {
-  if (!excludedTags.includes('example')) {
+  if (!includesIgnoreCase(excludedTags, 'example')) {
     return docComment;
   }
+
   return {
     ...docComment,
     exampleAnnotation: null,
   } as DocComment;
+};
+
+const includesIgnoreCase = (array: string[], value: string): boolean => {
+  return array.some((element) => element.toLowerCase() === value.toLowerCase());
 };
