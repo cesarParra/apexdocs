@@ -36,12 +36,27 @@ describe('when removing excluded tags', () => {
 
       expect(result[0].type.docComment?.exampleAnnotation).toBeNull();
     });
+
+    it('removes params annotations', () => {
+      const tagsToExclude = ['param'];
+      const content = `
+        /**
+         * @param myParam
+         * public void myMethod() {}
+         */
+        global class MyClass {}
+        `;
+      const parsedFile = parsedFileFromRawString(content);
+
+      const result = removeExcludedTags(tagsToExclude, [parsedFile]);
+
+      expect(result[0].type.docComment?.paramAnnotations).toHaveLength(0);
+    });
   });
 });
 
 // From type level
 // description | descriptionLines
-// example
 // param
 // return
 // throws

@@ -23,6 +23,7 @@ const removeExcludedTagsFromDocComment = (
     O.fromNullable(docComment),
     O.map((docComment) => removeExcludedTagsFromAnnotations(excludedTags, docComment)),
     O.map((docComment) => removeExampleTag(excludedTags, docComment)),
+    O.map((docComment) => removeParamTags(excludedTags, docComment)),
     O.fold(
       () => undefined,
       (updatedDocComment) => updatedDocComment,
@@ -56,6 +57,17 @@ const removeExampleTag = (excludedTags: string[], docComment: DocComment | undef
   return {
     ...docComment,
     exampleAnnotation: null,
+  } as DocComment;
+};
+
+const removeParamTags = (excludedTags: string[], docComment: DocComment | undefined): DocComment | undefined => {
+  if (!includesIgnoreCase(excludedTags, 'param')) {
+    return docComment;
+  }
+
+  return {
+    ...docComment,
+    paramAnnotations: [],
   } as DocComment;
 };
 
