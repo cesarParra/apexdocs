@@ -156,7 +156,7 @@ describe('When generating documentation', () => {
       assertEither(result, (data) => expect(data).firstDocContains('STATUS'));
     });
 
-    it('displays the description', async () => {
+    it('displays the description when no @description tag is used', async () => {
       const input = `
           /**
            * This is a description
@@ -168,6 +168,71 @@ describe('When generating documentation', () => {
 
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('This is a description'));
+    });
+
+    it('displays the description when a @description tag is used', async () => {
+      const input = `
+          /**
+            * @description This is a description
+            */
+          public class MyClass {}`;
+
+      const result = await generateDocs([apexBundleFromRawString(input)])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('This is a description'));
+    });
+
+    it('display custom documentation tags', async () => {
+      const input = `
+          /**
+           * @custom-tag My Value
+           */
+          public class MyClass {}
+        `;
+
+      const result = await generateDocs([apexBundleFromRawString(input)])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('Custom Tag'));
+      assertEither(result, (data) => expect(data).firstDocContains('My Value'));
+    });
+
+    it('displays the group', async () => {
+      const input = `
+          /**
+           * @group MyGroup
+           */
+          public class MyClass {}`;
+
+      const result = await generateDocs([apexBundleFromRawString(input)])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('Group'));
+      assertEither(result, (data) => expect(data).firstDocContains('MyGroup'));
+    });
+
+    it('displays the author', async () => {
+      const input = `
+          /**
+           * @author John Doe
+           */
+          public class MyClass {}`;
+
+      const result = await generateDocs([apexBundleFromRawString(input)])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('Author'));
+      assertEither(result, (data) => expect(data).firstDocContains('John Doe'));
+    });
+
+    it('displays the date', async () => {
+      const input = `
+          /**
+           * @date 2021-01-01
+           */
+          public class MyClass {}`;
+
+      const result = await generateDocs([apexBundleFromRawString(input)])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('Date'));
+      assertEither(result, (data) => expect(data).firstDocContains('2021-01-01'));
     });
   });
 });
