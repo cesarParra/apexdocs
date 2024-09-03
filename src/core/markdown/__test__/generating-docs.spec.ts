@@ -84,10 +84,8 @@ describe('When generating documentation', () => {
         assertEither(result, (data) => expect(aSingleDoc(data).source.type).toBe(expected));
       }
     });
-  });
 
-  describe('the generated bundle', () => {
-    it('does not return files out of scope', async () => {
+    it('do not return files out of scope', async () => {
       const input1 = 'global class MyClass {}';
       const input2 = 'public class AnotherClass {}';
 
@@ -97,7 +95,7 @@ describe('When generating documentation', () => {
       expect(result).documentationBundleHasLength(1);
     });
 
-    it('does not return files that have an @ignore in the docs', async () => {
+    it('do not return files that have an @ignore in the docs', async () => {
       const input = `
       /**
         * @ignore
@@ -106,6 +104,70 @@ describe('When generating documentation', () => {
 
       const result = await generateDocs([apexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(0);
+    });
+  });
+
+  describe('the documentation content', () => {
+    it('includes a heading with the type name', async () => {
+      const properties: [string, string][] = [
+        ['public class MyClass {}', 'MyClass Class'],
+        ['public enum MyEnum {}', 'MyEnum Enum'],
+        ['public interface MyInterface {}', 'MyInterface Interface'],
+      ];
+
+      for (const [input, expected] of properties) {
+        const result = await generateDocs([apexBundleFromRawString(input)])();
+
+        expect(result).documentationBundleHasLength(1);
+        assertEither(result, (data) => expect(data).firstDocContains(expected));
+      }
+    });
+
+    it('displays type level annotations', async () => {
+      const input = `
+        @NamespaceAccessible
+        public class MyClass {
+          @Deprecated
+          public void myMethod() {}
+        }
+       `;
+
+      const result = await generateDocs([apexBundleFromRawString(input)])();
+
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('NAMESPACEACCESSIBLE'));
+      assertEither(result, (data) => expect(data).firstDocContains('DEPRECATED'));
+    });
+
+    it('displays metadata as annotations', async () => {
+      const input = 'public class MyClass {}';
+      const metadata = `
+        <?xml version="1.0" encoding="UTF-8"?>
+        <ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">
+            <apiVersion>59.0</apiVersion>
+            <status>Active</status>
+        </ApexClass>
+        `;
+
+      const result = await generateDocs([apexBundleFromRawString(input, metadata)])();
+
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('APIVERSION'));
+      assertEither(result, (data) => expect(data).firstDocContains('STATUS'));
+    });
+
+    it('displays the description', async () => {
+      const input = `
+          /**
+           * This is a description
+           */
+          public class MyClass {}
+         `;
+
+      const result = await generateDocs([apexBundleFromRawString(input)])();
+
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('This is a description'));
     });
   });
 });

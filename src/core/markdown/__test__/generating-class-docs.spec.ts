@@ -8,60 +8,6 @@ describe('When generating documentation for a class', () => {
 
   describe('documentation content', () => {
     describe('type level information', () => {
-      it('generates a heading with the class name', async () => {
-        const input = 'public class MyClass {}';
-
-        const output = `# MyClass Class`;
-        const result = await generateDocs([apexBundleFromRawString(input)])();
-        expect(result).documentationBundleHasLength(1);
-        assertEither(result, (data) => expect(data).firstDocContains(output));
-      });
-
-      it('displays type level annotations', async () => {
-        const input = `
-        @NamespaceAccessible
-        public class MyClass {
-          @Deprecated
-          public void myMethod() {}
-        }
-       `;
-
-        const result = await generateDocs([apexBundleFromRawString(input)])();
-        expect(result).documentationBundleHasLength(1);
-        assertEither(result, (data) => expect(data).firstDocContains('NAMESPACEACCESSIBLE'));
-        assertEither(result, (data) => expect(data).firstDocContains('DEPRECATED'));
-      });
-
-      it('displays metadata as annotations', async () => {
-        const input = 'public class MyClass {}';
-        const metadata = `
-        <?xml version="1.0" encoding="UTF-8"?>
-        <ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">
-            <apiVersion>59.0</apiVersion>
-            <status>Active</status>
-        </ApexClass>
-        `;
-
-        const result = await generateDocs([apexBundleFromRawString(input, metadata)])();
-
-        expect(result).documentationBundleHasLength(1);
-        assertEither(result, (data) => expect(data).firstDocContains('APIVERSION'));
-        assertEither(result, (data) => expect(data).firstDocContains('STATUS'));
-      });
-
-      it('displays the description', async () => {
-        const input = `
-          /**
-           * This is a description
-           */
-          public class MyClass {}
-         `;
-
-        const result = await generateDocs([apexBundleFromRawString(input)])();
-        expect(result).documentationBundleHasLength(1);
-        assertEither(result, (data) => expect(data).firstDocContains('This is a description'));
-      });
-
       it('display custom documentation tags', async () => {
         const input = `
           /**

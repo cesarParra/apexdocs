@@ -7,35 +7,6 @@ describe('Generates enum documentation', () => {
   });
 
   describe('documentation content', () => {
-    it('generates a heading with the enum name', async () => {
-      const input = `
-     public enum MyEnum {
-        VALUE1,
-        VALUE2
-      }
-    `;
-
-      const output = `# MyEnum Enum`;
-
-      const result = await generateDocs([apexBundleFromRawString(input)])();
-      expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data).firstDocContains(output));
-    });
-
-    it('displays type level annotations', async () => {
-      const input = `
-        @NamespaceAccessible
-        public enum MyEnum {
-           VALUE1,
-           VALUE2
-         }
-       `;
-
-      const result = await generateDocs([apexBundleFromRawString(input)])();
-      expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data).firstDocContains('NAMESPACEACCESSIBLE'));
-    });
-
     it('displays the description', async () => {
       const input = `
      /**

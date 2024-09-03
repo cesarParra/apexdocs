@@ -8,32 +8,6 @@ describe('Generates interface documentation', () => {
 
   describe('documentation content', () => {
     describe('type level information', () => {
-      it('generates a heading with the interface name', async () => {
-        const input = `
-        public interface MyInterface {}
-      `;
-
-        const output = `# MyInterface Interface`;
-        const result = await generateDocs([apexBundleFromRawString(input)])();
-        expect(result).documentationBundleHasLength(1);
-        assertEither(result, (data) => expect(data).firstDocContains(output));
-      });
-
-      it('displays type level annotations', async () => {
-        const input = `
-        @NamespaceAccessible
-        public interface MyInterface {
-          @Deprecated
-          void myMethod();   
-        }
-       `;
-
-        const result = await generateDocs([apexBundleFromRawString(input)])();
-        expect(result).documentationBundleHasLength(1);
-        assertEither(result, (data) => expect(data).firstDocContains('NAMESPACEACCESSIBLE'));
-        assertEither(result, (data) => expect(data).firstDocContains('DEPRECATED'));
-      });
-
       it('displays the description', async () => {
         const input = `
           /**
