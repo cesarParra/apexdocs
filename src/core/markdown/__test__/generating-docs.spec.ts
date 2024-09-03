@@ -287,13 +287,14 @@ describe('When generating documentation', () => {
 
     it('displays @sees without links when the reference is not found', async () => {
       const input = `
-          /**
-            * @see ClassRef
-            */
-          public class MyClass {}
-          `;
+        /**
+          * @see ClassRef
+          */
+        public class MyClass {}
+        `;
 
       const result = await generateDocs([apexBundleFromRawString(input)])();
+
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('See'));
       assertEither(result, (data) => expect(data).firstDocContains('ClassRef'));
@@ -352,9 +353,26 @@ describe('When generating documentation', () => {
           public class MyClass {}`;
 
       const result = await generateDocs([apexBundleFromRawString(input)])();
+
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('```apex'));
       assertEither(result, (data) => expect(data).firstDocContains('public class MyClass'));
+    });
+
+    it('does not display tags marked as excluded', async () => {
+      const input = `
+        /**
+          * @see ClassRef
+          */
+        public class MyClass {}
+        `;
+
+      const result = await generateDocs([apexBundleFromRawString(input)], {
+        excludeTags: ['see'],
+      })();
+
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContainsNot('See'));
     });
   });
 });

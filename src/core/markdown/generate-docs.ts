@@ -30,20 +30,11 @@ import { sortMembers } from './reflection/sort-members';
 import { isSkip } from '../shared/utils';
 import { parsedFilesToReferenceGuide } from './adapters/reference-guide';
 
-export type MarkdownGeneratorConfig = Pick<
+export type MarkdownGeneratorConfig = Omit<
   UserDefinedMarkdownConfig,
-  | 'targetDir'
-  | 'scope'
-  | 'namespace'
-  | 'defaultGroupName'
-  | 'transformReferenceGuide'
-  | 'transformDocs'
-  | 'transformDocPage'
-  | 'transformReference'
-  | 'linkingStrategy'
+  'sourceDir' | 'targetGenerator' | 'includeMetadata'
 > & {
   referenceGuideTemplate: string;
-  sortMembersAlphabetically: boolean;
 };
 
 export class HookError {
