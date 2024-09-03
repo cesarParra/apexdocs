@@ -100,10 +100,26 @@ describe('when removing excluded tags', () => {
 
       expect(result[0].type.docComment?.throwsAnnotations).toHaveLength(0);
     });
+
+    it('removes descriptions', () => {
+      const tagsToExclude = ['description'];
+      const content = `
+        /**
+         * @description This is my description
+         * public void myMethod() {}
+         */
+        global class MyClass {}
+        `;
+      const parsedFile = parsedFileFromRawString(content);
+
+      const result = removeExcludedTags(tagsToExclude, [parsedFile]);
+
+      expect(result[0].type.docComment?.description).toBe('');
+      expect(result[0].type.docComment?.descriptionLines).toHaveLength(0);
+    });
   });
 });
 
 // From type level
-// description | descriptionLines
 // Interfaces Method level
 // Classes Member level
