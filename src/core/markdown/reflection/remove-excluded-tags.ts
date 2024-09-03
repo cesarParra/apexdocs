@@ -31,6 +31,7 @@ const removeExcludedTagsFromDocComment = (
     O.map((docComment) => removeExcludedTagsFromAnnotations(excludedTags, docComment)),
     O.map((docComment) => removeExampleTag(apply(removerFn, docComment))),
     O.map((docComment) => removeParamTags(apply(removerFn, docComment))),
+    O.map((docComment) => removeReturnTag(apply(removerFn, docComment))),
     O.fold(
       () => undefined,
       (updatedDocComment) => updatedDocComment,
@@ -66,6 +67,15 @@ const removeParamTags = (remover: AppliedRemoveTagFn): DocComment => {
     return {
       ...docComment,
       paramAnnotations: [],
+    };
+  });
+};
+
+const removeReturnTag = (remover: AppliedRemoveTagFn): DocComment => {
+  return remover('return', (docComment) => {
+    return {
+      ...docComment,
+      returnAnnotation: null,
     };
   });
 };

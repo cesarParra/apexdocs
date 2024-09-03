@@ -52,6 +52,22 @@ describe('when removing excluded tags', () => {
 
       expect(result[0].type.docComment?.paramAnnotations).toHaveLength(0);
     });
+
+    it('removes the return annotation', () => {
+      const tagsToExclude = ['return'];
+      const content = `
+        /**
+         * @return myReturn
+         * public void myMethod() {}
+         */
+        global class MyClass {}
+        `;
+      const parsedFile = parsedFileFromRawString(content);
+
+      const result = removeExcludedTags(tagsToExclude, [parsedFile]);
+
+      expect(result[0].type.docComment?.returnAnnotation).toBeNull();
+    });
   });
 });
 
