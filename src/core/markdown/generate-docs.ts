@@ -29,6 +29,7 @@ import { hookableTemplate } from './templates/hookable';
 import { sortMembers } from './reflection/sort-members';
 import { isSkip } from '../shared/utils';
 import { parsedFilesToReferenceGuide } from './adapters/reference-guide';
+import { removeExcludedTags } from './reflection/remove-excluded-tags';
 
 export type MarkdownGeneratorConfig = Omit<
   UserDefinedMarkdownConfig,
@@ -49,6 +50,7 @@ export function generateDocs(apexBundles: UnparsedSourceFile[], config: Markdown
   const convertToRenderableBundle = apply(parsedFilesToRenderableBundle, config);
   const convertToDocumentationBundleForTemplate = apply(convertToDocumentationBundle, config.referenceGuideTemplate);
   const sortTypeMembers = apply(sortMembers, config.sortMembersAlphabetically);
+  const removeExcluded = apply(removeExcludedTags, config.excludeTags);
 
   return pipe(
     apexBundles,
@@ -56,6 +58,7 @@ export function generateDocs(apexBundles: UnparsedSourceFile[], config: Markdown
     TE.map(filterOutOfScope),
     TE.map(addInheritedMembersToTypes),
     TE.map(addInheritanceChainToTypes),
+    TE.map(removeExcluded),
     TE.map(sortTypeMembers),
     TE.bindTo('parsedFiles'),
     TE.bind('references', ({ parsedFiles }) => TE.right(convertToReferences(parsedFiles))),

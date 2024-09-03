@@ -41,6 +41,7 @@ export default defineMarkdownConfig({
       frontmatter: frontMatter,
     };
   },
+  excludeTags: ['internal'],
   transformDocs: async (docs) => {
     // Update sidebar
     const sidebar = [

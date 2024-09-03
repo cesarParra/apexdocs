@@ -27,6 +27,11 @@ hero:
 
 ### [ReferencedEnum](miscellaneous/ReferencedEnum)
 
+### [Url](miscellaneous/Url)
+
+Represents a uniform resource locator (URL) and provides access to parts of the URL. 
+Enables access to the base URL used to access your Salesforce org.
+
 ### [SampleException](miscellaneous/SampleException)
 
 This is a sample exception.
@@ -34,11 +39,6 @@ This is a sample exception.
 ### [SampleInterface](miscellaneous/SampleInterface)
 
 This is a sample interface
-
-### [Url](miscellaneous/Url)
-
-Represents a uniform resource locator (URL) and provides access to parts of the URL. 
-Enables access to the base URL used to access your Salesforce org.
 
 ## Sample Enums
 

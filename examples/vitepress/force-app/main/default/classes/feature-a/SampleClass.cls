@@ -5,6 +5,7 @@
  * @example
  * SampleClass sample = new SampleClass();
  * sample.doSomething();
+ * @internal This should not appear in the docs
  */
 public with sharing virtual class SampleClass extends BaseClass implements SampleInterface, ParentInterface {
     // @start-group Group Name
