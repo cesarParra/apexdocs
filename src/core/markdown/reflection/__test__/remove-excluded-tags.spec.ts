@@ -57,7 +57,6 @@ describe('when removing excluded tags', () => {
 
 // From type level
 // description | descriptionLines
-// param
 // return
 // throws
 // Custom tags

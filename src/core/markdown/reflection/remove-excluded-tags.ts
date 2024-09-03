@@ -1,7 +1,12 @@
 import * as O from 'fp-ts/Option';
+import { match } from 'fp-ts/boolean';
 import { ParsedFile } from '../../shared/types';
 import { DocComment } from '@cparra/apex-reflection';
 import { pipe } from 'fp-ts/function';
+import { apply } from '#utils/fp';
+
+type AppliedRemoveTagFn = (tagName: string, removeFn: RemoveTagFn) => DocComment;
+type RemoveTagFn = (docComment: DocComment) => DocComment;
 
 export const removeExcludedTags = (excludedTags: string[], parsedFiles: ParsedFile[]): ParsedFile[] => {
   return parsedFiles.map((parsedFile) => {
@@ -19,11 +24,13 @@ const removeExcludedTagsFromDocComment = (
   excludedTags: string[],
   docComment: DocComment | undefined,
 ): DocComment | undefined => {
+  const removerFn = apply(remove, excludedTags);
+
   return pipe(
     O.fromNullable(docComment),
     O.map((docComment) => removeExcludedTagsFromAnnotations(excludedTags, docComment)),
-    O.map((docComment) => removeExampleTag(excludedTags, docComment)),
-    O.map((docComment) => removeParamTags(excludedTags, docComment)),
+    O.map((docComment) => removeExampleTag(apply(removerFn, docComment))),
+    O.map((docComment) => removeParamTags(apply(removerFn, docComment))),
     O.fold(
       () => undefined,
       (updatedDocComment) => updatedDocComment,
@@ -31,44 +38,43 @@ const removeExcludedTagsFromDocComment = (
   );
 };
 
-const removeExcludedTagsFromAnnotations = (
-  excludedTags: string[],
-  docComment: DocComment | undefined,
-): DocComment | undefined => {
+const removeExcludedTagsFromAnnotations = (excludedTags: string[], docComment: DocComment): DocComment => {
   return pipe(
-    O.fromNullable(docComment?.annotations),
+    O.some(docComment.annotations),
     O.map((annotations) => annotations.filter((annotation) => !includesIgnoreCase(excludedTags, annotation.name))),
     O.fold(
-      () => undefined,
-      (updatedDocComment) =>
-        ({
-          ...docComment,
-          annotations: updatedDocComment,
-        }) as DocComment,
+      () => docComment,
+      (filteredAnnotations) => ({
+        ...docComment,
+        annotations: filteredAnnotations,
+      }),
     ),
   );
 };
 
-const removeExampleTag = (excludedTags: string[], docComment: DocComment | undefined): DocComment | undefined => {
-  if (!includesIgnoreCase(excludedTags, 'example')) {
-    return docComment;
-  }
-
-  return {
-    ...docComment,
-    exampleAnnotation: null,
-  } as DocComment;
+const removeExampleTag = (remover: AppliedRemoveTagFn): DocComment => {
+  return remover('example', (docComment) => {
+    return {
+      ...docComment,
+      exampleAnnotation: null,
+    };
+  });
 };
 
-const removeParamTags = (excludedTags: string[], docComment: DocComment | undefined): DocComment | undefined => {
-  if (!includesIgnoreCase(excludedTags, 'param')) {
-    return docComment;
-  }
+const removeParamTags = (remover: AppliedRemoveTagFn): DocComment => {
+  return remover('param', (docComment) => {
+    return {
+      ...docComment,
+      paramAnnotations: [],
+    };
+  });
+};
 
-  return {
-    ...docComment,
-    paramAnnotations: [],
-  } as DocComment;
+const remove = (excludedTags: string[], docComment: DocComment, tagName: string, removeFn: RemoveTagFn): DocComment => {
+  return match(
+    () => docComment,
+    () => removeFn(docComment!),
+  )(includesIgnoreCase(excludedTags, tagName) && !!docComment);
 };
 
 const includesIgnoreCase = (array: string[], value: string): boolean => {
