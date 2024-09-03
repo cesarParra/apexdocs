@@ -1,5 +1,4 @@
-import { ParsedFile } from '../../../shared/types';
-import { ClassMirror, EnumMirror, InterfaceMirror, reflect } from '@cparra/apex-reflection';
+import { ClassMirror, EnumMirror, InterfaceMirror } from '@cparra/apex-reflection';
 import { filterScope } from '../filter-scope';
 import { parsedFileFromRawString } from './helpers';
 

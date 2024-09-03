@@ -1,6 +1,6 @@
 import * as O from 'fp-ts/Option';
 import { ParsedFile } from '../../shared/types';
-import { DocComment, DocCommentAnnotation } from '@cparra/apex-reflection';
+import { DocComment } from '@cparra/apex-reflection';
 import { pipe } from 'fp-ts/function';
 
 export const removeExcludedTags = (excludedTags: string[], parsedFiles: ParsedFile[]): ParsedFile[] => {
@@ -9,27 +9,51 @@ export const removeExcludedTags = (excludedTags: string[], parsedFiles: ParsedFi
       ...parsedFile,
       type: {
         ...parsedFile.type,
-        docComment: removeExcludedTagsFromType(excludedTags, parsedFile.type.docComment),
+        docComment: removeExcludedTagsFromDocComment(excludedTags, parsedFile.type.docComment),
       },
     };
   });
 };
 
-const removeExcludedTagsFromType = (
+const removeExcludedTagsFromDocComment = (
   excludedTags: string[],
   docComment: DocComment | undefined,
 ): DocComment | undefined => {
-  const filteredAnnotations: O.Option<DocCommentAnnotation[]> = pipe(
+  return pipe(
+    O.fromNullable(docComment),
+    O.map((docComment) => removeExcludedTagsFromAnnotations(excludedTags, docComment)),
+    O.map((docComment) => removeExampleTag(excludedTags, docComment)),
+    O.fold(
+      () => undefined,
+      (updatedDocComment) => updatedDocComment,
+    ),
+  );
+};
+
+const removeExcludedTagsFromAnnotations = (
+  excludedTags: string[],
+  docComment: DocComment | undefined,
+): DocComment | undefined => {
+  return pipe(
     O.fromNullable(docComment?.annotations),
     O.map((annotations) => annotations.filter((annotation) => !excludedTags.includes(annotation.name))),
+    O.fold(
+      () => undefined,
+      (updatedDocComment) =>
+        ({
+          ...docComment,
+          annotations: updatedDocComment,
+        }) as DocComment,
+    ),
   );
+};
 
-  return O.fold(
-    () => undefined,
-    (updatedDocComment: DocCommentAnnotation[]) =>
-      ({
-        ...docComment,
-        annotations: updatedDocComment,
-      }) as DocComment,
-  )(filteredAnnotations);
+const removeExampleTag = (excludedTags: string[], docComment: DocComment | undefined): DocComment | undefined => {
+  if (!excludedTags.includes('example')) {
+    return docComment;
+  }
+  return {
+    ...docComment,
+    exampleAnnotation: null,
+  } as DocComment;
 };

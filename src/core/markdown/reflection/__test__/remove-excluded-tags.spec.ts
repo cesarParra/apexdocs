@@ -20,22 +20,22 @@ describe('when removing excluded tags', () => {
       expect(result[0].type.docComment?.annotations[0].name).toBe('custom');
     });
 
-    // it('removes example annotations', () => {
-    //   const tagsToExclude = ['example'];
-    //   const content = `
-    //     /**
-    //      * @example
-    //      * This is my example
-    //      * public void myMethod() {}
-    //      */
-    //     global class MyClass {}
-    //     `;
-    //   const parsedFile = parsedFileFromRawString(content);
-    //
-    //   const result = removeExcludedTags(tagsToExclude, [parsedFile]);
-    //
-    //   expect(result[0].type.docComment?.exampleAnnotation).toBeUndefined();
-    // });
+    it('removes example annotations', () => {
+      const tagsToExclude = ['example'];
+      const content = `
+        /**
+         * @example
+         * This is my example
+         * public void myMethod() {}
+         */
+        global class MyClass {}
+        `;
+      const parsedFile = parsedFileFromRawString(content);
+
+      const result = removeExcludedTags(tagsToExclude, [parsedFile]);
+
+      expect(result[0].type.docComment?.exampleAnnotation).toBeNull();
+    });
   });
 });
 
