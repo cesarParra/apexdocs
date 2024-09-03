@@ -26,7 +26,7 @@ import { convertToDocumentationBundle } from './adapters/renderable-to-page-data
 import { filterScope } from './reflection/filter-scope';
 import { Template } from './templates/template';
 import { hookableTemplate } from './templates/hookable';
-import { sortMembers } from './reflection/sort-members';
+import { sortTypesAndMembers } from './reflection/sort-types-and-members';
 import { isSkip } from '../shared/utils';
 import { parsedFilesToReferenceGuide } from './adapters/reference-guide';
 import { removeExcludedTags } from './reflection/remove-excluded-tags';
@@ -49,7 +49,7 @@ export function generateDocs(apexBundles: UnparsedSourceFile[], config: Markdown
   const convertToReferences = apply(parsedFilesToReferenceGuide, config);
   const convertToRenderableBundle = apply(parsedFilesToRenderableBundle, config);
   const convertToDocumentationBundleForTemplate = apply(convertToDocumentationBundle, config.referenceGuideTemplate);
-  const sortTypeMembers = apply(sortMembers, config.sortMembersAlphabetically);
+  const sort = apply(sortTypesAndMembers, config.sortMembersAlphabetically);
   const removeExcluded = apply(removeExcludedTags, config.excludeTags);
 
   return pipe(
@@ -58,8 +58,8 @@ export function generateDocs(apexBundles: UnparsedSourceFile[], config: Markdown
     TE.map(filterOutOfScope),
     TE.map(addInheritedMembersToTypes),
     TE.map(addInheritanceChainToTypes),
+    TE.map(sort),
     TE.map(removeExcluded),
-    TE.map(sortTypeMembers),
     TE.bindTo('parsedFiles'),
     TE.bind('references', ({ parsedFiles }) => TE.right(convertToReferences(parsedFiles))),
     TE.flatMap(({ parsedFiles, references }) => transformReferenceHook(config)({ references, parsedFiles })),

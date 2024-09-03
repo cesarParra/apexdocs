@@ -17,16 +17,16 @@
                 "link": "miscellaneous/MultiInheritanceClass.md"
               },
               {
-                "text": "Url",
-                "link": "miscellaneous/Url.md"
-              },
-              {
                 "text": "SampleClass",
                 "link": "samplegroup/SampleClass.md"
               },
               {
                 "text": "SampleException",
                 "link": "miscellaneous/SampleException.md"
+              },
+              {
+                "text": "Url",
+                "link": "miscellaneous/Url.md"
               }
             ]
           },
@@ -81,16 +81,16 @@
                 "link": "miscellaneous/ReferencedEnum.md"
               },
               {
-                "text": "Url",
-                "link": "miscellaneous/Url.md"
-              },
-              {
                 "text": "SampleException",
                 "link": "miscellaneous/SampleException.md"
               },
               {
                 "text": "SampleInterface",
                 "link": "miscellaneous/SampleInterface.md"
+              },
+              {
+                "text": "Url",
+                "link": "miscellaneous/Url.md"
               }
             ]
           },
