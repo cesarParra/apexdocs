@@ -33,6 +33,7 @@ const removeExcludedTagsFromDocComment = (
     O.map((docComment) => removeParamTags(apply(removerFn, docComment))),
     O.map((docComment) => removeReturnTag(apply(removerFn, docComment))),
     O.map((docComment) => removeThrowsTag(apply(removerFn, docComment))),
+    O.map((docComment) => removeExceptionTag(apply(removerFn, docComment))),
     O.fold(
       () => undefined,
       (updatedDocComment) => updatedDocComment,
@@ -83,6 +84,15 @@ const removeReturnTag = (remover: AppliedRemoveTagFn): DocComment => {
 
 const removeThrowsTag = (remover: AppliedRemoveTagFn): DocComment => {
   return remover('throws', (docComment) => {
+    return {
+      ...docComment,
+      throwsAnnotations: [],
+    };
+  });
+};
+
+const removeExceptionTag = (remover: AppliedRemoveTagFn): DocComment => {
+  return remover('exception', (docComment) => {
     return {
       ...docComment,
       throwsAnnotations: [],
