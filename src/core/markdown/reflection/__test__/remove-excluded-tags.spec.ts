@@ -1,6 +1,6 @@
 import { parsedFileFromRawString } from './helpers';
 import { removeExcludedTags } from '../remove-excluded-tags';
-import { InterfaceMirror } from '@cparra/apex-reflection';
+import { ClassMirror, InterfaceMirror } from '@cparra/apex-reflection';
 
 describe('when removing excluded tags', () => {
   describe('from any type', () => {
@@ -120,7 +120,7 @@ describe('when removing excluded tags', () => {
     });
   });
 
-  describe('from interface', () => {
+  describe('from an interface', () => {
     it('removes annotations from methods', () => {
       const tagsToExclude = ['throws'];
       const content = `
@@ -138,8 +138,63 @@ describe('when removing excluded tags', () => {
       expect((result[0].type as InterfaceMirror).methods[0].docComment?.throwsAnnotations).toHaveLength(0);
     });
   });
+
+  describe('from a class', () => {
+    it('removes annotations from members', () => {
+      const tagsToExclude = ['throws'];
+      const content = `
+        global class MyClass {
+          /**
+           * @throws MyException
+           */
+          String myProperty {get; set;}
+          
+          /**
+           * @throws MyException
+           */
+          String myField;
+          /**
+           * @throws MyException
+           */
+          void myMethod() {}
+          
+          /**
+           * @throws MyException
+           */
+          MyClass() {}
+          
+          /**
+           * @throws MyException
+           */
+           public enum MyEnum {}
+           
+          /**
+            * @throws MyException
+            */
+          interface MyInnerInterface {}
+          
+          /**
+            * @throws MyException
+            */
+          class MyInnerClass {}
+        }
+        `;
+      const parsedFile = parsedFileFromRawString(content);
+
+      const result = removeExcludedTags(tagsToExclude, [parsedFile]);
+
+      const classMirror = result[0].type as ClassMirror;
+      expect(classMirror.methods[0].docComment?.throwsAnnotations).toHaveLength(0);
+      expect(classMirror.properties[0].docComment?.throwsAnnotations).toHaveLength(0);
+      expect(classMirror.fields[0].docComment?.throwsAnnotations).toHaveLength(0);
+      expect(classMirror.constructors[0].docComment?.throwsAnnotations).toHaveLength(0);
+      expect(classMirror.enums[0].docComment?.throwsAnnotations).toHaveLength(0);
+      expect(classMirror.interfaces[0].docComment?.throwsAnnotations).toHaveLength(0);
+      expect(classMirror.classes[0].docComment?.throwsAnnotations).toHaveLength(0);
+    });
+  });
 });
 
-// From type level
-// Interfaces Method level
-// Classes Member level
+// fields
+// inner interfaces
+// inner classes

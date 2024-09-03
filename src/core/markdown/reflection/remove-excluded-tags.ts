@@ -1,12 +1,13 @@
 import * as O from 'fp-ts/Option';
 import { match } from 'fp-ts/boolean';
 import { ParsedFile } from '../../shared/types';
-import { DocComment, InterfaceMirror, Type } from '@cparra/apex-reflection';
+import { ClassMirror, DocComment, InterfaceMirror, Type } from '@cparra/apex-reflection';
 import { pipe } from 'fp-ts/function';
 import { apply } from '#utils/fp';
 
 type AppliedRemoveTagFn = (tagName: string, removeFn: RemoveTagFn) => DocComment;
 type RemoveTagFn = (docComment: DocComment) => DocComment;
+type Documentable = { docComment?: DocComment };
 
 export const removeExcludedTags = (excludedTags: string[], parsedFiles: ParsedFile[]): ParsedFile[] => {
   return parsedFiles.map((parsedFile) => {
@@ -17,18 +18,17 @@ export const removeExcludedTags = (excludedTags: string[], parsedFiles: ParsedFi
   });
 };
 
-const removeExcludedTagsFromType = (excludedTags: string[], type: Type): Type => {
+const removeExcludedTagsFromType = <T extends Type>(excludedTags: string[], type: T): T => {
   return {
     ...handleType(excludedTags, type),
     docComment: removeExcludedTagsFromDocComment(excludedTags, type.docComment),
-  };
+  } as T;
 };
 
 const handleType = (excludedTags: string[], type: Type): Type => {
   switch (type.type_name) {
     case 'class':
-      // TODO
-      return type;
+      return handleClass(excludedTags, type as ClassMirror);
     case 'interface':
       return handleInterface(excludedTags, type as InterfaceMirror);
     case 'enum':
@@ -36,15 +36,32 @@ const handleType = (excludedTags: string[], type: Type): Type => {
   }
 };
 
+const handleClass = (excludedTags: string[], classMirror: ClassMirror): ClassMirror => {
+  return {
+    ...classMirror,
+    methods: classMirror.methods.map((method) => removeExcludedTagsFromDocumentable(excludedTags, method)),
+    properties: classMirror.properties.map((property) => removeExcludedTagsFromDocumentable(excludedTags, property)),
+    fields: classMirror.fields.map((field) => removeExcludedTagsFromDocumentable(excludedTags, field)),
+    constructors: classMirror.constructors.map((constructor) =>
+      removeExcludedTagsFromDocumentable(excludedTags, constructor),
+    ),
+    enums: classMirror.enums.map((enumType) => removeExcludedTagsFromType(excludedTags, enumType)),
+    interfaces: classMirror.interfaces.map((interfaceType) => removeExcludedTagsFromType(excludedTags, interfaceType)),
+    classes: classMirror.classes.map((innerClass) => removeExcludedTagsFromType(excludedTags, innerClass)),
+  };
+};
+
 const handleInterface = (excludedTags: string[], interfaceMirror: InterfaceMirror): InterfaceMirror => {
   return {
     ...interfaceMirror,
-    methods: interfaceMirror.methods.map((method) => {
-      return {
-        ...method,
-        docComment: removeExcludedTagsFromDocComment(excludedTags, method.docComment),
-      };
-    }),
+    methods: interfaceMirror.methods.map((method) => removeExcludedTagsFromDocumentable(excludedTags, method)),
+  };
+};
+
+const removeExcludedTagsFromDocumentable = <T extends Documentable>(excludedTags: string[], documentable: T): T => {
+  return {
+    ...documentable,
+    docComment: removeExcludedTagsFromDocComment(excludedTags, documentable.docComment),
   };
 };
 
