@@ -234,5 +234,127 @@ describe('When generating documentation', () => {
       assertEither(result, (data) => expect(data).firstDocContains('Date'));
       assertEither(result, (data) => expect(data).firstDocContains('2021-01-01'));
     });
+
+    it('displays descriptions with links', async () => {
+      const input1 = `
+          /**
+            * @description This is a description with a {@link ClassRef} reference
+            */
+          public enum MyClass {}
+          `;
+
+      const input2 = 'public class ClassRef {}';
+
+      const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
+      expect(result).documentationBundleHasLength(2);
+      assertEither(result, (data) =>
+        expect(data).firstDocContains('This is a description with a [ClassRef](ClassRef.md) reference'),
+      );
+    });
+
+    it('displays descriptions with emails', async () => {
+      const input = `
+          /**
+            * @description This is a description with an {@email test@testerson.com} email
+            */
+          public class MyClass {}
+          `;
+
+      const result = await generateDocs([apexBundleFromRawString(input)])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) =>
+        expect(data).firstDocContains(
+          'This is a description with an [test@testerson.com](mailto:test@testerson.com) email',
+        ),
+      );
+    });
+
+    it('displays @sees with accurately resolved links', async () => {
+      const input1 = `
+          /**
+            * @see ClassRef
+            */
+          public class MyClass {}
+          `;
+
+      const input2 = 'public class ClassRef {}';
+
+      const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
+      expect(result).documentationBundleHasLength(2);
+      assertEither(result, (data) => expect(data).firstDocContains('See'));
+      assertEither(result, (data) => expect(data).firstDocContains('[ClassRef](ClassRef.md)'));
+    });
+
+    it('displays @sees without links when the reference is not found', async () => {
+      const input = `
+          /**
+            * @see ClassRef
+            */
+          public class MyClass {}
+          `;
+
+      const result = await generateDocs([apexBundleFromRawString(input)])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('See'));
+      assertEither(result, (data) => expect(data).firstDocContains('ClassRef'));
+    });
+
+    it('displays the namespace if present in the config', async () => {
+      const input = 'public class MyClass {}';
+
+      const result = await generateDocs([apexBundleFromRawString(input)], { namespace: 'MyNamespace' })();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('## Namespace'));
+      assertEither(result, (data) => expect(data).firstDocContains('MyNamespace'));
+    });
+
+    it('does not display the namespace if not present in the config', async () => {
+      const input = 'public class MyClass {}';
+
+      const result = await generateDocs([apexBundleFromRawString(input)])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContainsNot('## Namespace'));
+    });
+
+    it('displays a mermaid diagram', async () => {
+      const input = `
+          /**
+            * @mermaid
+            * \`\`\`mermaid
+            * graph TD
+            *   A[Square Rect] -- Link text --> B((Circle))
+            *   A --> C(Round Rect)
+            *   B --> D{Rhombus}
+            *   C --> D
+            * \`\`\`
+            */
+          public class MyClass {}
+          `;
+
+      const result = await generateDocs([apexBundleFromRawString(input)])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('```mermaid'));
+      assertEither(result, (data) => expect(data).firstDocContains('graph TD'));
+    });
+
+    it('displays an example code block', async () => {
+      const input = `
+          /**
+            * @example
+            * \`\`\`apex
+            * public class MyClass {
+            *   public void myMethod() {
+            *     System.debug('Hello, World!');
+            *   }
+            * }
+            * \`\`\`
+            */
+          public class MyClass {}`;
+
+      const result = await generateDocs([apexBundleFromRawString(input)])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('```apex'));
+      assertEither(result, (data) => expect(data).firstDocContains('public class MyClass'));
+    });
   });
 });
