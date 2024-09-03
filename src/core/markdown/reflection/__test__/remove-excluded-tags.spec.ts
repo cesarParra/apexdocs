@@ -68,13 +68,29 @@ describe('when removing excluded tags', () => {
 
       expect(result[0].type.docComment?.returnAnnotation).toBeNull();
     });
+
+    it('removes the throws annotations', () => {
+      const tagsToExclude = ['throws'];
+      const content = `
+        /**
+         * @throws MyException
+         * public void myMethod() {}
+         */
+        global class MyClass {}
+        `;
+      const parsedFile = parsedFileFromRawString(content);
+
+      const result = removeExcludedTags(tagsToExclude, [parsedFile]);
+
+      expect(result[0].type.docComment?.throwsAnnotations).toHaveLength(0);
+    });
   });
 });
 
 // From type level
 // description | descriptionLines
-// return
 // throws
+// exception
 // Custom tags
 // case insensitive
 // Interfaces Method level
