@@ -1,8 +1,9 @@
 import { parsedFileFromRawString } from './helpers';
 import { removeExcludedTags } from '../remove-excluded-tags';
+import { InterfaceMirror } from '@cparra/apex-reflection';
 
 describe('when removing excluded tags', () => {
-  describe('from the type level', () => {
+  describe('from any type', () => {
     it('removes annotations', () => {
       const tagsToExclude = ['group'];
       const content = `
@@ -116,6 +117,25 @@ describe('when removing excluded tags', () => {
 
       expect(result[0].type.docComment?.description).toBe('');
       expect(result[0].type.docComment?.descriptionLines).toHaveLength(0);
+    });
+  });
+
+  describe('from interface', () => {
+    it('removes annotations from methods', () => {
+      const tagsToExclude = ['throws'];
+      const content = `
+        global interface MyInterface {
+          /**
+           * @throws MyException
+           */
+          void myMethod();
+        }
+        `;
+      const parsedFile = parsedFileFromRawString(content);
+
+      const result = removeExcludedTags(tagsToExclude, [parsedFile]);
+
+      expect((result[0].type as InterfaceMirror).methods[0].docComment?.throwsAnnotations).toHaveLength(0);
     });
   });
 });

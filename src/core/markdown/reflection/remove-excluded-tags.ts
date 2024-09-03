@@ -1,7 +1,7 @@
 import * as O from 'fp-ts/Option';
 import { match } from 'fp-ts/boolean';
 import { ParsedFile } from '../../shared/types';
-import { DocComment } from '@cparra/apex-reflection';
+import { DocComment, InterfaceMirror, Type } from '@cparra/apex-reflection';
 import { pipe } from 'fp-ts/function';
 import { apply } from '#utils/fp';
 
@@ -12,12 +12,40 @@ export const removeExcludedTags = (excludedTags: string[], parsedFiles: ParsedFi
   return parsedFiles.map((parsedFile) => {
     return {
       ...parsedFile,
-      type: {
-        ...parsedFile.type,
-        docComment: removeExcludedTagsFromDocComment(excludedTags, parsedFile.type.docComment),
-      },
+      type: removeExcludedTagsFromType(excludedTags, parsedFile.type),
     };
   });
+};
+
+const removeExcludedTagsFromType = (excludedTags: string[], type: Type): Type => {
+  return {
+    ...handleType(excludedTags, type),
+    docComment: removeExcludedTagsFromDocComment(excludedTags, type.docComment),
+  };
+};
+
+const handleType = (excludedTags: string[], type: Type): Type => {
+  switch (type.type_name) {
+    case 'class':
+      // TODO
+      return type;
+    case 'interface':
+      return handleInterface(excludedTags, type as InterfaceMirror);
+    case 'enum':
+      return type;
+  }
+};
+
+const handleInterface = (excludedTags: string[], interfaceMirror: InterfaceMirror): InterfaceMirror => {
+  return {
+    ...interfaceMirror,
+    methods: interfaceMirror.methods.map((method) => {
+      return {
+        ...method,
+        docComment: removeExcludedTagsFromDocComment(excludedTags, method.docComment),
+      };
+    }),
+  };
 };
 
 const removeExcludedTagsFromDocComment = (
