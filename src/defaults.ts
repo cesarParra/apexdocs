@@ -6,4 +6,5 @@ export const defaults = {
   includeMetadata: false,
   sortAlphabetically: false,
   linkingStrategy: 'relative' as const,
+  referenceGuideTitle: 'Apex Reference Guide',
 };

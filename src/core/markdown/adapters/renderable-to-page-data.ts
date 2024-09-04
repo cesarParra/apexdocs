@@ -8,12 +8,13 @@ import { classMarkdownTemplate } from '../templates/class-template';
 import { defaults } from '../../../defaults';
 
 export const convertToDocumentationBundle = (
+  referenceGuideTitle: string,
   referenceGuideTemplate: string,
   { referencesByGroup, renderables }: RenderableBundle,
 ): DocumentationBundle => ({
   referenceGuide: {
     frontmatter: null,
-    content: referencesToReferenceGuideContent(referencesByGroup, referenceGuideTemplate),
+    content: referencesToReferenceGuideContent(referenceGuideTitle, referencesByGroup, referenceGuideTemplate),
     outputDocPath: 'index.md',
   },
   docs: renderables.map((renderable: Renderable) =>
@@ -22,6 +23,7 @@ export const convertToDocumentationBundle = (
 });
 
 function referencesToReferenceGuideContent(
+  referenceGuideTitle: string,
   references: { [key: string]: ReferenceGuideReference[] },
   template: string,
 ): string {
@@ -39,7 +41,7 @@ function referencesToReferenceGuideContent(
   return pipe(references, alphabetizeReferences, (references) =>
     compile({
       template: template,
-      source: references,
+      source: { referenceGuideTitle: referenceGuideTitle, references },
     }),
   );
 }
