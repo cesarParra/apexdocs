@@ -78,16 +78,16 @@ Here are some live projects using ApexDocs:
 
 ### Flags
 
-| Flag                          | Alias | Description                                                                                                                            | Default         | Required |
-|-------------------------------|-------|----------------------------------------------------------------------------------------------------------------------------------------|-----------------|----------|
-| `--sourceDir`                 | `-s`  | The directory where the source files are located.                                                                                      | N/A             | Yes      |
-| `--targetDir`                 | `-t`  | The directory where the generated files will be placed.                                                                                | `docs`          | No       |
-| `--scope`                     | `-p`  | A list of scopes to document. Values should be separated by a space, e.g --scope global public namespaceaccessible.                    | `global`        | No       |
-| `--defaultGroupName`          | N/A   | The default group name to use when a group is not specified.                                                                           | `Miscellaneous` | No       |
-| `--namespace`                 | N/A   | The package namespace, if any. If provided, it will be added to the generated files.                                                   | N/A             | No       |
-| `--sortMembersAlphabetically` | N/A   | Sorts the members of a class, interface or enum alphabetically. If false, the members will be displayed in the same order as the code. | `false`         | No       |
-| `--includeMetadata `          | N/A   | Whether to include the file's meta.xml information: Whether it is active and and the API version                                       | `false`         | No       |
-| `--linkingStrategy`           | N/A   | The strategy to use when linking to other classes. Possible values are `relative`, `no-link`, and `none`                               | `relative`      | No       |
+| Flag                   | Alias | Description                                                                                                                                                                                              | Default         | Required |
+|------------------------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------|----------|
+| `--sourceDir`          | `-s`  | The directory where the source files are located.                                                                                                                                                        | N/A             | Yes      |
+| `--targetDir`          | `-t`  | The directory where the generated files will be placed.                                                                                                                                                  | `docs`          | No       |
+| `--scope`              | `-p`  | A list of scopes to document. Values should be separated by a space, e.g --scope global public namespaceaccessible.                                                                                      | `global`        | No       |
+| `--defaultGroupName`   | N/A   | The default group name to use when a group is not specified.                                                                                                                                             | `Miscellaneous` | No       |
+| `--namespace`          | N/A   | The package namespace, if any. If provided, it will be added to the generated files.                                                                                                                     | N/A             | No       |
+| `--sortAlphabetically` | N/A   | Sorts files appearing in the Reference Guide alphabetically, as well as the members of a class, interface or enum alphabetically. If false, the members will be displayed in the same order as the code. | `false`         | No       |
+| `--includeMetadata `   | N/A   | Whether to include the file's meta.xml information: Whether it is active and and the API version                                                                                                         | `false`         | No       |
+| `--linkingStrategy`    | N/A   | The strategy to use when linking to other classes. Possible values are `relative`, `no-link`, and `none`                                                                                                 | `relative`      | No       |
 
 #### Linking Strategy
 

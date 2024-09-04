@@ -28,7 +28,7 @@ function writeFileAsync(filePath: string, data: string): Promise<void> {
 export default defineMarkdownConfig({
   sourceDir: 'force-app',
   scope: ['global', 'public', 'protected', 'private', 'namespaceaccessible'],
-  sortMembersAlphabetically: true,
+  sortAlphabetically: true,
   namespace: 'apexdocs',
   transformReference: (reference) => {
     return {

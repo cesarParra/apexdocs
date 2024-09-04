@@ -32,10 +32,10 @@ export const markdownOptions: { [key: string]: Options } = {
     type: 'string',
     describe: 'The package namespace, if any. If provided, it will be added to the generated files.',
   },
-  sortMembersAlphabetically: {
+  sortAlphabetically: {
     type: 'boolean',
-    describe: 'Whether to sort members alphabetically.',
-    default: defaults.sortMembersAlphabetically,
+    describe: 'Whether to sort files and members alphabetically.',
+    default: defaults.sortAlphabetically,
   },
   includeMetadata: {
     type: 'boolean',

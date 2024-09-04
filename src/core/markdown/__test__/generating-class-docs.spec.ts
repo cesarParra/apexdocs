@@ -27,7 +27,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: true })();
+      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: true })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aMethodIndex = data.docs[0].content.indexOf('aMethod');
@@ -44,7 +44,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: false })();
+      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: false })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aMethodIndex = data.docs[0].content.indexOf('aMethod');
@@ -73,7 +73,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: true })();
+      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: true })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aPropertyIndex = data.docs[0].content.indexOf('aProperty');
@@ -90,7 +90,7 @@ describe('When generating documentation for a class', () => {
         }  
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: false })();
+      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: false })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aPropertyIndex = data.docs[0].content.indexOf('aProperty');
@@ -119,7 +119,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: true })();
+      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: true })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aFieldIndex = data.docs[0].content.indexOf('aField');
@@ -136,7 +136,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: false })();
+      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: false })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aFieldIndex = data.docs[0].content.indexOf('aField');
@@ -177,7 +177,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: true })();
+      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: true })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aInnerClassIndex = data.docs[0].content.indexOf('AInnerClass');
@@ -194,7 +194,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: false })();
+      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: false })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aInnerClassIndex = data.docs[0].content.indexOf('AInnerClass');
@@ -223,7 +223,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: true })();
+      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: true })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aInnerInterfaceIndex = data.docs[0].content.indexOf('AInnerInterface');
@@ -240,7 +240,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: false })();
+      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: false })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aInnerInterfaceIndex = data.docs[0].content.indexOf('AInnerInterface');
@@ -269,7 +269,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: true })();
+      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: true })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aInnerEnumIndex = data.docs[0].content.indexOf('AInnerEnum');
@@ -286,7 +286,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: false })();
+      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: false })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aInnerEnumIndex = data.docs[0].content.indexOf('AInnerEnum');

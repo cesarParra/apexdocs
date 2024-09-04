@@ -14,7 +14,7 @@ const defaultMarkdownGeneratorConfig: MarkdownGeneratorConfig = {
   namespace: '',
   defaultGroupName: 'Miscellaneous',
   referenceGuideTemplate: '',
-  sortMembersAlphabetically: false,
+  sortAlphabetically: false,
   linkingStrategy: 'relative',
   excludeTags: [],
 };

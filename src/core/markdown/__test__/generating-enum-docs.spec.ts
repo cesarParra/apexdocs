@@ -22,7 +22,7 @@ describe('Generates enum documentation', () => {
       assertEither(result, (data) => expect(data).firstDocContains('VALUE2'));
     });
 
-    it('displays values sorted when sortMembersAlphabetically is true', async () => {
+    it('displays values sorted when sortAlphabetically is true', async () => {
       const input = `
       public enum MyEnum {
         VALUE2,
@@ -30,7 +30,7 @@ describe('Generates enum documentation', () => {
       }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: true })();
+      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: true })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Values'));
       assertEither(result, (data) => {
@@ -40,7 +40,7 @@ describe('Generates enum documentation', () => {
       });
     });
 
-    it('does not sort values when sortMembersAlphabetically is false', async () => {
+    it('does not sort values when sortAlphabetically is false', async () => {
       const input = `
       public enum MyEnum {
         VALUE2,
@@ -48,7 +48,7 @@ describe('Generates enum documentation', () => {
       }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: false })();
+      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: false })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Values'));
       assertEither(result, (data) => {
