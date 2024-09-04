@@ -22,6 +22,7 @@ export type UserDefinedMarkdownConfig = {
   includeMetadata: boolean;
   linkingStrategy: LinkingStrategy;
   excludeTags: string[];
+  referenceGuideTitle: string;
 } & Partial<ConfigurableHooks>;
 
 export type UserDefinedOpenApiConfig = {

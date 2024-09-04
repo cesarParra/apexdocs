@@ -19,6 +19,7 @@ export function generateDocs(apexBundles: UnparsedSourceFile[], config?: Partial
     referenceGuideTemplate: referenceGuideTemplate,
     linkingStrategy: 'relative',
     excludeTags: [],
+    referenceGuideTitle: 'Apex Reference Guide',
     ...config,
   });
 }

@@ -163,6 +163,6 @@ const remove = (excludedTags: string[], docComment: DocComment, tagName: string,
   )(includesIgnoreCase(excludedTags, tagName) && !!docComment);
 };
 
-const includesIgnoreCase = (array: string[], value: string): boolean => {
-  return array.some((element) => element.toLowerCase() === value.toLowerCase());
+const includesIgnoreCase = (excluded: string[], value: string): boolean => {
+  return excluded.some((element) => element.toLowerCase() === value.toLowerCase());
 };

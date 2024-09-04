@@ -48,4 +48,9 @@ export const markdownOptions: { [key: string]: Options } = {
     choices: ['relative', 'no-link', 'none'],
     default: defaults.linkingStrategy,
   },
+  referenceGuideTitle: {
+    type: 'string',
+    describe: 'The title of the reference guide.',
+    default: defaults.referenceGuideTitle,
+  },
 };

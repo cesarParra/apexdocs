@@ -48,7 +48,11 @@ export function generateDocs(apexBundles: UnparsedSourceFile[], config: Markdown
   const filterOutOfScope = apply(filterScope, config.scope);
   const convertToReferences = apply(parsedFilesToReferenceGuide, config);
   const convertToRenderableBundle = apply(parsedFilesToRenderableBundle, config);
-  const convertToDocumentationBundleForTemplate = apply(convertToDocumentationBundle, config.referenceGuideTemplate);
+  const convertToDocumentationBundleForTemplate = apply(
+    convertToDocumentationBundle,
+    config.referenceGuideTitle,
+    config.referenceGuideTemplate,
+  );
   const sort = apply(sortTypesAndMembers, config.sortAlphabetically);
   const removeExcluded = apply(removeExcludedTags, config.excludeTags);
 

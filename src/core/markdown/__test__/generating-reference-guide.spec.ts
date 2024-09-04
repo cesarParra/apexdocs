@@ -4,9 +4,25 @@ import * as E from 'fp-ts/Either';
 import { apexBundleFromRawString, generateDocs } from './test-helpers';
 import { ReferenceGuidePageData } from '../../shared/types';
 
-describe('Generates a Reference Guide', () => {
+describe('When generating the Reference Guide', () => {
   beforeAll(() => {
     extendExpect();
+  });
+
+  it('contains the correct default title by default', async () => {
+    const result = await generateDocs([])();
+
+    assertEither(result, (data) =>
+      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('# Apex Reference Guide'),
+    );
+  });
+
+  it('allows for the reference guide title to be configured', async () => {
+    const result = await generateDocs([], { referenceGuideTitle: 'Custom Title' })();
+
+    assertEither(result, (data) =>
+      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('# Custom Title'),
+    );
   });
 
   it('returns a reference guide with links to all other files', async () => {
