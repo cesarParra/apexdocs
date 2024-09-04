@@ -1,9 +1,13 @@
 import { cosmiconfig, CosmiconfigResult } from 'cosmiconfig';
 import * as yargs from 'yargs';
-import { UserDefinedMarkdownConfig } from '../core/shared/types';
+import { UserDefinedConfig, UserDefinedMarkdownConfig } from '../core/shared/types';
 import { TypeScriptLoader } from 'cosmiconfig-typescript-loader';
 import { markdownOptions } from './commands/markdown';
 import { openApiOptions } from './commands/openapi';
+
+const configOnlyDefaults: Partial<UserDefinedMarkdownConfig> = {
+  excludeTags: [],
+};
 
 /**
  * Extracts configuration from a configuration file or the package.json
@@ -37,10 +41,15 @@ function _extractYargs(config?: CosmiconfigResult) {
 /**
  * Combines the extracted configuration and arguments.
  */
-export async function extractArgs(): Promise<UserDefinedMarkdownConfig> {
+export async function extractArgs(): Promise<UserDefinedConfig> {
   const config = await _extractConfig();
   const cliArgs = _extractYargs(config);
   const commandName = cliArgs._[0];
 
-  return { ...config?.config, ...cliArgs, targetGenerator: commandName as 'markdown' | 'openapi' };
+  const mergedConfig = { ...config?.config, ...cliArgs, targetGenerator: commandName as 'markdown' | 'openapi' };
+  if (mergedConfig.targetGenerator === 'markdown') {
+    return { ...configOnlyDefaults, ...mergedConfig };
+  } else {
+    return mergedConfig;
+  }
 }

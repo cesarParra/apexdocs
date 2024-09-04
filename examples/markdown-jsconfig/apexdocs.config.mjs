@@ -4,6 +4,7 @@ export default defineMarkdownConfig({
   sourceDir: 'force-app',
   scope: ['global', 'public', 'protected', 'private', 'namespaceaccessible'],
   namespace: 'ns',
+  referenceGuideTitle: 'Custom Title',
   transformReferenceGuide: () => {
     return {
       frontmatter: {

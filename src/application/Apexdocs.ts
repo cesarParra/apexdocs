@@ -20,23 +20,23 @@ export class Apexdocs {
   static async generate(config: UserDefinedConfig): Promise<E.Either<unknown[], string>> {
     Logger.logSingle(`Generating ${config.targetGenerator} documentation...`);
 
-    try {
-      const fileBodies = await ApexFileReader.processFiles(
-        new DefaultFileSystem(),
-        config.sourceDir,
-        config.targetGenerator === 'markdown' ? config.includeMetadata : false,
-      );
+    //try {
+    const fileBodies = await ApexFileReader.processFiles(
+      new DefaultFileSystem(),
+      config.sourceDir,
+      config.targetGenerator === 'markdown' ? config.includeMetadata : false,
+    );
 
-      switch (config.targetGenerator) {
-        case 'markdown':
-          return await generateMarkdownDocumentation(fileBodies, config)();
-        case 'openapi':
-          await openApi(fileBodies, config);
-          return E.right('✔️ Documentation generated successfully!');
-      }
-    } catch (error) {
-      return E.left([error]);
+    switch (config.targetGenerator) {
+      case 'markdown':
+        return await generateMarkdownDocumentation(fileBodies, config)();
+      case 'openapi':
+        await openApi(fileBodies, config);
+        return E.right('✔️ Documentation generated successfully!');
     }
+    // } catch (error) {
+    //   return E.left([error]);
+    // }
   }
 }
 
