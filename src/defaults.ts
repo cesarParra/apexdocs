@@ -4,6 +4,6 @@ export const defaults = {
   scope: ['global'],
   defaultGroupName: 'Miscellaneous',
   includeMetadata: false,
-  sortMembersAlphabetically: false,
+  sortAlphabetically: false,
   linkingStrategy: 'relative' as const,
 };

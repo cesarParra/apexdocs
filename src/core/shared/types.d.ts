@@ -18,7 +18,7 @@ export type UserDefinedMarkdownConfig = {
   scope: string[];
   namespace?: string;
   defaultGroupName: string;
-  sortMembersAlphabetically: boolean;
+  sortAlphabetically: boolean;
   includeMetadata: boolean;
   linkingStrategy: LinkingStrategy;
   excludeTags: string[];

@@ -20,7 +20,7 @@ describe('Generates interface documentation', () => {
         assertEither(result, (data) => expect(data).firstDocContains('## Methods'));
       });
 
-      it('displays methods sorted if sortMembersAlphabetically is true', async () => {
+      it('displays methods sorted if sortAlphabetically is true', async () => {
         const input = `
         public interface MyInterface {
           void myMethod();
@@ -28,14 +28,14 @@ describe('Generates interface documentation', () => {
         }
       `;
 
-        const result = await generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: true })();
+        const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: true })();
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) => {
           expect(data.docs[0].content.indexOf('anotherMethod')).toBeLessThan(data.docs[0].content.indexOf('myMethod'));
         });
       });
 
-      it('does not display methods sorted if sortMembersAlphabetically is false', async () => {
+      it('does not display methods sorted if sortAlphabetically is false', async () => {
         const input = `
         public interface MyInterface {
           void myMethod();
@@ -43,7 +43,7 @@ describe('Generates interface documentation', () => {
         }
       `;
 
-        const result = await generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: false })();
+        const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: false })();
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) => {
           expect(data.docs[0].content.indexOf('myMethod')).toBeLessThan(data.docs[0].content.indexOf('anotherMethod'));

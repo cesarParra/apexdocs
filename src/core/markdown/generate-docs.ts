@@ -49,7 +49,7 @@ export function generateDocs(apexBundles: UnparsedSourceFile[], config: Markdown
   const convertToReferences = apply(parsedFilesToReferenceGuide, config);
   const convertToRenderableBundle = apply(parsedFilesToRenderableBundle, config);
   const convertToDocumentationBundleForTemplate = apply(convertToDocumentationBundle, config.referenceGuideTemplate);
-  const sort = apply(sortTypesAndMembers, config.sortMembersAlphabetically);
+  const sort = apply(sortTypesAndMembers, config.sortAlphabetically);
   const removeExcluded = apply(removeExcludedTags, config.excludeTags);
 
   return pipe(
