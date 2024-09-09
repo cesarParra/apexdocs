@@ -1,0 +1,14 @@
+{
+  "name": "apexdocs-docsify-example",
+  "version": "1.0.0",
+  "dependencies": {
+    "docsify-cli": "^4.4.1"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2"
+  },
+  "scripts": {
+    "generate": "ts-node ../../src/cli/generate.ts markdown",
+    "serve": "docsify serve docs"
+  }
+}
