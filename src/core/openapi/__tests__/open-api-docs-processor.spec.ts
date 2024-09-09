@@ -4,6 +4,11 @@ import { SettingsBuilder } from '../../../test-helpers/SettingsBuilder';
 import { DocCommentBuilder } from '../../../test-helpers/DocCommentBuilder';
 import { AnnotationBuilder } from '../../../test-helpers/AnnotationBuilder';
 import { ClassMirrorBuilder } from '../../../test-helpers/ClassMirrorBuilder';
+import { Logger } from '../../../util/logger';
+
+beforeAll(() => {
+  Logger.logSingle = jest.fn();
+});
 
 beforeEach(() => {
   OpenApiSettings.build(new SettingsBuilder().build());
