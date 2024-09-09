@@ -4,7 +4,7 @@ This project contains an example on how to generate documentation to be rendered
 
 ## Getting Started
 
-* Follow the Vitepress insllation instructions [here](https://vitepress.dev/guide/getting-started#installation).
+* Follow the Vitepress installation instructions [here](https://vitepress.dev/guide/getting-started#installation).
 * Keep track of where you initialized your VitePress config. If it is different than the `docs` directory, you will
 need to make sure that it matches the `targetDir` when configuring ApexDocs.
 
