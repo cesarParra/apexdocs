@@ -11,7 +11,7 @@ export class OpenApiDocsProcessor {
   protected readonly _fileContainer: FileContainer;
   openApiModel: OpenApi;
 
-  constructor() {
+  constructor(private logger: Logger) {
     this._fileContainer = new FileContainer();
     const title = OpenApiSettings.getInstance().getOpenApiTitle();
     if (!title) {
@@ -29,7 +29,7 @@ export class OpenApiDocsProcessor {
   }
 
   onProcess(type: Type): void {
-    Logger.logSingle(`Processing ${type.name}`, 'green');
+    this.logger.logSingle(`Processing ${type.name}`, 'green');
 
     const endpointPath = this.getEndpointPath(type);
     if (!endpointPath) {
@@ -80,7 +80,7 @@ export class OpenApiDocsProcessor {
       (element) => element.key.toLowerCase() === 'urlmapping',
     );
     if (!urlMapping) {
-      Logger.error(`Type does not contain urlMapping annotation ${type.name}`);
+      this.logger.error(`Type does not contain urlMapping annotation ${type.name}`);
       return null;
     }
 
