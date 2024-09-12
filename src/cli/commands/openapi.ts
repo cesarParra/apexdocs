@@ -1,5 +1,5 @@
 import { Options } from 'yargs';
-import { defaults } from '../../defaults';
+import { markdownDefaults, openApiDefaults } from '../../defaults';
 
 export const openApiOptions: { [key: string]: Options } = {
   sourceDir: {
@@ -11,12 +11,12 @@ export const openApiOptions: { [key: string]: Options } = {
   targetDir: {
     type: 'string',
     alias: 't',
-    default: defaults.targetDir,
+    default: markdownDefaults.targetDir,
     describe: 'The directory location where the OpenApi file will be generated.',
   },
   fileName: {
     type: 'string',
-    default: 'openapi',
+    default: openApiDefaults.fileName,
     describe: 'The name of the OpenApi file to be generated.',
   },
   namespace: {
@@ -25,12 +25,12 @@ export const openApiOptions: { [key: string]: Options } = {
   },
   title: {
     type: 'string',
-    default: 'Apex REST API',
+    default: openApiDefaults.title,
     describe: 'The title of the OpenApi file.',
   },
   apiVersion: {
     type: 'string',
-    default: '1.0.0',
+    default: openApiDefaults.apiVersion,
     describe: 'The version of the OpenApi file.',
   },
 };

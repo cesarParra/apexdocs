@@ -5,7 +5,7 @@ import { CompilationRequest, Template } from '../templates/template';
 import { enumMarkdownTemplate } from '../templates/enum-template';
 import { interfaceMarkdownTemplate } from '../templates/interface-template';
 import { classMarkdownTemplate } from '../templates/class-template';
-import { defaults } from '../../../defaults';
+import { markdownDefaults } from '../../../defaults';
 
 export const convertToDocumentationBundle = (
   referenceGuideTitle: string,
@@ -61,7 +61,7 @@ function renderableToPageData(referenceGuideReference: ReferenceGuideReference[]
       outputDocPath: reference!.reference.outputDocPath,
       frontmatter: null,
       content: docContents,
-      group: renderable.doc.group ?? defaults.defaultGroupName,
+      group: renderable.doc.group ?? markdownDefaults.defaultGroupName,
     };
   }
 

@@ -11,16 +11,27 @@ import type {
   TransformDocPage,
   TransformReference,
   ConfigurableDocPageReference,
+  UserDefinedOpenApiConfig,
 } from './core/shared/types';
-import { defaults } from './defaults';
+import { markdownDefaults, openApiDefaults } from './defaults';
 
 type ConfigurableMarkdownConfig = Omit<Partial<UserDefinedMarkdownConfig>, 'targetGenerator'>;
 
 function defineMarkdownConfig(config: ConfigurableMarkdownConfig): Partial<UserDefinedMarkdownConfig> {
   return {
-    ...defaults,
+    ...markdownDefaults,
     ...config,
-    targetGenerator: 'markdown',
+    targetGenerator: 'markdown' as const,
+  };
+}
+
+type ConfigurableOpenApiConfig = Omit<Partial<UserDefinedOpenApiConfig>, 'targetGenerator'>;
+
+function defineOpenApiConfig(config: ConfigurableOpenApiConfig): Partial<UserDefinedOpenApiConfig> {
+  return {
+    ...openApiDefaults,
+    ...config,
+    targetGenerator: 'openapi' as const,
   };
 }
 
@@ -30,10 +41,9 @@ function skip(): Skip {
   };
 }
 
-// Exports
-
 export {
   defineMarkdownConfig,
+  defineOpenApiConfig,
   skip,
   TransformReferenceGuide,
   TransformDocs,
