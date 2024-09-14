@@ -1,0 +1,15 @@
+import { process } from '../../../dist/index.js';
+
+const config = {
+  sourceDir: 'force-app',
+  targetGenerator: 'markdown',
+  scope: ['global', 'public', 'private'],
+};
+
+process(config)
+  .then(() => {
+    console.log('Finished processing');
+  })
+  .catch((error) => {
+    console.log(error);
+  });

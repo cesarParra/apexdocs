@@ -10,6 +10,7 @@ export const markdownDefaults = {
   sortAlphabetically: false,
   linkingStrategy: 'relative' as const,
   referenceGuideTitle: 'Apex Reference Guide',
+  excludeTags: [],
 };
 
 export const openApiDefaults = {
