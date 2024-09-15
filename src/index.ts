@@ -58,7 +58,6 @@ function skip(): Skip {
 
 type CallableConfig = Partial<UserDefinedConfig> & { sourceDir: string; targetGenerator: 'markdown' | 'openapi' };
 
-// TODO: Docs
 async function process(config: CallableConfig): Promise<void> {
   const logger = new NoLogger();
   const configWithDefaults = {

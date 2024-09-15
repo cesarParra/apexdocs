@@ -196,6 +196,23 @@ export default defineMarkdownConfig({
 });
 ```
 
+### Excluding Tags from Appearing in the Documentation
+
+You can exclude tags from appearing in the documentation by using the `excludeTags` property in the configuration file,
+which allow you to pass a list of tags that you want to exclude from the documentation.
+
+```typescript
+import { defineMarkdownConfig } from "@cparra/apexdocs";
+
+export default defineMarkdownConfig({
+  sourceDir: 'force-app',
+  targetDir: 'docs',
+  scope: ['global', 'public'],
+  excludeTags: ['internal', 'ignore'],
+  ...
+});
+```
+
 ### Configuration Hooks
 
 When defining a `.js` or `.ts` configuration file, your object export can also make use
@@ -319,9 +336,27 @@ export default {
 
 ## ⤵︎ Importing to your project
 
+### Reflection
+
 If you are just interested in the Apex parsing capabilities, you can use the
 standalone [Apex Reflection Library](https://www.npmjs.com/package/@cparra/apex-reflection)
 which is what gets used by this library behind the scenes to generate the documentation files.
+
+### Processing
+
+If you would like to use the processing capabilities of ApexDocs directly from Javascript/Typescript
+instead of using the CLI, you can import the `process` function from the library.
+
+```typescript
+import { process } from '@cparra/apexdocs';
+
+process({
+  sourceDir: 'force-app',
+  targetDir: 'docs',
+  scope: ['global', 'public'],
+  ...
+});
+```
 
 ### 👨‍💻 Typescript
 
