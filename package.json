@@ -1,6 +1,6 @@
 {
   "name": "@cparra/apexdocs",
-  "version": "2.25.0",
+  "version": "3.0.0",
   "description": "Library with CLI capabilities to generate documentation for Salesforce Apex classes.",
   "keywords": [
     "apex",
@@ -10,23 +10,19 @@
     "apex-docs",
     "docs"
   ],
-  "main": "lib/index.js",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "bin": {
-    "apexdocs-generate": "lib/cli/generate.js"
+    "apexdocs": "./dist/cli/generate.js"
   },
-  "types": "lib/index.d.ts",
   "scripts": {
-    "test": "jest --coverage",
-    "build": "rimraf ./lib && npm run lint && tsc --declaration",
+    "test": "npm run build && jest",
+    "test:cov": "npm run build && jest --coverage",
+    "build": "rimraf ./lib && npm run lint && tsc --noEmit && pkgroll",
     "lint": "eslint \"./src/**/*.{js,ts}\" --quiet --fix",
     "prepare": "npm run build",
     "version": "npm run format && git add -A src",
-    "postversion": "git push && git push --tags",
-    "docs:init": "docsify init docs",
-    "docs:serve": "docsify serve docs",
-    "execute:example": "rimraf ./docs/types && node lib/cli/generate.js -s examples/force-app -t docs/types --scope global public private protected -g docsify --defaultGroupName \"Misc Group\" --namespace nspc --title \"Sample Documentation\" --documentationRootDir types",
-    "execute:example:index:only": "node lib/cli/generate.js -s examples/force-app -t docs --scope global public private -g docsify --indexOnly",
-    "execute:example:openapi": "node lib/cli/generate.js -s examples/force-app -t docs -g openapi --openApiTitle \"Sample REST Api\" --namespace nspc --openApiFileName restapi"
+    "postversion": "git push && git push --tags"
   },
   "author": "Cesar Parra",
   "license": "MIT",
@@ -35,26 +31,22 @@
     "url": "https://github.com/cesarParra/apexdocs"
   },
   "devDependencies": {
-    "@types/html-entities": "^1.3.4",
-    "@types/jest": "^27.4.1",
-    "@types/js-yaml": "^4.0.5",
-    "@types/node": "^13.7.4",
-    "@types/shelljs": "^0.8.6",
-    "@types/yargs": "^15.0.3",
-    "@typescript-eslint/eslint-plugin": "^5.41.0",
-    "@typescript-eslint/parser": "^5.41.0",
-    "docsify": "^4.13.1",
-    "docsify-cli": "^4.4.4",
-    "eslint": "^8.0.1",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "husky": "^8.0.3",
-    "jest": "^27.5.1",
-    "lint-staged": "^13.2.1",
-    "prettier": "^2.4.1",
-    "rimraf": "^3.0.2",
-    "ts-jest": "^27.1.3",
-    "typescript": "^4.8.4"
+    "@eslint/js": "^9.6.0",
+    "@types/eslint__js": "^8.42.3",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.14.10",
+    "@types/shelljs": "^0.8.15",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "husky": "^9.0.11",
+    "jest": "^29.7.0",
+    "lint-staged": "^15.2.7",
+    "pkgroll": "^2.4.2",
+    "prettier": "^3.3.2",
+    "rimraf": "^6.0.0",
+    "ts-jest": "^29.2.0",
+    "typescript": "^5.5.3",
+    "typescript-eslint": "^7.16.0"
   },
   "husky": {
     "hooks": {
@@ -67,13 +59,19 @@
     ]
   },
   "dependencies": {
-    "@cparra/apex-reflection": "2.12.1",
+    "@cparra/apex-reflection": "2.13.1",
+    "@types/js-yaml": "^4.0.9",
+    "@types/yargs": "^17.0.32",
     "chalk": "^4.1.2",
     "cosmiconfig": "^9.0.0",
-    "fast-xml-parser": "^4.0.1",
+    "cosmiconfig-typescript-loader": "^5.0.0",
+    "fast-xml-parser": "^4.4.0",
+    "fp-ts": "^2.16.8",
+    "handlebars": "^4.7.8",
     "js-yaml": "^4.1.0",
-    "log-update": "4.0.0",
-    "xss": "^1.0.11",
-    "yargs": "^16.0.3"
+    "yargs": "^17.7.2"
+  },
+  "imports": {
+    "#utils/*": "./src/util/*.ts"
   }
 }

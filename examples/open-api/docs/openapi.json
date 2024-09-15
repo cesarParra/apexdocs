@@ -1,0 +1,14 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Open API Example",
+    "version": "3.0.0"
+  },
+  "servers": [
+    {
+      "url": "/services/apexrest/openapi/"
+    }
+  ],
+  "paths": {},
+  "tags": []
+}

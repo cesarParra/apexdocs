@@ -3,15 +3,20 @@
     "target": "es6",
     "module": "commonjs",
     "declaration": true,
-    "outDir": "./lib",
+    "outDir": "./dist",
     "strict": true,
     "sourceMap": true,
+    "esModuleInterop": true,
     "lib": [
       "ES2021"
-    ]
+    ],
+    "baseUrl": "./",
+    "paths": {
+      "#utils/*": ["src/util/*"],
+    }
   },
   "include": [
-    "src"
+    "src", "jest.d.ts"
   ],
   "exclude": [
     "node_modules",
