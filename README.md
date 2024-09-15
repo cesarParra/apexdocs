@@ -74,9 +74,11 @@ Here are some live projects using ApexDocs:
 
 ## ▶️ Available Commands
 
+### Markdown
+
 `markdown`
 
-### Flags
+#### Flags
 
 | Flag                   | Alias | Description                                                                                                                                                                                              | Default         | Required |
 |------------------------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------|----------|
@@ -89,7 +91,7 @@ Here are some live projects using ApexDocs:
 | `--includeMetadata `   | N/A   | Whether to include the file's meta.xml information: Whether it is active and and the API version                                                                                                         | `false`         | No       |
 | `--linkingStrategy`    | N/A   | The strategy to use when linking to other classes. Possible values are `relative`, `no-link`, and `none`                                                                                                 | `relative`      | No       |
 
-#### Linking Strategy
+##### Linking Strategy
 
 The linking strategy determines how ApexDocs will link to other classes in your documentation. For example,
 if I have class `A` that links through class `B` (e.g. through an `{@link B}` tag, the `@see` tag,
@@ -115,15 +117,19 @@ Does not apply any kind of logic. Instead, the links will be determined by the p
 from the root of the documentation site OR by whatever path you have returned in the `transformReference` hook
 for the file.
 
-### Sample Usage
+#### Sample Usage
 
 ```bash
 apexdocs markdown -s force-app -t docs -p global public namespaceaccessible -n MyNamespace
 ```
 
+---
+
+### OpenApi
+
 `openapi`
 
-### Flags
+#### Flags
 
 | Flag           | Alias | Description                                                                   | Default         | Required |
 |----------------|-------|-------------------------------------------------------------------------------|-----------------|----------|
@@ -134,7 +140,7 @@ apexdocs markdown -s force-app -t docs -p global public namespaceaccessible -n M
 | `--title`      | N/A   | The title of the OpenApi file.                                                | `Apex REST API` | No       |
 | `--apiVersion` | N/A   | The version of the API.                                                       | `1.0.0`         | No       |
 
-### Sample Usage
+#### Sample Usage
 
 ```bash
 apexdocs openapi -s force-app -t docs -n MyNamespace --title "My Custom OpenApi Title"
