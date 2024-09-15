@@ -2,7 +2,7 @@
 title: ApexDocs Reference Guide
 ---
 
-# Apex Reference Guide
+# Custom Title
 
 ## Miscellaneous
 

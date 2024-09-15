@@ -28,6 +28,7 @@ function writeFileAsync(filePath: string, data: string): Promise<void> {
 export default defineMarkdownConfig({
   sourceDir: 'force-app',
   scope: ['global', 'public', 'protected', 'private', 'namespaceaccessible'],
+  sortAlphabetically: true,
   namespace: 'apexdocs',
   transformReference: (reference) => {
     return {
@@ -41,6 +42,7 @@ export default defineMarkdownConfig({
       frontmatter: frontMatter,
     };
   },
+  excludeTags: ['internal'],
   transformDocs: async (docs) => {
     // Update sidebar
     const sidebar = [

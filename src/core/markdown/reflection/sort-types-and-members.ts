@@ -3,11 +3,13 @@ import { ParsedFile } from '../../shared/types';
 
 type Named = { name: string };
 
-export function sortMembers(shouldSortMembers: boolean, parsedFiles: ParsedFile[]): ParsedFile[] {
-  return parsedFiles.map((parsedFile) => ({
-    ...parsedFile,
-    type: sortTypeMember(parsedFile.type, shouldSortMembers),
-  }));
+export function sortTypesAndMembers(shouldSort: boolean, parsedFiles: ParsedFile[]): ParsedFile[] {
+  return parsedFiles
+    .map((parsedFile) => ({
+      ...parsedFile,
+      type: sortTypeMember(parsedFile.type, shouldSort),
+    }))
+    .sort((a, b) => sortByNames(shouldSort, a.type, b.type));
 }
 
 function sortByNames<T extends Named>(shouldSort: boolean, a: T, b: T): number {

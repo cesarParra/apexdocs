@@ -5,15 +5,16 @@ import { CompilationRequest, Template } from '../templates/template';
 import { enumMarkdownTemplate } from '../templates/enum-template';
 import { interfaceMarkdownTemplate } from '../templates/interface-template';
 import { classMarkdownTemplate } from '../templates/class-template';
-import { defaults } from '../../../defaults';
+import { markdownDefaults } from '../../../defaults';
 
 export const convertToDocumentationBundle = (
+  referenceGuideTitle: string,
   referenceGuideTemplate: string,
   { referencesByGroup, renderables }: RenderableBundle,
 ): DocumentationBundle => ({
   referenceGuide: {
     frontmatter: null,
-    content: referencesToReferenceGuideContent(referencesByGroup, referenceGuideTemplate),
+    content: referencesToReferenceGuideContent(referenceGuideTitle, referencesByGroup, referenceGuideTemplate),
     outputDocPath: 'index.md',
   },
   docs: renderables.map((renderable: Renderable) =>
@@ -22,6 +23,7 @@ export const convertToDocumentationBundle = (
 });
 
 function referencesToReferenceGuideContent(
+  referenceGuideTitle: string,
   references: { [key: string]: ReferenceGuideReference[] },
   template: string,
 ): string {
@@ -39,7 +41,7 @@ function referencesToReferenceGuideContent(
   return pipe(references, alphabetizeReferences, (references) =>
     compile({
       template: template,
-      source: references,
+      source: { referenceGuideTitle: referenceGuideTitle, references },
     }),
   );
 }
@@ -59,7 +61,7 @@ function renderableToPageData(referenceGuideReference: ReferenceGuideReference[]
       outputDocPath: reference!.reference.outputDocPath,
       frontmatter: null,
       content: docContents,
-      group: renderable.doc.group ?? defaults.defaultGroupName,
+      group: renderable.doc.group ?? markdownDefaults.defaultGroupName,
     };
   }
 

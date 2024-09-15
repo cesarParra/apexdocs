@@ -7,234 +7,6 @@ describe('Generates interface documentation', () => {
   });
 
   describe('documentation content', () => {
-    describe('type level information', () => {
-      it('generates a heading with the interface name', async () => {
-        const input = `
-        public interface MyInterface {}
-      `;
-
-        const output = `# MyInterface Interface`;
-        const result = await generateDocs([apexBundleFromRawString(input)])();
-        expect(result).documentationBundleHasLength(1);
-        assertEither(result, (data) => expect(data).firstDocContains(output));
-      });
-
-      it('displays type level annotations', async () => {
-        const input = `
-        @NamespaceAccessible
-        public interface MyInterface {
-          @Deprecated
-          void myMethod();   
-        }
-       `;
-
-        const result = await generateDocs([apexBundleFromRawString(input)])();
-        expect(result).documentationBundleHasLength(1);
-        assertEither(result, (data) => expect(data).firstDocContains('NAMESPACEACCESSIBLE'));
-        assertEither(result, (data) => expect(data).firstDocContains('DEPRECATED'));
-      });
-
-      it('displays the description', async () => {
-        const input = `
-          /**
-           * This is a description
-           */
-          public interface MyInterface {}
-         `;
-
-        const result = await generateDocs([apexBundleFromRawString(input)])();
-        expect(result).documentationBundleHasLength(1);
-        assertEither(result, (data) => expect(data).firstDocContains('This is a description'));
-      });
-
-      it('display custom documentation tags', async () => {
-        const input = `
-          /**
-           * @custom-tag My Value
-           */
-          public interface MyInterface {}
-        `;
-
-        const result = await generateDocs([apexBundleFromRawString(input)])();
-        expect(result).documentationBundleHasLength(1);
-        assertEither(result, (data) => expect(data).firstDocContains('Custom Tag'));
-        assertEither(result, (data) => expect(data).firstDocContains('My Value'));
-      });
-
-      it('displays the group', async () => {
-        const input = `
-          /**
-           * @group MyGroup
-           */
-          public interface MyInterface {}`;
-
-        const result = await generateDocs([apexBundleFromRawString(input)])();
-        expect(result).documentationBundleHasLength(1);
-        assertEither(result, (data) => expect(data).firstDocContains('Group'));
-        assertEither(result, (data) => expect(data).firstDocContains('MyGroup'));
-      });
-
-      it('displays the author', async () => {
-        const input = `
-          /**
-           * @author John Doe
-           */
-          public interface MyInterface {}`;
-
-        const result = await generateDocs([apexBundleFromRawString(input)])();
-        expect(result).documentationBundleHasLength(1);
-        assertEither(result, (data) => expect(data).firstDocContains('Author'));
-        assertEither(result, (data) => expect(data).firstDocContains('John Doe'));
-      });
-
-      it('displays the date', async () => {
-        const input = `
-          /**
-           * @date 2021-01-01
-           */
-          public interface MyInterface {}`;
-
-        const result = await generateDocs([apexBundleFromRawString(input)])();
-        expect(result).documentationBundleHasLength(1);
-        assertEither(result, (data) => expect(data).firstDocContains('Date'));
-        assertEither(result, (data) => expect(data).firstDocContains('2021-01-01'));
-      });
-
-      it('displays descriptions', async () => {
-        const input = `
-          /**
-            * @description This is a description
-            */
-          public interface MyInterface {}`;
-
-        const result = await generateDocs([apexBundleFromRawString(input)])();
-        expect(result).documentationBundleHasLength(1);
-        assertEither(result, (data) => expect(data).firstDocContains('This is a description'));
-      });
-
-      it('displays descriptions with links', async () => {
-        const input1 = `
-          /**
-            * @description This is a description with a {@link InterfaceRef} reference
-            */
-          public enum MyInterface {}
-          `;
-
-        const input2 = 'public interface InterfaceRef {}';
-
-        const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
-        expect(result).documentationBundleHasLength(2);
-        assertEither(result, (data) =>
-          expect(data).firstDocContains('This is a description with a [InterfaceRef](InterfaceRef.md) reference'),
-        );
-      });
-
-      it('displays descriptions with emails', async () => {
-        const input = `
-          /**
-            * @description This is a description with an {@email test@testerson.com} email
-            */
-          public interface MyInterface {}
-          `;
-
-        const result = await generateDocs([apexBundleFromRawString(input)])();
-        expect(result).documentationBundleHasLength(1);
-        assertEither(result, (data) =>
-          expect(data).firstDocContains(
-            'This is a description with an [test@testerson.com](mailto:test@testerson.com) email',
-          ),
-        );
-      });
-
-      it('displays sees with accurately resolved links', async () => {
-        const input1 = `
-          /**
-            * @see InterfaceRef
-            */
-          public interface MyInterface {}
-          `;
-
-        const input2 = 'public interface InterfaceRef {}';
-
-        const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
-        expect(result).documentationBundleHasLength(2);
-        assertEither(result, (data) => expect(data).firstDocContains('See'));
-        assertEither(result, (data) => expect(data).firstDocContains('[InterfaceRef](InterfaceRef.md)'));
-      });
-
-      it('displays sees without links when the reference is not found', async () => {
-        const input = `
-          /**
-            * @see InterfaceRef
-            */
-          public interface MyInterface {}
-          `;
-
-        const result = await generateDocs([apexBundleFromRawString(input)])();
-        expect(result).documentationBundleHasLength(1);
-        assertEither(result, (data) => expect(data).firstDocContains('See'));
-        assertEither(result, (data) => expect(data).firstDocContains('InterfaceRef'));
-      });
-
-      it('displays the namespace if present in the config', async () => {
-        const input = 'public interface MyInterface {}';
-
-        const result = await generateDocs([apexBundleFromRawString(input)], { namespace: 'MyNamespace' })();
-        expect(result).documentationBundleHasLength(1);
-        assertEither(result, (data) => expect(data).firstDocContains('## Namespace'));
-        assertEither(result, (data) => expect(data).firstDocContains('MyNamespace'));
-      });
-
-      it('does not display the namespace if not present in the config', async () => {
-        const input = 'public interface MyInterface {}';
-
-        const result = await generateDocs([apexBundleFromRawString(input)])();
-        expect(result).documentationBundleHasLength(1);
-        assertEither(result, (data) => expect(data).firstDocContainsNot('## Namespace'));
-      });
-
-      it('displays a mermaid diagram', async () => {
-        const input = `
-          /**
-            * @mermaid
-            * \`\`\`mermaid
-            * graph TD
-            *   A[Square Rect] -- Link text --> B((Circle))
-            *   A --> C(Round Rect)
-            *   B --> D{Rhombus}
-            *   C --> D
-            * \`\`\`
-            */
-          public interface MyInterface {}
-          `;
-
-        const result = await generateDocs([apexBundleFromRawString(input)])();
-        expect(result).documentationBundleHasLength(1);
-        assertEither(result, (data) => expect(data).firstDocContains('```mermaid'));
-        assertEither(result, (data) => expect(data).firstDocContains('graph TD'));
-      });
-
-      it('displays an example code block', async () => {
-        const input = `
-          /**
-            * @example
-            * \`\`\`apex
-            * public class MyClass {
-            *   public void myMethod() {
-            *     System.debug('Hello, World!');
-            *   }
-            * }
-            * \`\`\`
-            */
-          public interface MyInterface {}`;
-
-        const result = await generateDocs([apexBundleFromRawString(input)])();
-        expect(result).documentationBundleHasLength(1);
-        assertEither(result, (data) => expect(data).firstDocContains('```apex'));
-        assertEither(result, (data) => expect(data).firstDocContains('public class MyClass'));
-      });
-    });
-
     describe('method information', () => {
       it('displays the Method heading', async () => {
         const input = `
@@ -248,7 +20,7 @@ describe('Generates interface documentation', () => {
         assertEither(result, (data) => expect(data).firstDocContains('## Methods'));
       });
 
-      it('displays methods sorted if sortMembersAlphabetically is true', async () => {
+      it('displays methods sorted if sortAlphabetically is true', async () => {
         const input = `
         public interface MyInterface {
           void myMethod();
@@ -256,14 +28,14 @@ describe('Generates interface documentation', () => {
         }
       `;
 
-        const result = await generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: true })();
+        const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: true })();
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) => {
           expect(data.docs[0].content.indexOf('anotherMethod')).toBeLessThan(data.docs[0].content.indexOf('myMethod'));
         });
       });
 
-      it('does not display methods sorted if sortMembersAlphabetically is false', async () => {
+      it('does not display methods sorted if sortAlphabetically is false', async () => {
         const input = `
         public interface MyInterface {
           void myMethod();
@@ -271,7 +43,7 @@ describe('Generates interface documentation', () => {
         }
       `;
 
-        const result = await generateDocs([apexBundleFromRawString(input)], { sortMembersAlphabetically: false })();
+        const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: false })();
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) => {
           expect(data.docs[0].content.indexOf('myMethod')).toBeLessThan(data.docs[0].content.indexOf('anotherMethod'));

@@ -1,7 +1,7 @@
 export const referenceGuideTemplate = `
-# Apex Reference Guide
+# {{referenceGuideTitle}}
 
-{{#each this}}
+{{#each references}}
 ## {{@key}}
 
 {{#each this}}

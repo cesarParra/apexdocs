@@ -14,8 +14,10 @@ const defaultMarkdownGeneratorConfig: MarkdownGeneratorConfig = {
   namespace: '',
   defaultGroupName: 'Miscellaneous',
   referenceGuideTemplate: '',
-  sortMembersAlphabetically: false,
+  sortAlphabetically: false,
   linkingStrategy: 'relative',
+  referenceGuideTitle: 'Apex Reference Guide',
+  excludeTags: [],
 };
 
 describe('Conversion from InterfaceMirror to InterfaceSource understandable by the templating engine', () => {

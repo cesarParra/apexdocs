@@ -1,22 +1,6 @@
-import { ParsedFile } from '../../../shared/types';
-import { ClassMirror, EnumMirror, InterfaceMirror, reflect } from '@cparra/apex-reflection';
+import { ClassMirror, EnumMirror, InterfaceMirror } from '@cparra/apex-reflection';
 import { filterScope } from '../filter-scope';
-
-function parsedFileFromRawString(raw: string): ParsedFile {
-  const { error, typeMirror } = reflect(raw);
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return {
-    source: {
-      filePath: 'test.cls',
-      name: typeMirror!.name,
-      type: typeMirror!.type_name,
-    },
-    type: typeMirror!,
-  };
-}
+import { parsedFileFromRawString } from './helpers';
 
 describe('When filtering scope', () => {
   it('filters out files with the @ignore annotation', () => {

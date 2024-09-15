@@ -4,6 +4,9 @@ import { SettingsBuilder } from '../../../test-helpers/SettingsBuilder';
 import { DocCommentBuilder } from '../../../test-helpers/DocCommentBuilder';
 import { AnnotationBuilder } from '../../../test-helpers/AnnotationBuilder';
 import { ClassMirrorBuilder } from '../../../test-helpers/ClassMirrorBuilder';
+import { NoLogger } from '../../../util/logger';
+
+const noLogger = new NoLogger();
 
 beforeEach(() => {
   OpenApiSettings.build(new SettingsBuilder().build());
@@ -18,7 +21,7 @@ it('should add a path based on the @UrlResource annotation on the class', functi
     .addAnnotation(new AnnotationBuilder().addElementValue(annotationElementValue).build())
     .build();
 
-  const processor = new OpenApiDocsProcessor();
+  const processor = new OpenApiDocsProcessor(noLogger);
   processor.onProcess(classMirror);
 
   expect(processor.openApiModel.paths).toHaveProperty('Account/');
@@ -33,7 +36,7 @@ it('should respect slashes', function () {
     .addAnnotation(new AnnotationBuilder().addElementValue(annotationElementValue).build())
     .build();
 
-  const processor = new OpenApiDocsProcessor();
+  const processor = new OpenApiDocsProcessor(noLogger);
   processor.onProcess(classMirror);
 
   expect(processor.openApiModel.paths).toHaveProperty('v1/Account/');
@@ -49,7 +52,7 @@ it('should contain a path with a description when the class has an ApexDoc comme
     .withDocComment(new DocCommentBuilder().withDescription('My Description').build())
     .build();
 
-  const processor = new OpenApiDocsProcessor();
+  const processor = new OpenApiDocsProcessor(noLogger);
   processor.onProcess(classMirror);
 
   expect(processor.openApiModel.paths['Account/'].description).toBe('My Description');

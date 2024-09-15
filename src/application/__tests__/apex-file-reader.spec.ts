@@ -1,87 +1,128 @@
 import { ApexFileReader } from '../apex-file-reader';
+import { FileSystem } from '../file-system';
+
+type File = {
+  type: 'file';
+  path: string;
+  content: string;
+};
+
+type Directory = {
+  type: 'directory';
+  path: string;
+  files: (File | Directory)[];
+};
+
+type Path = File | Directory;
+
+class TestFileSystem implements FileSystem {
+  constructor(private readonly paths: Path[]) {}
+
+  async isDirectory(path: string): Promise<boolean> {
+    const directory = this.findPath(path);
+    return directory ? directory.type === 'directory' : false;
+  }
+
+  joinPath(...paths: string[]): string {
+    return paths.join('/');
+  }
+
+  async readDirectory(sourceDirectory: string): Promise<string[]> {
+    const directory = this.findPath(sourceDirectory);
+    if (!directory || directory.type !== 'directory') {
+      throw new Error('Directory not found');
+    }
+    return directory.files.map((f) => f.path);
+  }
+
+  async readFile(path: string): Promise<string> {
+    const file = this.findPath(path);
+    if (!file || file.type !== 'file') {
+      throw new Error('File not found');
+    }
+    return file.content;
+  }
+
+  exists(path: string): boolean {
+    return this.paths.some((p) => p.path === path);
+  }
+
+  findPath(path: string): Path | undefined {
+    const splitPath = path.split('/');
+    let currentPath = this.paths.find((p) => p.path === splitPath[0]);
+    for (let i = 1; i < splitPath.length; i++) {
+      if (!currentPath || currentPath.type !== 'directory') {
+        return undefined;
+      }
+      currentPath = currentPath.files.find((f) => f.path === splitPath[i]);
+    }
+    return currentPath;
+  }
+}
 
 describe('File Reader', () => {
   it('returns an empty list when there are no files in the directory', async () => {
-    const result = await ApexFileReader.processFiles(
+    const fileSystem = new TestFileSystem([
       {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        isDirectory(_: string): Promise<boolean> {
-          return Promise.resolve(false);
-        },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        joinPath(_: string): string {
-          return '';
-        },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        readDirectory(_: string): Promise<string[]> {
-          return Promise.resolve([]);
-        },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        readFile(_: string): Promise<string> {
-          return Promise.resolve('');
-        },
-        exists(): boolean {
-          return true;
-        },
+        type: 'directory',
+        path: '',
+        files: [],
       },
-      '',
-      false,
-    );
+    ]);
+
+    const result = await ApexFileReader.processFiles(fileSystem, '', false);
+
     expect(result.length).toBe(0);
   });
 
   it('returns an empty list when there are no Apex files in the directory', async () => {
-    const result = await ApexFileReader.processFiles(
+    const fileSystem = new TestFileSystem([
       {
-        isDirectory(): Promise<boolean> {
-          return Promise.resolve(false);
-        },
-        joinPath(): string {
-          return '';
-        },
-        readDirectory(): Promise<string[]> {
-          return Promise.resolve(['SomeFile.md']);
-        },
-        readFile(): Promise<string> {
-          return Promise.resolve('');
-        },
-        exists(): boolean {
-          return true;
-        },
+        type: 'directory',
+        path: '',
+        files: [
+          {
+            type: 'file',
+            path: 'SomeFile.md',
+            content: '## Some Markdown',
+          },
+        ],
       },
-      '',
-      false,
-    );
+    ]);
+
+    const result = await ApexFileReader.processFiles(fileSystem, '', false);
     expect(result.length).toBe(0);
   });
 
-  it('returns the file contents for an Apex file', async () => {
-    const result = await ApexFileReader.processFiles(
+  it('returns the file contents for all Apex files', async () => {
+    const fileSystem = new TestFileSystem([
       {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        isDirectory(_: string): Promise<boolean> {
-          return Promise.resolve(false);
-        },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        joinPath(_: string): string {
-          return 'SomeApexFile.cls';
-        },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        readDirectory(_: string): Promise<string[]> {
-          return Promise.resolve(['SomeApexFile.cls']);
-        },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        readFile(_: string): Promise<string> {
-          return Promise.resolve('public class MyClass{}');
-        },
-        exists(): boolean {
-          return true;
-        },
+        type: 'directory',
+        path: '',
+        files: [
+          {
+            type: 'file',
+            path: 'SomeFile.cls',
+            content: 'public class MyClass{}',
+          },
+          {
+            type: 'directory',
+            path: 'subdir',
+            files: [
+              {
+                type: 'file',
+                path: 'AnotherFile.cls',
+                content: 'public class AnotherClass{}',
+              },
+            ],
+          },
+        ],
       },
-      '',
-      false,
-    );
-    expect(result.length).toBe(1);
+    ]);
+
+    const result = await ApexFileReader.processFiles(fileSystem, '', false);
+    expect(result.length).toBe(2);
     expect(result[0].content).toBe('public class MyClass{}');
+    expect(result[1].content).toBe('public class AnotherClass{}');
   });
 });

@@ -15,9 +15,11 @@ export function generateDocs(apexBundles: UnparsedSourceFile[], config?: Partial
     targetDir: 'target',
     scope: ['global', 'public'],
     defaultGroupName: 'Miscellaneous',
-    sortMembersAlphabetically: true,
+    sortAlphabetically: false,
     referenceGuideTemplate: referenceGuideTemplate,
     linkingStrategy: 'relative',
+    excludeTags: [],
+    referenceGuideTitle: 'Apex Reference Guide',
     ...config,
   });
 }
