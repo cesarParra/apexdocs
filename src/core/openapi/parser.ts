@@ -9,12 +9,15 @@ export interface TypeParser {
 type NameAware = { name: string };
 
 export class RawBodyParser implements TypeParser {
-  constructor(public typeBundles: UnparsedSourceFile[]) {}
+  constructor(
+    private logger: Logger,
+    public typeBundles: UnparsedSourceFile[],
+  ) {}
 
   parse(reflect: (apexBundle: UnparsedSourceFile) => ReflectionResult): Type[] {
     const types = this.typeBundles
       .map((currentBundle) => {
-        Logger.log(`Parsing file: ${currentBundle.filePath}`);
+        this.logger.log(`Parsing file: ${currentBundle.filePath}`);
         return reflect(currentBundle);
       })
       .filter((reflectionResult) => {

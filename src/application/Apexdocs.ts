@@ -17,8 +17,8 @@ export class Apexdocs {
   /**
    * Generates documentation out of Apex source files.
    */
-  static async generate(config: UserDefinedConfig): Promise<E.Either<unknown[], string>> {
-    Logger.logSingle(`Generating ${config.targetGenerator} documentation...`);
+  static async generate(config: UserDefinedConfig, logger: Logger): Promise<E.Either<unknown[], string>> {
+    logger.logSingle(`Generating ${config.targetGenerator} documentation...`);
 
     try {
       const fileBodies = await ApexFileReader.processFiles(
@@ -31,7 +31,7 @@ export class Apexdocs {
         case 'markdown':
           return await generateMarkdownDocumentation(fileBodies, config)();
         case 'openapi':
-          await openApi(fileBodies, config);
+          await openApi(logger, fileBodies, config);
           return E.right('✔️ Documentation generated successfully!');
       }
     } catch (error) {

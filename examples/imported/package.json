@@ -1,0 +1,6 @@
+{
+  "name": "plain-markdown",
+  "scripts": {
+    "exec": "node scripts/process-docs.mjs"
+  }
+}

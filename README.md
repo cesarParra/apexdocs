@@ -181,7 +181,8 @@ CLI will be used, or the default value will be used.
 
 ### Config Intellisense
 
-Using the `defineMarkdownConfig` helper will provide Typescript-powered intellisense
+Using the `defineMarkdownConfig` (or the `defineOpenApiConfig` for OpenApi documentation) 
+helper will provide Typescript-powered intellisense
 for the configuration file options. This should work with both Javascript and Typescript files.
 
 ```typescript

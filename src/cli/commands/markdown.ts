@@ -1,5 +1,5 @@
 import { Options } from 'yargs';
-import { defaults } from '../../defaults';
+import { markdownDefaults } from '../../defaults';
 
 export const markdownOptions: { [key: string]: Options } = {
   sourceDir: {
@@ -11,21 +11,21 @@ export const markdownOptions: { [key: string]: Options } = {
   targetDir: {
     type: 'string',
     alias: 't',
-    default: defaults.targetDir,
+    default: markdownDefaults.targetDir,
     describe: 'The directory location where documentation will be generated to.',
   },
   scope: {
     type: 'string',
     array: true,
     alias: 'p',
-    default: defaults.scope,
+    default: markdownDefaults.scope,
     describe:
       'A list of scopes to document. Values should be separated by a space, e.g --scope global public namespaceaccessible. ' +
       'Annotations are supported and should be passed lowercased and without the @ symbol, e.g. namespaceaccessible auraenabled.',
   },
   defaultGroupName: {
     type: 'string',
-    default: defaults.defaultGroupName,
+    default: markdownDefaults.defaultGroupName,
     describe: 'Defines the @group name to be used when a file does not specify it.',
   },
   namespace: {
@@ -35,22 +35,22 @@ export const markdownOptions: { [key: string]: Options } = {
   sortAlphabetically: {
     type: 'boolean',
     describe: 'Whether to sort files and members alphabetically.',
-    default: defaults.sortAlphabetically,
+    default: markdownDefaults.sortAlphabetically,
   },
   includeMetadata: {
     type: 'boolean',
     describe: "Whether to include the file's meta.xml information: Whether it is active and and the API version",
-    default: defaults.includeMetadata,
+    default: markdownDefaults.includeMetadata,
   },
   linkingStrategy: {
     type: 'string',
     describe: 'The strategy to use when linking to other documentation pages.',
     choices: ['relative', 'no-link', 'none'],
-    default: defaults.linkingStrategy,
+    default: markdownDefaults.linkingStrategy,
   },
   referenceGuideTitle: {
     type: 'string',
     describe: 'The title of the reference guide.',
-    default: defaults.referenceGuideTitle,
+    default: markdownDefaults.referenceGuideTitle,
   },
 };
