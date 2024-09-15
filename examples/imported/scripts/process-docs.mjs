@@ -1,4 +1,4 @@
-// Substitute the import location for 'apexdocs'
+// Substitute the import location for '@cparra/apexdocs'
 import { process } from '../../../dist/index.js';
 
 const config = {
