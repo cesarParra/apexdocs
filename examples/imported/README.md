@@ -1,7 +1,6 @@
-# Markdown Example
+# Importing the module
 
-This project contains an example for generating simple markdown documentation.
+This example project provides a demonstration of how to import `apexdocs` into your Javascript/Typescript project
+and call it imperatively.
 
-It has no integrations with a Static Site Generator (SSG) or any other tool.
-
-You can find the configuration in the `package.json` file, under the `apexdocs` key.
+See `scripts/process-docs.mjs` for the implementation.

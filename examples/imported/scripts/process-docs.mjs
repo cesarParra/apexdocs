@@ -1,3 +1,4 @@
+// Substitute the import location for 'apexdocs'
 import { process } from '../../../dist/index.js';
 
 const config = {
@@ -11,5 +12,5 @@ process(config)
     console.log('Finished processing');
   })
   .catch((error) => {
-    console.log(error);
+    console.error(error);
   });
