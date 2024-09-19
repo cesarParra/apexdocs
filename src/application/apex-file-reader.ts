@@ -28,9 +28,9 @@ export class ApexFileReader {
       const currentPath = fileSystem.joinPath(rootPath, filePath);
       if (await fileSystem.isDirectory(currentPath)) {
         paths.push(...(await this.getFilePaths(fileSystem, currentPath)));
-        return paths;
+      } else {
+        paths.push(currentPath);
       }
-      paths.push(currentPath);
     }
     return paths;
   }
