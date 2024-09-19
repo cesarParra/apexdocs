@@ -125,4 +125,56 @@ describe('File Reader', () => {
     expect(result[0].content).toBe('public class MyClass{}');
     expect(result[1].content).toBe('public class AnotherClass{}');
   });
+
+  it('returns the file contents for all Apex  when there are multiple directories', async () => {
+    const fileSystem = new TestFileSystem([
+      {
+        type: 'directory',
+        path: '',
+        files: [
+          {
+            type: 'file',
+            path: 'SomeFile.cls',
+            content: 'public class MyClass{}',
+          },
+          {
+            type: 'directory',
+            path: 'subdir',
+            files: [
+              {
+                type: 'file',
+                path: 'AnotherFile.cls',
+                content: 'public class AnotherClass{}',
+              },
+            ],
+          },
+          {
+            type: 'directory',
+            path: 'subdir2',
+            files: [
+              {
+                type: 'file',
+                path: 'SomeFile2.cls',
+                content: 'public class MyClass{}',
+              },
+              {
+                type: 'directory',
+                path: 'subdir',
+                files: [
+                  {
+                    type: 'file',
+                    path: 'AnotherFile2.cls',
+                    content: 'public class AnotherClass{}',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ]);
+
+    const result = await ApexFileReader.processFiles(fileSystem, '', false);
+    expect(result.length).toBe(4);
+  });
 });
