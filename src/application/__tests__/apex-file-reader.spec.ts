@@ -70,7 +70,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await ApexFileReader.processFiles(fileSystem, '', false);
+    const result = await ApexFileReader.processFiles(fileSystem, '', false, []);
 
     expect(result.length).toBe(0);
   });
@@ -90,7 +90,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await ApexFileReader.processFiles(fileSystem, '', false);
+    const result = await ApexFileReader.processFiles(fileSystem, '', false, []);
     expect(result.length).toBe(0);
   });
 
@@ -120,7 +120,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await ApexFileReader.processFiles(fileSystem, '', false);
+    const result = await ApexFileReader.processFiles(fileSystem, '', false, []);
     expect(result.length).toBe(2);
     expect(result[0].content).toBe('public class MyClass{}');
     expect(result[1].content).toBe('public class AnotherClass{}');
@@ -174,7 +174,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await ApexFileReader.processFiles(fileSystem, '', false);
+    const result = await ApexFileReader.processFiles(fileSystem, '', false, []);
     expect(result.length).toBe(4);
   });
 });

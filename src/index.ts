@@ -12,12 +12,9 @@ import type {
   TransformReference,
   ConfigurableDocPageReference,
   UserDefinedOpenApiConfig,
-  UserDefinedConfig,
 } from './core/shared/types';
 import { markdownDefaults, openApiDefaults } from './defaults';
-import { NoLogger } from '#utils/logger';
-import { Apexdocs } from './application/Apexdocs';
-import * as E from 'fp-ts/Either';
+import { process } from './node/process';
 
 type ConfigurableMarkdownConfig = Omit<Partial<UserDefinedMarkdownConfig>, 'targetGenerator'>;
 
@@ -54,39 +51,6 @@ function skip(): Skip {
   return {
     _tag: 'Skip',
   };
-}
-
-type CallableConfig = Partial<UserDefinedConfig> & { sourceDir: string; targetGenerator: 'markdown' | 'openapi' };
-
-async function process(config: CallableConfig): Promise<void> {
-  const logger = new NoLogger();
-  const configWithDefaults = {
-    ...getDefault(config),
-    ...config,
-  };
-
-  if (!configWithDefaults.sourceDir) {
-    throw new Error('sourceDir is required');
-  }
-
-  const result = await Apexdocs.generate(configWithDefaults as UserDefinedConfig, logger);
-  E.match(
-    (errors) => {
-      throw errors;
-    },
-    () => {},
-  )(result);
-}
-
-function getDefault(config: CallableConfig) {
-  switch (config.targetGenerator) {
-    case 'markdown':
-      return markdownDefaults;
-    case 'openapi':
-      return openApiDefaults;
-    default:
-      throw new Error('Unknown target generator');
-  }
 }
 
 export {

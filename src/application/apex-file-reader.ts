@@ -1,5 +1,6 @@
 import { FileSystem } from './file-system';
 import { UnparsedSourceFile } from '../core/shared/types';
+import { minimatch } from 'minimatch';
 
 const APEX_FILE_EXTENSION = '.cls';
 
@@ -14,9 +15,14 @@ export class ApexFileReader {
     fileSystem: FileSystem,
     rootPath: string,
     includeMetadata: boolean,
+    exclude: string[],
   ): Promise<UnparsedSourceFile[]> {
+    // TODO: Make this more functional
+    // TODO: Unit tests
+
     const filePaths = await this.getFilePaths(fileSystem, rootPath);
-    const apexFilePaths = filePaths.filter((filePath) => this.isApexFile(filePath));
+    const includedFilePaths = filePaths.filter((filePath) => !this.isExcluded(filePath, exclude));
+    const apexFilePaths = includedFilePaths.filter((filePath) => this.isApexFile(filePath));
     const filePromises = apexFilePaths.map((filePath) => this.processFile(fileSystem, filePath, includeMetadata));
     return Promise.all(filePromises);
   }
@@ -33,6 +39,10 @@ export class ApexFileReader {
       }
     }
     return paths;
+  }
+
+  private static isExcluded(filePath: string, exclude: string[]): boolean {
+    return exclude.some((pattern) => minimatch(filePath, pattern));
   }
 
   private static async processFile(

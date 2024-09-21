@@ -25,6 +25,7 @@ export class Apexdocs {
         new DefaultFileSystem(),
         config.sourceDir,
         config.targetGenerator === 'markdown' ? config.includeMetadata : false,
+        config.exclude,
       );
 
       switch (config.targetGenerator) {

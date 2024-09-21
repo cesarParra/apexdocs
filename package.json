@@ -38,7 +38,6 @@
     "@types/eslint__js": "^8.42.3",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.14.10",
-    "@types/shelljs": "^0.8.15",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "husky": "^9.0.11",
@@ -46,7 +45,7 @@
     "lint-staged": "^15.2.7",
     "pkgroll": "^2.4.2",
     "prettier": "^3.3.2",
-    "rimraf": "^6.0.0",
+    "rimraf": "^6.0.1",
     "ts-jest": "^29.2.0",
     "typescript": "^5.5.3",
     "typescript-eslint": "^7.16.0"
@@ -72,6 +71,7 @@
     "fp-ts": "^2.16.8",
     "handlebars": "^4.7.8",
     "js-yaml": "^4.1.0",
+    "minimatch": "^10.0.1",
     "yargs": "^17.7.2"
   },
   "imports": {
