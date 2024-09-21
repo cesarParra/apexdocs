@@ -10,7 +10,12 @@ type NewEnumValue = {
   value: string;
 };
 
-type MemberModificationType = NewEnumValue;
+type RemovedEnumValue = {
+  __typename: 'RemovedEnumValue';
+  value: string;
+};
+
+type MemberModificationType = NewEnumValue | RemovedEnumValue;
 
 type NewOrModifiedMember = {
   typeName: string;
@@ -58,7 +63,7 @@ function getNewOrModifiedEnumValues(oldVersion: VersionManifest, newVersion: Ver
 
         return {
           typeName: enumMirror.name,
-          modifications: getNewEnumValues(oldEnum, newEnum),
+          modifications: [...getNewEnumValues(oldEnum, newEnum), ...getRemovedEnumValues(oldEnum, newEnum)],
         };
       }),
     (newOrModifiedMembers) => newOrModifiedMembers.filter((member) => member.modifications.length > 0),
@@ -81,4 +86,12 @@ function getNewEnumValues(oldEnum: EnumMirror, newEnum: EnumMirror): NewEnumValu
       (newValue) => !oldEnum.values.some((oldValue) => oldValue.name.toLowerCase() === newValue.name.toLowerCase()),
     )
     .map((value) => ({ __typename: 'NewEnumValue', value: value.name }));
+}
+
+function getRemovedEnumValues(oldEnum: EnumMirror, newEnum: EnumMirror): RemovedEnumValue[] {
+  return oldEnum.values
+    .filter(
+      (oldValue) => !newEnum.values.some((newValue) => newValue.name.toLowerCase() === oldValue.name.toLowerCase()),
+    )
+    .map((value) => ({ __typename: 'RemovedEnumValue', value: value.name }));
 }
