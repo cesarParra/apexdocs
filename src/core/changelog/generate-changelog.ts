@@ -15,7 +15,12 @@ type RemovedEnumValue = {
   value: string;
 };
 
-type MemberModificationType = NewEnumValue | RemovedEnumValue;
+type NewMethod = {
+  __typename: 'NewMethod';
+  name: string;
+};
+
+type MemberModificationType = NewEnumValue | RemovedEnumValue | NewMethod;
 
 type NewOrModifiedMember = {
   typeName: string;
@@ -32,7 +37,7 @@ export function generateChangeLog(oldVersion: VersionManifest, newVersion: Versi
   return {
     newTypes: getNewTypes(oldVersion, newVersion),
     removedTypes: getRemovedTypes(oldVersion, newVersion),
-    newOrModifiedMembers: getNewOrModifiedEnumValues(oldVersion, newVersion),
+    newOrModifiedMembers: getNewOrModifiedMembers(oldVersion, newVersion),
   };
 }
 
@@ -48,36 +53,39 @@ function getRemovedTypes(oldVersion: VersionManifest, newVersion: VersionManifes
     .map((type) => type.name);
 }
 
-function getNewOrModifiedEnumValues(oldVersion: VersionManifest, newVersion: VersionManifest): NewOrModifiedMember[] {
-  return pipe(
-    getTypesInBothVersions(oldVersion, newVersion),
-    (types) => getEnums(types),
-    (enums) =>
-      enums.map((enumMirror) => {
-        const oldEnum = oldVersion.types.find(
-          (type) => type.name.toLowerCase() === enumMirror.name.toLowerCase(),
-        ) as EnumMirror;
-        const newEnum = newVersion.types.find(
-          (type) => type.name.toLowerCase() === enumMirror.name.toLowerCase(),
-        ) as EnumMirror;
+function getNewOrModifiedMembers(oldVersion: VersionManifest, newVersion: VersionManifest): NewOrModifiedMember[] {
+  return pipe(getTypesInBothVersions(oldVersion, newVersion), getNewOrModifiedEnumValues, (newOrModifiedMembers) =>
+    newOrModifiedMembers.filter((member) => member.modifications.length > 0),
+  );
+}
 
+function getNewOrModifiedEnumValues(typesInBoth: TypeInBoth[]): NewOrModifiedMember[] {
+  return pipe(
+    typesInBoth.filter((typeInBoth) => typeInBoth.oldType.type_name === 'enum'),
+    (enumsInBoth) =>
+      enumsInBoth.map(({ oldType, newType }) => {
+        const oldEnum = oldType as EnumMirror;
+        const newEnum = newType as EnumMirror;
         return {
-          typeName: enumMirror.name,
+          typeName: newType.name,
           modifications: [...getNewEnumValues(oldEnum, newEnum), ...getRemovedEnumValues(oldEnum, newEnum)],
         };
       }),
-    (newOrModifiedMembers) => newOrModifiedMembers.filter((member) => member.modifications.length > 0),
   );
 }
 
-function getTypesInBothVersions(oldVersion: VersionManifest, newVersion: VersionManifest): Type[] {
-  return newVersion.types.filter((newType) =>
-    oldVersion.types.some((oldType) => oldType.name.toLowerCase() === newType.name.toLowerCase()),
-  );
-}
+type TypeInBoth = {
+  oldType: Type;
+  newType: Type;
+};
 
-function getEnums(types: Type[]): EnumMirror[] {
-  return types.filter((type) => type.type_name === 'enum') as EnumMirror[];
+function getTypesInBothVersions(oldVersion: VersionManifest, newVersion: VersionManifest): TypeInBoth[] {
+  return oldVersion.types
+    .map((oldType) => ({
+      oldType,
+      newType: newVersion.types.find((newType) => newType.name.toLowerCase() === oldType.name.toLowerCase()),
+    }))
+    .filter((type) => type.newType !== undefined) as TypeInBoth[];
 }
 
 function getNewEnumValues(oldEnum: EnumMirror, newEnum: EnumMirror): NewEnumValue[] {
