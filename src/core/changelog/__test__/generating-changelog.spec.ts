@@ -76,4 +76,28 @@ describe('when generating a change log', () => {
 
     expect(changeLog.removedTypes).toEqual([existingOnlyInOldClass.name]);
   });
+
+  it('lists all new values of a modified enum', () => {
+    const enumBefore = 'public enum MyEnum { VALUE1 }';
+    const oldEnum = typeFromRawString(enumBefore);
+    const enumAfter = 'public enum MyEnum { VALUE1, VALUE2 }';
+    const newEnum = typeFromRawString(enumAfter);
+
+    const oldVersion = { types: [oldEnum] };
+    const newVersion = { types: [newEnum] };
+
+    const changeLog = generateChangeLog(oldVersion, newVersion);
+
+    expect(changeLog.newOrModifiedMembers).toEqual([
+      {
+        typeName: 'MyEnum',
+        modifications: [
+          {
+            __typename: 'NewEnumValue',
+            value: 'VALUE2',
+          },
+        ],
+      },
+    ]);
+  });
 });
