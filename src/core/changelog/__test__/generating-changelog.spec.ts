@@ -18,7 +18,7 @@ describe('when generating a change log', () => {
     const changeLog = generateChangeLog(oldVersion, newVersion);
 
     expect(changeLog).toEqual({
-      newClasses: [],
+      newTypes: [],
     });
   });
 
@@ -31,20 +31,22 @@ describe('when generating a change log', () => {
     const changeLog = generateChangeLog(oldVersion, newVersion);
 
     expect(changeLog).toEqual({
-      newClasses: [],
+      newTypes: [],
     });
   });
 
-  it('lists all new classes', () => {
-    const oldVersion = { types: [] };
+  it('lists all new types', () => {
+    const existingInBoth = 'public class ExistingInBoth {}';
+    const existingClass = typeFromRawString(existingInBoth);
+    const oldVersion = { types: [existingClass] };
     const newClassBody = 'public class NewClass {}';
     const newClass = typeFromRawString(newClassBody);
-    const newVersion = { types: [newClass] };
+    const newVersion = { types: [existingClass, newClass] };
 
     const changeLog = generateChangeLog(oldVersion, newVersion);
 
     expect(changeLog).toEqual({
-      newClasses: [newClass.name],
+      newTypes: [newClass.name],
     });
   });
 });

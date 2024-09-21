@@ -5,12 +5,12 @@ type VersionManifest = {
 };
 
 type ChangeLog = {
-  newClasses: string[];
+  newTypes: string[];
 };
 
 export function generateChangeLog(oldVersion: VersionManifest, newVersion: VersionManifest): ChangeLog {
   return {
-    newClasses: getNewClasses(oldVersion, newVersion),
+    newTypes: getNewClasses(oldVersion, newVersion),
   };
 }
 
