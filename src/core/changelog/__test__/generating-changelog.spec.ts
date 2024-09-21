@@ -40,6 +40,17 @@ describe('when generating a change log', () => {
     expect(changeLog.newTypes).toEqual([]);
   });
 
+  it('has no removed types when both the old and new versions are the same', () => {
+    const anyClassBody = 'public class AnyClass {}';
+    const anyClass = typeFromRawString(anyClassBody);
+    const oldVersion = { types: [anyClass] };
+    const newVersion = { types: [anyClass] };
+
+    const changeLog = generateChangeLog(oldVersion, newVersion);
+
+    expect(changeLog.removedTypes).toEqual([]);
+  });
+
   it('lists all new types', () => {
     const existingInBoth = 'public class ExistingInBoth {}';
     const existingClass = typeFromRawString(existingInBoth);
@@ -51,5 +62,18 @@ describe('when generating a change log', () => {
     const changeLog = generateChangeLog(oldVersion, newVersion);
 
     expect(changeLog.newTypes).toEqual([newClass.name]);
+  });
+
+  it('lists all removed types', () => {
+    const existingInBoth = 'public class ExistingInBoth {}';
+    const existingClass = typeFromRawString(existingInBoth);
+    const existingOnlyInOld = 'public class ExistingOnlyInOld {}';
+    const existingOnlyInOldClass = typeFromRawString(existingOnlyInOld);
+    const oldVersion = { types: [existingClass, existingOnlyInOldClass] };
+    const newVersion = { types: [existingClass] };
+
+    const changeLog = generateChangeLog(oldVersion, newVersion);
+
+    expect(changeLog.removedTypes).toEqual([existingOnlyInOldClass.name]);
   });
 });
