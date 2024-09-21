@@ -70,7 +70,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await ApexFileReader.processFiles(fileSystem, '', false);
+    const result = await ApexFileReader.processFiles(fileSystem, '', false, []);
 
     expect(result.length).toBe(0);
   });
@@ -90,7 +90,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await ApexFileReader.processFiles(fileSystem, '', false);
+    const result = await ApexFileReader.processFiles(fileSystem, '', false, []);
     expect(result.length).toBe(0);
   });
 
@@ -120,10 +120,41 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await ApexFileReader.processFiles(fileSystem, '', false);
+    const result = await ApexFileReader.processFiles(fileSystem, '', false, []);
     expect(result.length).toBe(2);
     expect(result[0].content).toBe('public class MyClass{}');
     expect(result[1].content).toBe('public class AnotherClass{}');
+  });
+
+  it('skips files that match the excluded glob pattern', async () => {
+    const fileSystem = new TestFileSystem([
+      {
+        type: 'directory',
+        path: '',
+        files: [
+          {
+            type: 'file',
+            path: 'SomeFile.cls',
+            content: 'public class MyClass{}',
+          },
+          {
+            type: 'directory',
+            path: 'subdir',
+            files: [
+              {
+                type: 'file',
+                path: 'AnotherFile.cls',
+                content: 'public class AnotherClass{}',
+              },
+            ],
+          },
+        ],
+      },
+    ]);
+
+    const result = await ApexFileReader.processFiles(fileSystem, '', false, ['**/AnotherFile.cls']);
+    expect(result.length).toBe(1);
+    expect(result[0].content).toBe('public class MyClass{}');
   });
 
   it('returns the file contents for all Apex  when there are multiple directories', async () => {
@@ -174,7 +205,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await ApexFileReader.processFiles(fileSystem, '', false);
+    const result = await ApexFileReader.processFiles(fileSystem, '', false, []);
     expect(result.length).toBe(4);
   });
 });

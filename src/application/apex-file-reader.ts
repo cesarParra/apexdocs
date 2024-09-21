@@ -1,5 +1,8 @@
 import { FileSystem } from './file-system';
 import { UnparsedSourceFile } from '../core/shared/types';
+import { minimatch } from 'minimatch';
+import { pipe } from 'fp-ts/function';
+import { apply } from '#utils/fp';
 
 const APEX_FILE_EXTENSION = '.cls';
 
@@ -14,11 +17,16 @@ export class ApexFileReader {
     fileSystem: FileSystem,
     rootPath: string,
     includeMetadata: boolean,
+    exclude: string[],
   ): Promise<UnparsedSourceFile[]> {
-    const filePaths = await this.getFilePaths(fileSystem, rootPath);
-    const apexFilePaths = filePaths.filter((filePath) => this.isApexFile(filePath));
-    const filePromises = apexFilePaths.map((filePath) => this.processFile(fileSystem, filePath, includeMetadata));
-    return Promise.all(filePromises);
+    const processSingleFile = apply(this.processFile, fileSystem, includeMetadata);
+
+    return pipe(
+      await this.getFilePaths(fileSystem, rootPath),
+      (filePaths) => filePaths.filter((filePath) => !this.isExcluded(filePath, exclude)),
+      (filePaths) => filePaths.filter(this.isApexFile),
+      (filePaths) => Promise.all(filePaths.map(processSingleFile)),
+    );
   }
 
   private static async getFilePaths(fileSystem: FileSystem, rootPath: string): Promise<string[]> {
@@ -35,10 +43,14 @@ export class ApexFileReader {
     return paths;
   }
 
+  private static isExcluded(filePath: string, exclude: string[]): boolean {
+    return exclude.some((pattern) => minimatch(filePath, pattern));
+  }
+
   private static async processFile(
     fileSystem: FileSystem,
-    filePath: string,
     includeMetadata: boolean,
+    filePath: string,
   ): Promise<UnparsedSourceFile> {
     const rawTypeContent = await fileSystem.readFile(filePath);
     const metadataPath = `${filePath}-meta.xml`;

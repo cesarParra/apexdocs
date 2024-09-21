@@ -219,6 +219,23 @@ export default defineMarkdownConfig({
 });
 ```
 
+### Excluding Files from Being Documented
+
+You can exclude one or multiple files from being documented by providing a list of glob patterns to 
+the `exclude` property in the configuration file.
+
+```typescript
+import { defineMarkdownConfig } from "@cparra/apexdocs";
+
+export default defineMarkdownConfig({
+  sourceDir: 'force-app',
+  targetDir: 'docs',
+  scope: ['global', 'public'],
+  exclude: ['**/MyClass.cls', '**/MyOtherClass.cls'],
+  ...
+});
+```
+
 ### Configuration Hooks
 
 When defining a `.js` or `.ts` configuration file, your object export can also make use

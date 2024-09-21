@@ -17,6 +17,7 @@ const defaultMarkdownGeneratorConfig: MarkdownGeneratorConfig = {
   sortAlphabetically: false,
   linkingStrategy: 'relative',
   referenceGuideTitle: 'Apex Reference Guide',
+  exclude: [],
   excludeTags: [],
 };
 

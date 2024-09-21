@@ -23,6 +23,7 @@ export type UserDefinedMarkdownConfig = {
   linkingStrategy: LinkingStrategy;
   excludeTags: string[];
   referenceGuideTitle: string;
+  exclude: string[];
 } & Partial<ConfigurableHooks>;
 
 export type UserDefinedOpenApiConfig = {
@@ -33,6 +34,7 @@ export type UserDefinedOpenApiConfig = {
   namespace?: string;
   title: string;
   apiVersion: string;
+  exclude: string[];
 };
 
 export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig;

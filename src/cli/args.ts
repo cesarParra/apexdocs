@@ -5,8 +5,13 @@ import { TypeScriptLoader } from 'cosmiconfig-typescript-loader';
 import { markdownOptions } from './commands/markdown';
 import { openApiOptions } from './commands/openapi';
 
-const configOnlyDefaults: Partial<UserDefinedMarkdownConfig> = {
+const configOnlyMarkdownDefaults: Partial<UserDefinedMarkdownConfig> = {
   excludeTags: [],
+  exclude: [],
+};
+
+const configOnlyOpenApiDefaults = {
+  exclude: [],
 };
 
 /**
@@ -48,8 +53,8 @@ export async function extractArgs(): Promise<UserDefinedConfig> {
 
   const mergedConfig = { ...config?.config, ...cliArgs, targetGenerator: commandName as 'markdown' | 'openapi' };
   if (mergedConfig.targetGenerator === 'markdown') {
-    return { ...configOnlyDefaults, ...mergedConfig };
+    return { ...configOnlyMarkdownDefaults, ...mergedConfig };
   } else {
-    return mergedConfig;
+    return { ...configOnlyOpenApiDefaults, ...mergedConfig };
   }
 }
