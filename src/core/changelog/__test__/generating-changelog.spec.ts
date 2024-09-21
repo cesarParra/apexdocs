@@ -124,4 +124,52 @@ describe('when generating a change log', () => {
       },
     ]);
   });
+
+  it('lists all new methods of an interface', () => {
+    const interfaceBefore = 'public interface MyInterface {}';
+    const oldInterface = typeFromRawString(interfaceBefore);
+    const interfaceAfter = 'public interface MyInterface { void newMethod(); }';
+    const newInterface = typeFromRawString(interfaceAfter);
+
+    const oldVersion = { types: [oldInterface] };
+    const newVersion = { types: [newInterface] };
+
+    const changeLog = generateChangeLog(oldVersion, newVersion);
+
+    expect(changeLog.newOrModifiedMembers).toEqual([
+      {
+        typeName: 'MyInterface',
+        modifications: [
+          {
+            __typename: 'NewMethod',
+            name: 'newMethod',
+          },
+        ],
+      },
+    ]);
+  });
+
+  it('lists all new methods of a class', () => {
+    const classBefore = 'public class MyClass {}';
+    const oldClass = typeFromRawString(classBefore);
+    const classAfter = 'public class MyClass { void newMethod() {} }';
+    const newClass = typeFromRawString(classAfter);
+
+    const oldVersion = { types: [oldClass] };
+    const newVersion = { types: [newClass] };
+
+    const changeLog = generateChangeLog(oldVersion, newVersion);
+
+    expect(changeLog.newOrModifiedMembers).toEqual([
+      {
+        typeName: 'MyClass',
+        modifications: [
+          {
+            __typename: 'NewMethod',
+            name: 'newMethod',
+          },
+        ],
+      },
+    ]);
+  });
 });

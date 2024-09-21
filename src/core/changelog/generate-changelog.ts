@@ -1,4 +1,4 @@
-import { EnumMirror, Type } from '@cparra/apex-reflection';
+import { EnumMirror, MethodMirror, Type } from '@cparra/apex-reflection';
 import { pipe } from 'fp-ts/function';
 
 export type VersionManifest = {
@@ -54,8 +54,10 @@ function getRemovedTypes(oldVersion: VersionManifest, newVersion: VersionManifes
 }
 
 function getNewOrModifiedMembers(oldVersion: VersionManifest, newVersion: VersionManifest): NewOrModifiedMember[] {
-  return pipe(getTypesInBothVersions(oldVersion, newVersion), getNewOrModifiedEnumValues, (newOrModifiedMembers) =>
-    newOrModifiedMembers.filter((member) => member.modifications.length > 0),
+  return pipe(
+    getTypesInBothVersions(oldVersion, newVersion),
+    (typesInBoth) => [...getNewOrModifiedEnumValues(typesInBoth), ...getNewOrModifiedMethods(typesInBoth)],
+    (newOrModifiedMembers) => newOrModifiedMembers.filter((member) => member.modifications.length > 0),
   );
 }
 
@@ -69,6 +71,24 @@ function getNewOrModifiedEnumValues(typesInBoth: TypeInBoth[]): NewOrModifiedMem
         return {
           typeName: newType.name,
           modifications: [...getNewEnumValues(oldEnum, newEnum), ...getRemovedEnumValues(oldEnum, newEnum)],
+        };
+      }),
+  );
+}
+
+function getNewOrModifiedMethods(typesInBoth: TypeInBoth[]): NewOrModifiedMember[] {
+  return pipe(
+    typesInBoth.filter(
+      (typeInBoth) => typeInBoth.oldType.type_name === 'class' || typeInBoth.oldType.type_name === 'interface',
+    ),
+    (typesInBoth) =>
+      typesInBoth.map(({ oldType, newType }) => {
+        const oldMethodAware = oldType as MethodAware;
+        const newMethodAware = newType as MethodAware;
+
+        return {
+          typeName: newType.name,
+          modifications: getNewMethods(oldMethodAware, newMethodAware),
         };
       }),
   );
@@ -102,4 +122,17 @@ function getRemovedEnumValues(oldEnum: EnumMirror, newEnum: EnumMirror): Removed
       (oldValue) => !newEnum.values.some((newValue) => newValue.name.toLowerCase() === oldValue.name.toLowerCase()),
     )
     .map((value) => ({ __typename: 'RemovedEnumValue', value: value.name }));
+}
+
+type MethodAware = {
+  methods: MethodMirror[];
+};
+
+function getNewMethods(oldMethodAware: MethodAware, newMethodAware: MethodAware): NewMethod[] {
+  return newMethodAware.methods
+    .filter(
+      (newMethod) =>
+        !oldMethodAware.methods.some((oldMethod) => oldMethod.name.toLowerCase() === newMethod.name.toLowerCase()),
+    )
+    .map((method) => ({ __typename: 'NewMethod', name: method.name }));
 }
