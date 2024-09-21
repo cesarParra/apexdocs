@@ -11,18 +11,25 @@ function typeFromRawString(raw: string): Type {
 }
 
 describe('when generating a change log', () => {
-  it('results in an empty change log when both the old and new versions are empty', () => {
+  it('has no new types when both the old and new versions are empty', () => {
     const oldVersion = { types: [] };
     const newVersion = { types: [] };
 
     const changeLog = generateChangeLog(oldVersion, newVersion);
 
-    expect(changeLog).toEqual({
-      newTypes: [],
-    });
+    expect(changeLog.newTypes).toEqual([]);
   });
 
-  it('results in an empty change log when both the old and new versions are the same', () => {
+  it('has no removed types when the old and new versions are empty', () => {
+    const oldVersion = { types: [] };
+    const newVersion = { types: [] };
+
+    const changeLog = generateChangeLog(oldVersion, newVersion);
+
+    expect(changeLog.removedTypes).toEqual([]);
+  });
+
+  it('has no new types when both the old and new versions are the same', () => {
     const anyClassBody = 'public class AnyClass {}';
     const anyClass = typeFromRawString(anyClassBody);
     const oldVersion = { types: [anyClass] };
@@ -30,9 +37,7 @@ describe('when generating a change log', () => {
 
     const changeLog = generateChangeLog(oldVersion, newVersion);
 
-    expect(changeLog).toEqual({
-      newTypes: [],
-    });
+    expect(changeLog.newTypes).toEqual([]);
   });
 
   it('lists all new types', () => {
@@ -45,8 +50,6 @@ describe('when generating a change log', () => {
 
     const changeLog = generateChangeLog(oldVersion, newVersion);
 
-    expect(changeLog).toEqual({
-      newTypes: [newClass.name],
-    });
+    expect(changeLog.newTypes).toEqual([newClass.name]);
   });
 });
