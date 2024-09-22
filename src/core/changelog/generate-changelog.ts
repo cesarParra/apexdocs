@@ -164,6 +164,8 @@ function getNewOrModifiedClassMembers(typesInBoth: TypeInBoth[]): NewOrModifiedM
             ...getRemovedFields(oldClass, newClass),
             ...getNewInnerClasses(oldClass, newClass),
             ...getRemovedInnerClasses(oldClass, newClass),
+            ...getNewInnerInterfaces(oldClass, newClass),
+            ...getRemovedInnerInterfaces(oldClass, newClass),
           ],
         };
       }),
@@ -262,6 +264,24 @@ function getRemovedInnerClasses(oldClass: ClassMirror, newClass: ClassMirror): R
   return oldClass.classes
     .filter(
       (oldValue) => !newClass.classes.some((newValue) => newValue.name.toLowerCase() === oldValue.name.toLowerCase()),
+    )
+    .map((value) => ({ __typename: 'RemovedType', name: value.name }));
+}
+
+function getNewInnerInterfaces(oldClass: ClassMirror, newClass: ClassMirror): NewType[] {
+  return newClass.interfaces
+    .filter(
+      (newValue) =>
+        !oldClass.interfaces.some((oldValue) => oldValue.name.toLowerCase() === newValue.name.toLowerCase()),
+    )
+    .map((value) => ({ __typename: 'NewType', name: value.name }));
+}
+
+function getRemovedInnerInterfaces(oldClass: ClassMirror, newClass: ClassMirror): RemovedType[] {
+  return oldClass.interfaces
+    .filter(
+      (oldValue) =>
+        !newClass.interfaces.some((newValue) => newValue.name.toLowerCase() === oldValue.name.toLowerCase()),
     )
     .map((value) => ({ __typename: 'RemovedType', name: value.name }));
 }
