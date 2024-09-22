@@ -388,4 +388,52 @@ describe('when generating a change log', () => {
       },
     ]);
   });
+
+  it('lists new inner enums of a class', () => {
+    const classBefore = 'public class MyClass { }';
+    const oldClass = typeFromRawString(classBefore);
+    const classAfter = 'public class MyClass { enum NewEnum { } }';
+    const newClass = typeFromRawString(classAfter);
+
+    const oldVersion = { types: [oldClass] };
+    const newVersion = { types: [newClass] };
+
+    const changeLog = generateChangeLog(oldVersion, newVersion);
+
+    expect(changeLog.newOrModifiedMembers).toEqual([
+      {
+        typeName: 'MyClass',
+        modifications: [
+          {
+            __typename: 'NewType',
+            name: 'NewEnum',
+          },
+        ],
+      },
+    ]);
+  });
+
+  it('lists removed inner enums of a class', () => {
+    const classBefore = 'public class MyClass { interface OldEnum { } }';
+    const oldClass = typeFromRawString(classBefore);
+    const classAfter = 'public class MyClass { }';
+    const newClass = typeFromRawString(classAfter);
+
+    const oldVersion = { types: [oldClass] };
+    const newVersion = { types: [newClass] };
+
+    const changeLog = generateChangeLog(oldVersion, newVersion);
+
+    expect(changeLog.newOrModifiedMembers).toEqual([
+      {
+        typeName: 'MyClass',
+        modifications: [
+          {
+            __typename: 'RemovedType',
+            name: 'OldEnum',
+          },
+        ],
+      },
+    ]);
+  });
 });

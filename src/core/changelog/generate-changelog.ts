@@ -166,6 +166,8 @@ function getNewOrModifiedClassMembers(typesInBoth: TypeInBoth[]): NewOrModifiedM
             ...getRemovedInnerClasses(oldClass, newClass),
             ...getNewInnerInterfaces(oldClass, newClass),
             ...getRemovedInnerInterfaces(oldClass, newClass),
+            ...getNewInnerEnums(oldClass, newClass),
+            ...getRemovedInnerEnums(oldClass, newClass),
           ],
         };
       }),
@@ -282,6 +284,22 @@ function getRemovedInnerInterfaces(oldClass: ClassMirror, newClass: ClassMirror)
     .filter(
       (oldValue) =>
         !newClass.interfaces.some((newValue) => newValue.name.toLowerCase() === oldValue.name.toLowerCase()),
+    )
+    .map((value) => ({ __typename: 'RemovedType', name: value.name }));
+}
+
+function getNewInnerEnums(oldClass: ClassMirror, newClass: ClassMirror): NewType[] {
+  return newClass.enums
+    .filter(
+      (newValue) => !oldClass.enums.some((oldValue) => oldValue.name.toLowerCase() === newValue.name.toLowerCase()),
+    )
+    .map((value) => ({ __typename: 'NewType', name: value.name }));
+}
+
+function getRemovedInnerEnums(oldClass: ClassMirror, newClass: ClassMirror): RemovedType[] {
+  return oldClass.enums
+    .filter(
+      (oldValue) => !newClass.enums.some((newValue) => newValue.name.toLowerCase() === oldValue.name.toLowerCase()),
     )
     .map((value) => ({ __typename: 'RemovedType', name: value.name }));
 }
