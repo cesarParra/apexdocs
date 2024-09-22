@@ -6,67 +6,22 @@ export type VersionManifest = {
   types: Type[];
 };
 
-type NewEnumValue = {
-  __typename: 'NewEnumValue';
-  value: string;
-};
+type ModificationTypes =
+  | 'NewEnumValue'
+  | 'RemovedEnumValue'
+  | 'NewMethod'
+  | 'RemovedMethod'
+  | 'NewProperty'
+  | 'RemovedProperty'
+  | 'NewField'
+  | 'RemovedField'
+  | 'NewType'
+  | 'RemovedType';
 
-type RemovedEnumValue = {
-  __typename: 'RemovedEnumValue';
-  value: string;
-};
-
-type NewMethod = {
-  __typename: 'NewMethod';
+type MemberModificationType = {
+  __typename: ModificationTypes;
   name: string;
 };
-
-type RemovedMethod = {
-  __typename: 'RemovedMethod';
-  name: string;
-};
-
-type NewProperty = {
-  __typename: 'NewProperty';
-  name: string;
-};
-
-type RemovedProperty = {
-  __typename: 'RemovedProperty';
-  name: string;
-};
-
-type NewField = {
-  __typename: 'NewField';
-  name: string;
-};
-
-type RemovedField = {
-  __typename: 'RemovedField';
-  name: string;
-};
-
-type NewType = {
-  __typename: 'NewType';
-  name: string;
-};
-
-type RemovedType = {
-  __typename: 'RemovedType';
-  name: string;
-};
-
-type MemberModificationType =
-  | NewEnumValue
-  | RemovedEnumValue
-  | NewMethod
-  | RemovedMethod
-  | NewProperty
-  | RemovedProperty
-  | NewField
-  | RemovedField
-  | NewType
-  | RemovedType;
 
 type NewOrModifiedMember = {
   typeName: string;
@@ -120,7 +75,10 @@ function getNewOrModifiedEnumValues(typesInBoth: TypeInBoth[]): NewOrModifiedMem
         const newEnum = newType as EnumMirror;
         return {
           typeName: newType.name,
-          modifications: [...getNewEnumValues(oldEnum, newEnum), ...getRemovedEnumValues(oldEnum, newEnum)],
+          modifications: [
+            ...getNewValues(oldEnum, newEnum, 'values', 'NewEnumValue'),
+            ...getRemovedValues(oldEnum, newEnum, 'values', 'RemovedEnumValue'),
+          ],
         };
       }),
   );
@@ -158,16 +116,16 @@ function getNewOrModifiedClassMembers(typesInBoth: TypeInBoth[]): NewOrModifiedM
         return {
           typeName: newType.name,
           modifications: [
-            ...getNewProperties(oldClass, newClass),
-            ...getRemovedProperties(oldClass, newClass),
-            ...getNewFields(oldClass, newClass),
-            ...getRemovedFields(oldClass, newClass),
-            ...getNewInnerClasses(oldClass, newClass),
-            ...getRemovedInnerClasses(oldClass, newClass),
-            ...getNewInnerInterfaces(oldClass, newClass),
-            ...getRemovedInnerInterfaces(oldClass, newClass),
-            ...getNewInnerEnums(oldClass, newClass),
-            ...getRemovedInnerEnums(oldClass, newClass),
+            ...getNewValues(oldClass, newClass, 'properties', 'NewProperty'),
+            ...getRemovedValues(oldClass, newClass, 'properties', 'RemovedProperty'),
+            ...getNewValues(oldClass, newClass, 'fields', 'NewField'),
+            ...getRemovedValues(oldClass, newClass, 'fields', 'RemovedField'),
+            ...getNewValues(oldClass, newClass, 'classes', 'NewType'),
+            ...getRemovedValues(oldClass, newClass, 'classes', 'RemovedType'),
+            ...getNewValues(oldClass, newClass, 'interfaces', 'NewType'),
+            ...getRemovedValues(oldClass, newClass, 'interfaces', 'RemovedType'),
+            ...getNewValues(oldClass, newClass, 'enums', 'NewType'),
+            ...getRemovedValues(oldClass, newClass, 'enums', 'RemovedType'),
           ],
         };
       }),
@@ -188,118 +146,52 @@ function getTypesInBothVersions(oldVersion: VersionManifest, newVersion: Version
     .filter((type) => type.newType !== undefined) as TypeInBoth[];
 }
 
-function getNewEnumValues(oldEnum: EnumMirror, newEnum: EnumMirror): NewEnumValue[] {
-  return newEnum.values
+type NameAware = {
+  name: string;
+};
+
+function getNewValues<T extends Record<K, NameAware[]>, K extends keyof T>(
+  oldPlaceToSearch: T,
+  newPlaceToSearch: T,
+  keyToSearch: K,
+  typeName: ModificationTypes,
+): MemberModificationType[] {
+  return newPlaceToSearch[keyToSearch]
     .filter(
-      (newValue) => !oldEnum.values.some((oldValue) => oldValue.name.toLowerCase() === newValue.name.toLowerCase()),
+      (newValue) =>
+        !oldPlaceToSearch[keyToSearch].some((oldValue) => oldValue.name.toLowerCase() === newValue.name.toLowerCase()),
     )
-    .map((value) => ({ __typename: 'NewEnumValue', value: value.name }));
+    .map((value) => value.name)
+    .map((name) => ({ __typename: typeName, name }));
 }
 
-function getRemovedEnumValues(oldEnum: EnumMirror, newEnum: EnumMirror): RemovedEnumValue[] {
-  return oldEnum.values
+function getRemovedValues<T extends Record<K, NameAware[]>, K extends keyof T>(
+  oldPlaceToSearch: T,
+  newPlaceToSearch: T,
+  keyToSearch: K,
+  typeName: ModificationTypes,
+): MemberModificationType[] {
+  return oldPlaceToSearch[keyToSearch]
     .filter(
-      (oldValue) => !newEnum.values.some((newValue) => newValue.name.toLowerCase() === oldValue.name.toLowerCase()),
+      (oldValue) =>
+        !newPlaceToSearch[keyToSearch].some((newValue) => newValue.name.toLowerCase() === oldValue.name.toLowerCase()),
     )
-    .map((value) => ({ __typename: 'RemovedEnumValue', value: value.name }));
+    .map((value) => value.name)
+    .map((name) => ({ __typename: typeName, name }));
 }
 
 type MethodAware = {
   methods: MethodMirror[];
 };
 
-function getNewMethods(oldMethodAware: MethodAware, newMethodAware: MethodAware): NewMethod[] {
+function getNewMethods(oldMethodAware: MethodAware, newMethodAware: MethodAware): MemberModificationType[] {
   return newMethodAware.methods
     .filter((newMethod) => !oldMethodAware.methods.some((oldMethod) => areMethodsEqual(oldMethod, newMethod)))
     .map((method) => ({ __typename: 'NewMethod', name: method.name }));
 }
 
-function getRemovedMethods(oldMethodAware: MethodAware, newMethodAware: MethodAware): RemovedMethod[] {
+function getRemovedMethods(oldMethodAware: MethodAware, newMethodAware: MethodAware): MemberModificationType[] {
   return oldMethodAware.methods
     .filter((oldMethod) => !newMethodAware.methods.some((newMethod) => areMethodsEqual(oldMethod, newMethod)))
     .map((method) => ({ __typename: 'RemovedMethod', name: method.name }));
-}
-
-function getNewProperties(oldClass: ClassMirror, newClass: ClassMirror): NewProperty[] {
-  return newClass.properties
-    .filter(
-      (newValue) =>
-        !oldClass.properties.some((oldValue) => oldValue.name.toLowerCase() === newValue.name.toLowerCase()),
-    )
-    .map((value) => ({ __typename: 'NewProperty', name: value.name }));
-}
-
-function getRemovedProperties(oldClass: ClassMirror, newClass: ClassMirror): RemovedProperty[] {
-  return oldClass.properties
-    .filter(
-      (oldValue) =>
-        !newClass.properties.some((newValue) => newValue.name.toLowerCase() === oldValue.name.toLowerCase()),
-    )
-    .map((value) => ({ __typename: 'RemovedProperty', name: value.name }));
-}
-
-function getNewFields(oldClass: ClassMirror, newClass: ClassMirror): NewField[] {
-  return newClass.fields
-    .filter(
-      (newValue) => !oldClass.fields.some((oldValue) => oldValue.name.toLowerCase() === newValue.name.toLowerCase()),
-    )
-    .map((value) => ({ __typename: 'NewField', name: value.name }));
-}
-
-function getRemovedFields(oldClass: ClassMirror, newClass: ClassMirror): RemovedField[] {
-  return oldClass.fields
-    .filter(
-      (oldValue) => !newClass.fields.some((newValue) => newValue.name.toLowerCase() === oldValue.name.toLowerCase()),
-    )
-    .map((value) => ({ __typename: 'RemovedField', name: value.name }));
-}
-
-function getNewInnerClasses(oldClass: ClassMirror, newClass: ClassMirror): NewType[] {
-  return newClass.classes
-    .filter(
-      (newValue) => !oldClass.classes.some((oldValue) => oldValue.name.toLowerCase() === newValue.name.toLowerCase()),
-    )
-    .map((value) => ({ __typename: 'NewType', name: value.name }));
-}
-
-function getRemovedInnerClasses(oldClass: ClassMirror, newClass: ClassMirror): RemovedType[] {
-  return oldClass.classes
-    .filter(
-      (oldValue) => !newClass.classes.some((newValue) => newValue.name.toLowerCase() === oldValue.name.toLowerCase()),
-    )
-    .map((value) => ({ __typename: 'RemovedType', name: value.name }));
-}
-
-function getNewInnerInterfaces(oldClass: ClassMirror, newClass: ClassMirror): NewType[] {
-  return newClass.interfaces
-    .filter(
-      (newValue) =>
-        !oldClass.interfaces.some((oldValue) => oldValue.name.toLowerCase() === newValue.name.toLowerCase()),
-    )
-    .map((value) => ({ __typename: 'NewType', name: value.name }));
-}
-
-function getRemovedInnerInterfaces(oldClass: ClassMirror, newClass: ClassMirror): RemovedType[] {
-  return oldClass.interfaces
-    .filter(
-      (oldValue) =>
-        !newClass.interfaces.some((newValue) => newValue.name.toLowerCase() === oldValue.name.toLowerCase()),
-    )
-    .map((value) => ({ __typename: 'RemovedType', name: value.name }));
-}
-
-function getNewInnerEnums(oldClass: ClassMirror, newClass: ClassMirror): NewType[] {
-  return newClass.enums
-    .filter(
-      (newValue) => !oldClass.enums.some((oldValue) => oldValue.name.toLowerCase() === newValue.name.toLowerCase()),
-    )
-    .map((value) => ({ __typename: 'NewType', name: value.name }));
-}
-
-function getRemovedInnerEnums(oldClass: ClassMirror, newClass: ClassMirror): RemovedType[] {
-  return oldClass.enums
-    .filter(
-      (oldValue) => !newClass.enums.some((newValue) => newValue.name.toLowerCase() === oldValue.name.toLowerCase()),
-    )
-    .map((value) => ({ __typename: 'RemovedType', name: value.name }));
 }

@@ -94,7 +94,7 @@ describe('when generating a change log', () => {
         modifications: [
           {
             __typename: 'NewEnumValue',
-            value: 'VALUE2',
+            name: 'VALUE2',
           },
         ],
       },
@@ -118,7 +118,7 @@ describe('when generating a change log', () => {
         modifications: [
           {
             __typename: 'RemovedEnumValue',
-            value: 'VALUE2',
+            name: 'VALUE2',
           },
         ],
       },
