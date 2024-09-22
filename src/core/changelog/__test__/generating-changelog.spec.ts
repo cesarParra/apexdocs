@@ -150,7 +150,7 @@ describe('when generating a change log', () => {
   });
 
   it('lists all new methods of a class', () => {
-    const classBefore = 'public class MyClass { void oldMethod() {} }';
+    const classBefore = 'public class MyClass { }';
     const oldClass = typeFromRawString(classBefore);
     const classAfter = 'public class MyClass { void newMethod() {} }';
     const newClass = typeFromRawString(classAfter);
@@ -167,6 +167,30 @@ describe('when generating a change log', () => {
           {
             __typename: 'NewMethod',
             name: 'newMethod',
+          },
+        ],
+      },
+    ]);
+  });
+
+  it('lists all removed methods of an interface', () => {
+    const interfaceBefore = 'public interface MyInterface { void oldMethod(); }';
+    const oldInterface = typeFromRawString(interfaceBefore);
+    const interfaceAfter = 'public interface MyInterface {}';
+    const newInterface = typeFromRawString(interfaceAfter);
+
+    const oldVersion = { types: [oldInterface] };
+    const newVersion = { types: [newInterface] };
+
+    const changeLog = generateChangeLog(oldVersion, newVersion);
+
+    expect(changeLog.newOrModifiedMembers).toEqual([
+      {
+        typeName: 'MyInterface',
+        modifications: [
+          {
+            __typename: 'RemovedMethod',
+            name: 'oldMethod',
           },
         ],
       },

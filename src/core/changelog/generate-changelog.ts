@@ -21,7 +21,12 @@ type NewMethod = {
   name: string;
 };
 
-type MemberModificationType = NewEnumValue | RemovedEnumValue | NewMethod;
+type RemovedMethod = {
+  __typename: 'RemovedMethod';
+  name: string;
+};
+
+type MemberModificationType = NewEnumValue | RemovedEnumValue | NewMethod | RemovedMethod;
 
 type NewOrModifiedMember = {
   typeName: string;
@@ -89,7 +94,10 @@ function getNewOrModifiedMethods(typesInBoth: TypeInBoth[]): NewOrModifiedMember
 
         return {
           typeName: newType.name,
-          modifications: getNewMethods(oldMethodAware, newMethodAware),
+          modifications: [
+            ...getNewMethods(oldMethodAware, newMethodAware),
+            ...getRemovedMethods(oldMethodAware, newMethodAware),
+          ],
         };
       }),
   );
@@ -133,4 +141,10 @@ function getNewMethods(oldMethodAware: MethodAware, newMethodAware: MethodAware)
   return newMethodAware.methods
     .filter((newMethod) => !oldMethodAware.methods.some((oldMethod) => areMethodsEqual(oldMethod, newMethod)))
     .map((method) => ({ __typename: 'NewMethod', name: method.name }));
+}
+
+function getRemovedMethods(oldMethodAware: MethodAware, newMethodAware: MethodAware): RemovedMethod[] {
+  return oldMethodAware.methods
+    .filter((oldMethod) => !newMethodAware.methods.some((newMethod) => areMethodsEqual(oldMethod, newMethod)))
+    .map((method) => ({ __typename: 'RemovedMethod', name: method.name }));
 }
