@@ -1,4 +1,4 @@
-import { EnumMirror, MethodMirror, Type } from '@cparra/apex-reflection';
+import { ClassMirror, EnumMirror, MethodMirror, Type } from '@cparra/apex-reflection';
 import { pipe } from 'fp-ts/function';
 import { areMethodsEqual } from './method-changes-checker';
 
@@ -26,7 +26,12 @@ type RemovedMethod = {
   name: string;
 };
 
-type MemberModificationType = NewEnumValue | RemovedEnumValue | NewMethod | RemovedMethod;
+type NewProperty = {
+  __typename: 'NewProperty';
+  name: string;
+};
+
+type MemberModificationType = NewEnumValue | RemovedEnumValue | NewMethod | RemovedMethod | NewProperty;
 
 type NewOrModifiedMember = {
   typeName: string;
@@ -62,7 +67,11 @@ function getRemovedTypes(oldVersion: VersionManifest, newVersion: VersionManifes
 function getNewOrModifiedMembers(oldVersion: VersionManifest, newVersion: VersionManifest): NewOrModifiedMember[] {
   return pipe(
     getTypesInBothVersions(oldVersion, newVersion),
-    (typesInBoth) => [...getNewOrModifiedEnumValues(typesInBoth), ...getNewOrModifiedMethods(typesInBoth)],
+    (typesInBoth) => [
+      ...getNewOrModifiedEnumValues(typesInBoth),
+      ...getNewOrModifiedMethods(typesInBoth),
+      ...getNewOrModifiedClassMembers(typesInBoth),
+    ],
     (newOrModifiedMembers) => newOrModifiedMembers.filter((member) => member.modifications.length > 0),
   );
 }
@@ -98,6 +107,22 @@ function getNewOrModifiedMethods(typesInBoth: TypeInBoth[]): NewOrModifiedMember
             ...getNewMethods(oldMethodAware, newMethodAware),
             ...getRemovedMethods(oldMethodAware, newMethodAware),
           ],
+        };
+      }),
+  );
+}
+
+function getNewOrModifiedClassMembers(typesInBoth: TypeInBoth[]): NewOrModifiedMember[] {
+  return pipe(
+    typesInBoth.filter((typeInBoth) => typeInBoth.oldType.type_name === 'class'),
+    (classesInBoth) =>
+      classesInBoth.map(({ oldType, newType }) => {
+        const oldClass = oldType as ClassMirror;
+        const newClass = newType as ClassMirror;
+
+        return {
+          typeName: newType.name,
+          modifications: [...getNewProperties(oldClass, newClass)],
         };
       }),
   );
@@ -147,4 +172,13 @@ function getRemovedMethods(oldMethodAware: MethodAware, newMethodAware: MethodAw
   return oldMethodAware.methods
     .filter((oldMethod) => !newMethodAware.methods.some((newMethod) => areMethodsEqual(oldMethod, newMethod)))
     .map((method) => ({ __typename: 'RemovedMethod', name: method.name }));
+}
+
+function getNewProperties(oldClass: ClassMirror, newClass: ClassMirror): NewProperty[] {
+  return newClass.properties
+    .filter(
+      (newValue) =>
+        !oldClass.properties.some((oldValue) => oldValue.name.toLowerCase() === newValue.name.toLowerCase()),
+    )
+    .map((value) => ({ __typename: 'NewProperty', name: value.name }));
 }

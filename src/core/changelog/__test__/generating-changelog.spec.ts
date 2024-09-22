@@ -196,4 +196,28 @@ describe('when generating a change log', () => {
       },
     ]);
   });
+
+  it('lists all new properties of a class', () => {
+    const classBefore = 'public class MyClass { }';
+    const oldClass = typeFromRawString(classBefore);
+    const classAfter = 'public class MyClass { String newProperty { get; set; } }';
+    const newClass = typeFromRawString(classAfter);
+
+    const oldVersion = { types: [oldClass] };
+    const newVersion = { types: [newClass] };
+
+    const changeLog = generateChangeLog(oldVersion, newVersion);
+
+    expect(changeLog.newOrModifiedMembers).toEqual([
+      {
+        typeName: 'MyClass',
+        modifications: [
+          {
+            __typename: 'NewProperty',
+            name: 'newProperty',
+          },
+        ],
+      },
+    ]);
+  });
 });

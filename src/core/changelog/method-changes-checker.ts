@@ -1,7 +1,7 @@
 import { MethodMirror } from '@cparra/apex-reflection';
 
 export function areMethodsEqual(method1: MethodMirror, method2: MethodMirror): boolean {
-  if (method1.name !== method2.name) {
+  if (method1.name.toLowerCase() !== method2.name.toLowerCase()) {
     return false;
   }
 
