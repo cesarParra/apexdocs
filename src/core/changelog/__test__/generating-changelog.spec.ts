@@ -292,4 +292,28 @@ describe('when generating a change log', () => {
       },
     ]);
   });
+
+  it('lists new inner classes of a class', () => {
+    const classBefore = 'public class MyClass { }';
+    const oldClass = typeFromRawString(classBefore);
+    const classAfter = 'public class MyClass { class NewInnerClass { } }';
+    const newClass = typeFromRawString(classAfter);
+
+    const oldVersion = { types: [oldClass] };
+    const newVersion = { types: [newClass] };
+
+    const changeLog = generateChangeLog(oldVersion, newVersion);
+
+    expect(changeLog.newOrModifiedMembers).toEqual([
+      {
+        typeName: 'MyClass',
+        modifications: [
+          {
+            __typename: 'NewType',
+            name: 'NewInnerClass',
+          },
+        ],
+      },
+    ]);
+  });
 });

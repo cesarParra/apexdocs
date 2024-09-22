@@ -46,6 +46,11 @@ type RemovedField = {
   name: string;
 };
 
+type NewType = {
+  __typename: 'NewType';
+  name: string;
+};
+
 type MemberModificationType =
   | NewEnumValue
   | RemovedEnumValue
@@ -54,7 +59,8 @@ type MemberModificationType =
   | NewProperty
   | RemovedProperty
   | NewField
-  | RemovedField;
+  | RemovedField
+  | NewType;
 
 type NewOrModifiedMember = {
   typeName: string;
@@ -150,6 +156,7 @@ function getNewOrModifiedClassMembers(typesInBoth: TypeInBoth[]): NewOrModifiedM
             ...getRemovedProperties(oldClass, newClass),
             ...getNewFields(oldClass, newClass),
             ...getRemovedFields(oldClass, newClass),
+            ...getNewInnerClasses(oldClass, newClass),
           ],
         };
       }),
@@ -234,4 +241,12 @@ function getRemovedFields(oldClass: ClassMirror, newClass: ClassMirror): Removed
       (oldValue) => !newClass.fields.some((newValue) => newValue.name.toLowerCase() === oldValue.name.toLowerCase()),
     )
     .map((value) => ({ __typename: 'RemovedField', name: value.name }));
+}
+
+function getNewInnerClasses(oldClass: ClassMirror, newClass: ClassMirror): NewType[] {
+  return newClass.classes
+    .filter(
+      (newValue) => !oldClass.classes.some((oldValue) => oldValue.name.toLowerCase() === newValue.name.toLowerCase()),
+    )
+    .map((value) => ({ __typename: 'NewType', name: value.name }));
 }
