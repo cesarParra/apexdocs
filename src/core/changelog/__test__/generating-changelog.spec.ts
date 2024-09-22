@@ -220,4 +220,28 @@ describe('when generating a change log', () => {
       },
     ]);
   });
+
+  it('lists all removed properties of a class', () => {
+    const classBefore = 'public class MyClass { String oldProperty { get; set; } }';
+    const oldClass = typeFromRawString(classBefore);
+    const classAfter = 'public class MyClass { }';
+    const newClass = typeFromRawString(classAfter);
+
+    const oldVersion = { types: [oldClass] };
+    const newVersion = { types: [newClass] };
+
+    const changeLog = generateChangeLog(oldVersion, newVersion);
+
+    expect(changeLog.newOrModifiedMembers).toEqual([
+      {
+        typeName: 'MyClass',
+        modifications: [
+          {
+            __typename: 'RemovedProperty',
+            name: 'oldProperty',
+          },
+        ],
+      },
+    ]);
+  });
 });

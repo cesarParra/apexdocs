@@ -31,7 +31,18 @@ type NewProperty = {
   name: string;
 };
 
-type MemberModificationType = NewEnumValue | RemovedEnumValue | NewMethod | RemovedMethod | NewProperty;
+type RemovedProperty = {
+  __typename: 'RemovedProperty';
+  name: string;
+};
+
+type MemberModificationType =
+  | NewEnumValue
+  | RemovedEnumValue
+  | NewMethod
+  | RemovedMethod
+  | NewProperty
+  | RemovedProperty;
 
 type NewOrModifiedMember = {
   typeName: string;
@@ -122,7 +133,7 @@ function getNewOrModifiedClassMembers(typesInBoth: TypeInBoth[]): NewOrModifiedM
 
         return {
           typeName: newType.name,
-          modifications: [...getNewProperties(oldClass, newClass)],
+          modifications: [...getNewProperties(oldClass, newClass), ...getRemovedProperties(oldClass, newClass)],
         };
       }),
   );
@@ -181,4 +192,13 @@ function getNewProperties(oldClass: ClassMirror, newClass: ClassMirror): NewProp
         !oldClass.properties.some((oldValue) => oldValue.name.toLowerCase() === newValue.name.toLowerCase()),
     )
     .map((value) => ({ __typename: 'NewProperty', name: value.name }));
+}
+
+function getRemovedProperties(oldClass: ClassMirror, newClass: ClassMirror): RemovedProperty[] {
+  return oldClass.properties
+    .filter(
+      (oldValue) =>
+        !newClass.properties.some((newValue) => newValue.name.toLowerCase() === oldValue.name.toLowerCase()),
+    )
+    .map((value) => ({ __typename: 'RemovedProperty', name: value.name }));
 }
