@@ -36,13 +36,25 @@ type RemovedProperty = {
   name: string;
 };
 
+type NewField = {
+  __typename: 'NewField';
+  name: string;
+};
+
+type RemovedField = {
+  __typename: 'RemovedField';
+  name: string;
+};
+
 type MemberModificationType =
   | NewEnumValue
   | RemovedEnumValue
   | NewMethod
   | RemovedMethod
   | NewProperty
-  | RemovedProperty;
+  | RemovedProperty
+  | NewField
+  | RemovedField;
 
 type NewOrModifiedMember = {
   typeName: string;
@@ -133,7 +145,12 @@ function getNewOrModifiedClassMembers(typesInBoth: TypeInBoth[]): NewOrModifiedM
 
         return {
           typeName: newType.name,
-          modifications: [...getNewProperties(oldClass, newClass), ...getRemovedProperties(oldClass, newClass)],
+          modifications: [
+            ...getNewProperties(oldClass, newClass),
+            ...getRemovedProperties(oldClass, newClass),
+            ...getNewFields(oldClass, newClass),
+            ...getRemovedFields(oldClass, newClass),
+          ],
         };
       }),
   );
@@ -201,4 +218,20 @@ function getRemovedProperties(oldClass: ClassMirror, newClass: ClassMirror): Rem
         !newClass.properties.some((newValue) => newValue.name.toLowerCase() === oldValue.name.toLowerCase()),
     )
     .map((value) => ({ __typename: 'RemovedProperty', name: value.name }));
+}
+
+function getNewFields(oldClass: ClassMirror, newClass: ClassMirror): NewField[] {
+  return newClass.fields
+    .filter(
+      (newValue) => !oldClass.fields.some((oldValue) => oldValue.name.toLowerCase() === newValue.name.toLowerCase()),
+    )
+    .map((value) => ({ __typename: 'NewField', name: value.name }));
+}
+
+function getRemovedFields(oldClass: ClassMirror, newClass: ClassMirror): RemovedField[] {
+  return oldClass.fields
+    .filter(
+      (oldValue) => !newClass.fields.some((newValue) => newValue.name.toLowerCase() === oldValue.name.toLowerCase()),
+    )
+    .map((value) => ({ __typename: 'RemovedField', name: value.name }));
 }

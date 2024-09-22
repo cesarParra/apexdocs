@@ -244,4 +244,52 @@ describe('when generating a change log', () => {
       },
     ]);
   });
+
+  it('lists all new fields of a class', () => {
+    const classBefore = 'public class MyClass { }';
+    const oldClass = typeFromRawString(classBefore);
+    const classAfter = 'public class MyClass { String newField; }';
+    const newClass = typeFromRawString(classAfter);
+
+    const oldVersion = { types: [oldClass] };
+    const newVersion = { types: [newClass] };
+
+    const changeLog = generateChangeLog(oldVersion, newVersion);
+
+    expect(changeLog.newOrModifiedMembers).toEqual([
+      {
+        typeName: 'MyClass',
+        modifications: [
+          {
+            __typename: 'NewField',
+            name: 'newField',
+          },
+        ],
+      },
+    ]);
+  });
+
+  it('lists all removed fields of a class', () => {
+    const classBefore = 'public class MyClass { String oldField; }';
+    const oldClass = typeFromRawString(classBefore);
+    const classAfter = 'public class MyClass { }';
+    const newClass = typeFromRawString(classAfter);
+
+    const oldVersion = { types: [oldClass] };
+    const newVersion = { types: [newClass] };
+
+    const changeLog = generateChangeLog(oldVersion, newVersion);
+
+    expect(changeLog.newOrModifiedMembers).toEqual([
+      {
+        typeName: 'MyClass',
+        modifications: [
+          {
+            __typename: 'RemovedField',
+            name: 'oldField',
+          },
+        ],
+      },
+    ]);
+  });
 });
