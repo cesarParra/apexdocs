@@ -150,7 +150,7 @@ describe('when generating a change log', () => {
   });
 
   it('lists all new methods of a class', () => {
-    const classBefore = 'public class MyClass {}';
+    const classBefore = 'public class MyClass { void oldMethod() {} }';
     const oldClass = typeFromRawString(classBefore);
     const classAfter = 'public class MyClass { void newMethod() {} }';
     const newClass = typeFromRawString(classAfter);

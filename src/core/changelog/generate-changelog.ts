@@ -1,5 +1,6 @@
 import { EnumMirror, MethodMirror, Type } from '@cparra/apex-reflection';
 import { pipe } from 'fp-ts/function';
+import { areMethodsEqual } from './method-changes-checker';
 
 export type VersionManifest = {
   types: Type[];
@@ -130,9 +131,6 @@ type MethodAware = {
 
 function getNewMethods(oldMethodAware: MethodAware, newMethodAware: MethodAware): NewMethod[] {
   return newMethodAware.methods
-    .filter(
-      (newMethod) =>
-        !oldMethodAware.methods.some((oldMethod) => oldMethod.name.toLowerCase() === newMethod.name.toLowerCase()),
-    )
+    .filter((newMethod) => !oldMethodAware.methods.some((oldMethod) => areMethodsEqual(oldMethod, newMethod)))
     .map((method) => ({ __typename: 'NewMethod', name: method.name }));
 }
