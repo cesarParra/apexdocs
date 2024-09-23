@@ -97,8 +97,20 @@ function getNewOrModifiedMethods(typesInBoth: TypeInBoth[]): NewOrModifiedMember
         return {
           typeName: newType.name,
           modifications: [
-            ...getNewMethods(oldMethodAware, newMethodAware),
-            ...getRemovedMethods(oldMethodAware, newMethodAware),
+            ...getNewValues<MethodMirror, MethodAware, 'methods'>(
+              oldMethodAware,
+              newMethodAware,
+              'methods',
+              'NewMethod',
+              areMethodsEqual,
+            ),
+            ...getRemovedValues<MethodMirror, MethodAware, 'methods'>(
+              oldMethodAware,
+              newMethodAware,
+              'methods',
+              'RemovedMethod',
+              areMethodsEqual,
+            ),
           ],
         };
       }),
@@ -150,32 +162,33 @@ type NameAware = {
   name: string;
 };
 
-function getNewValues<T extends Record<K, NameAware[]>, K extends keyof T>(
+type AreEqualFn<T> = (oldValue: T, newValue: T) => boolean;
+function areEqualByName<T extends NameAware>(oldValue: T, newValue: T): boolean {
+  return oldValue.name.toLowerCase() === newValue.name.toLowerCase();
+}
+
+function getNewValues<Named extends NameAware, T extends Record<K, Named[]>, K extends keyof T>(
   oldPlaceToSearch: T,
   newPlaceToSearch: T,
   keyToSearch: K,
   typeName: ModificationTypes,
+  areEqualFn: AreEqualFn<Named> = areEqualByName,
 ): MemberModificationType[] {
   return newPlaceToSearch[keyToSearch]
-    .filter(
-      (newValue) =>
-        !oldPlaceToSearch[keyToSearch].some((oldValue) => oldValue.name.toLowerCase() === newValue.name.toLowerCase()),
-    )
+    .filter((newValue) => !oldPlaceToSearch[keyToSearch].some((oldValue) => areEqualFn(oldValue, newValue)))
     .map((value) => value.name)
     .map((name) => ({ __typename: typeName, name }));
 }
 
-function getRemovedValues<T extends Record<K, NameAware[]>, K extends keyof T>(
+function getRemovedValues<Named extends NameAware, T extends Record<K, Named[]>, K extends keyof T>(
   oldPlaceToSearch: T,
   newPlaceToSearch: T,
   keyToSearch: K,
   typeName: ModificationTypes,
+  areEqualFn: AreEqualFn<Named> = areEqualByName,
 ): MemberModificationType[] {
   return oldPlaceToSearch[keyToSearch]
-    .filter(
-      (oldValue) =>
-        !newPlaceToSearch[keyToSearch].some((newValue) => newValue.name.toLowerCase() === oldValue.name.toLowerCase()),
-    )
+    .filter((oldValue) => !newPlaceToSearch[keyToSearch].some((newValue) => areEqualFn(oldValue, newValue)))
     .map((value) => value.name)
     .map((name) => ({ __typename: typeName, name }));
 }
@@ -183,15 +196,3 @@ function getRemovedValues<T extends Record<K, NameAware[]>, K extends keyof T>(
 type MethodAware = {
   methods: MethodMirror[];
 };
-
-function getNewMethods(oldMethodAware: MethodAware, newMethodAware: MethodAware): MemberModificationType[] {
-  return newMethodAware.methods
-    .filter((newMethod) => !oldMethodAware.methods.some((oldMethod) => areMethodsEqual(oldMethod, newMethod)))
-    .map((method) => ({ __typename: 'NewMethod', name: method.name }));
-}
-
-function getRemovedMethods(oldMethodAware: MethodAware, newMethodAware: MethodAware): MemberModificationType[] {
-  return oldMethodAware.methods
-    .filter((oldMethod) => !newMethodAware.methods.some((newMethod) => areMethodsEqual(oldMethod, newMethod)))
-    .map((method) => ({ __typename: 'RemovedMethod', name: method.name }));
-}
