@@ -10,7 +10,7 @@ function main() {
   function parseResult(result: E.Either<unknown, string>) {
     E.match(
       (error) => {
-        logger.error(`❌ An error occurred while generating the documentation: ${error}`);
+        logger.error(`❌ An error occurred while processing the request: ${error}`);
         process.exit(1);
       },
       (successMessage: string) => {

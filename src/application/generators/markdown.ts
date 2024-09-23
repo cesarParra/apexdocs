@@ -11,7 +11,7 @@ import * as TE from 'fp-ts/TaskEither';
 import { isSkip } from '../../core/shared/utils';
 import { writeFiles } from '../file-writer';
 
-class FileWritingError {
+export class FileWritingError {
   readonly _tag = 'FileWritingError';
 
   constructor(

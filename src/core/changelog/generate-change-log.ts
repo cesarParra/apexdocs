@@ -1,4 +1,4 @@
-import { ParsedFile, UnparsedSourceFile } from '../shared/types';
+import { ParsedFile, UnparsedSourceFile, UserDefinedChangelogConfig } from '../shared/types';
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
 // TODO: Move the reflection code to outside of the markdown folder since now it is shared with this
@@ -9,14 +9,10 @@ import { convertToRenderableChangeLog } from './renderable-change-log';
 import { CompilationRequest, Template } from '../markdown/templates/template';
 import { changeLogTemplate } from './templates/change-log-template';
 
-type ChangeLogPageData = {
+export type ChangeLogPageData = {
   // TODO: This should also support frontmatter (and the hook to add it)
   content: string;
-  filePath: string;
-};
-
-type ChangeLogConfig = {
-  targetDir: string;
+  outputDocPath: string;
 };
 
 // TODO: We should provide the ability to filter out of scope if we are going
@@ -24,7 +20,7 @@ type ChangeLogConfig = {
 export function generateChangeLog(
   oldBundles: UnparsedSourceFile[],
   newBundles: UnparsedSourceFile[],
-  config: ChangeLogConfig,
+  config: UserDefinedChangelogConfig,
 ): TE.TaskEither<ReflectionErrors, ChangeLogPageData> {
   return pipe(
     reflectBundles(oldBundles),
@@ -51,9 +47,7 @@ export function generateChangeLog(
     }),
     TE.map((content) => ({
       content,
-      // TODO: There should be a way that someone can change the name of the output file
-      // TODO: Do not concantenate the strings, but instead use the path module
-      filePath: `${config.targetDir}/changelog.md`,
+      outputDocPath: `${config.fileName}.md`,
     })),
   );
 }

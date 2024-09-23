@@ -53,6 +53,8 @@ function skip(): Skip {
   };
 }
 
+// TODO: It should be possible to generate the changelog imperatively
+
 export {
   defineMarkdownConfig,
   ConfigurableMarkdownConfig,

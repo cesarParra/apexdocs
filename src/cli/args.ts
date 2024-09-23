@@ -1,9 +1,10 @@
 import { cosmiconfig, CosmiconfigResult } from 'cosmiconfig';
 import * as yargs from 'yargs';
-import { UserDefinedConfig, UserDefinedMarkdownConfig } from '../core/shared/types';
+import { Generators, UserDefinedConfig, UserDefinedMarkdownConfig } from '../core/shared/types';
 import { TypeScriptLoader } from 'cosmiconfig-typescript-loader';
 import { markdownOptions } from './commands/markdown';
 import { openApiOptions } from './commands/openapi';
+import { changeLogOptions } from './commands/changelog';
 
 const configOnlyMarkdownDefaults: Partial<UserDefinedMarkdownConfig> = {
   excludeTags: [],
@@ -39,6 +40,9 @@ function _extractYargs(config?: CosmiconfigResult) {
     .command('openapi', 'Generate an OpenApi REST specification from Apex classes.', () =>
       yargs.options(openApiOptions),
     )
+    .command('changelog', 'Generate a changelog from 2 versions of the source code.', () =>
+      yargs.options(changeLogOptions),
+    )
     .demandCommand()
     .parseSync();
 }
@@ -51,10 +55,16 @@ export async function extractArgs(): Promise<UserDefinedConfig> {
   const cliArgs = _extractYargs(config);
   const commandName = cliArgs._[0];
 
-  const mergedConfig = { ...config?.config, ...cliArgs, targetGenerator: commandName as 'markdown' | 'openapi' };
+  const mergedConfig = { ...config?.config, ...cliArgs, targetGenerator: commandName as Generators };
+  // TODO: Use switch statement instead of if-else
   if (mergedConfig.targetGenerator === 'markdown') {
     return { ...configOnlyMarkdownDefaults, ...mergedConfig };
-  } else {
+  } else if (mergedConfig.targetGenerator === 'openapi') {
     return { ...configOnlyOpenApiDefaults, ...mergedConfig };
+  } else if (mergedConfig.targetGenerator === 'changelog') {
+    return mergedConfig;
+  } else {
+    // TODO: Handle the changelog case
+    throw new Error(`Unknown command: ${commandName}`);
   }
 }
