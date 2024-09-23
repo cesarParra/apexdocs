@@ -1,4 +1,4 @@
-import { generateChangeLog } from '../generate-changelog';
+import { processChangeLog } from '../process-change-log';
 import { reflect, Type } from '@cparra/apex-reflection';
 
 function typeFromRawString(raw: string): Type {
@@ -15,7 +15,7 @@ describe('when generating a change log', () => {
     const oldVersion = { types: [] };
     const newVersion = { types: [] };
 
-    const changeLog = generateChangeLog(oldVersion, newVersion);
+    const changeLog = processChangeLog(oldVersion, newVersion);
 
     expect(changeLog.newTypes).toEqual([]);
   });
@@ -24,7 +24,7 @@ describe('when generating a change log', () => {
     const oldVersion = { types: [] };
     const newVersion = { types: [] };
 
-    const changeLog = generateChangeLog(oldVersion, newVersion);
+    const changeLog = processChangeLog(oldVersion, newVersion);
 
     expect(changeLog.removedTypes).toEqual([]);
   });
@@ -35,7 +35,7 @@ describe('when generating a change log', () => {
     const oldVersion = { types: [anyClass] };
     const newVersion = { types: [anyClass] };
 
-    const changeLog = generateChangeLog(oldVersion, newVersion);
+    const changeLog = processChangeLog(oldVersion, newVersion);
 
     expect(changeLog.newTypes).toEqual([]);
   });
@@ -46,7 +46,7 @@ describe('when generating a change log', () => {
     const oldVersion = { types: [anyClass] };
     const newVersion = { types: [anyClass] };
 
-    const changeLog = generateChangeLog(oldVersion, newVersion);
+    const changeLog = processChangeLog(oldVersion, newVersion);
 
     expect(changeLog.removedTypes).toEqual([]);
   });
@@ -59,7 +59,7 @@ describe('when generating a change log', () => {
     const newClass = typeFromRawString(newClassBody);
     const newVersion = { types: [existingClass, newClass] };
 
-    const changeLog = generateChangeLog(oldVersion, newVersion);
+    const changeLog = processChangeLog(oldVersion, newVersion);
 
     expect(changeLog.newTypes).toEqual([newClass.name]);
   });
@@ -72,7 +72,7 @@ describe('when generating a change log', () => {
     const oldVersion = { types: [existingClass, existingOnlyInOldClass] };
     const newVersion = { types: [existingClass] };
 
-    const changeLog = generateChangeLog(oldVersion, newVersion);
+    const changeLog = processChangeLog(oldVersion, newVersion);
 
     expect(changeLog.removedTypes).toEqual([existingOnlyInOldClass.name]);
   });
@@ -86,7 +86,7 @@ describe('when generating a change log', () => {
     const oldVersion = { types: [oldEnum] };
     const newVersion = { types: [newEnum] };
 
-    const changeLog = generateChangeLog(oldVersion, newVersion);
+    const changeLog = processChangeLog(oldVersion, newVersion);
 
     expect(changeLog.newOrModifiedMembers).toEqual([
       {
@@ -110,7 +110,7 @@ describe('when generating a change log', () => {
     const oldVersion = { types: [oldEnum] };
     const newVersion = { types: [newEnum] };
 
-    const changeLog = generateChangeLog(oldVersion, newVersion);
+    const changeLog = processChangeLog(oldVersion, newVersion);
 
     expect(changeLog.newOrModifiedMembers).toEqual([
       {
@@ -134,7 +134,7 @@ describe('when generating a change log', () => {
     const oldVersion = { types: [oldInterface] };
     const newVersion = { types: [newInterface] };
 
-    const changeLog = generateChangeLog(oldVersion, newVersion);
+    const changeLog = processChangeLog(oldVersion, newVersion);
 
     expect(changeLog.newOrModifiedMembers).toEqual([
       {
@@ -158,7 +158,7 @@ describe('when generating a change log', () => {
     const oldVersion = { types: [oldClass] };
     const newVersion = { types: [newClass] };
 
-    const changeLog = generateChangeLog(oldVersion, newVersion);
+    const changeLog = processChangeLog(oldVersion, newVersion);
 
     expect(changeLog.newOrModifiedMembers).toEqual([
       {
@@ -182,7 +182,7 @@ describe('when generating a change log', () => {
     const oldVersion = { types: [oldInterface] };
     const newVersion = { types: [newInterface] };
 
-    const changeLog = generateChangeLog(oldVersion, newVersion);
+    const changeLog = processChangeLog(oldVersion, newVersion);
 
     expect(changeLog.newOrModifiedMembers).toEqual([
       {
@@ -206,7 +206,7 @@ describe('when generating a change log', () => {
     const oldVersion = { types: [oldClass] };
     const newVersion = { types: [newClass] };
 
-    const changeLog = generateChangeLog(oldVersion, newVersion);
+    const changeLog = processChangeLog(oldVersion, newVersion);
 
     expect(changeLog.newOrModifiedMembers).toEqual([
       {
@@ -230,7 +230,7 @@ describe('when generating a change log', () => {
     const oldVersion = { types: [oldClass] };
     const newVersion = { types: [newClass] };
 
-    const changeLog = generateChangeLog(oldVersion, newVersion);
+    const changeLog = processChangeLog(oldVersion, newVersion);
 
     expect(changeLog.newOrModifiedMembers).toEqual([
       {
@@ -254,7 +254,7 @@ describe('when generating a change log', () => {
     const oldVersion = { types: [oldClass] };
     const newVersion = { types: [newClass] };
 
-    const changeLog = generateChangeLog(oldVersion, newVersion);
+    const changeLog = processChangeLog(oldVersion, newVersion);
 
     expect(changeLog.newOrModifiedMembers).toEqual([
       {
@@ -278,7 +278,7 @@ describe('when generating a change log', () => {
     const oldVersion = { types: [oldClass] };
     const newVersion = { types: [newClass] };
 
-    const changeLog = generateChangeLog(oldVersion, newVersion);
+    const changeLog = processChangeLog(oldVersion, newVersion);
 
     expect(changeLog.newOrModifiedMembers).toEqual([
       {
@@ -302,7 +302,7 @@ describe('when generating a change log', () => {
     const oldVersion = { types: [oldClass] };
     const newVersion = { types: [newClass] };
 
-    const changeLog = generateChangeLog(oldVersion, newVersion);
+    const changeLog = processChangeLog(oldVersion, newVersion);
 
     expect(changeLog.newOrModifiedMembers).toEqual([
       {
@@ -326,7 +326,7 @@ describe('when generating a change log', () => {
     const oldVersion = { types: [oldClass] };
     const newVersion = { types: [newClass] };
 
-    const changeLog = generateChangeLog(oldVersion, newVersion);
+    const changeLog = processChangeLog(oldVersion, newVersion);
 
     expect(changeLog.newOrModifiedMembers).toEqual([
       {
@@ -350,7 +350,7 @@ describe('when generating a change log', () => {
     const oldVersion = { types: [oldClass] };
     const newVersion = { types: [newClass] };
 
-    const changeLog = generateChangeLog(oldVersion, newVersion);
+    const changeLog = processChangeLog(oldVersion, newVersion);
 
     expect(changeLog.newOrModifiedMembers).toEqual([
       {
@@ -374,7 +374,7 @@ describe('when generating a change log', () => {
     const oldVersion = { types: [oldClass] };
     const newVersion = { types: [newClass] };
 
-    const changeLog = generateChangeLog(oldVersion, newVersion);
+    const changeLog = processChangeLog(oldVersion, newVersion);
 
     expect(changeLog.newOrModifiedMembers).toEqual([
       {
@@ -398,7 +398,7 @@ describe('when generating a change log', () => {
     const oldVersion = { types: [oldClass] };
     const newVersion = { types: [newClass] };
 
-    const changeLog = generateChangeLog(oldVersion, newVersion);
+    const changeLog = processChangeLog(oldVersion, newVersion);
 
     expect(changeLog.newOrModifiedMembers).toEqual([
       {
@@ -422,7 +422,7 @@ describe('when generating a change log', () => {
     const oldVersion = { types: [oldClass] };
     const newVersion = { types: [newClass] };
 
-    const changeLog = generateChangeLog(oldVersion, newVersion);
+    const changeLog = processChangeLog(oldVersion, newVersion);
 
     expect(changeLog.newOrModifiedMembers).toEqual([
       {

@@ -34,7 +34,7 @@ export type ChangeLog = {
   newOrModifiedMembers: NewOrModifiedMember[];
 };
 
-export function generateChangeLog(oldVersion: VersionManifest, newVersion: VersionManifest): ChangeLog {
+export function processChangeLog(oldVersion: VersionManifest, newVersion: VersionManifest): ChangeLog {
   return {
     newTypes: getNewTypes(oldVersion, newVersion),
     removedTypes: getRemovedTypes(oldVersion, newVersion),
