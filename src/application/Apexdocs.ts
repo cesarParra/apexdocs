@@ -69,7 +69,7 @@ function generateDocs(
 ): TE.TaskEither<unknown[], string> {
   return pipe(
     fn(),
-    TE.map(() => '✔️ Documentation generated successfully!'),
+    TE.map(() => '✔️ Documentation generated successfully!'), // TODO: Different success message for changelog
     TE.mapLeft((error) => {
       if (error._tag === 'HookError') {
         return ['Error(s) occurred while processing hooks. Please review the following issues:', error.error];
