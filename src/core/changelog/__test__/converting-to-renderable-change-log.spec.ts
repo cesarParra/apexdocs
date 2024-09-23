@@ -3,7 +3,7 @@ import { convertToRenderableChangeLog } from '../renderable-change-log';
 import { ClassMirrorBuilder } from '../../../test-helpers/ClassMirrorBuilder';
 
 describe('when converting a change log to a renderable change log', () => {
-  it('does not include new classes if there are none', () => {
+  it('does not include the New Classes section if there are none', () => {
     const changeLog: ChangeLog = {
       newTypes: [],
       removedTypes: [],
@@ -15,7 +15,7 @@ describe('when converting a change log to a renderable change log', () => {
     expect(renderable.newClasses).toBeNull();
   });
 
-  it('includes new classes if there are any', () => {
+  it('includes the New Classes section if there are any', () => {
     const newClasses = [new ClassMirrorBuilder().withName('MyClass').build()];
     const changeLog: ChangeLog = {
       newTypes: ['MyClass'],
