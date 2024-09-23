@@ -9,9 +9,10 @@ describe('when generating a change log', () => {
       const oldBundle: UnparsedSourceFile[] = [];
       const newBundle: UnparsedSourceFile[] = [];
 
-      const result = await generateChangeLog(oldBundle, newBundle)();
+      const result = await generateChangeLog(oldBundle, newBundle, { targetDir: '' })();
 
-      assertEither(result, (data) => expect(data).not.toContain('## New Classes'));
+      assertEither(result, (data) => expect(data.filePath).toContain('changelog.md')); // TODO: This assertion should have its own test
+      assertEither(result, (data) => expect(data.content).not.toContain('## New Classes'));
     });
   });
 
@@ -24,9 +25,9 @@ describe('when generating a change log', () => {
         { content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle)();
+      const result = await generateChangeLog(oldBundle, newBundle, { targetDir: '' })();
 
-      assertEither(result, (data) => expect(data).toContain('## New Classes'));
+      assertEither(result, (data) => expect(data.content).toContain('## New Classes'));
     });
   });
 });
