@@ -17,6 +17,7 @@ import {
 } from '../core/shared/types';
 import { ReflectionError, ReflectionErrors, HookError } from '../core/errors/errors';
 import { FileWritingError } from './errors';
+import { apply } from '#utils/fp';
 
 /**
  * Application entry-point to generate documentation out of Apex source files.
@@ -44,13 +45,10 @@ export class Apexdocs {
   }
 }
 
+const readFiles = apply(processFiles, new DefaultFileSystem());
+
 async function processMarkdown(config: UserDefinedMarkdownConfig) {
-  const fileBodies = await processFiles(
-    new DefaultFileSystem(),
-    config.sourceDir,
-    config.includeMetadata,
-    config.exclude,
-  );
+  const fileBodies = await readFiles(config.sourceDir, config.includeMetadata, config.exclude);
 
   return pipe(
     markdown(fileBodies, config),
@@ -60,13 +58,13 @@ async function processMarkdown(config: UserDefinedMarkdownConfig) {
 }
 
 async function processOpenApi(config: UserDefinedOpenApiConfig, logger: Logger) {
-  const fileBodies = await processFiles(new DefaultFileSystem(), config.sourceDir, false, config.exclude);
+  const fileBodies = await readFiles(config.sourceDir, false, config.exclude);
   return openApi(logger, fileBodies, config);
 }
 
 async function processChangeLog(config: UserDefinedChangelogConfig) {
-  const previousVersionFiles = await processFiles(new DefaultFileSystem(), config.previousVersionDir, false, []);
-  const currentVersionFiles = await processFiles(new DefaultFileSystem(), config.currentVersionDir, false, []);
+  const previousVersionFiles = await readFiles(config.previousVersionDir, false, []);
+  const currentVersionFiles = await readFiles(config.currentVersionDir, false, []);
 
   return pipe(
     changelog(previousVersionFiles, currentVersionFiles, config),
