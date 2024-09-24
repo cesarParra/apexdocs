@@ -10,13 +10,14 @@ import { processFiles } from './apex-file-reader';
 import { DefaultFileSystem } from './file-system';
 import { Logger } from '#utils/logger';
 import {
+  UnparsedSourceFile,
   UserDefinedChangelogConfig,
   UserDefinedConfig,
   UserDefinedMarkdownConfig,
   UserDefinedOpenApiConfig,
 } from '../core/shared/types';
 import { ReflectionError, ReflectionErrors, HookError } from '../core/errors/errors';
-import { FileWritingError } from './errors';
+import { FileReadingError, FileWritingError } from './errors';
 import { apply } from '#utils/fp';
 
 /**
@@ -48,10 +49,12 @@ export class Apexdocs {
 const readFiles = apply(processFiles, new DefaultFileSystem());
 
 async function processMarkdown(config: UserDefinedMarkdownConfig) {
-  const fileBodies = await readFiles(config.sourceDir, config.includeMetadata, config.exclude);
-
   return pipe(
-    markdown(fileBodies, config),
+    TE.tryCatch(
+      () => readFiles(config.sourceDir, config.includeMetadata, config.exclude),
+      (e) => new FileReadingError('An error occurred while reading files.', e),
+    ),
+    TE.flatMap((fileBodies) => markdown(fileBodies, config)),
     TE.map(() => '✔️ Documentation generated successfully!'),
     TE.mapLeft(toErrors),
   );
@@ -63,29 +66,35 @@ async function processOpenApi(config: UserDefinedOpenApiConfig, logger: Logger) 
 }
 
 async function processChangeLog(config: UserDefinedChangelogConfig) {
-  const previousVersionFiles = await readFiles(config.previousVersionDir, false, []);
-  const currentVersionFiles = await readFiles(config.currentVersionDir, false, []);
+  async function loadFiles(): Promise<[UnparsedSourceFile[], UnparsedSourceFile[]]> {
+    return [
+      await readFiles(config.previousVersionDir, false, []),
+      await readFiles(config.currentVersionDir, false, []),
+    ];
+  }
 
   return pipe(
-    changelog(previousVersionFiles, currentVersionFiles, config),
+    TE.tryCatch(loadFiles, (e) => new FileReadingError('An error occurred while reading files.', e)),
+    TE.flatMap(([previous, current]) => changelog(previous, current, config)),
     TE.map(() => '✔️ Changelog generated successfully!'),
     TE.mapLeft(toErrors),
   );
 }
 
-function toErrors(error: ReflectionErrors | HookError | FileWritingError): unknown[] {
-  if (error._tag === 'HookError') {
-    return ['Error(s) occurred while processing hooks. Please review the following issues:', error.error];
+function toErrors(error: ReflectionErrors | HookError | FileReadingError | FileWritingError): unknown[] {
+  switch (error._tag) {
+    case 'HookError':
+      return ['Error(s) occurred while processing hooks. Please review the following issues:', error.error];
+    case 'FileReadingError':
+      return ['Error(s) occurred while reading files. Please review the following issues:', error.error];
+    case 'FileWritingError':
+      return ['Error(s) occurred while writing files. Please review the following issues:', error.error];
+    default:
+      return [
+        'Error(s) occurred while parsing files. Please review the following issues:',
+        ...error.errors.map(formatReflectionError),
+      ];
   }
-
-  if (error._tag === 'FileWritingError') {
-    return ['Error(s) occurred while writing files. Please review the following issues:', error.error];
-  }
-
-  return [
-    'Error(s) occurred while parsing files. Please review the following issues:',
-    ...error.errors.map(formatReflectionError),
-  ];
 }
 
 function formatReflectionError(error: ReflectionError) {
