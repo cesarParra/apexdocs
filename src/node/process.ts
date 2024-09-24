@@ -2,7 +2,7 @@ import type { Generators, UserDefinedConfig } from '../core/shared/types';
 import { NoLogger } from '#utils/logger';
 import { Apexdocs } from '../application/Apexdocs';
 import * as E from 'fp-ts/Either';
-import { markdownDefaults, openApiDefaults } from '../defaults';
+import { changeLogDefaults, markdownDefaults, openApiDefaults } from '../defaults';
 
 type CallableConfig = Partial<UserDefinedConfig> & { sourceDir: string; targetGenerator: Generators };
 
@@ -36,8 +36,9 @@ function getDefault(config: CallableConfig) {
       return markdownDefaults;
     case 'openapi':
       return openApiDefaults;
+    case 'changelog':
+      return changeLogDefaults;
     default:
-      // TODO: handle changelog
       throw new Error('Unknown target generator');
   }
 }
