@@ -23,10 +23,3 @@ export function extendExpect() {
     },
   });
 }
-
-export function assertEither<T, U>(result: E.Either<T, U>, assertion: (data: U) => void): void {
-  E.match<T, U, void>(
-    (error) => fail(error),
-    (data) => assertion(data),
-  )(result);
-}

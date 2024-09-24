@@ -1,7 +1,6 @@
 import { UnparsedSourceFile } from '../../shared/types';
 import { generateChangeLog } from '../generate-change-log';
-// TODO: Move the assert either function to a shared place so we are not importing it from markdown
-import { assertEither } from '../../markdown/__test__/expect-extensions';
+import { assertEither } from '../../test-helpers/assert-either';
 
 const config = {
   fileName: 'changelog',
@@ -11,6 +10,12 @@ const config = {
 };
 
 describe('when generating a changelog', () => {
+  it('should return a file path', async () => {
+    const result = await generateChangeLog([], [], config)();
+
+    assertEither(result, (data) => expect(data.outputDocPath).toContain('changelog.md'));
+  });
+
   describe('that does not include new classes', () => {
     it('should not have a section for new classes', async () => {
       const oldBundle: UnparsedSourceFile[] = [];
@@ -18,7 +23,6 @@ describe('when generating a changelog', () => {
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
-      assertEither(result, (data) => expect(data.outputDocPath).toContain('changelog.md')); // TODO: This assertion should have its own test
       assertEither(result, (data) => expect(data.content).not.toContain('## New Classes'));
     });
   });

@@ -1,8 +1,9 @@
-import { assertEither, extendExpect } from './expect-extensions';
+import { extendExpect } from './expect-extensions';
 import { pipe } from 'fp-ts/function';
 import * as E from 'fp-ts/Either';
 import { apexBundleFromRawString, generateDocs } from './test-helpers';
 import { ReferenceGuidePageData } from '../../shared/types';
+import { assertEither } from '../../test-helpers/assert-either';
 
 describe('When generating the Reference Guide', () => {
   beforeAll(() => {

@@ -56,15 +56,15 @@ export async function extractArgs(): Promise<UserDefinedConfig> {
   const commandName = cliArgs._[0];
 
   const mergedConfig = { ...config?.config, ...cliArgs, targetGenerator: commandName as Generators };
-  // TODO: Use switch statement instead of if-else
-  if (mergedConfig.targetGenerator === 'markdown') {
-    return { ...configOnlyMarkdownDefaults, ...mergedConfig };
-  } else if (mergedConfig.targetGenerator === 'openapi') {
-    return { ...configOnlyOpenApiDefaults, ...mergedConfig };
-  } else if (mergedConfig.targetGenerator === 'changelog') {
-    return mergedConfig;
-  } else {
-    // TODO: Handle the changelog case
-    throw new Error(`Unknown command: ${commandName}`);
+
+  switch (mergedConfig.targetGenerator) {
+    case 'markdown':
+      return { ...configOnlyMarkdownDefaults, ...mergedConfig };
+    case 'openapi':
+      return { ...configOnlyOpenApiDefaults, ...mergedConfig };
+    case 'changelog':
+      return mergedConfig;
+    default:
+      throw new Error(`Unknown command: ${commandName}`);
   }
 }
