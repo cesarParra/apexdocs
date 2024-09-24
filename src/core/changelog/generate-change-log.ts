@@ -20,7 +20,7 @@ export type ChangeLogPageData = {
 export function generateChangeLog(
   oldBundles: UnparsedSourceFile[],
   newBundles: UnparsedSourceFile[],
-  config: UserDefinedChangelogConfig,
+  config: Omit<UserDefinedChangelogConfig, 'targetGenerator'>,
 ): TE.TaskEither<ReflectionErrors, ChangeLogPageData> {
   return pipe(
     reflectBundles(oldBundles),
