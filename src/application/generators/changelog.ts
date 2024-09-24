@@ -3,16 +3,7 @@ import { PageData, UnparsedSourceFile, UserDefinedChangelogConfig } from '../../
 import * as TE from 'fp-ts/TaskEither';
 import { writeFiles } from '../file-writer';
 import { ChangeLogPageData, generateChangeLog } from '../../core/changelog/generate-change-log';
-
-// TODO: Share this error with the one that already exists in markdown.ts
-class FileWritingError {
-  readonly _tag = 'FileWritingError';
-
-  constructor(
-    public message: string,
-    public error: unknown,
-  ) {}
-}
+import { FileWritingError } from '../errors';
 
 export default function generate(
   oldBundles: UnparsedSourceFile[],

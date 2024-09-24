@@ -10,15 +10,7 @@ import { referenceGuideTemplate } from '../../core/markdown/templates/reference-
 import * as TE from 'fp-ts/TaskEither';
 import { isSkip } from '../../core/shared/utils';
 import { writeFiles } from '../file-writer';
-
-export class FileWritingError {
-  readonly _tag = 'FileWritingError';
-
-  constructor(
-    public message: string,
-    public error: unknown,
-  ) {}
-}
+import { FileWritingError } from '../errors';
 
 export default function generate(bundles: UnparsedSourceFile[], config: UserDefinedMarkdownConfig) {
   return pipe(
