@@ -10,19 +10,7 @@ import { parseApexMetadata } from '../../parse-apex-metadata';
 import { ParsingError } from '@cparra/apex-reflection';
 import { apply } from '#utils/fp';
 import { Semigroup } from 'fp-ts/Semigroup';
-
-export class ReflectionErrors {
-  readonly _tag = 'ReflectionErrors';
-
-  constructor(public errors: ReflectionError[]) {}
-}
-
-export class ReflectionError {
-  constructor(
-    public file: string,
-    public message: string,
-  ) {}
-}
+import { ReflectionError, ReflectionErrors } from '../../errors/errors';
 
 async function reflectAsync(rawSource: string): Promise<Type> {
   return new Promise((resolve, reject) => {

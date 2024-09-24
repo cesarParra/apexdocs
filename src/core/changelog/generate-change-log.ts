@@ -2,12 +2,13 @@ import { ParsedFile, UnparsedSourceFile, UserDefinedChangelogConfig } from '../s
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
 // TODO: Move the reflection code to outside of the markdown folder since now it is shared with this
-import { reflectBundles, ReflectionErrors } from '../markdown/reflection/reflect-source';
+import { reflectBundles } from '../markdown/reflection/reflect-source';
 import { processChangeLog, VersionManifest } from './process-change-log';
 import { convertToRenderableChangeLog } from './renderable-change-log';
 // TODO: Also move this file since this is now shared
 import { CompilationRequest, Template } from '../markdown/templates/template';
 import { changeLogTemplate } from './templates/change-log-template';
+import { ReflectionErrors } from '../errors/errors';
 
 export type ChangeLogPageData = {
   // TODO: This should also support frontmatter (and the hook to add it)

@@ -1,3 +1,7 @@
+import { pipe } from 'fp-ts/function';
+import * as TE from 'fp-ts/TaskEither';
+import * as E from 'fp-ts/Either';
+
 import markdown, { FileWritingError } from './generators/markdown';
 import openApi from './generators/openapi';
 import changelog from './generators/changelog';
@@ -12,11 +16,7 @@ import {
   UserDefinedMarkdownConfig,
   UserDefinedOpenApiConfig,
 } from '../core/shared/types';
-import { pipe } from 'fp-ts/function';
-import * as TE from 'fp-ts/TaskEither';
-import * as E from 'fp-ts/Either';
-import { ReflectionError, ReflectionErrors } from '../core/markdown/reflection/reflect-source';
-import { HookError } from '../core/markdown/generate-docs';
+import { ReflectionError, ReflectionErrors, HookError } from '../core/errors/errors';
 
 /**
  * Application entry-point to generate documentation out of Apex source files.

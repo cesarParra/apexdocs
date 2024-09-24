@@ -30,6 +30,7 @@ import { sortTypesAndMembers } from './reflection/sort-types-and-members';
 import { isSkip } from '../shared/utils';
 import { parsedFilesToReferenceGuide } from './adapters/reference-guide';
 import { removeExcludedTags } from './reflection/remove-excluded-tags';
+import { HookError } from '../errors/errors';
 
 export type MarkdownGeneratorConfig = Omit<
   UserDefinedMarkdownConfig,
@@ -37,12 +38,6 @@ export type MarkdownGeneratorConfig = Omit<
 > & {
   referenceGuideTemplate: string;
 };
-
-export class HookError {
-  readonly _tag = 'HookError';
-
-  constructor(public error: unknown) {}
-}
 
 export function generateDocs(apexBundles: UnparsedSourceFile[], config: MarkdownGeneratorConfig) {
   const filterOutOfScope = apply(filterScope, config.scope);
