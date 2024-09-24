@@ -40,5 +40,36 @@ describe('when generating a changelog', () => {
 
       assertEither(result, (data) => expect(data.content).toContain('## New Classes'));
     });
+
+    it('should include the new class name', async () => {
+      const newClassSource = 'class Test {}';
+
+      const oldBundle: UnparsedSourceFile[] = [];
+      const newBundle: UnparsedSourceFile[] = [
+        { content: newClassSource, filePath: 'Test.cls', metadataContent: null },
+      ];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect(data.content).toContain('### Test'));
+    });
+
+    it('should include the new class description', async () => {
+      const newClassSource = `
+        /**
+         * This is a test class.
+         */
+        class Test {}
+      `;
+
+      const oldBundle: UnparsedSourceFile[] = [];
+      const newBundle: UnparsedSourceFile[] = [
+        { content: newClassSource, filePath: 'Test.cls', metadataContent: null },
+      ];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect(data.content).toContain('This is a test class.'));
+    });
   });
 });

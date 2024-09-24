@@ -33,7 +33,7 @@ export function convertToRenderableChangeLog(changeLog: ChangeLog, newManifest: 
             __type: 'class',
             heading: 'New Classes',
             description: 'These classes are new.',
-            types: newClasses.map(typeToRenderable), // TODO: Unit test this gets populated
+            types: newClasses.map(typeToRenderable),
           }
         : null,
   };
@@ -47,17 +47,15 @@ function typeToRenderable(type: Type): NewTypeRenderable {
 
   return {
     name: type.name,
-    description: adapt(), // TODO: integration test that the content renders correctly
+    description: adapt(),
   };
 }
 
-// TODO:
-// New Classes
-// New Enums
-// New Interfaces
+// TODO: New Enums
+// TODO: New Interfaces
 
-// Removed Classes
-// Removed Enums
-// Removed Interfaces
+// TODO: Removed Classes
+// TODO: Removed Enums
+// TODO: Removed Interfaces
 
 // Changes...

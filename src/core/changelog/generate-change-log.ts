@@ -21,6 +21,7 @@ export type ChangeLogPageData = {
 
 // TODO: We should provide the ability to filter out of scope if we are going
 // to be relying on source files and not on a previously generated manifest.
+// TODO: And also the "exclude" property in the config, it should be fairly simple to add.
 export function generateChangeLog(
   oldBundles: UnparsedSourceFile[],
   newBundles: UnparsedSourceFile[],

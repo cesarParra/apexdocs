@@ -359,5 +359,3 @@ describe('When generating documentation for a class', () => {
     });
   });
 });
-
-// TODO: Skips tags at the member level
