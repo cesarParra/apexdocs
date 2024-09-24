@@ -17,6 +17,7 @@ type NewTypeSection<T extends 'class' | 'interface' | 'enum'> = {
 
 type RenderableChangeLog = {
   newClasses: NewTypeSection<'class'> | null;
+  newInterfaces: NewTypeSection<'interface'> | null;
 };
 
 export function convertToRenderableChangeLog(changeLog: ChangeLog, newManifest: Type[]): RenderableChangeLog {
@@ -25,6 +26,7 @@ export function convertToRenderableChangeLog(changeLog: ChangeLog, newManifest: 
   );
 
   const newClasses = allNewTypes.filter((type) => type.type_name === 'class');
+  const newInterfaces = allNewTypes.filter((type) => type.type_name === 'interface');
 
   return {
     newClasses:
@@ -34,6 +36,15 @@ export function convertToRenderableChangeLog(changeLog: ChangeLog, newManifest: 
             heading: 'New Classes',
             description: 'These classes are new.',
             types: newClasses.map(typeToRenderable),
+          }
+        : null,
+    newInterfaces:
+      newInterfaces.length > 0
+        ? {
+            __type: 'interface',
+            heading: 'New Interfaces',
+            description: 'These interfaces are new.',
+            types: newInterfaces.map(typeToRenderable),
           }
         : null,
   };

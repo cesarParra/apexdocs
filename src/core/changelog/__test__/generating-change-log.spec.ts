@@ -72,4 +72,50 @@ describe('when generating a changelog', () => {
       assertEither(result, (data) => expect(data.content).toContain('This is a test class.'));
     });
   });
+
+  describe('that include new interfaces', () => {
+    it('should include a section for new interfaces', async () => {
+      const newInterfaceSource = 'interface Test {}';
+
+      const oldBundle: UnparsedSourceFile[] = [];
+      const newBundle: UnparsedSourceFile[] = [
+        { content: newInterfaceSource, filePath: 'Test.cls', metadataContent: null },
+      ];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect(data.content).toContain('## New Interfaces'));
+    });
+
+    it('should include the new interface name', async () => {
+      const newInterfaceSource = 'interface Test {}';
+
+      const oldBundle: UnparsedSourceFile[] = [];
+      const newBundle: UnparsedSourceFile[] = [
+        { content: newInterfaceSource, filePath: 'Test.cls', metadataContent: null },
+      ];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect(data.content).toContain('### Test'));
+    });
+
+    it('should include the new interface description', async () => {
+      const newInterfaceSource = `
+        /**
+         * This is a test interface.
+         */
+        interface Test {}
+      `;
+
+      const oldBundle: UnparsedSourceFile[] = [];
+      const newBundle: UnparsedSourceFile[] = [
+        { content: newInterfaceSource, filePath: 'Test.cls', metadataContent: null },
+      ];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect(data.content).toContain('This is a test interface.'));
+    });
+  });
 });

@@ -11,6 +11,17 @@ export const changeLogTemplate = `
 
 {{{renderContent this.description}}}
 {{/each}}
+{{/if}}
 
+{{#if newInterfaces}}
+## {{newInterfaces.heading}}
+
+{{newInterfaces.description}}
+
+{{#each newInterfaces.types}}
+### {{this.name}}
+
+{{{renderContent this.description}}}
+{{/each}}
 {{/if}}
 `.trim();
