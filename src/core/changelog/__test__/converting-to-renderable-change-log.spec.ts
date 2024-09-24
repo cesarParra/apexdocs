@@ -2,7 +2,7 @@ import { ChangeLog } from '../process-change-log';
 import { convertToRenderableChangeLog } from '../renderable-change-log';
 import { ClassMirrorBuilder } from '../../../test-helpers/ClassMirrorBuilder';
 
-describe('when converting a change log to a renderable change log', () => {
+describe('when converting a changelog to a renderable changelog', () => {
   it('does not include the New Classes section if there are none', () => {
     const changeLog: ChangeLog = {
       newTypes: [],

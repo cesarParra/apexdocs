@@ -10,7 +10,7 @@ const config = {
   previousVersionDir: '',
 };
 
-describe('when generating a change log', () => {
+describe('when generating a changelog', () => {
   describe('that does not include new classes', () => {
     it('should not have a section for new classes', async () => {
       const oldBundle: UnparsedSourceFile[] = [];

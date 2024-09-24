@@ -60,6 +60,7 @@ export function describableToRenderableContent(
       },
     ];
   }
+
   return (
     content
       // If the last element is an empty line, remove it

@@ -15,6 +15,9 @@ export type ChangeLogPageData = {
   outputDocPath: string;
 };
 
+// TODO: Also provide the ability to have a previously generated manifest as an input
+// TODO: Also provide the ability to have 2 git refs as input
+
 // TODO: We should provide the ability to filter out of scope if we are going
 // to be relying on source files and not on a previously generated manifest.
 export function generateChangeLog(
@@ -41,8 +44,6 @@ export function generateChangeLog(
         source: renderable,
       };
 
-      // TODO: At some point just having a string won't be enough, since we want an object
-      // that contains the target file name and directory as well as the content.
       return Template.getInstance().compile(compilationRequest);
     }),
     TE.map((content) => ({

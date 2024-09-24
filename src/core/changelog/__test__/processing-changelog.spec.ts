@@ -10,7 +10,7 @@ function typeFromRawString(raw: string): Type {
   return result.typeMirror!;
 }
 
-describe('when generating a change log', () => {
+describe('when generating a changelog', () => {
   it('has no new types when both the old and new versions are empty', () => {
     const oldVersion = { types: [] };
     const newVersion = { types: [] };
