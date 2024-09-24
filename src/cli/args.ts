@@ -57,6 +57,11 @@ export async function extractArgs(): Promise<UserDefinedConfig> {
 
   const mergedConfig = { ...config?.config, ...cliArgs, targetGenerator: commandName as Generators };
 
+  // TODO: It should be possible to have a version of the config that supports
+  // generating all commands at the same time. So users should be able to provide the key for the main
+  // command, and then it should be possible to provide the specific configuration for each command.
+  // this is invaluable if we want to allow for the combination of changelog + markdown generation, for example
+
   switch (mergedConfig.targetGenerator) {
     case 'markdown':
       return { ...configOnlyMarkdownDefaults, ...mergedConfig };
