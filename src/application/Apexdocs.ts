@@ -6,7 +6,7 @@ import markdown from './generators/markdown';
 import openApi from './generators/openapi';
 import changelog from './generators/changelog';
 
-import { ApexFileReader } from './apex-file-reader';
+import { processFiles } from './apex-file-reader';
 import { DefaultFileSystem } from './file-system';
 import { Logger } from '#utils/logger';
 import {
@@ -45,7 +45,7 @@ export class Apexdocs {
 }
 
 async function processMarkdown(config: UserDefinedMarkdownConfig) {
-  const fileBodies = await ApexFileReader.processFiles(
+  const fileBodies = await processFiles(
     new DefaultFileSystem(),
     config.sourceDir,
     config.includeMetadata,
@@ -60,29 +60,13 @@ async function processMarkdown(config: UserDefinedMarkdownConfig) {
 }
 
 async function processOpenApi(config: UserDefinedOpenApiConfig, logger: Logger) {
-  const fileBodies = await ApexFileReader.processFiles(
-    new DefaultFileSystem(),
-    config.sourceDir,
-    false,
-    config.exclude,
-  );
+  const fileBodies = await processFiles(new DefaultFileSystem(), config.sourceDir, false, config.exclude);
   return openApi(logger, fileBodies, config);
 }
 
 async function processChangeLog(config: UserDefinedChangelogConfig) {
-  const previousVersionFiles = await ApexFileReader.processFiles(
-    new DefaultFileSystem(),
-    config.previousVersionDir,
-    false,
-    [],
-  );
-
-  const currentVersionFiles = await ApexFileReader.processFiles(
-    new DefaultFileSystem(),
-    config.currentVersionDir,
-    false,
-    [],
-  );
+  const previousVersionFiles = await processFiles(new DefaultFileSystem(), config.previousVersionDir, false, []);
+  const currentVersionFiles = await processFiles(new DefaultFileSystem(), config.currentVersionDir, false, []);
 
   return pipe(
     changelog(previousVersionFiles, currentVersionFiles, config),
