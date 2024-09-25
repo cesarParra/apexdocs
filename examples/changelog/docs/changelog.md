@@ -15,3 +15,9 @@ These interfaces are new.
 ### IAnotherExample
 
 ### IExemplificable
+
+## New Enums
+
+These enums are new.
+
+### PossibleValues

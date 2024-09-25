@@ -24,4 +24,16 @@ export const changeLogTemplate = `
 {{{renderContent this.description}}}
 {{/each}}
 {{/if}}
+
+{{#if newEnums}}
+## {{newEnums.heading}}
+
+{{newEnums.description}}
+
+{{#each newEnums.types}}
+### {{this.name}}
+
+{{{renderContent this.description}}}
+{{/each}}
+{{/if}}
 `.trim();

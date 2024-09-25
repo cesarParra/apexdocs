@@ -2,6 +2,7 @@ import { ChangeLog } from '../process-change-log';
 import { convertToRenderableChangeLog } from '../renderable-change-log';
 import { ClassMirrorBuilder } from '../../../test-helpers/ClassMirrorBuilder';
 import { InterfaceMirrorBuilder } from '../../../test-helpers/InterfaceMirrorBuilder';
+import { EnumMirrorBuilder } from '../../../test-helpers/EnumMirrorBuilder';
 
 describe('when converting a changelog to a renderable changelog', () => {
   it('does not include the New Classes section if there are none', () => {
@@ -52,5 +53,30 @@ describe('when converting a changelog to a renderable changelog', () => {
     const renderable = convertToRenderableChangeLog(changeLog, newInterfaces);
 
     expect(renderable.newInterfaces).not.toBeNull();
+  });
+
+  it('does not include the New Enums section if there are none', () => {
+    const changeLog: ChangeLog = {
+      newTypes: [],
+      removedTypes: [],
+      newOrModifiedMembers: [],
+    };
+
+    const renderable = convertToRenderableChangeLog(changeLog, []);
+
+    expect(renderable.newEnums).toBeNull();
+  });
+
+  it('includes the New Enums section if there are any', () => {
+    const newEnums = [new EnumMirrorBuilder().withName('MyEnum').build()];
+    const changeLog: ChangeLog = {
+      newTypes: ['MyEnum'],
+      removedTypes: [],
+      newOrModifiedMembers: [],
+    };
+
+    const renderable = convertToRenderableChangeLog(changeLog, newEnums);
+
+    expect(renderable.newEnums).not.toBeNull();
   });
 });

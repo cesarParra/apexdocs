@@ -118,4 +118,44 @@ describe('when generating a changelog', () => {
       assertEither(result, (data) => expect(data.content).toContain('This is a test interface.'));
     });
   });
+
+  describe('that include new enums', () => {
+    it('should include a section for new enums', async () => {
+      const newEnumSource = 'enum Test {}';
+
+      const oldBundle: UnparsedSourceFile[] = [];
+      const newBundle: UnparsedSourceFile[] = [{ content: newEnumSource, filePath: 'Test.cls', metadataContent: null }];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect(data.content).toContain('## New Enums'));
+    });
+
+    it('should include the new enum name', async () => {
+      const newEnumSource = 'enum Test {}';
+
+      const oldBundle: UnparsedSourceFile[] = [];
+      const newBundle: UnparsedSourceFile[] = [{ content: newEnumSource, filePath: 'Test.cls', metadataContent: null }];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect(data.content).toContain('### Test'));
+    });
+
+    it('should include the new enum description', async () => {
+      const newEnumSource = `
+        /**
+         * This is a test enum.
+         */
+        enum Test {}
+      `;
+
+      const oldBundle: UnparsedSourceFile[] = [];
+      const newBundle: UnparsedSourceFile[] = [{ content: newEnumSource, filePath: 'Test.cls', metadataContent: null }];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect(data.content).toContain('This is a test enum.'));
+    });
+  });
 });

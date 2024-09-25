@@ -1,5 +1,3 @@
-// This class is new
-
 /**
  * @description This is a new class that does foo and bar and references {@link Baz}.
  */
