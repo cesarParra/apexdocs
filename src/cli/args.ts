@@ -18,8 +18,8 @@ const configOnlyOpenApiDefaults = {
 /**
  * Combines the extracted configuration and arguments.
  */
-export async function extractArgs(): Promise<[UserDefinedConfig]> {
-  const config = await _extractConfig();
+export async function extractArgs(): Promise<UserDefinedConfig[]> {
+  const config = await extractConfig();
   const configType = getConfigType(config);
 
   switch (configType._type) {
@@ -27,7 +27,7 @@ export async function extractArgs(): Promise<[UserDefinedConfig]> {
     case 'single-command-config':
       return [await extractArgsForCommandProvidedThroughCli(config)];
     case 'multi-command-config':
-      throw new Error('Not implemented yet');
+      return extractArgsForCommandsProvidedInConfig(config!.config);
   }
 }
 
@@ -35,7 +35,7 @@ export async function extractArgs(): Promise<[UserDefinedConfig]> {
  * Extracts configuration from a configuration file or the package.json
  * through cosmiconfig.
  */
-function _extractConfig(): Promise<CosmiconfigResult> {
+function extractConfig(): Promise<CosmiconfigResult> {
   return cosmiconfig('apexdocs', {
     loaders: {
       '.ts': TypeScriptLoader(),
@@ -43,7 +43,7 @@ function _extractConfig(): Promise<CosmiconfigResult> {
   }).search();
 }
 
-export async function extractArgsForCommandProvidedThroughCli(config: CosmiconfigResult): Promise<UserDefinedConfig> {
+async function extractArgsForCommandProvidedThroughCli(config: CosmiconfigResult): Promise<UserDefinedConfig> {
   const cliArgs = _extractYargsDemandingCommand(config);
   const commandName = cliArgs._[0];
 
@@ -59,6 +59,27 @@ export async function extractArgsForCommandProvidedThroughCli(config: Cosmiconfi
     default:
       throw new Error(`Unknown command: ${commandName}`);
   }
+}
+
+type ConfigByGenerator = {
+  [key in Generators]: UserDefinedConfig;
+};
+
+async function extractArgsForCommandsProvidedInConfig(config: ConfigByGenerator): Promise<UserDefinedConfig[]> {
+  // TODO: Use yargs for checking that things are ok per command
+  // TODO: Throw if a command was still passed through the CLI
+  return Object.entries(config).map(([generator, generatorConfig]) => {
+    switch (generator) {
+      case 'markdown':
+        return { ...configOnlyMarkdownDefaults, ...generatorConfig };
+      case 'openapi':
+        return { ...configOnlyOpenApiDefaults, ...generatorConfig };
+      case 'changelog':
+        return generatorConfig;
+      default:
+        throw new Error(`Unknown command: ${generator}`);
+    }
+  });
 }
 
 type NoConfig = {
@@ -89,10 +110,16 @@ function getConfigType(config: CosmiconfigResult): NoConfig | SingleCommandConfi
   const validRootKeys = ['markdown', 'openapi', 'changelog'];
   const containsAnyValidRootKey = rootKeys.some((key) => validRootKeys.includes(key));
   if (containsAnyValidRootKey) {
+    const commands = rootKeys.filter((key) => validRootKeys.includes(key));
+    const hasInvalidCommands = rootKeys.some((key) => !validRootKeys.includes(key));
+    if (hasInvalidCommands) {
+      throw new Error(`Invalid command(s) provided in the configuration file: ${rootKeys}`);
+    }
+
     return {
       _type: 'multi-command-config',
       // TODO: Throw if the same root key is provided more than once
-      commands: rootKeys.filter((key) => validRootKeys.includes(key)) as Generators[],
+      commands: commands as Generators[],
     };
   }
 
