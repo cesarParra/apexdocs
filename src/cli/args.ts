@@ -6,6 +6,11 @@ import { markdownOptions } from './commands/markdown';
 import { openApiOptions } from './commands/openapi';
 import { changeLogOptions } from './commands/changelog';
 
+// TODO: Never throw in here, because if we throw then we will
+// get the message saying that "an unexpected error occurred",
+// but in reality we know what the failure was, so we should
+// accurately reflect that
+
 const configOnlyMarkdownDefaults: Partial<UserDefinedMarkdownConfig> = {
   excludeTags: [],
   exclude: [],
@@ -44,7 +49,7 @@ function extractConfig(): Promise<CosmiconfigResult> {
 }
 
 async function extractArgsForCommandProvidedThroughCli(config: CosmiconfigResult): Promise<UserDefinedConfig> {
-  const cliArgs = _extractYargsDemandingCommand(config);
+  const cliArgs = extractYargsDemandingCommand(config);
   const commandName = cliArgs._[0];
 
   const mergedConfig = { ...config?.config, ...cliArgs, targetGenerator: commandName as Generators };
@@ -66,15 +71,17 @@ type ConfigByGenerator = {
 };
 
 async function extractArgsForCommandsProvidedInConfig(config: ConfigByGenerator): Promise<UserDefinedConfig[]> {
-  // TODO: Use yargs for checking that things are ok per command
   // TODO: Throw if a command was still passed through the CLI
   return Object.entries(config).map(([generator, generatorConfig]) => {
     switch (generator) {
       case 'markdown':
+        validateConfig('markdown', generatorConfig);
         return { ...configOnlyMarkdownDefaults, ...generatorConfig };
       case 'openapi':
+        validateConfig('openapi', generatorConfig);
         return { ...configOnlyOpenApiDefaults, ...generatorConfig };
       case 'changelog':
+        validateConfig('changelog', generatorConfig);
         return generatorConfig;
       default:
         throw new Error(`Unknown command: ${generator}`);
@@ -130,7 +137,7 @@ function getConfigType(config: CosmiconfigResult): NoConfig | SingleCommandConfi
  * Extracts arguments from the command line, expecting a command to be provided.
  * @param config The configuration object from the configuration file, if any.
  */
-function _extractYargsDemandingCommand(config?: CosmiconfigResult) {
+function extractYargsDemandingCommand(config?: CosmiconfigResult) {
   return yargs
     .config(config?.config)
     .command('markdown', 'Generate documentation from Apex classes as a Markdown site.', (yargs) =>
@@ -144,4 +151,26 @@ function _extractYargsDemandingCommand(config?: CosmiconfigResult) {
     )
     .demandCommand()
     .parseSync();
+}
+
+function validateConfig(command: Generators, config: UserDefinedConfig) {
+  function getOptions(generator: Generators) {
+    switch (generator) {
+      case 'markdown':
+        return markdownOptions;
+      case 'openapi':
+        return openApiOptions;
+      case 'changelog':
+        return changeLogOptions;
+    }
+  }
+
+  const options = getOptions(command);
+  yargs
+    .config(config)
+    .options(options)
+    .fail((msg) => {
+      throw new Error(`Invalid configuration for command "${command}": ${msg}`);
+    })
+    .parse();
 }

@@ -1,4 +1,4 @@
-import { defineMarkdownConfig, DocPageData } from '../../src';
+import { defineChangelogConfig, defineMarkdownConfig, DocPageData } from '../../src';
 import * as fs from 'node:fs';
 
 function loadFileAsync(filePath: string): Promise<string> {
@@ -26,6 +26,10 @@ function writeFileAsync(filePath: string, data: string): Promise<void> {
 }
 
 export default {
+  changelog: defineChangelogConfig({
+    previousVersionDir: 'previous',
+    currentVersionDir: 'force-app',
+  }),
   markdown: defineMarkdownConfig({
     sourceDir: 'force-app',
     scope: ['global', 'public', 'protected', 'private', 'namespaceaccessible'],

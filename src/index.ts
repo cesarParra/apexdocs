@@ -12,8 +12,9 @@ import type {
   TransformReference,
   ConfigurableDocPageReference,
   UserDefinedOpenApiConfig,
+  UserDefinedChangelogConfig,
 } from './core/shared/types';
-import { markdownDefaults, openApiDefaults } from './defaults';
+import { changeLogDefaults, markdownDefaults, openApiDefaults } from './defaults';
 import { process } from './node/process';
 
 type ConfigurableMarkdownConfig = Omit<Partial<UserDefinedMarkdownConfig>, 'targetGenerator'>;
@@ -44,6 +45,20 @@ function defineOpenApiConfig(config: ConfigurableOpenApiConfig): Partial<UserDef
   };
 }
 
+type ConfigurableChangelogConfig = Omit<Partial<UserDefinedChangelogConfig>, 'targetGenerator'>;
+
+/**
+ * Helper function to define a configuration to generate a changelog.
+ * @param config The configuration to use.
+ */
+function defineChangelogConfig(config: ConfigurableChangelogConfig): Partial<UserDefinedChangelogConfig> {
+  return {
+    ...changeLogDefaults,
+    ...config,
+    targetGenerator: 'changelog' as const,
+  };
+}
+
 /**
  * Represents a file to be skipped.
  */
@@ -58,6 +73,8 @@ export {
   ConfigurableMarkdownConfig,
   defineOpenApiConfig,
   ConfigurableOpenApiConfig,
+  defineChangelogConfig,
+  ConfigurableChangelogConfig,
   skip,
   TransformReferenceGuide,
   TransformDocs,
