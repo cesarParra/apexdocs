@@ -1,15 +1,12 @@
 import { cosmiconfig, CosmiconfigResult } from 'cosmiconfig';
 import * as yargs from 'yargs';
+import * as E from 'fp-ts/Either';
 import { Generators, UserDefinedConfig, UserDefinedMarkdownConfig } from '../core/shared/types';
 import { TypeScriptLoader } from 'cosmiconfig-typescript-loader';
 import { markdownOptions } from './commands/markdown';
 import { openApiOptions } from './commands/openapi';
 import { changeLogOptions } from './commands/changelog';
-
-// TODO: Never throw in here, because if we throw then we will
-// get the message saying that "an unexpected error occurred",
-// but in reality we know what the failure was, so we should
-// accurately reflect that
+import { pipe } from 'fp-ts/function';
 
 const configOnlyMarkdownDefaults: Partial<UserDefinedMarkdownConfig> = {
   excludeTags: [],
@@ -23,14 +20,14 @@ const configOnlyOpenApiDefaults = {
 /**
  * Combines the extracted configuration and arguments.
  */
-export async function extractArgs(): Promise<UserDefinedConfig[]> {
+export async function extractArgs(): Promise<E.Either<Error, readonly UserDefinedConfig[]>> {
   const config = await extractConfig();
   const configType = getConfigType(config);
 
   switch (configType._type) {
     case 'no-config':
     case 'single-command-config':
-      return [await extractArgsForCommandProvidedThroughCli(config)];
+      return handleSingleCommand(config);
     case 'multi-command-config':
       return extractArgsForCommandsProvidedInConfig(config!.config);
   }
@@ -48,7 +45,15 @@ function extractConfig(): Promise<CosmiconfigResult> {
   }).search();
 }
 
-async function extractArgsForCommandProvidedThroughCli(config: CosmiconfigResult): Promise<UserDefinedConfig> {
+function handleSingleCommand(config: CosmiconfigResult) {
+  return pipe(
+    E.right(config),
+    E.flatMap(extractArgsForCommandProvidedThroughCli),
+    E.map((config) => [config]),
+  );
+}
+
+function extractArgsForCommandProvidedThroughCli(config: CosmiconfigResult): E.Either<Error, UserDefinedConfig> {
   const cliArgs = extractYargsDemandingCommand(config);
   const commandName = cliArgs._[0];
 
@@ -56,13 +61,13 @@ async function extractArgsForCommandProvidedThroughCli(config: CosmiconfigResult
 
   switch (mergedConfig.targetGenerator) {
     case 'markdown':
-      return { ...configOnlyMarkdownDefaults, ...mergedConfig };
+      return E.right({ ...configOnlyMarkdownDefaults, ...mergedConfig });
     case 'openapi':
-      return { ...configOnlyOpenApiDefaults, ...mergedConfig };
+      return E.right({ ...configOnlyOpenApiDefaults, ...mergedConfig });
     case 'changelog':
-      return mergedConfig;
+      return E.right(mergedConfig);
     default:
-      throw new Error(`Unknown command: ${commandName}`);
+      throw E.left(new Error(`Invalid command provided: ${mergedConfig.targetGenerator}`));
   }
 }
 
@@ -70,23 +75,29 @@ type ConfigByGenerator = {
   [key in Generators]: UserDefinedConfig;
 };
 
-async function extractArgsForCommandsProvidedInConfig(config: ConfigByGenerator): Promise<UserDefinedConfig[]> {
-  // TODO: Throw if a command was still passed through the CLI
-  return Object.entries(config).map(([generator, generatorConfig]) => {
-    switch (generator) {
+function extractArgsForCommandsProvidedInConfig(config: ConfigByGenerator) {
+  // TODO: Error if a command was still passed through the CLI
+  const configs = Object.entries(config).map(([generator, generatorConfig]) => {
+    switch (generator as Generators) {
       case 'markdown':
-        validateConfig('markdown', generatorConfig);
-        return { ...configOnlyMarkdownDefaults, ...generatorConfig };
+        return pipe(
+          validateConfig('markdown', generatorConfig),
+          E.map(() => ({ ...configOnlyMarkdownDefaults, ...generatorConfig })),
+        );
       case 'openapi':
-        validateConfig('openapi', generatorConfig);
-        return { ...configOnlyOpenApiDefaults, ...generatorConfig };
+        return pipe(
+          validateConfig('openapi', generatorConfig),
+          E.map(() => ({ ...configOnlyOpenApiDefaults, ...generatorConfig })),
+        );
       case 'changelog':
-        validateConfig('changelog', generatorConfig);
-        return generatorConfig;
-      default:
-        throw new Error(`Unknown command: ${generator}`);
+        return pipe(
+          validateConfig('changelog', generatorConfig),
+          E.map(() => generatorConfig),
+        );
     }
   });
+
+  return E.sequenceArray(configs);
 }
 
 type NoConfig = {
@@ -106,9 +117,10 @@ function getConfigType(config: CosmiconfigResult): NoConfig | SingleCommandConfi
   }
 
   // When the config has a shape that looks as follows:
-  // {
-  //   COMMAND_NAME: ...
-  // }
+  // Partial<{
+  //   COMMAND_NAME: ...,
+  //   ANOTHER_COMMAND_NAME: ...,
+  // }>
   // That means that the config is providing the name of the command, and the user is not
   // expected to provide it through the CLI.
   // We call this a "multi-command-config", as it allows for the config file to provide
@@ -166,11 +178,13 @@ function validateConfig(command: Generators, config: UserDefinedConfig) {
   }
 
   const options = getOptions(command);
-  yargs
-    .config(config)
-    .options(options)
-    .fail((msg) => {
-      throw new Error(`Invalid configuration for command "${command}": ${msg}`);
-    })
-    .parse();
+  return E.tryCatch(() => {
+    yargs
+      .config(config)
+      .options(options)
+      .fail((msg) => {
+        throw new Error(`Invalid configuration for command "${command}": ${msg}`);
+      })
+      .parse();
+  }, E.toError);
 }
