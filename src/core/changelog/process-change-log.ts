@@ -7,6 +7,8 @@ export type VersionManifest = {
 };
 
 type ModificationTypes =
+  | 'NewType'
+  | 'RemovedType'
   | 'NewEnumValue'
   | 'RemovedEnumValue'
   | 'NewMethod'
@@ -14,9 +16,7 @@ type ModificationTypes =
   | 'NewProperty'
   | 'RemovedProperty'
   | 'NewField'
-  | 'RemovedField'
-  | 'NewType'
-  | 'RemovedType';
+  | 'RemovedField';
 
 type MemberModificationType = {
   __typename: ModificationTypes;

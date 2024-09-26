@@ -25,7 +25,11 @@ function main() {
   }
 
   extractArgs()
-    .then((config) => Apexdocs.generate(config, logger).then(parseResult))
+    .then((configs) => {
+      for (const config of configs) {
+        Apexdocs.generate(config, logger).then(parseResult);
+      }
+    })
     .catch(catchUnexpectedError);
 }
 

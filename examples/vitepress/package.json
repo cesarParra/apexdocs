@@ -2,7 +2,7 @@
   "name": "vitepress-example",
   "scripts": {
     "docs:clean": "rimraf --glob 'docs/!(.vitepress|index-frontmatter.md|api-examples.md|markdown-examples.md)'",
-    "apexdocs:build": "npm run docs:clean && ts-node ../../src/cli/generate.ts markdown",
+    "apexdocs:build": "npm run docs:clean && ts-node ../../src/cli/generate.ts",
     "changelog:build": "ts-node ../../src/cli/generate.ts changelog --previousVersionDir previous --currentVersionDir force-app",
     "docs:build": "vitepress build docs",
     "docs:gen": "npm run docs:clean && npm run docs:build",

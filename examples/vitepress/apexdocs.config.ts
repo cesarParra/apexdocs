@@ -25,70 +25,72 @@ function writeFileAsync(filePath: string, data: string): Promise<void> {
   });
 }
 
-export default defineMarkdownConfig({
-  sourceDir: 'force-app',
-  scope: ['global', 'public', 'protected', 'private', 'namespaceaccessible'],
-  sortAlphabetically: true,
-  namespace: 'apexdocs',
-  transformReference: (reference) => {
-    return {
-      // remove the trailing .md
-      referencePath: reference.referencePath.replace(/\.md$/, ''),
-    };
-  },
-  transformReferenceGuide: async () => {
-    const frontMatter = await loadFileAsync('./docs/index-frontmatter.md');
-    return {
-      frontmatter: frontMatter,
-    };
-  },
-  excludeTags: ['internal'],
-  transformDocs: async (docs) => {
-    // Update sidebar
-    const sidebar = [
-      {
-        text: 'API Reference',
-        items: [
-          {
-            text: 'Grouped By Type',
-            items: [
-              {
-                text: 'Classes',
-                items: docs.filter((doc) => doc.source.type === 'class').map(toSidebarLink),
-              },
-              {
-                text: 'Interfaces',
-                items: docs.filter((doc) => doc.source.type === 'interface').map(toSidebarLink),
-              },
-              {
-                text: 'Enums',
-                items: docs.filter((doc) => doc.source.type === 'enum').map(toSidebarLink),
-              },
-            ],
-          },
-          {
-            text: 'Grouped by Group',
-            items: Array.from(extractGroups(docs)).map(([groupName, groupDocs]) => ({
-              text: groupName,
-              items: groupDocs.map(toSidebarLink),
-            })),
-          },
-        ],
-      },
-    ];
-    await writeFileAsync('./docs/.vitepress/sidebar.json', JSON.stringify(sidebar, null, 2));
+export default {
+  markdown: defineMarkdownConfig({
+    sourceDir: 'force-app',
+    scope: ['global', 'public', 'protected', 'private', 'namespaceaccessible'],
+    sortAlphabetically: true,
+    namespace: 'apexdocs',
+    transformReference: (reference) => {
+      return {
+        // remove the trailing .md
+        referencePath: reference.referencePath.replace(/\.md$/, ''),
+      };
+    },
+    transformReferenceGuide: async () => {
+      const frontMatter = await loadFileAsync('./docs/index-frontmatter.md');
+      return {
+        frontmatter: frontMatter,
+      };
+    },
+    excludeTags: ['internal'],
+    transformDocs: async (docs) => {
+      // Update sidebar
+      const sidebar = [
+        {
+          text: 'API Reference',
+          items: [
+            {
+              text: 'Grouped By Type',
+              items: [
+                {
+                  text: 'Classes',
+                  items: docs.filter((doc) => doc.source.type === 'class').map(toSidebarLink),
+                },
+                {
+                  text: 'Interfaces',
+                  items: docs.filter((doc) => doc.source.type === 'interface').map(toSidebarLink),
+                },
+                {
+                  text: 'Enums',
+                  items: docs.filter((doc) => doc.source.type === 'enum').map(toSidebarLink),
+                },
+              ],
+            },
+            {
+              text: 'Grouped by Group',
+              items: Array.from(extractGroups(docs)).map(([groupName, groupDocs]) => ({
+                text: groupName,
+                items: groupDocs.map(toSidebarLink),
+              })),
+            },
+          ],
+        },
+      ];
+      await writeFileAsync('./docs/.vitepress/sidebar.json', JSON.stringify(sidebar, null, 2));
 
-    return docs;
-  },
-  transformDocPage: async (docPage) => {
-    return {
-      ...docPage,
-      frontmatter: {
-        title: docPage.source.name,
-      },
-    };
-  },
-});
+      return docs;
+    },
+    transformDocPage: async (docPage) => {
+      return {
+        ...docPage,
+        frontmatter: {
+          title: docPage.source.name,
+        },
+      };
+    },
+  }),
+};
 
 function toSidebarLink(doc: DocPageData) {
   return {
