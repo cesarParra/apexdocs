@@ -9,7 +9,7 @@ export interface Logger {
 /**
  * Logs messages to the console.
  */
-export class StdOutLogger {
+export class StdOutLogger implements Logger {
   /**
    * Logs a message with optional arguments.
    * @param message The message to log.
