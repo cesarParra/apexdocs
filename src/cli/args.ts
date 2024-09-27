@@ -17,17 +17,24 @@ const configOnlyOpenApiDefaults = {
   exclude: [],
 };
 
+type ExtractArgsFromProcess = () => string[];
+function getArgumentsFromProcess() {
+  return process.argv.slice(2);
+}
+
 /**
  * Combines the extracted configuration and arguments.
  */
-export async function extractArgs(): Promise<E.Either<Error, readonly UserDefinedConfig[]>> {
+export async function extractArgs(
+  extractFromProcessFn: ExtractArgsFromProcess = getArgumentsFromProcess,
+): Promise<E.Either<Error, readonly UserDefinedConfig[]>> {
   const config = await extractConfig();
   const configType = getConfigType(config);
 
   switch (configType._type) {
     case 'no-config':
     case 'single-command-config':
-      return handleSingleCommand(config);
+      return handleSingleCommand(extractFromProcessFn, config);
     case 'multi-command-config':
       return extractArgsForCommandsProvidedInConfig(config!.config);
   }
@@ -45,16 +52,19 @@ function extractConfig(): Promise<CosmiconfigResult> {
   }).search();
 }
 
-function handleSingleCommand(config: CosmiconfigResult) {
+function handleSingleCommand(extractFromProcessFn: ExtractArgsFromProcess, config: CosmiconfigResult) {
   return pipe(
     E.right(config),
-    E.flatMap(extractArgsForCommandProvidedThroughCli),
+    E.flatMap((config) => extractArgsForCommandProvidedThroughCli(extractFromProcessFn, config)),
     E.map((config) => [config]),
   );
 }
 
-function extractArgsForCommandProvidedThroughCli(config: CosmiconfigResult): E.Either<Error, UserDefinedConfig> {
-  const cliArgs = extractYargsDemandingCommand(config);
+function extractArgsForCommandProvidedThroughCli(
+  extractFromProcessFn: ExtractArgsFromProcess,
+  config: CosmiconfigResult,
+): E.Either<Error, UserDefinedConfig> {
+  const cliArgs = extractYargsDemandingCommand(extractFromProcessFn, config);
   const commandName = cliArgs._[0];
 
   const mergedConfig = { ...config?.config, ...cliArgs, targetGenerator: commandName as Generators };
@@ -132,6 +142,7 @@ function getConfigType(config: CosmiconfigResult): NoConfig | SingleCommandConfi
     const commands = rootKeys.filter((key) => validRootKeys.includes(key));
     const hasInvalidCommands = rootKeys.some((key) => !validRootKeys.includes(key));
     if (hasInvalidCommands) {
+      // TODO: Do not throw
       throw new Error(`Invalid command(s) provided in the configuration file: ${rootKeys}`);
     }
 
@@ -147,9 +158,10 @@ function getConfigType(config: CosmiconfigResult): NoConfig | SingleCommandConfi
 
 /**
  * Extracts arguments from the command line, expecting a command to be provided.
+ * @param extractFromProcessFn The function that extracts the arguments from the process.
  * @param config The configuration object from the configuration file, if any.
  */
-function extractYargsDemandingCommand(config?: CosmiconfigResult) {
+function extractYargsDemandingCommand(extractFromProcessFn: ExtractArgsFromProcess, config?: CosmiconfigResult) {
   return yargs
     .config(config?.config)
     .command('markdown', 'Generate documentation from Apex classes as a Markdown site.', (yargs) =>
@@ -162,7 +174,7 @@ function extractYargsDemandingCommand(config?: CosmiconfigResult) {
       yargs.options(changeLogOptions),
     )
     .demandCommand()
-    .parseSync();
+    .parseSync(extractFromProcessFn());
 }
 
 function validateConfig(command: Generators, config: UserDefinedConfig) {
