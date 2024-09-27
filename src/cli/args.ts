@@ -77,7 +77,7 @@ function extractArgsForCommandProvidedThroughCli(
     case 'changelog':
       return E.right(mergedConfig);
     default:
-      throw E.left(new Error(`Invalid command provided: ${mergedConfig.targetGenerator}`));
+      return E.left(new Error(`Invalid command provided: ${mergedConfig.targetGenerator}`));
   }
 }
 

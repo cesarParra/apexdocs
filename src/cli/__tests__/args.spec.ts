@@ -1,4 +1,5 @@
 import { extractArgs } from '../args';
+import * as E from 'fp-ts/Either';
 import { assertEither } from '../../core/test-helpers/assert-either';
 import {
   UserDefinedChangelogConfig,
@@ -7,6 +8,17 @@ import {
 } from '../../core/shared/types';
 
 describe('when extracting arguments', () => {
+  beforeEach(() => {
+    // Remove all cached modules. The cache needs to be cleared before running
+    // each command, otherwise you will see the same results from the command
+    // run in your first test in subsequent tests.
+    jest.resetModules();
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   describe('and no configuration is provided', () => {
     it('extracts the arguments from the process for the markdown command', async () => {
       function getFromProcess() {
@@ -57,7 +69,53 @@ describe('when extracting arguments', () => {
         expect(changelogConfig.currentVersionDir).toEqual('force-app');
       });
     });
+
+    it('fails when a not-supported command is provided', async () => {
+      function getFromProcess() {
+        return ['not-supported'];
+      }
+
+      const result = await extractArgs(getFromProcess);
+
+      expect(E.isLeft(result)).toBeTruthy();
+    });
+
+    it('prints an error to the console when no command is provided', async () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      // @ts-ignore
+      const mockExit = jest.spyOn(process, 'exit').mockImplementation((_code) => {
+        // Do nothing
+        return null;
+      });
+      function getFromProcess() {
+        return [];
+      }
+
+      await extractArgs(getFromProcess);
+
+      expect(consoleSpy).toHaveBeenCalled();
+
+      consoleSpy.mockRestore();
+      mockExit.mockRestore();
+    });
+
+    it('prints an error to the console when a required argument is not provided', async () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      // @ts-ignore
+      const mockExit = jest.spyOn(process, 'exit').mockImplementation((_code) => {
+        // Do nothing
+        return null;
+      });
+      function getFromProcess() {
+        return ['markdown'];
+      }
+
+      await extractArgs(getFromProcess);
+
+      expect(consoleSpy).toHaveBeenCalled();
+
+      consoleSpy.mockRestore();
+      mockExit.mockRestore();
+    });
   });
 });
-
-// TODO: Console errors when the command is not provided
