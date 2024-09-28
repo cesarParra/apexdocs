@@ -1,7 +1,7 @@
 import { DocPageReference, ParsedFile } from '../../shared/types';
-import { Link, ReferenceGuideReference, Renderable, RenderableBundle } from './types';
+import { Link, ReferenceGuideReference, Renderable, RenderableBundle } from '../../renderables/types';
 import { typeToRenderable } from './apex-types';
-import { adaptDescribable } from './documentables';
+import { adaptDescribable } from '../../renderables/documentables';
 import { MarkdownGeneratorConfig } from '../generate-docs';
 import { apply } from '#utils/fp';
 import { Type } from '@cparra/apex-reflection';

@@ -1,4 +1,4 @@
-import { StringOrLink } from './types';
+import { StringOrLink } from '../../renderables/types';
 import path from 'path';
 import { LinkingStrategy } from '../../shared/types';
 

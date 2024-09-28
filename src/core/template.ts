@@ -1,5 +1,5 @@
 import Handlebars from 'handlebars';
-import { CodeBlock, RenderableContent, StringOrLink } from './markdown/adapters/types';
+import { CodeBlock, RenderableContent, StringOrLink } from './renderables/types';
 import { isCodeBlock, isEmptyLine, isInlineCode } from './markdown/adapters/type-utils';
 import { typeDocPartial } from './markdown/templates/type-doc-partial';
 import { documentablePartialTemplate } from './markdown/templates/documentable-partial-template';

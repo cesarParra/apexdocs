@@ -10,8 +10,8 @@ import {
   FieldMirrorWithInheritance,
   PropertyMirrorWithInheritance,
   GetRenderableContentByTypeName,
-} from './types';
-import { adaptDescribable, adaptDocumentable } from './documentables';
+} from '../../renderables/types';
+import { adaptDescribable, adaptDocumentable } from '../../renderables/documentables';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
 import { MarkdownGeneratorConfig } from '../generate-docs';

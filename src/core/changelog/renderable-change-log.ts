@@ -1,8 +1,7 @@
 import { ChangeLog } from './process-change-log';
 import { Type } from '@cparra/apex-reflection';
-// TODO: For these 2 imports, we should move the adapters and documentables to a shared place to not have to get into the markdown folder
-import { RenderableContent } from '../markdown/adapters/types';
-import { adaptDescribable } from '../markdown/adapters/documentables';
+import { RenderableContent } from '../renderables/types';
+import { adaptDescribable } from '../renderables/documentables';
 
 type NewTypeRenderable = {
   name: string;
@@ -74,11 +73,14 @@ function typeToRenderable(type: Type): NewTypeRenderable {
   };
 }
 
-// TODO: New Enums
-// TODO: New Interfaces
-
 // TODO: Removed Classes
 // TODO: Removed Enums
 // TODO: Removed Interfaces
 
 // Changes...
+// TODO: New and removed enum values
+// TODO: new and removed mehtods
+// TODO: new and removed class members
+// TODO: new and removed inner classes
+// TODO: new and removed inner interfaces
+// TODO: new and removed inner enums

@@ -1,4 +1,4 @@
-import { InlineCode, Link, RenderableContent } from './types';
+import { InlineCode, Link, RenderableContent } from '../../renderables/types';
 import { pipe } from 'fp-ts/function';
 import { apply } from '#utils/fp';
 

@@ -1,4 +1,4 @@
-import { ReferenceGuideReference, Renderable, RenderableBundle, RenderableEnum } from './types';
+import { ReferenceGuideReference, Renderable, RenderableBundle, RenderableEnum } from '../../renderables/types';
 import { DocPageData, DocumentationBundle } from '../../shared/types';
 import { pipe } from 'fp-ts/function';
 import { CompilationRequest, Template } from '../../template';
