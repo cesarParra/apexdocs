@@ -454,12 +454,12 @@ If using Typescript, ApexDocs provides all necessary type definitions.
 
 ## 📖 Documentation Guide
 
-See the [wiki](https://github.com/cesarParra/apexdocs/wiki/%F0%9F%93%96-Documenting-Apex-code)
+See the [wiki](https://github.com/cesarParra/apexdocs/wiki/2.-%F0%9F%93%96-Documenting-Apex-code)
 for an in-depth guide on how to document your Apex code to get the most out of ApexDocs.
 
 ## 📄 Generating OpenApi REST Definitions
 
 ApexDocs can also generate OpenApi REST definitions for your Salesforce Apex classes annotated with `@RestResource`.
 
-See the [wiki](https://github.com/cesarParra/apexdocs/wiki/%F0%9F%93%84-Generating-OpenApi-REST-Definitions)
+See the [wiki](https://github.com/cesarParra/apexdocs/wiki/3.-%F0%9F%93%84-Generating-OpenApi-REST-Definitions)
 for more information.
