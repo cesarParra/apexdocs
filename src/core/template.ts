@@ -1,15 +1,15 @@
 import Handlebars from 'handlebars';
-import { CodeBlock, RenderableContent, StringOrLink } from '../adapters/types';
-import { isCodeBlock, isEmptyLine, isInlineCode } from '../adapters/type-utils';
-import { typeDocPartial } from './type-doc-partial';
-import { documentablePartialTemplate } from './documentable-partial-template';
-import { methodsPartialTemplate } from './methods-partial-template';
-import { groupedMembersPartialTemplate } from './grouped-members-partial-template';
-import { constructorsPartialTemplate } from './constructors-partial-template';
-import { fieldsPartialTemplate } from './fieldsPartialTemplate';
-import { classMarkdownTemplate } from './class-template';
-import { enumMarkdownTemplate } from './enum-template';
-import { interfaceMarkdownTemplate } from './interface-template';
+import { CodeBlock, RenderableContent, StringOrLink } from './markdown/adapters/types';
+import { isCodeBlock, isEmptyLine, isInlineCode } from './markdown/adapters/type-utils';
+import { typeDocPartial } from './markdown/templates/type-doc-partial';
+import { documentablePartialTemplate } from './markdown/templates/documentable-partial-template';
+import { methodsPartialTemplate } from './markdown/templates/methods-partial-template';
+import { groupedMembersPartialTemplate } from './markdown/templates/grouped-members-partial-template';
+import { constructorsPartialTemplate } from './markdown/templates/constructors-partial-template';
+import { fieldsPartialTemplate } from './markdown/templates/fieldsPartialTemplate';
+import { classMarkdownTemplate } from './markdown/templates/class-template';
+import { enumMarkdownTemplate } from './markdown/templates/enum-template';
+import { interfaceMarkdownTemplate } from './markdown/templates/interface-template';
 
 export type CompilationRequest = {
   template: string;

@@ -1,12 +1,10 @@
 import { ParsedFile, UnparsedSourceFile, UserDefinedChangelogConfig } from '../shared/types';
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
-// TODO: Move the reflection code to outside of the markdown folder since now it is shared with this
 import { reflectBundles } from '../reflection/reflect-source';
 import { processChangeLog, VersionManifest } from './process-change-log';
 import { convertToRenderableChangeLog } from './renderable-change-log';
-// TODO: Also move this file since this is now shared
-import { CompilationRequest, Template } from '../markdown/templates/template';
+import { CompilationRequest, Template } from '../template';
 import { changeLogTemplate } from './templates/change-log-template';
 import { ReflectionErrors } from '../errors/errors';
 

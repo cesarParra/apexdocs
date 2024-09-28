@@ -24,7 +24,7 @@ import { addInheritanceChainToTypes } from '../reflection/inheritance-chain-expa
 import { addInheritedMembersToTypes } from '../reflection/inherited-member-expansion';
 import { convertToDocumentationBundle } from './adapters/renderable-to-page-data';
 import { filterScope } from '../reflection/filter-scope';
-import { Template } from './templates/template';
+import { Template } from '../template';
 import { hookableTemplate } from './templates/hookable';
 import { sortTypesAndMembers } from '../reflection/sort-types-and-members';
 import { isSkip } from '../shared/utils';
