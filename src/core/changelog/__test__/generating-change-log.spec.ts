@@ -8,6 +8,7 @@ const config = {
   targetDir: '',
   currentVersionDir: '',
   previousVersionDir: '',
+  exclude: [],
 };
 
 describe('when generating a changelog', () => {
