@@ -21,3 +21,9 @@ These interfaces are new.
 These enums are new.
 
 ### PossibleValues
+
+## Removed Types
+
+These types have been removed.
+
+- OldImplementation

@@ -84,10 +84,6 @@ function typeToRenderable(type: Type): NewTypeRenderable {
   };
 }
 
-// TODO: Removed Classes
-// TODO: Removed Enums
-// TODO: Removed Interfaces
-
 // Changes...
 // TODO: New and removed enum values
 // TODO: new and removed mehtods
