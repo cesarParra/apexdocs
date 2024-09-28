@@ -15,15 +15,22 @@ import { changeLogOptions } from './commands/changelog';
 import { pipe } from 'fp-ts/function';
 
 const configOnlyMarkdownDefaults: Partial<UserDefinedMarkdownConfig> = {
+  targetGenerator: 'markdown',
   excludeTags: [],
   exclude: [],
 };
 
 const configOnlyOpenApiDefaults = {
+  targetGenerator: 'openapi',
   exclude: [],
 };
 
+const configOnlyChangelogDefaults = {
+  targetGenerator: 'changelog',
+};
+
 type ExtractArgsFromProcess = () => string[];
+
 function getArgumentsFromProcess() {
   return process.argv.slice(2);
 }
@@ -32,11 +39,8 @@ type ConfigResult = {
   config: Record<string, unknown>;
 };
 type ExtractConfig = () => Promise<ConfigResult>;
-/**
- * Extracts configuration from a configuration file or the package.json
- * through cosmiconfig.
- */
-async function extractConfig(): Promise<ConfigResult> {
+
+async function extractConfigFromPackageJsonOrFile(): Promise<ConfigResult> {
   const result = await cosmiconfig('apexdocs', {
     loaders: {
       '.ts': TypeScriptLoader(),
@@ -50,18 +54,21 @@ async function extractConfig(): Promise<ConfigResult> {
  */
 export async function extractArgs(
   extractFromProcessFn: ExtractArgsFromProcess = getArgumentsFromProcess,
-  extractConfigFn: ExtractConfig = extractConfig,
+  extractConfigFn: ExtractConfig = extractConfigFromPackageJsonOrFile,
 ): Promise<E.Either<Error, readonly UserDefinedConfig[]>> {
   const config = await extractConfigFn();
-  const configType = getConfigType(config);
 
-  switch (configType._type) {
-    case 'no-config':
-    case 'single-command-config':
-      return handleSingleCommand(extractFromProcessFn, config);
-    case 'multi-command-config':
-      return extractArgsForCommandsProvidedInConfig(config.config as ConfigByGenerator);
+  function handle(configType: NoConfig | SingleCommandConfig | MultiCommandConfig) {
+    switch (configType._type) {
+      case 'no-config':
+      case 'single-command-config':
+        return handleSingleCommand(extractFromProcessFn, config);
+      case 'multi-command-config':
+        return extractArgsForCommandsProvidedInConfig(extractFromProcessFn, config.config as ConfigByGenerator);
+    }
   }
+
+  return pipe(getConfigType(config), E.flatMap(handle));
 }
 
 function handleSingleCommand(extractFromProcessFn: ExtractArgsFromProcess, config: ConfigResult) {
@@ -87,7 +94,7 @@ function extractArgsForCommandProvidedThroughCli(
     case 'openapi':
       return E.right({ ...configOnlyOpenApiDefaults, ...mergedConfig } as unknown as UserDefinedOpenApiConfig);
     case 'changelog':
-      return E.right(mergedConfig as unknown as UserDefinedChangelogConfig);
+      return E.right({ ...configOnlyChangelogDefaults, ...mergedConfig } as unknown as UserDefinedChangelogConfig);
     default:
       return E.left(new Error(`Invalid command provided: ${mergedConfig.targetGenerator}`));
   }
@@ -97,24 +104,26 @@ type ConfigByGenerator = {
   [key in Generators]: UserDefinedConfig;
 };
 
-function extractArgsForCommandsProvidedInConfig(config: ConfigByGenerator) {
-  // TODO: Error if a command was still passed through the CLI
+function extractArgsForCommandsProvidedInConfig(
+  extractFromProcessFn: ExtractArgsFromProcess,
+  config: ConfigByGenerator,
+) {
   const configs = Object.entries(config).map(([generator, generatorConfig]) => {
     switch (generator as Generators) {
       case 'markdown':
         return pipe(
-          validateConfig('markdown', generatorConfig),
+          validateMultiCommandConfig(extractFromProcessFn, 'markdown', generatorConfig),
           E.map(() => ({ ...configOnlyMarkdownDefaults, ...generatorConfig })),
         );
       case 'openapi':
         return pipe(
-          validateConfig('openapi', generatorConfig),
+          validateMultiCommandConfig(extractFromProcessFn, 'openapi', generatorConfig),
           E.map(() => ({ ...configOnlyOpenApiDefaults, ...generatorConfig })),
         );
       case 'changelog':
         return pipe(
-          validateConfig('changelog', generatorConfig),
-          E.map(() => generatorConfig),
+          validateMultiCommandConfig(extractFromProcessFn, 'changelog', generatorConfig),
+          E.map(() => ({ ...configOnlyChangelogDefaults, ...generatorConfig })),
         );
     }
   });
@@ -133,9 +142,9 @@ type MultiCommandConfig = {
   commands: Generators[];
 };
 
-function getConfigType(config: ConfigResult): NoConfig | SingleCommandConfig | MultiCommandConfig {
+function getConfigType(config: ConfigResult): E.Either<Error, NoConfig | SingleCommandConfig | MultiCommandConfig> {
   if (!config) {
-    return { _type: 'no-config' };
+    return E.right({ _type: 'no-config' });
   }
 
   // When the config has a shape that looks as follows:
@@ -154,25 +163,18 @@ function getConfigType(config: ConfigResult): NoConfig | SingleCommandConfig | M
     const commands = rootKeys.filter((key) => validRootKeys.includes(key));
     const hasInvalidCommands = rootKeys.some((key) => !validRootKeys.includes(key));
     if (hasInvalidCommands) {
-      // TODO: Do not throw
-      throw new Error(`Invalid command(s) provided in the configuration file: ${rootKeys}`);
+      return E.left(new Error(`Invalid command(s) provided in the configuration file: ${rootKeys}`));
     }
 
-    return {
+    return E.right({
       _type: 'multi-command-config',
-      // TODO: Throw if the same root key is provided more than once
       commands: commands as Generators[],
-    };
+    });
   }
 
-  return { _type: 'single-command-config' };
+  return E.right({ _type: 'single-command-config' });
 }
 
-/**
- * Extracts arguments from the command line, expecting a command to be provided.
- * @param extractFromProcessFn The function that extracts the arguments from the process.
- * @param config The configuration object from the configuration file, if any.
- */
 function extractYargsDemandingCommand(extractFromProcessFn: ExtractArgsFromProcess, config: ConfigResult) {
   return yargs
     .config(config.config as Record<string, unknown>)
@@ -189,7 +191,11 @@ function extractYargsDemandingCommand(extractFromProcessFn: ExtractArgsFromProce
     .parseSync(extractFromProcessFn());
 }
 
-function validateConfig(command: Generators, config: UserDefinedConfig) {
+function validateMultiCommandConfig(
+  extractFromProcessFn: ExtractArgsFromProcess,
+  command: Generators,
+  config: UserDefinedConfig,
+) {
   function getOptions(generator: Generators) {
     switch (generator) {
       case 'markdown':
@@ -206,9 +212,21 @@ function validateConfig(command: Generators, config: UserDefinedConfig) {
     yargs
       .config(config)
       .options(options)
+      .check((argv) => {
+        // we should not be receiving a command here
+        // since this is a multi-command config
+        if (argv._.length > 0) {
+          throw new Error(
+            `Unexpected command "${argv._[0]}". 
+            The command name should be provided in the configuration when using the current configuration format.`,
+          );
+        } else {
+          return true;
+        }
+      })
       .fail((msg) => {
         throw new Error(`Invalid configuration for command "${command}": ${msg}`);
       })
-      .parse();
+      .parse(extractFromProcessFn());
   }, E.toError);
 }

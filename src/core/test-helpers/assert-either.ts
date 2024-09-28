@@ -6,3 +6,7 @@ export function assertEither<T, U>(result: E.Either<T, U>, assertion: (data: U) 
     (data) => assertion(data),
   )(result);
 }
+
+function fail(error: unknown): never {
+  throw error;
+}
