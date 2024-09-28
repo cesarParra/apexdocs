@@ -16,7 +16,7 @@ type NewTypeSection<T extends 'class' | 'interface' | 'enum'> = {
   types: NewTypeRenderable[];
 };
 
-type RenderableChangeLog = {
+export type RenderableChangeLog = {
   newClasses: NewTypeSection<'class'> | null;
   newInterfaces: NewTypeSection<'interface'> | null;
   newEnums: NewTypeSection<'enum'> | null;
