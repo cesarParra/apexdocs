@@ -19,17 +19,17 @@ import {
   ParsedFile,
 } from '../shared/types';
 import { parsedFilesToRenderableBundle } from './adapters/renderable-bundle';
-import { reflectBundles } from './reflection/reflect-source';
-import { addInheritanceChainToTypes } from './reflection/inheritance-chain-expanion';
-import { addInheritedMembersToTypes } from './reflection/inherited-member-expansion';
+import { reflectBundles } from '../reflection/reflect-source';
+import { addInheritanceChainToTypes } from '../reflection/inheritance-chain-expanion';
+import { addInheritedMembersToTypes } from '../reflection/inherited-member-expansion';
 import { convertToDocumentationBundle } from './adapters/renderable-to-page-data';
-import { filterScope } from './reflection/filter-scope';
+import { filterScope } from '../reflection/filter-scope';
 import { Template } from './templates/template';
 import { hookableTemplate } from './templates/hookable';
-import { sortTypesAndMembers } from './reflection/sort-types-and-members';
+import { sortTypesAndMembers } from '../reflection/sort-types-and-members';
 import { isSkip } from '../shared/utils';
 import { parsedFilesToReferenceGuide } from './adapters/reference-guide';
-import { removeExcludedTags } from './reflection/remove-excluded-tags';
+import { removeExcludedTags } from '../reflection/remove-excluded-tags';
 import { HookError } from '../errors/errors';
 
 export type MarkdownGeneratorConfig = Omit<

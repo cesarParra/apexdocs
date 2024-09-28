@@ -1,5 +1,5 @@
-import { ParsedFile } from '../../../shared/types';
 import { reflect } from '@cparra/apex-reflection';
+import { ParsedFile } from '../../shared/types';
 
 export function parsedFileFromRawString(raw: string): ParsedFile {
   const { error, typeMirror } = reflect(raw);

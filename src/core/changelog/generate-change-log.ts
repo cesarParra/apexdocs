@@ -2,7 +2,7 @@ import { ParsedFile, UnparsedSourceFile, UserDefinedChangelogConfig } from '../s
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
 // TODO: Move the reflection code to outside of the markdown folder since now it is shared with this
-import { reflectBundles } from '../markdown/reflection/reflect-source';
+import { reflectBundles } from '../reflection/reflect-source';
 import { processChangeLog, VersionManifest } from './process-change-log';
 import { convertToRenderableChangeLog } from './renderable-change-log';
 // TODO: Also move this file since this is now shared

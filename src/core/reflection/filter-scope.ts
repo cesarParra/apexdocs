@@ -1,5 +1,5 @@
-import { ParsedFile } from '../../shared/types';
-import Manifest from '../../manifest';
+import Manifest from '../manifest';
+import { ParsedFile } from '../shared/types';
 
 export function filterScope(scopes: string[], parsedFiles: ParsedFile[]): ParsedFile[] {
   return parsedFiles
