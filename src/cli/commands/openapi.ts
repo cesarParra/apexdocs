@@ -1,5 +1,5 @@
 import { Options } from 'yargs';
-import { markdownDefaults, openApiDefaults } from '../../defaults';
+import { openApiDefaults } from '../../defaults';
 
 export const openApiOptions: { [key: string]: Options } = {
   sourceDir: {
@@ -11,7 +11,7 @@ export const openApiOptions: { [key: string]: Options } = {
   targetDir: {
     type: 'string',
     alias: 't',
-    default: markdownDefaults.targetDir,
+    default: openApiDefaults.targetDir,
     describe: 'The directory location where the OpenApi file will be generated.',
   },
   fileName: {

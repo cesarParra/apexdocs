@@ -1,5 +1,5 @@
 import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
-import { ParsedFile } from '../../shared/types';
+import { ParsedFile } from '../shared/types';
 
 type Named = { name: string };
 

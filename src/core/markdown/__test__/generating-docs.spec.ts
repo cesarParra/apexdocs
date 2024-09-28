@@ -1,6 +1,7 @@
 import { DocPageData, PostHookDocumentationBundle } from '../../shared/types';
-import { assertEither, extendExpect } from './expect-extensions';
+import { extendExpect } from './expect-extensions';
 import { apexBundleFromRawString, generateDocs } from './test-helpers';
+import { assertEither } from '../../test-helpers/assert-either';
 
 function aSingleDoc(result: PostHookDocumentationBundle): DocPageData {
   expect(result.docs).toHaveLength(1);

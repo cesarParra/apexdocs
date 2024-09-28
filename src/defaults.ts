@@ -19,3 +19,9 @@ export const openApiDefaults = {
   title: 'Apex REST API',
   apiVersion: '1.0.0',
 };
+
+export const changeLogDefaults = {
+  ...commonDefaults,
+  fileName: 'changelog',
+  scope: ['global'],
+};

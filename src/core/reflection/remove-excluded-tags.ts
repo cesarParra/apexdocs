@@ -1,9 +1,9 @@
 import * as O from 'fp-ts/Option';
 import { match } from 'fp-ts/boolean';
-import { ParsedFile } from '../../shared/types';
 import { ClassMirror, DocComment, InterfaceMirror, Type } from '@cparra/apex-reflection';
 import { pipe } from 'fp-ts/function';
 import { apply } from '#utils/fp';
+import { ParsedFile } from '../shared/types';
 
 type AppliedRemoveTagFn = (tagName: string, removeFn: RemoveTagFn) => DocComment;
 type RemoveTagFn = (docComment: DocComment) => DocComment;

@@ -7,7 +7,7 @@ import {
   MethodMirror,
   PropertyMirror,
 } from '@cparra/apex-reflection';
-import { DocPageReference } from '../../shared/types';
+import { DocPageReference } from '../shared/types';
 
 export type Describable = string[] | undefined;
 

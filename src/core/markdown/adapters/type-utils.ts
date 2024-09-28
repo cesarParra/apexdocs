@@ -1,4 +1,4 @@
-import { CodeBlock, EmptyLine, InlineCode, RenderableContent } from './types';
+import { CodeBlock, EmptyLine, InlineCode, RenderableContent } from '../../renderables/types';
 
 export function isEmptyLine(content: RenderableContent): content is EmptyLine {
   return Object.keys(content).includes('__type') && (content as { __type: string }).__type === 'empty-line';

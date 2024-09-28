@@ -1,5 +1,6 @@
-import { assertEither, extendExpect } from './expect-extensions';
+import { extendExpect } from './expect-extensions';
 import { apexBundleFromRawString, generateDocs } from './test-helpers';
+import { assertEither } from '../../test-helpers/assert-either';
 
 describe('When generating documentation for a class', () => {
   beforeAll(() => {
@@ -358,5 +359,3 @@ describe('When generating documentation for a class', () => {
     });
   });
 });
-
-// TODO: Skips tags at the member level

@@ -1,7 +1,7 @@
 import { ClassMirror, Type } from '@cparra/apex-reflection';
 import { createInheritanceChain } from './inheritance-chain';
-import { ParsedFile } from '../../shared/types';
-import { parsedFilesToTypes } from '../utils';
+import { parsedFilesToTypes } from '../markdown/utils';
+import { ParsedFile } from '../shared/types';
 
 export const addInheritanceChainToTypes = (parsedFiles: ParsedFile[]): ParsedFile[] =>
   parsedFiles.map((parsedFile) => ({

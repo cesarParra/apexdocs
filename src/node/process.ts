@@ -1,10 +1,10 @@
-import type { UserDefinedConfig } from '../core/shared/types';
+import type { Generators, UserDefinedConfig } from '../core/shared/types';
 import { NoLogger } from '#utils/logger';
 import { Apexdocs } from '../application/Apexdocs';
 import * as E from 'fp-ts/Either';
-import { markdownDefaults, openApiDefaults } from '../defaults';
+import { changeLogDefaults, markdownDefaults, openApiDefaults } from '../defaults';
 
-type CallableConfig = Partial<UserDefinedConfig> & { sourceDir: string; targetGenerator: 'markdown' | 'openapi' };
+type CallableConfig = Partial<UserDefinedConfig> & { sourceDir: string; targetGenerator: Generators };
 
 /**
  * Processes the documentation generation, similar to the main function in the CLI.
@@ -36,6 +36,8 @@ function getDefault(config: CallableConfig) {
       return markdownDefaults;
     case 'openapi':
       return openApiDefaults;
+    case 'changelog':
+      return changeLogDefaults;
     default:
       throw new Error('Unknown target generator');
   }

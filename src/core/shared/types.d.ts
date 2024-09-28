@@ -1,4 +1,7 @@
 import { Type } from '@cparra/apex-reflection';
+import { ChangeLogPageData } from '../changelog/generate-change-log';
+
+export type Generators = 'markdown' | 'openapi' | 'changelog';
 
 type LinkingStrategy =
   // Links will be generated using relative paths.
@@ -37,7 +40,17 @@ export type UserDefinedOpenApiConfig = {
   exclude: string[];
 };
 
-export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig;
+export type UserDefinedChangelogConfig = {
+  targetGenerator: 'changelog';
+  previousVersionDir: string;
+  currentVersionDir: string;
+  targetDir: string;
+  fileName: string;
+  scope: string[];
+  exclude: string[];
+};
+
+export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig | UserDefinedChangelogConfig;
 
 export type UnparsedSourceFile = {
   filePath: string;
@@ -88,7 +101,7 @@ export type DocPageData = {
 
 export type OpenApiPageData = Omit<DocPageData, 'source'>;
 
-export type PageData = DocPageData | OpenApiPageData | ReferenceGuidePageData;
+export type PageData = DocPageData | OpenApiPageData | ReferenceGuidePageData | ChangeLogPageData;
 
 export type DocumentationBundle = {
   referenceGuide: ReferenceGuidePageData;
