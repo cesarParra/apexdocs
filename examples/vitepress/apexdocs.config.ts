@@ -29,6 +29,7 @@ export default {
   changelog: defineChangelogConfig({
     previousVersionDir: 'previous',
     currentVersionDir: 'force-app',
+    scope: ['global', 'public', 'protected', 'private', 'namespaceaccessible'],
   }),
   markdown: defineMarkdownConfig({
     sourceDir: 'force-app',
