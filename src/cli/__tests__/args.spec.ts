@@ -7,6 +7,10 @@ import {
   UserDefinedOpenApiConfig,
 } from '../../core/shared/types';
 
+function exitFake(_code?: string | number | null | undefined): never {
+  throw new Error('process.exit() was called');
+}
+
 describe('when extracting arguments', () => {
   beforeEach(() => {
     // Remove all cached modules. The cache needs to be cleared before running
@@ -82,16 +86,16 @@ describe('when extracting arguments', () => {
 
     it('prints an error to the console when no command is provided', async () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      // @ts-ignore
-      const mockExit = jest.spyOn(process, 'exit').mockImplementation((_code) => {
-        // Do nothing
-        return null;
-      });
+      const mockExit = jest.spyOn(process, 'exit').mockImplementation(exitFake);
       function getFromProcess() {
         return [];
       }
 
-      await extractArgs(getFromProcess);
+      try {
+        await extractArgs(getFromProcess);
+      } catch (error) {
+        // Do nothing
+      }
 
       expect(consoleSpy).toHaveBeenCalled();
 
@@ -101,21 +105,71 @@ describe('when extracting arguments', () => {
 
     it('prints an error to the console when a required argument is not provided', async () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      // @ts-ignore
-      const mockExit = jest.spyOn(process, 'exit').mockImplementation((_code) => {
-        // Do nothing
-        return null;
-      });
+      const mockExit = jest.spyOn(process, 'exit').mockImplementation(exitFake);
       function getFromProcess() {
         return ['markdown'];
       }
 
-      await extractArgs(getFromProcess);
+      try {
+        await extractArgs(getFromProcess);
+      } catch (error) {
+        // Do nothing
+      }
 
       expect(consoleSpy).toHaveBeenCalled();
 
       consoleSpy.mockRestore();
       mockExit.mockRestore();
+    });
+  });
+
+  describe('and a configuration is provided for a single command', () => {
+    it('extracts the arguments from the process for the markdown command from the configuration', async () => {
+      function getFromProcess() {
+        return ['markdown'];
+      }
+
+      function extractConfig() {
+        return Promise.resolve({
+          config: {
+            sourceDir: 'force-app',
+          },
+        });
+      }
+
+      const result = await extractArgs(getFromProcess, extractConfig);
+
+      assertEither(result, (configs) => {
+        expect(configs).toHaveLength(1);
+        expect(configs[0].targetGenerator).toEqual('markdown');
+
+        const markdownConfig = configs[0] as UserDefinedMarkdownConfig;
+        expect(markdownConfig.sourceDir).toEqual('force-app');
+      });
+    });
+
+    it('extracts the arguments from the process for the openapi command from the configuration', async () => {
+      function getFromProcess() {
+        return ['openapi'];
+      }
+
+      function extractConfig() {
+        return Promise.resolve({
+          config: {
+            sourceDir: 'force-app',
+          },
+        });
+      }
+
+      const result = await extractArgs(getFromProcess, extractConfig);
+
+      assertEither(result, (configs) => {
+        expect(configs).toHaveLength(1);
+        expect(configs[0].targetGenerator).toEqual('openapi');
+
+        const openApiConfig = configs[0] as UserDefinedOpenApiConfig;
+        expect(openApiConfig.sourceDir).toEqual('force-app');
+      });
     });
   });
 });

@@ -1,7 +1,13 @@
-import { cosmiconfig, CosmiconfigResult } from 'cosmiconfig';
+import { cosmiconfig } from 'cosmiconfig';
 import * as yargs from 'yargs';
 import * as E from 'fp-ts/Either';
-import { Generators, UserDefinedConfig, UserDefinedMarkdownConfig } from '../core/shared/types';
+import {
+  Generators,
+  UserDefinedChangelogConfig,
+  UserDefinedConfig,
+  UserDefinedMarkdownConfig,
+  UserDefinedOpenApiConfig,
+} from '../core/shared/types';
 import { TypeScriptLoader } from 'cosmiconfig-typescript-loader';
 import { markdownOptions } from './commands/markdown';
 import { openApiOptions } from './commands/openapi';
@@ -22,13 +28,31 @@ function getArgumentsFromProcess() {
   return process.argv.slice(2);
 }
 
+type ConfigResult = {
+  config: Record<string, unknown>;
+};
+type ExtractConfig = () => Promise<ConfigResult>;
+/**
+ * Extracts configuration from a configuration file or the package.json
+ * through cosmiconfig.
+ */
+async function extractConfig(): Promise<ConfigResult> {
+  const result = await cosmiconfig('apexdocs', {
+    loaders: {
+      '.ts': TypeScriptLoader(),
+    },
+  }).search();
+  return { config: result?.config ?? {} };
+}
+
 /**
  * Combines the extracted configuration and arguments.
  */
 export async function extractArgs(
   extractFromProcessFn: ExtractArgsFromProcess = getArgumentsFromProcess,
+  extractConfigFn: ExtractConfig = extractConfig,
 ): Promise<E.Either<Error, readonly UserDefinedConfig[]>> {
-  const config = await extractConfig();
+  const config = await extractConfigFn();
   const configType = getConfigType(config);
 
   switch (configType._type) {
@@ -36,23 +60,11 @@ export async function extractArgs(
     case 'single-command-config':
       return handleSingleCommand(extractFromProcessFn, config);
     case 'multi-command-config':
-      return extractArgsForCommandsProvidedInConfig(config!.config);
+      return extractArgsForCommandsProvidedInConfig(config.config as ConfigByGenerator);
   }
 }
 
-/**
- * Extracts configuration from a configuration file or the package.json
- * through cosmiconfig.
- */
-function extractConfig(): Promise<CosmiconfigResult> {
-  return cosmiconfig('apexdocs', {
-    loaders: {
-      '.ts': TypeScriptLoader(),
-    },
-  }).search();
-}
-
-function handleSingleCommand(extractFromProcessFn: ExtractArgsFromProcess, config: CosmiconfigResult) {
+function handleSingleCommand(extractFromProcessFn: ExtractArgsFromProcess, config: ConfigResult) {
   return pipe(
     E.right(config),
     E.flatMap((config) => extractArgsForCommandProvidedThroughCli(extractFromProcessFn, config)),
@@ -62,20 +74,20 @@ function handleSingleCommand(extractFromProcessFn: ExtractArgsFromProcess, confi
 
 function extractArgsForCommandProvidedThroughCli(
   extractFromProcessFn: ExtractArgsFromProcess,
-  config: CosmiconfigResult,
+  config: ConfigResult,
 ): E.Either<Error, UserDefinedConfig> {
   const cliArgs = extractYargsDemandingCommand(extractFromProcessFn, config);
   const commandName = cliArgs._[0];
 
-  const mergedConfig = { ...config?.config, ...cliArgs, targetGenerator: commandName as Generators };
+  const mergedConfig = { ...config.config, ...cliArgs, targetGenerator: commandName as Generators };
 
   switch (mergedConfig.targetGenerator) {
     case 'markdown':
-      return E.right({ ...configOnlyMarkdownDefaults, ...mergedConfig });
+      return E.right({ ...configOnlyMarkdownDefaults, ...mergedConfig } as UserDefinedMarkdownConfig);
     case 'openapi':
-      return E.right({ ...configOnlyOpenApiDefaults, ...mergedConfig });
+      return E.right({ ...configOnlyOpenApiDefaults, ...mergedConfig } as unknown as UserDefinedOpenApiConfig);
     case 'changelog':
-      return E.right(mergedConfig);
+      return E.right(mergedConfig as unknown as UserDefinedChangelogConfig);
     default:
       return E.left(new Error(`Invalid command provided: ${mergedConfig.targetGenerator}`));
   }
@@ -121,7 +133,7 @@ type MultiCommandConfig = {
   commands: Generators[];
 };
 
-function getConfigType(config: CosmiconfigResult): NoConfig | SingleCommandConfig | MultiCommandConfig {
+function getConfigType(config: ConfigResult): NoConfig | SingleCommandConfig | MultiCommandConfig {
   if (!config) {
     return { _type: 'no-config' };
   }
@@ -161,9 +173,9 @@ function getConfigType(config: CosmiconfigResult): NoConfig | SingleCommandConfi
  * @param extractFromProcessFn The function that extracts the arguments from the process.
  * @param config The configuration object from the configuration file, if any.
  */
-function extractYargsDemandingCommand(extractFromProcessFn: ExtractArgsFromProcess, config?: CosmiconfigResult) {
+function extractYargsDemandingCommand(extractFromProcessFn: ExtractArgsFromProcess, config: ConfigResult) {
   return yargs
-    .config(config?.config)
+    .config(config.config as Record<string, unknown>)
     .command('markdown', 'Generate documentation from Apex classes as a Markdown site.', (yargs) =>
       yargs.options(markdownOptions),
     )
