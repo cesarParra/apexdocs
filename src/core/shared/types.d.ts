@@ -46,6 +46,7 @@ export type UserDefinedChangelogConfig = {
   currentVersionDir: string;
   targetDir: string;
   fileName: string;
+  scope: string[];
 };
 
 export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig | UserDefinedChangelogConfig;

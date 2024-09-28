@@ -7,6 +7,8 @@ import { convertToRenderableChangeLog } from './renderable-change-log';
 import { CompilationRequest, Template } from '../template';
 import { changeLogTemplate } from './templates/change-log-template';
 import { ReflectionErrors } from '../errors/errors';
+import { apply } from '#utils/fp';
+import { filterScope } from '../reflection/filter-scope';
 
 export type ChangeLogPageData = {
   // TODO: This should also support frontmatter (and the hook to add it)
@@ -14,21 +16,22 @@ export type ChangeLogPageData = {
   outputDocPath: string;
 };
 
-// TODO: Also provide the ability to have a previously generated manifest as an input
-// TODO: Also provide the ability to have 2 git refs as input
-
 // TODO: We should provide the ability to filter out of scope if we are going
-// to be relying on source files and not on a previously generated manifest.
+// to be relying on source files and not on a previously generated manifest
+
 // TODO: And also the "exclude" property in the config, it should be fairly simple to add.
 export function generateChangeLog(
   oldBundles: UnparsedSourceFile[],
   newBundles: UnparsedSourceFile[],
   config: Omit<UserDefinedChangelogConfig, 'targetGenerator'>,
 ): TE.TaskEither<ReflectionErrors, ChangeLogPageData> {
+  const filterOutOfScope = apply(filterScope, config.scope);
+
   return pipe(
     reflectBundles(oldBundles),
+    TE.map(filterOutOfScope),
     TE.bindTo('oldVersion'),
-    TE.bind('newVersion', () => reflectBundles(newBundles)),
+    TE.bind('newVersion', () => pipe(reflectBundles(newBundles), TE.map(filterOutOfScope))),
     TE.map(({ oldVersion, newVersion }) => ({
       oldManifest: parsedFilesToManifest(oldVersion),
       newManifest: parsedFilesToManifest(newVersion),

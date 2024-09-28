@@ -25,4 +25,14 @@ export const changeLogOptions: { [key: string]: Options } = {
     default: changeLogDefaults.fileName,
     describe: 'The name of the changelog file to be generated.',
   },
+  scope: {
+    type: 'string',
+    array: true,
+    alias: 's',
+    default: changeLogDefaults.scope,
+    describe:
+      'The list of scope to respect when generating the changelog. ' +
+      'Values should be separated by a space, e.g --scope global public namespaceaccessible. ' +
+      'Annotations are supported and should be passed lowercased and without the @ symbol, e.g. namespaceaccessible auraenabled.',
+  },
 };

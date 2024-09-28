@@ -23,4 +23,5 @@ export const openApiDefaults = {
 export const changeLogDefaults = {
   ...commonDefaults,
   fileName: 'changelog',
+  scope: ['global'],
 };
