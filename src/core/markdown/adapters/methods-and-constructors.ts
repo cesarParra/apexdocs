@@ -5,9 +5,9 @@ import {
   MethodMirrorWithInheritance,
   CodeBlock,
   GetRenderableContentByTypeName,
-} from './types';
-import { adaptDescribable, adaptDocumentable } from './documentables';
-import { Documentable } from './types';
+} from '../../renderables/types';
+import { adaptDescribable, adaptDocumentable } from '../../renderables/documentables';
+import { Documentable } from '../../renderables/types';
 
 export function adaptMethod(
   method: MethodMirror,

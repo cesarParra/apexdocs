@@ -4,8 +4,8 @@ import {
   PropertyMirrorWithInheritance,
   RenderableField,
   GetRenderableContentByTypeName,
-} from './types';
-import { adaptDocumentable } from './documentables';
+} from '../../renderables/types';
+import { adaptDocumentable } from '../../renderables/documentables';
 
 export function adaptFieldOrProperty(
   field: FieldMirrorWithInheritance | PropertyMirrorWithInheritance,

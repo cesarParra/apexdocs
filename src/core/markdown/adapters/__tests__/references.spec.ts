@@ -1,5 +1,5 @@
 import { replaceInlineReferences } from '../inline';
-import { Link } from '../types';
+import { Link } from '../../../renderables/types';
 
 function getFileLink(typeName: string): Link {
   return {

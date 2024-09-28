@@ -41,10 +41,19 @@ annotated with `@RestResource`:
 apexdocs openapi -s force-app
 ```
 
+#### Changelog
+
+Run the following command to generate a changelog for your Salesforce Apex classes:
+
+```bash
+apexdocs changelog --previousVersionDir force-app-previous --currentVersionDir force-app
+```
+
 ## 🚀 Features
 
 * Generate documentation for Salesforce Apex classes as Markdown files
 * Generate an OpenApi REST specification based on `@RestResource` classes
+* Generate a changelog based on the differences between two versions of your Salesforce Apex classes
 * Support for grouping blocks of related code within a class
 * Support for ignoring files and members from being documented
 * Namespace support
@@ -146,6 +155,28 @@ apexdocs markdown -s force-app -t docs -p global public namespaceaccessible -n M
 apexdocs openapi -s force-app -t docs -n MyNamespace --title "My Custom OpenApi Title"
 ```
 
+### Changelog
+
+`changelog`
+
+#### Flags
+
+| Flag                   | Alias | Description                                                        | Default     | Required |
+|------------------------|-------|--------------------------------------------------------------------|-------------|----------|
+| `--previousVersionDir` | `-p`  | The directory location of the previous version of the source code. | N/A         | Yes      |
+| `--currentVersionDir`  | `-t`  | The directory location of the current version of the source code.  | N/A         | Yes      |
+| `--targetDir`          | `-t`  | The directory location where the changelog file will be generated. | `./docs/`   | No       |
+| `--fileName`           | N/A   | The name of the changelog file to be generated.                    | `changelog` | No       |
+| `--scope`              | N/A   | The list of scope to respect when generating the changelog.        | ['global']  | No       |
+
+#### Sample Usage
+
+```bash
+apexdocs changelog -p force-app-previous -t force-app
+```
+
+---
+
 ## 🔬 Defining a configuration file
 
 You can also use a configuration file to define the parameters that will be used when generating the documentation.
@@ -187,7 +218,7 @@ CLI will be used, or the default value will be used.
 
 ### Config Intellisense
 
-Using the `defineMarkdownConfig` (or the `defineOpenApiConfig` for OpenApi documentation) 
+Using the `defineMarkdownConfig` (or the `defineOpenApiConfig` for OpenApi documentation)
 helper will provide Typescript-powered intellisense
 for the configuration file options. This should work with both Javascript and Typescript files.
 
@@ -202,7 +233,43 @@ export default defineMarkdownConfig({
 });
 ```
 
+### Generating Different Types of Documentation
+
+You might want to generate different types of documentation using a single command. For example, if you are releasing
+a new version of your project, you might want to generate updated documentation Markdown files, and at the
+same time generate a changelog listing everything new.
+
+You can do this by providing a configuration file that exports a configuration object which keys are the type of
+documentation you want to generate.
+
+```typescript
+import { defineMarkdownConfig, defineChangelogConfig } from '@cparra/apexdocs';
+
+export default {
+  markdown: defineMarkdownConfig({
+    sourceDir: 'force-app',
+    targetDir: 'docs',
+    scope: ['global', 'public'],
+    ...
+  }),
+  changelog: defineChangelogConfig({
+    previousVersionDir: 'force-app-previous',
+    currentVersionDir: 'force-app',
+    targetDir: 'docs',
+    scope: ['global', 'public'],
+  })
+};
+```
+
+Then you only need to run the top level `apexdocs` command, and it will generate both types of documentation.
+
+```bash
+apexdocs
+```
+
 ### Excluding Tags from Appearing in the Documentation
+
+Note: Only works for Markdown documentation.
 
 You can exclude tags from appearing in the documentation by using the `excludeTags` property in the configuration file,
 which allow you to pass a list of tags that you want to exclude from the documentation.
@@ -215,6 +282,23 @@ export default defineMarkdownConfig({
   targetDir: 'docs',
   scope: ['global', 'public'],
   excludeTags: ['internal', 'ignore'],
+  ...
+});
+```
+
+### Excluding Files from Being Documented
+
+You can exclude one or multiple files from being documented by providing a list of glob patterns to
+the `exclude` property in the configuration file.
+
+```typescript
+import { defineMarkdownConfig } from "@cparra/apexdocs";
+
+export default defineMarkdownConfig({
+  sourceDir: 'force-app',
+  targetDir: 'docs',
+  scope: ['global', 'public'],
+  exclude: ['**/MyClass.cls', '**/MyOtherClass.cls'],
   ...
 });
 ```
@@ -370,12 +454,12 @@ If using Typescript, ApexDocs provides all necessary type definitions.
 
 ## 📖 Documentation Guide
 
-See the [wiki](https://github.com/cesarParra/apexdocs/wiki/%F0%9F%93%96-Documenting-Apex-code)
+See the [wiki](https://github.com/cesarParra/apexdocs/wiki/2.-%F0%9F%93%96-Documenting-Apex-code)
 for an in-depth guide on how to document your Apex code to get the most out of ApexDocs.
 
 ## 📄 Generating OpenApi REST Definitions
 
 ApexDocs can also generate OpenApi REST definitions for your Salesforce Apex classes annotated with `@RestResource`.
 
-See the [wiki](https://github.com/cesarParra/apexdocs/wiki/%F0%9F%93%84-Generating-OpenApi-REST-Definitions)
+See the [wiki](https://github.com/cesarParra/apexdocs/wiki/3.-%F0%9F%93%84-Generating-OpenApi-REST-Definitions)
 for more information.

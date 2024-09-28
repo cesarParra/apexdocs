@@ -1,4 +1,4 @@
-import { adaptDescribable } from '../documentables';
+import { adaptDescribable } from '../../../renderables/documentables';
 
 function linkGenerator(typeName: string) {
   return typeName;

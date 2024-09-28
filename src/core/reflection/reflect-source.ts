@@ -1,4 +1,3 @@
-import { ParsedFile, UnparsedSourceFile } from '../../shared/types';
 import * as TE from 'fp-ts/TaskEither';
 import * as E from 'fp-ts/Either';
 import * as T from 'fp-ts/Task';
@@ -6,23 +5,12 @@ import * as A from 'fp-ts/lib/Array';
 import { Annotation, reflect as mirrorReflection, Type } from '@cparra/apex-reflection';
 import { pipe } from 'fp-ts/function';
 import * as O from 'fp-ts/Option';
-import { parseApexMetadata } from '../../parse-apex-metadata';
 import { ParsingError } from '@cparra/apex-reflection';
 import { apply } from '#utils/fp';
 import { Semigroup } from 'fp-ts/Semigroup';
-
-export class ReflectionErrors {
-  readonly _tag = 'ReflectionErrors';
-
-  constructor(public errors: ReflectionError[]) {}
-}
-
-export class ReflectionError {
-  constructor(
-    public file: string,
-    public message: string,
-  ) {}
-}
+import { ParsedFile, UnparsedSourceFile } from '../shared/types';
+import { ReflectionError, ReflectionErrors } from '../errors/errors';
+import { parseApexMetadata } from '../parse-apex-metadata';
 
 async function reflectAsync(rawSource: string): Promise<Type> {
   return new Promise((resolve, reject) => {

@@ -1,7 +1,7 @@
 import { CustomTag, RenderableDocumentation, RenderableContent } from './types';
 import { Describable, Documentable, GetRenderableContentByTypeName } from './types';
-import { replaceInlineReferences } from './inline';
-import { isEmptyLine } from './type-utils';
+import { replaceInlineReferences } from '../markdown/adapters/inline';
+import { isEmptyLine } from '../markdown/adapters/type-utils';
 
 export function adaptDescribable(
   describable: Describable,
@@ -60,6 +60,7 @@ export function describableToRenderableContent(
       },
     ];
   }
+
   return (
     content
       // If the last element is an empty line, remove it
