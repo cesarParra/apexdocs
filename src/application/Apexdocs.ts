@@ -68,8 +68,8 @@ async function processOpenApi(config: UserDefinedOpenApiConfig, logger: Logger) 
 async function processChangeLog(config: UserDefinedChangelogConfig) {
   async function loadFiles(): Promise<[UnparsedSourceFile[], UnparsedSourceFile[]]> {
     return [
-      await readFiles(config.previousVersionDir, false, []),
-      await readFiles(config.currentVersionDir, false, []),
+      await readFiles(config.previousVersionDir, false, config.exclude),
+      await readFiles(config.currentVersionDir, false, config.exclude),
     ];
   }
 

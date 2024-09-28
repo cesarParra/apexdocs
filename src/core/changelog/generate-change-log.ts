@@ -16,10 +16,6 @@ export type ChangeLogPageData = {
   outputDocPath: string;
 };
 
-// TODO: We should provide the ability to filter out of scope if we are going
-// to be relying on source files and not on a previously generated manifest
-
-// TODO: And also the "exclude" property in the config, it should be fairly simple to add.
 export function generateChangeLog(
   oldBundles: UnparsedSourceFile[],
   newBundles: UnparsedSourceFile[],
@@ -27,11 +23,14 @@ export function generateChangeLog(
 ): TE.TaskEither<ReflectionErrors, ChangeLogPageData> {
   const filterOutOfScope = apply(filterScope, config.scope);
 
+  function reflect(sourceFiles: UnparsedSourceFile[]) {
+    return pipe(reflectBundles(sourceFiles), TE.map(filterOutOfScope));
+  }
+
   return pipe(
-    reflectBundles(oldBundles),
-    TE.map(filterOutOfScope),
+    reflect(oldBundles),
     TE.bindTo('oldVersion'),
-    TE.bind('newVersion', () => pipe(reflectBundles(newBundles), TE.map(filterOutOfScope))),
+    TE.bind('newVersion', () => reflect(newBundles)),
     TE.map(({ oldVersion, newVersion }) => ({
       oldManifest: parsedFilesToManifest(oldVersion),
       newManifest: parsedFilesToManifest(newVersion),

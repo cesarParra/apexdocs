@@ -27,6 +27,7 @@ const configOnlyOpenApiDefaults = {
 
 const configOnlyChangelogDefaults = {
   targetGenerator: 'changelog',
+  exclude: [],
 };
 
 type ExtractArgsFromProcess = () => string[];
