@@ -203,4 +203,57 @@ describe('when generating a changelog', () => {
       assertEither(result, (data) => expect(data.content).toContain('- Test'));
     });
   });
+
+  describe('that includes modifications to existing members', () => {
+    it('should include a section for new or modified members', async () => {
+      const oldClassSource = 'class Test {}';
+      const newClassSource = 'class Test { void myMethod() {} }';
+
+      const oldBundle: UnparsedSourceFile[] = [
+        { content: oldClassSource, filePath: 'Test.cls', metadataContent: null },
+      ];
+
+      const newBundle: UnparsedSourceFile[] = [
+        { content: newClassSource, filePath: 'Test.cls', metadataContent: null },
+      ];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect(data.content).toContain('## New or Modified Members in Existing Types'));
+    });
+
+    it('should include the new or modified type name', async () => {
+      const oldClassSource = 'class Test {}';
+      const newClassSource = 'class Test { void myMethod() {} }';
+
+      const oldBundle: UnparsedSourceFile[] = [
+        { content: oldClassSource, filePath: 'Test.cls', metadataContent: null },
+      ];
+
+      const newBundle: UnparsedSourceFile[] = [
+        { content: newClassSource, filePath: 'Test.cls', metadataContent: null },
+      ];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect(data.content).toContain('### Test'));
+    });
+
+    it('should include the new or modified member name', async () => {
+      const oldClassSource = 'class Test {}';
+      const newClassSource = 'class Test { void myMethod() {} }';
+
+      const oldBundle: UnparsedSourceFile[] = [
+        { content: oldClassSource, filePath: 'Test.cls', metadataContent: null },
+      ];
+
+      const newBundle: UnparsedSourceFile[] = [
+        { content: newClassSource, filePath: 'Test.cls', metadataContent: null },
+      ];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect(data.content).toContain('myMethod'));
+    });
+  });
 });

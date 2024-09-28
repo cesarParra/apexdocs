@@ -46,4 +46,18 @@ export const changelogTemplate = `
 - {{this}}
 {{/each}}
 {{/if}}
+
+{{#if newOrModifiedMembers}}
+## {{newOrModifiedMembers.heading}}
+
+{{newOrModifiedMembers.description}}
+
+{{#each newOrModifiedMembers.modifications}}
+### {{this.typeName}}
+
+{{#each this.modifications}}
+- {{this}}
+{{/each}}
+{{/each}}
+{{/if}}
 `.trim();

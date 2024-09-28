@@ -18,12 +18,12 @@ type ModificationTypes =
   | 'NewField'
   | 'RemovedField';
 
-type MemberModificationType = {
+export type MemberModificationType = {
   __typename: ModificationTypes;
   name: string;
 };
 
-type NewOrModifiedMember = {
+export type NewOrModifiedMember = {
   typeName: string;
   modifications: MemberModificationType[];
 };

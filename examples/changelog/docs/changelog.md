@@ -27,3 +27,12 @@ These enums are new.
 These types have been removed.
 
 - OldImplementation
+
+## New or Modified Members in Existing Types
+
+These members have been added or modified.
+
+### SolidService
+
+- New Method: newMethod
+- Removed Method: deprecatedMethod

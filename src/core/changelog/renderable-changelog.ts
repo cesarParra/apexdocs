@@ -1,4 +1,4 @@
-import { Changelog } from './process-changelog';
+import { Changelog, MemberModificationType, NewOrModifiedMember } from './process-changelog';
 import { Type } from '@cparra/apex-reflection';
 import { RenderableContent } from '../renderables/types';
 import { adaptDescribable } from '../renderables/documentables';
@@ -21,11 +21,23 @@ type RemovedTypeSection = {
   types: string[];
 };
 
+type NewOrModifiedMemberSection = {
+  typeName: string;
+  modifications: string[];
+};
+
+type NewOrModifiedMembersSection = {
+  heading: string;
+  description: string;
+  modifications: NewOrModifiedMemberSection[];
+};
+
 export type RenderableChangelog = {
   newClasses: NewTypeSection<'class'> | null;
   newInterfaces: NewTypeSection<'interface'> | null;
   newEnums: NewTypeSection<'enum'> | null;
   removedTypes: RemovedTypeSection | null;
+  newOrModifiedMembers: NewOrModifiedMembersSection | null;
 };
 
 export function convertToRenderableChangelog(changelog: Changelog, newManifest: Type[]): RenderableChangelog {
@@ -69,6 +81,14 @@ export function convertToRenderableChangelog(changelog: Changelog, newManifest: 
       changelog.removedTypes.length > 0
         ? { heading: 'Removed Types', description: 'These types have been removed.', types: changelog.removedTypes }
         : null,
+    newOrModifiedMembers:
+      changelog.newOrModifiedMembers.length > 0
+        ? {
+            heading: 'New or Modified Members in Existing Types',
+            description: 'These members have been added or modified.',
+            modifications: changelog.newOrModifiedMembers.map(toRenderableModification),
+          }
+        : null,
   };
 }
 
@@ -84,10 +104,34 @@ function typeToRenderable(type: Type): NewTypeRenderable {
   };
 }
 
-// Changes...
-// TODO: New and removed enum values
-// TODO: new and removed mehtods
-// TODO: new and removed class members
-// TODO: new and removed inner classes
-// TODO: new and removed inner interfaces
-// TODO: new and removed inner enums
+function toRenderableModification(newOrModifiedMember: NewOrModifiedMember): NewOrModifiedMemberSection {
+  return {
+    typeName: newOrModifiedMember.typeName,
+    modifications: newOrModifiedMember.modifications.map(toRenderableModificationDescription),
+  };
+}
+
+function toRenderableModificationDescription(memberModificationType: MemberModificationType): string {
+  switch (memberModificationType.__typename) {
+    case 'NewEnumValue':
+      return `New Enum Value: ${memberModificationType.name}`;
+    case 'RemovedEnumValue':
+      return `Removed Enum Value: ${memberModificationType.name}`;
+    case 'NewMethod':
+      return `New Method: ${memberModificationType.name}`;
+    case 'RemovedMethod':
+      return `Removed Method: ${memberModificationType.name}`;
+    case 'NewProperty':
+      return `New Property: ${memberModificationType.name}`;
+    case 'RemovedProperty':
+      return `Removed Property: ${memberModificationType.name}`;
+    case 'NewField':
+      return `New Field: ${memberModificationType.name}`;
+    case 'RemovedField':
+      return `Removed Field: ${memberModificationType.name}`;
+    case 'NewType':
+      return `New Type: ${memberModificationType.name}`;
+    case 'RemovedType':
+      return `Removed Type: ${memberModificationType.name}`;
+  }
+}
