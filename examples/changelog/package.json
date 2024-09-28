@@ -14,6 +14,7 @@
   },
   "apexdocs": {
     "previousVersionDir": "previous",
-    "currentVersionDir": "current"
+    "currentVersionDir": "current",
+    "scope": ["global", "public", "private"]
   }
 }
