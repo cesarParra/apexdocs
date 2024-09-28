@@ -28,13 +28,13 @@ type NewOrModifiedMember = {
   modifications: MemberModificationType[];
 };
 
-export type ChangeLog = {
+export type Changelog = {
   newTypes: string[];
   removedTypes: string[];
   newOrModifiedMembers: NewOrModifiedMember[];
 };
 
-export function processChangeLog(oldVersion: VersionManifest, newVersion: VersionManifest): ChangeLog {
+export function processChangelog(oldVersion: VersionManifest, newVersion: VersionManifest): Changelog {
   return {
     newTypes: getNewTypes(oldVersion, newVersion),
     removedTypes: getRemovedTypes(oldVersion, newVersion),

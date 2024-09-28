@@ -1,4 +1,4 @@
-import { ChangeLog } from './process-change-log';
+import { Changelog } from './process-changelog';
 import { Type } from '@cparra/apex-reflection';
 import { RenderableContent } from '../renderables/types';
 import { adaptDescribable } from '../renderables/documentables';
@@ -15,14 +15,21 @@ type NewTypeSection<T extends 'class' | 'interface' | 'enum'> = {
   types: NewTypeRenderable[];
 };
 
-export type RenderableChangeLog = {
+type RemovedTypeSection = {
+  heading: string;
+  description: string;
+  types: string[];
+};
+
+export type RenderableChangelog = {
   newClasses: NewTypeSection<'class'> | null;
   newInterfaces: NewTypeSection<'interface'> | null;
   newEnums: NewTypeSection<'enum'> | null;
+  removedTypes: RemovedTypeSection | null;
 };
 
-export function convertToRenderableChangeLog(changeLog: ChangeLog, newManifest: Type[]): RenderableChangeLog {
-  const allNewTypes = changeLog.newTypes.map(
+export function convertToRenderableChangelog(changelog: Changelog, newManifest: Type[]): RenderableChangelog {
+  const allNewTypes = changelog.newTypes.map(
     (newType) => newManifest.find((type) => type.name.toLowerCase() === newType.toLowerCase())!,
   );
 
@@ -57,6 +64,10 @@ export function convertToRenderableChangeLog(changeLog: ChangeLog, newManifest: 
             description: 'These enums are new.',
             types: newEnums.map(typeToRenderable),
           }
+        : null,
+    removedTypes:
+      changelog.removedTypes.length > 0
+        ? { heading: 'Removed Types', description: 'These types have been removed.', types: changelog.removedTypes }
         : null,
   };
 }

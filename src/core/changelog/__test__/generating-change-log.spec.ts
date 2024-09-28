@@ -175,4 +175,32 @@ describe('when generating a changelog', () => {
       assertEither(result, (data) => expect(data.content).not.toContain('## New Classes'));
     });
   });
+
+  describe('that includes removed types', () => {
+    it('should include a section for removed types', async () => {
+      const oldClassSource = 'class Test {}';
+
+      const oldBundle: UnparsedSourceFile[] = [
+        { content: oldClassSource, filePath: 'Test.cls', metadataContent: null },
+      ];
+      const newBundle: UnparsedSourceFile[] = [];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect(data.content).toContain('## Removed Types'));
+    });
+
+    it('should include the removed type name', async () => {
+      const oldClassSource = 'class Test {}';
+
+      const oldBundle: UnparsedSourceFile[] = [
+        { content: oldClassSource, filePath: 'Test.cls', metadataContent: null },
+      ];
+      const newBundle: UnparsedSourceFile[] = [];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect(data.content).toContain('- Test'));
+    });
+  });
 });

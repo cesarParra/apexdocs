@@ -2,10 +2,10 @@ import { ParsedFile, UnparsedSourceFile, UserDefinedChangelogConfig } from '../s
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
 import { reflectBundles } from '../reflection/reflect-source';
-import { processChangeLog, VersionManifest } from './process-change-log';
-import { convertToRenderableChangeLog, RenderableChangeLog } from './renderable-change-log';
+import { processChangelog, VersionManifest } from './process-changelog';
+import { convertToRenderableChangelog, RenderableChangelog } from './renderable-changelog';
 import { CompilationRequest, Template } from '../template';
-import { changeLogTemplate } from './templates/change-log-template';
+import { changelogTemplate } from './templates/changelog-template';
 import { ReflectionErrors } from '../errors/errors';
 import { apply } from '#utils/fp';
 import { filterScope } from '../reflection/filter-scope';
@@ -34,10 +34,10 @@ export function generateChangeLog(
     TE.bind('newVersion', () => reflect(newBundles)),
     TE.map(toManifests),
     TE.map(({ oldManifest, newManifest }) => ({
-      changeLog: processChangeLog(oldManifest, newManifest),
+      changeLog: processChangelog(oldManifest, newManifest),
       newManifest,
     })),
-    TE.map(({ changeLog, newManifest }) => convertToRenderableChangeLog(changeLog, newManifest.types)),
+    TE.map(({ changeLog, newManifest }) => convertToRenderableChangelog(changeLog, newManifest.types)),
     TE.map(compile),
     TE.map(convertToPageData),
   );
@@ -56,9 +56,9 @@ function toManifests({ oldVersion, newVersion }: { oldVersion: ParsedFile[]; new
   };
 }
 
-function compile(renderable: RenderableChangeLog): string {
+function compile(renderable: RenderableChangelog): string {
   const compilationRequest: CompilationRequest = {
-    template: changeLogTemplate,
+    template: changelogTemplate,
     source: renderable,
   };
 

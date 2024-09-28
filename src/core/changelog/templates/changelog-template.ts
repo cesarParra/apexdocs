@@ -1,4 +1,4 @@
-export const changeLogTemplate = `
+export const changelogTemplate = `
 # Changelog
 
 {{#if newClasses}}
@@ -34,6 +34,16 @@ export const changeLogTemplate = `
 ### {{this.name}}
 
 {{{renderContent this.description}}}
+{{/each}}
+{{/if}}
+
+{{#if removedTypes}}
+## Removed Types
+
+{{removedTypes.description}}
+
+{{#each removedTypes.types}}
+- {{this}}
 {{/each}}
 {{/if}}
 `.trim();
