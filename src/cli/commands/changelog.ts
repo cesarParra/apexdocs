@@ -6,7 +6,21 @@ export const changeLogOptions: { [key: string]: Options } = {
     type: 'string',
     alias: 'p',
     demandOption: true,
-    describe: 'The directory location of the previous version of the source code.',
+    describe:
+      'The directory location of the previous version of the source code. ' +
+      'If previousGitReference is provided, this value should be the directory in which the ' +
+      'Apex source code resides within the repository.',
+  },
+  // TODO: Validate that if previousGitReference is provided, repoPath is also provided.
+  repoPath: {
+    type: 'string',
+    alias: 'g',
+    describe: 'The path to the git repository. Must be provided if previousGitReference is provided.',
+  },
+  previousGitReference: {
+    type: 'string',
+    alias: 'r',
+    describe: 'The git reference of the previous version of the source code.',
   },
   currentVersionDir: {
     type: 'string',

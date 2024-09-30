@@ -72,6 +72,7 @@
     "handlebars": "^4.7.8",
     "js-yaml": "^4.1.0",
     "minimatch": "^10.0.1",
+    "simple-git": "^3.27.0",
     "yargs": "^17.7.2"
   },
   "imports": {

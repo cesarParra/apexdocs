@@ -43,6 +43,8 @@ export type UserDefinedOpenApiConfig = {
 export type UserDefinedChangelogConfig = {
   targetGenerator: 'changelog';
   previousVersionDir: string;
+  repoPath?: string;
+  previousGitReference?: string;
   currentVersionDir: string;
   targetDir: string;
   fileName: string;

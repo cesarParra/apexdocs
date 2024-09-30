@@ -13,8 +13,10 @@
     "rimraf": "^5.0.7"
   },
   "apexdocs": {
-    "previousVersionDir": "previous",
+    "previousVersionDir": "src",
     "currentVersionDir": "current",
+    "repoPath": "git@github.com:Fonteva/framework.git",
+    "previousGitReference": "develop",
     "scope": ["global", "public", "private"]
   }
 }

@@ -1,3 +1,12 @@
+export class GitCloneError {
+  readonly _tag = 'GitCloneError';
+
+  constructor(
+    public message: string,
+    public error: unknown,
+  ) {}
+}
+
 export class FileReadingError {
   readonly _tag = 'FileReadingError';
 

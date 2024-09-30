@@ -1,6 +1,7 @@
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
 import * as E from 'fp-ts/Either';
+import { simpleGit } from 'simple-git';
 
 import markdown from './generators/markdown';
 import openApi from './generators/openapi';
@@ -17,7 +18,7 @@ import {
   UserDefinedOpenApiConfig,
 } from '../core/shared/types';
 import { ReflectionError, ReflectionErrors, HookError } from '../core/errors/errors';
-import { FileReadingError, FileWritingError } from './errors';
+import { FileReadingError, FileWritingError, GitCloneError } from './errors';
 import { apply } from '#utils/fp';
 
 /**
@@ -66,22 +67,52 @@ async function processOpenApi(config: UserDefinedOpenApiConfig, logger: Logger) 
 }
 
 async function processChangeLog(config: UserDefinedChangelogConfig) {
-  async function loadFiles(): Promise<[UnparsedSourceFile[], UnparsedSourceFile[]]> {
+  async function clonePreviousVersionOfRepo() {
+    // Clones the previous version of the repository to a temporary directory.
+    // Returns the path to the cloned repository.
+    if (config.repoPath && config.previousGitReference) {
+      await simpleGit().clone(config.repoPath, '.apexdocs', {
+        '--branch': config.previousGitReference,
+      });
+      return '.apexdocs';
+    }
+
+    return '';
+  }
+
+  async function loadFiles(pathRoot = ''): Promise<[UnparsedSourceFile[], UnparsedSourceFile[]]> {
+    // let pathRoot = '';
+    // if (config.repoPath && config.previousGitReference) {
+    //   console.log(__dirname);
+    //   console.log(process.cwd());
+    //   const response = await simpleGit().clone(config.repoPath, '.apexdocs', {
+    //     '--branch': 'develop',
+    //   });
+    //   pathRoot = '.apexdocs';
+    //
+    //   // TODO: Get rid of this console log.
+    //   console.log('Cloned repo', response);
+    // }
+
     return [
-      await readFiles(config.previousVersionDir, false, config.exclude),
+      await readFiles(pathRoot + '/' + config.previousVersionDir, false, config.exclude),
       await readFiles(config.currentVersionDir, false, config.exclude),
     ];
   }
 
   return pipe(
-    TE.tryCatch(loadFiles, (e) => new FileReadingError('An error occurred while reading files.', e)),
+    TE.tryCatch(clonePreviousVersionOfRepo, (e) => new GitCloneError('', e)),
+    TE.flatMap(() => TE.tryCatch(loadFiles, (e) => new FileReadingError('An error occurred while reading files.', e))),
     TE.flatMap(([previous, current]) => changelog(previous, current, config)),
     TE.map(() => '✔️ Changelog generated successfully!'),
     TE.mapLeft(toErrors),
+    // TODO: Delete directory contents after we are done
   );
 }
 
-function toErrors(error: ReflectionErrors | HookError | FileReadingError | FileWritingError): unknown[] {
+function toErrors(
+  error: ReflectionErrors | HookError | FileReadingError | FileWritingError | GitCloneError,
+): unknown[] {
   switch (error._tag) {
     case 'HookError':
       return ['Error(s) occurred while processing hooks. Please review the following issues:', error.error];
@@ -89,6 +120,8 @@ function toErrors(error: ReflectionErrors | HookError | FileReadingError | FileW
       return ['Error(s) occurred while reading files. Please review the following issues:', error.error];
     case 'FileWritingError':
       return ['Error(s) occurred while writing files. Please review the following issues:', error.error];
+    case 'GitCloneError':
+      return [`${error.error}`];
     default:
       return [
         'Error(s) occurred while parsing files. Please review the following issues:',
