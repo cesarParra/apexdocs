@@ -16,7 +16,7 @@
     "previousVersionDir": "src",
     "currentVersionDir": "current",
     "repoPath": "git@github.com:Fonteva/framework.git",
-    "previousGitReference": "develop",
+    "previousGitReference": "v145.2.24",
     "scope": ["global", "public", "private"]
   }
 }

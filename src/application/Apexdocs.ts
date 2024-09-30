@@ -20,6 +20,8 @@ import {
 import { ReflectionError, ReflectionErrors, HookError } from '../core/errors/errors';
 import { FileReadingError, FileWritingError, GitCloneError } from './errors';
 import { apply } from '#utils/fp';
+import path from 'node:path';
+import * as fs from 'node:fs';
 
 /**
  * Application entry-point to generate documentation out of Apex source files.
@@ -67,46 +69,42 @@ async function processOpenApi(config: UserDefinedOpenApiConfig, logger: Logger) 
 }
 
 async function processChangeLog(config: UserDefinedChangelogConfig) {
+  const previousVersionDir = path.join(process.cwd(), '.apexdocs');
   async function clonePreviousVersionOfRepo() {
     // Clones the previous version of the repository to a temporary directory.
     // Returns the path to the cloned repository.
     if (config.repoPath && config.previousGitReference) {
-      await simpleGit().clone(config.repoPath, '.apexdocs', {
+      await simpleGit().clone(config.repoPath, previousVersionDir, {
         '--branch': config.previousGitReference,
       });
-      return '.apexdocs';
+      return previousVersionDir;
     }
 
     return '';
   }
 
   async function loadFiles(pathRoot = ''): Promise<[UnparsedSourceFile[], UnparsedSourceFile[]]> {
-    // let pathRoot = '';
-    // if (config.repoPath && config.previousGitReference) {
-    //   console.log(__dirname);
-    //   console.log(process.cwd());
-    //   const response = await simpleGit().clone(config.repoPath, '.apexdocs', {
-    //     '--branch': 'develop',
-    //   });
-    //   pathRoot = '.apexdocs';
-    //
-    //   // TODO: Get rid of this console log.
-    //   console.log('Cloned repo', response);
-    // }
-
     return [
-      await readFiles(pathRoot + '/' + config.previousVersionDir, false, config.exclude),
+      await readFiles(path.join(pathRoot, config.previousVersionDir), false, config.exclude),
       await readFiles(config.currentVersionDir, false, config.exclude),
     ];
   }
 
+  function removeTemporaryDirectory() {
+    if (fs.existsSync(previousVersionDir)) {
+      fs.rmSync(previousVersionDir, { recursive: true, force: true });
+    }
+  }
+
   return pipe(
     TE.tryCatch(clonePreviousVersionOfRepo, (e) => new GitCloneError('', e)),
-    TE.flatMap(() => TE.tryCatch(loadFiles, (e) => new FileReadingError('An error occurred while reading files.', e))),
+    TE.flatMap((pathRoot) =>
+      TE.tryCatch(apply(loadFiles, pathRoot), (e) => new FileReadingError('An error occurred while reading files.', e)),
+    ),
     TE.flatMap(([previous, current]) => changelog(previous, current, config)),
+    TE.map(removeTemporaryDirectory),
     TE.map(() => '✔️ Changelog generated successfully!'),
     TE.mapLeft(toErrors),
-    // TODO: Delete directory contents after we are done
   );
 }
 
