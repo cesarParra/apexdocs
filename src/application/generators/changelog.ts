@@ -12,7 +12,8 @@ export default function generate(
 ) {
   return pipe(
     generateChangeLog(oldBundles, newBundles, config),
-    TE.flatMap((files) => writeFilesToSystem(files, config.targetDir)),
+    TE.tapIO((files) => writeFilesToSystem(files, config.targetDir)),
+    TE.tapIO(printOutputToConsole),
   );
 }
 
@@ -24,4 +25,9 @@ function writeFilesToSystem(pageData: ChangeLogPageData, outputDir: string) {
       return new FileWritingError('An error occurred while writing files to the system.', error);
     }),
   );
+}
+
+function printOutputToConsole(pageData: ChangeLogPageData) {
+  console.log(pageData.content);
+  return TE.right(() => console.log(pageData.content));
 }

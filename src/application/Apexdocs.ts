@@ -2,6 +2,8 @@ import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
 import * as E from 'fp-ts/Either';
 import { simpleGit } from 'simple-git';
+// import * as IO from 'fp-ts/IO';
+// import * as Console from 'fp-ts/Console';
 
 import markdown from './generators/markdown';
 import openApi from './generators/openapi';
@@ -17,11 +19,12 @@ import {
   UserDefinedMarkdownConfig,
   UserDefinedOpenApiConfig,
 } from '../core/shared/types';
-import { ReflectionError, ReflectionErrors, HookError } from '../core/errors/errors';
+import { HookError, ReflectionError, ReflectionErrors } from '../core/errors/errors';
 import { FileReadingError, FileWritingError, GitCloneError } from './errors';
 import { apply } from '#utils/fp';
 import path from 'node:path';
 import * as fs from 'node:fs';
+//import { createSpinner } from '../cli/spinner/spinner';
 
 /**
  * Application entry-point to generate documentation out of Apex source files.
@@ -70,10 +73,12 @@ async function processOpenApi(config: UserDefinedOpenApiConfig, logger: Logger) 
 
 async function processChangeLog(config: UserDefinedChangelogConfig) {
   const previousVersionDir = path.join(process.cwd(), '.apexdocs');
+  //const spinner = createSpinner();
   async function clonePreviousVersionOfRepo() {
     // Clones the previous version of the repository to a temporary directory.
     // Returns the path to the cloned repository.
     if (config.repoPath && config.previousGitReference) {
+      //spinner.update({ message: 'Cloning previous version of the repository...' });
       await simpleGit().clone(config.repoPath, previousVersionDir, {
         '--branch': config.previousGitReference,
       });
@@ -90,19 +95,35 @@ async function processChangeLog(config: UserDefinedChangelogConfig) {
     ];
   }
 
+  function createChangelog(
+    previous: UnparsedSourceFile[],
+    current: UnparsedSourceFile[],
+    config: UserDefinedChangelogConfig,
+  ) {
+    //spinner.update({ message: 'Generating changelog...' });
+    return changelog(previous, current, config);
+  }
+
   function removeTemporaryDirectory() {
     if (fs.existsSync(previousVersionDir)) {
       fs.rmSync(previousVersionDir, { recursive: true, force: true });
     }
   }
 
+  // function stopSpinner() {
+  //   spinner.stop();
+  // }
+
+  //spinner.start({ message: 'Generating changelog...' });
+
   return pipe(
     TE.tryCatch(clonePreviousVersionOfRepo, (e) => new GitCloneError('', e)),
     TE.flatMap((pathRoot) =>
       TE.tryCatch(apply(loadFiles, pathRoot), (e) => new FileReadingError('An error occurred while reading files.', e)),
     ),
-    TE.flatMap(([previous, current]) => changelog(previous, current, config)),
+    TE.flatMap(([previous, current]) => createChangelog(previous, current, config)),
     TE.map(removeTemporaryDirectory),
+    //TE.map(stopSpinner),
     TE.map(() => '✔️ Changelog generated successfully!'),
     TE.mapLeft(toErrors),
   );

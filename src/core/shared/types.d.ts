@@ -50,6 +50,9 @@ export type UserDefinedChangelogConfig = {
   fileName: string;
   scope: string[];
   exclude: string[];
+  // TODO: This is just me playing around with this. But markdown and console should not really
+  // be the options. Maybe we differentiate between format (markdown, json), and output (file, console).
+  output: 'markdown' | 'console';
 };
 
 export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig | UserDefinedChangelogConfig;

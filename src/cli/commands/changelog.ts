@@ -49,4 +49,11 @@ export const changeLogOptions: { [key: string]: Options } = {
       'Values should be separated by a space, e.g --scope global public namespaceaccessible. ' +
       'Annotations are supported and should be passed lowercased and without the @ symbol, e.g. namespaceaccessible auraenabled.',
   },
+  output: {
+    type: 'string',
+    alias: 'o',
+    default: changeLogDefaults.output,
+    describe: 'The output format of the changelog. Default is markdown.',
+    choices: ['markdown', 'console'],
+  },
 };
