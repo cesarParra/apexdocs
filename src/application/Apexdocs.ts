@@ -76,7 +76,6 @@ async function processChangeLog(config: UserDefinedChangelogConfig) {
   return pipe(
     TE.tryCatch(loadFiles, (e) => new FileReadingError('An error occurred while reading files.', e)),
     TE.flatMap(([previous, current]) => changelog(previous, current, config)),
-    TE.map(() => '✔️ Changelog generated successfully!'),
     TE.mapLeft(toErrors),
   );
 }

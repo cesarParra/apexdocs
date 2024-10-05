@@ -27,4 +27,5 @@ export const changeLogDefaults = {
   fileName: 'changelog',
   scope: ['global'],
   exclude: [],
+  skipIfNoChanges: true,
 };

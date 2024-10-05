@@ -35,4 +35,9 @@ export const changeLogOptions: { [key: string]: Options } = {
       'Values should be separated by a space, e.g --scope global public namespaceaccessible. ' +
       'Annotations are supported and should be passed lowercased and without the @ symbol, e.g. namespaceaccessible auraenabled.',
   },
+  skipIfNoChanges: {
+    type: 'boolean',
+    default: changeLogDefaults.skipIfNoChanges,
+    describe: 'Skip the changelog generation if there are no changes between the previous and current version.',
+  },
 };
