@@ -109,25 +109,32 @@ function extractArgsForCommandsProvidedInConfig(
   extractFromProcessFn: ExtractArgsFromProcess,
   config: ConfigByGenerator,
 ) {
-  const configs = Object.entries(config).map(([generator, generatorConfig]) => {
-    switch (generator as Generators) {
-      case 'markdown':
-        return pipe(
-          validateMultiCommandConfig(extractFromProcessFn, 'markdown', generatorConfig),
-          E.map(() => ({ ...configOnlyMarkdownDefaults, ...generatorConfig })),
-        );
-      case 'openapi':
-        return pipe(
-          validateMultiCommandConfig(extractFromProcessFn, 'openapi', generatorConfig),
-          E.map(() => ({ ...configOnlyOpenApiDefaults, ...generatorConfig })),
-        );
-      case 'changelog':
-        return pipe(
-          validateMultiCommandConfig(extractFromProcessFn, 'changelog', generatorConfig),
-          E.map(() => ({ ...configOnlyChangelogDefaults, ...generatorConfig })),
-        );
-    }
-  });
+  const providedThroughCli = yargs.parseSync(extractFromProcessFn());
+  const hasACommandBeenProvided = providedThroughCli._.length > 0;
+
+  const configs = Object.entries(config)
+    // If no specific command was provided through the CLI, we will generate all the commands.
+    // Otherwise, we only want to generate the command that was provided.
+    .filter(([generator]) => (hasACommandBeenProvided ? providedThroughCli._[0] === generator : true))
+    .map(([generator, generatorConfig]) => {
+      switch (generator as Generators) {
+        case 'markdown':
+          return pipe(
+            validateMultiCommandConfig(extractFromProcessFn, 'markdown', generatorConfig),
+            E.map(() => ({ ...configOnlyMarkdownDefaults, ...generatorConfig })),
+          );
+        case 'openapi':
+          return pipe(
+            validateMultiCommandConfig(extractFromProcessFn, 'openapi', generatorConfig),
+            E.map(() => ({ ...configOnlyOpenApiDefaults, ...generatorConfig })),
+          );
+        case 'changelog':
+          return pipe(
+            validateMultiCommandConfig(extractFromProcessFn, 'changelog', generatorConfig),
+            E.map(() => ({ ...configOnlyChangelogDefaults, ...generatorConfig })),
+          );
+      }
+    });
 
   return E.sequenceArray(configs);
 }
@@ -210,21 +217,9 @@ function validateMultiCommandConfig(
 
   const options = getOptions(command);
   return E.tryCatch(() => {
-    yargs
+    return yargs
       .config(config)
       .options(options)
-      .check((argv) => {
-        // we should not be receiving a command here
-        // since this is a multi-command config
-        if (argv._.length > 0) {
-          throw new Error(
-            `Unexpected command "${argv._[0]}". 
-            The command name should be provided in the configuration when using the current configuration format.`,
-          );
-        } else {
-          return true;
-        }
-      })
       .fail((msg) => {
         throw new Error(`Invalid configuration for command "${command}": ${msg}`);
       })
