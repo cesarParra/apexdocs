@@ -1,5 +1,5 @@
 import { cosmiconfig } from 'cosmiconfig';
-import * as yargs from 'yargs';
+import yargs = require('yargs');
 import * as E from 'fp-ts/Either';
 import {
   Generators,
@@ -108,7 +108,7 @@ type ConfigByGenerator = {
 function extractArgsForCommandsProvidedInConfig(
   extractFromProcessFn: ExtractArgsFromProcess,
   config: ConfigByGenerator,
-) {
+): E.Either<Error, readonly UserDefinedConfig[]> {
   const providedThroughCli = yargs.parseSync(extractFromProcessFn());
   const hasACommandBeenProvided = providedThroughCli._.length > 0;
 
@@ -120,18 +120,26 @@ function extractArgsForCommandsProvidedInConfig(
       switch (generator as Generators) {
         case 'markdown':
           return pipe(
-            validateMultiCommandConfig(extractFromProcessFn, 'markdown', generatorConfig),
-            E.map(() => ({ ...configOnlyMarkdownDefaults, ...generatorConfig })),
+            extractMultiCommandConfig(extractFromProcessFn, 'markdown', generatorConfig),
+            E.map((cliArgs) => {
+              console.log('markdown', cliArgs);
+              return cliArgs;
+            }),
+            E.map((cliArgs) => ({ ...configOnlyMarkdownDefaults, ...generatorConfig, ...cliArgs })),
           );
         case 'openapi':
           return pipe(
-            validateMultiCommandConfig(extractFromProcessFn, 'openapi', generatorConfig),
-            E.map(() => ({ ...configOnlyOpenApiDefaults, ...generatorConfig })),
+            extractMultiCommandConfig(extractFromProcessFn, 'openapi', generatorConfig),
+            E.map((cliArgs) => ({ ...configOnlyOpenApiDefaults, ...generatorConfig, ...cliArgs })),
           );
         case 'changelog':
           return pipe(
-            validateMultiCommandConfig(extractFromProcessFn, 'changelog', generatorConfig),
-            E.map(() => ({ ...configOnlyChangelogDefaults, ...generatorConfig })),
+            extractMultiCommandConfig(extractFromProcessFn, 'changelog', generatorConfig),
+            E.map((cliArgs) => {
+              console.log('changelog', cliArgs);
+              return cliArgs;
+            }),
+            E.map((cliArgs) => ({ ...configOnlyChangelogDefaults, ...generatorConfig, ...cliArgs })),
           );
       }
     });
@@ -199,7 +207,7 @@ function extractYargsDemandingCommand(extractFromProcessFn: ExtractArgsFromProce
     .parseSync(extractFromProcessFn());
 }
 
-function validateMultiCommandConfig(
+function extractMultiCommandConfig(
   extractFromProcessFn: ExtractArgsFromProcess,
   command: Generators,
   config: UserDefinedConfig,
@@ -216,13 +224,14 @@ function validateMultiCommandConfig(
   }
 
   const options = getOptions(command);
+  console.log('config', config);
   return E.tryCatch(() => {
-    return yargs
+    return yargs(extractFromProcessFn())
       .config(config)
       .options(options)
       .fail((msg) => {
         throw new Error(`Invalid configuration for command "${command}": ${msg}`);
       })
-      .parse(extractFromProcessFn());
+      .parseSync();
   }, E.toError);
 }
