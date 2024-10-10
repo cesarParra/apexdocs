@@ -1,6 +1,7 @@
 import { UnparsedSourceFile } from '../../shared/types';
-import { generateChangeLog } from '../generate-change-log';
+import { ChangeLogPageData, generateChangeLog } from '../generate-change-log';
 import { assertEither } from '../../test-helpers/assert-either';
+import { isSkip } from '../../shared/utils';
 
 const config = {
   fileName: 'changelog',
@@ -9,13 +10,26 @@ const config = {
   currentVersionDir: '',
   previousVersionDir: '',
   exclude: [],
+  skipIfNoChanges: false,
 };
 
 describe('when generating a changelog', () => {
+  it('should not skip when skipIfNoChanges, even if there are no changes', async () => {
+    const result = await generateChangeLog([], [], { ...config })();
+
+    assertEither(result, (data) => expect(isSkip(data)).toBe(false));
+  });
+
+  it('should skip when there are no changes', async () => {
+    const result = await generateChangeLog([], [], { ...config, skipIfNoChanges: true })();
+
+    assertEither(result, (data) => expect(isSkip(data)).toBe(true));
+  });
+
   it('should return a file path', async () => {
     const result = await generateChangeLog([], [], config)();
 
-    assertEither(result, (data) => expect(data.outputDocPath).toContain('changelog.md'));
+    assertEither(result, (data) => expect((data as ChangeLogPageData).outputDocPath).toContain('changelog.md'));
   });
 
   describe('that does not include new classes', () => {
@@ -25,7 +39,7 @@ describe('when generating a changelog', () => {
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
-      assertEither(result, (data) => expect(data.content).not.toContain('## New Classes'));
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).not.toContain('## New Classes'));
     });
   });
 
@@ -40,7 +54,7 @@ describe('when generating a changelog', () => {
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
-      assertEither(result, (data) => expect(data.content).toContain('## New Classes'));
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('## New Classes'));
     });
 
     it('should include the new class name', async () => {
@@ -53,7 +67,7 @@ describe('when generating a changelog', () => {
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
-      assertEither(result, (data) => expect(data.content).toContain('### Test'));
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('### Test'));
     });
 
     it('should include the new class description', async () => {
@@ -71,7 +85,7 @@ describe('when generating a changelog', () => {
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
-      assertEither(result, (data) => expect(data.content).toContain('This is a test class.'));
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('This is a test class.'));
     });
   });
 
@@ -86,7 +100,7 @@ describe('when generating a changelog', () => {
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
-      assertEither(result, (data) => expect(data.content).toContain('## New Interfaces'));
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('## New Interfaces'));
     });
 
     it('should include the new interface name', async () => {
@@ -99,7 +113,7 @@ describe('when generating a changelog', () => {
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
-      assertEither(result, (data) => expect(data.content).toContain('### Test'));
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('### Test'));
     });
 
     it('should include the new interface description', async () => {
@@ -117,7 +131,9 @@ describe('when generating a changelog', () => {
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
-      assertEither(result, (data) => expect(data.content).toContain('This is a test interface.'));
+      assertEither(result, (data) =>
+        expect((data as ChangeLogPageData).content).toContain('This is a test interface.'),
+      );
     });
   });
 
@@ -130,7 +146,7 @@ describe('when generating a changelog', () => {
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
-      assertEither(result, (data) => expect(data.content).toContain('## New Enums'));
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('## New Enums'));
     });
 
     it('should include the new enum name', async () => {
@@ -141,7 +157,7 @@ describe('when generating a changelog', () => {
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
-      assertEither(result, (data) => expect(data.content).toContain('### Test'));
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('### Test'));
     });
 
     it('should include the new enum description', async () => {
@@ -157,7 +173,7 @@ describe('when generating a changelog', () => {
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
-      assertEither(result, (data) => expect(data.content).toContain('This is a test enum.'));
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('This is a test enum.'));
     });
   });
 
@@ -172,7 +188,7 @@ describe('when generating a changelog', () => {
 
       const result = await generateChangeLog(oldBundle, newBundle, { ...config, scope: ['global'] })();
 
-      assertEither(result, (data) => expect(data.content).not.toContain('## New Classes'));
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).not.toContain('## New Classes'));
     });
   });
 
@@ -187,7 +203,7 @@ describe('when generating a changelog', () => {
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
-      assertEither(result, (data) => expect(data.content).toContain('## Removed Types'));
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('## Removed Types'));
     });
 
     it('should include the removed type name', async () => {
@@ -200,7 +216,7 @@ describe('when generating a changelog', () => {
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
-      assertEither(result, (data) => expect(data.content).toContain('- Test'));
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('- Test'));
     });
   });
 
@@ -219,7 +235,9 @@ describe('when generating a changelog', () => {
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
-      assertEither(result, (data) => expect(data.content).toContain('## New or Modified Members in Existing Types'));
+      assertEither(result, (data) =>
+        expect((data as ChangeLogPageData).content).toContain('## New or Modified Members in Existing Types'),
+      );
     });
 
     it('should include the new or modified type name', async () => {
@@ -236,7 +254,7 @@ describe('when generating a changelog', () => {
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
-      assertEither(result, (data) => expect(data.content).toContain('### Test'));
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('### Test'));
     });
 
     it('should include the new or modified member name', async () => {
@@ -253,7 +271,7 @@ describe('when generating a changelog', () => {
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
-      assertEither(result, (data) => expect(data.content).toContain('myMethod'));
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('myMethod'));
     });
   });
 });

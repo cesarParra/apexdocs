@@ -48,6 +48,7 @@ export type UserDefinedChangelogConfig = {
   fileName: string;
   scope: string[];
   exclude: string[];
+  skipIfNoChanges: boolean;
 };
 
 export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig | UserDefinedChangelogConfig;

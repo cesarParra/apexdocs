@@ -1,5 +1,5 @@
 import { cosmiconfig } from 'cosmiconfig';
-import * as yargs from 'yargs';
+import yargs = require('yargs');
 import * as E from 'fp-ts/Either';
 import {
   Generators,
@@ -108,26 +108,41 @@ type ConfigByGenerator = {
 function extractArgsForCommandsProvidedInConfig(
   extractFromProcessFn: ExtractArgsFromProcess,
   config: ConfigByGenerator,
-) {
-  const configs = Object.entries(config).map(([generator, generatorConfig]) => {
-    switch (generator as Generators) {
-      case 'markdown':
-        return pipe(
-          validateMultiCommandConfig(extractFromProcessFn, 'markdown', generatorConfig),
-          E.map(() => ({ ...configOnlyMarkdownDefaults, ...generatorConfig })),
-        );
-      case 'openapi':
-        return pipe(
-          validateMultiCommandConfig(extractFromProcessFn, 'openapi', generatorConfig),
-          E.map(() => ({ ...configOnlyOpenApiDefaults, ...generatorConfig })),
-        );
-      case 'changelog':
-        return pipe(
-          validateMultiCommandConfig(extractFromProcessFn, 'changelog', generatorConfig),
-          E.map(() => ({ ...configOnlyChangelogDefaults, ...generatorConfig })),
-        );
-    }
-  });
+): E.Either<Error, readonly UserDefinedConfig[]> {
+  const providedThroughCli = yargs.parseSync(extractFromProcessFn());
+  const hasACommandBeenProvided = providedThroughCli._.length > 0;
+
+  const configs = Object.entries(config)
+    // If no specific command was provided through the CLI, we will generate all the commands.
+    // Otherwise, we only want to generate the command that was provided.
+    .filter(([generator]) => (hasACommandBeenProvided ? providedThroughCli._[0] === generator : true))
+    .map(([generator, generatorConfig]) => {
+      switch (generator as Generators) {
+        case 'markdown':
+          return pipe(
+            extractMultiCommandConfig(extractFromProcessFn, 'markdown', generatorConfig),
+            E.map((cliArgs) => {
+              console.log('markdown', cliArgs);
+              return cliArgs;
+            }),
+            E.map((cliArgs) => ({ ...configOnlyMarkdownDefaults, ...generatorConfig, ...cliArgs })),
+          );
+        case 'openapi':
+          return pipe(
+            extractMultiCommandConfig(extractFromProcessFn, 'openapi', generatorConfig),
+            E.map((cliArgs) => ({ ...configOnlyOpenApiDefaults, ...generatorConfig, ...cliArgs })),
+          );
+        case 'changelog':
+          return pipe(
+            extractMultiCommandConfig(extractFromProcessFn, 'changelog', generatorConfig),
+            E.map((cliArgs) => {
+              console.log('changelog', cliArgs);
+              return cliArgs;
+            }),
+            E.map((cliArgs) => ({ ...configOnlyChangelogDefaults, ...generatorConfig, ...cliArgs })),
+          );
+      }
+    });
 
   return E.sequenceArray(configs);
 }
@@ -192,7 +207,7 @@ function extractYargsDemandingCommand(extractFromProcessFn: ExtractArgsFromProce
     .parseSync(extractFromProcessFn());
 }
 
-function validateMultiCommandConfig(
+function extractMultiCommandConfig(
   extractFromProcessFn: ExtractArgsFromProcess,
   command: Generators,
   config: UserDefinedConfig,
@@ -209,25 +224,14 @@ function validateMultiCommandConfig(
   }
 
   const options = getOptions(command);
+  console.log('config', config);
   return E.tryCatch(() => {
-    yargs
+    return yargs(extractFromProcessFn())
       .config(config)
       .options(options)
-      .check((argv) => {
-        // we should not be receiving a command here
-        // since this is a multi-command config
-        if (argv._.length > 0) {
-          throw new Error(
-            `Unexpected command "${argv._[0]}". 
-            The command name should be provided in the configuration when using the current configuration format.`,
-          );
-        } else {
-          return true;
-        }
-      })
       .fail((msg) => {
         throw new Error(`Invalid configuration for command "${command}": ${msg}`);
       })
-      .parse(extractFromProcessFn());
+      .parseSync();
   }, E.toError);
 }

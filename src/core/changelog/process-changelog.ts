@@ -34,6 +34,12 @@ export type Changelog = {
   newOrModifiedMembers: NewOrModifiedMember[];
 };
 
+export function hasChanges(changelog: Changelog): boolean {
+  return (
+    changelog.newTypes.length > 0 || changelog.removedTypes.length > 0 || changelog.newOrModifiedMembers.length > 0
+  );
+}
+
 export function processChangelog(oldVersion: VersionManifest, newVersion: VersionManifest): Changelog {
   return {
     newTypes: getNewTypes(oldVersion, newVersion),

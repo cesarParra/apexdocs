@@ -168,6 +168,7 @@ apexdocs openapi -s force-app -t docs -n MyNamespace --title "My Custom OpenApi 
 | `--targetDir`          | `-t`  | The directory location where the changelog file will be generated. | `./docs/`   | No       |
 | `--fileName`           | N/A   | The name of the changelog file to be generated.                    | `changelog` | No       |
 | `--scope`              | N/A   | The list of scope to respect when generating the changelog.        | ['global']  | No       |
+| `--skipIfNoChanges`    | N/A   | Whether to skip generating the changelog if there are no changes.  | `true`      | No       |
 
 #### Sample Usage
 
@@ -263,9 +264,8 @@ export default {
 
 Then you only need to run the top level `apexdocs` command, and it will generate both types of documentation.
 
-```bash
-apexdocs
-```
+Note that you can still run the individual commands if you only want to generate one type of documentation by
+providing the subcommand, e.g `apexdocs markdown` or `apexdocs changelog`.
 
 ### Excluding Tags from Appearing in the Documentation
 
