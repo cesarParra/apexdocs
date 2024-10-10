@@ -9,7 +9,7 @@ import { changelogTemplate } from './templates/changelog-template';
 import { ReflectionErrors } from '../errors/errors';
 import { apply } from '#utils/fp';
 import { filterScope } from '../reflection/filter-scope';
-import { skip } from '../../index';
+import { skip } from '../shared/utils';
 
 export type ChangeLogPageData = {
   content: string;

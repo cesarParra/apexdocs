@@ -14,6 +14,7 @@ import type {
   UserDefinedOpenApiConfig,
   UserDefinedChangelogConfig,
 } from './core/shared/types';
+import { skip } from './core/shared/utils';
 import { changeLogDefaults, markdownDefaults, openApiDefaults } from './defaults';
 import { process } from './node/process';
 
@@ -56,15 +57,6 @@ function defineChangelogConfig(config: ConfigurableChangelogConfig): Partial<Use
     ...changeLogDefaults,
     ...config,
     targetGenerator: 'changelog' as const,
-  };
-}
-
-/**
- * Represents a file to be skipped.
- */
-function skip(): Skip {
-  return {
-    _tag: 'Skip',
   };
 }
 
