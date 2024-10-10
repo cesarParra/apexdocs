@@ -1,6 +1,6 @@
 {
   "name": "@cparra/apexdocs",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "description": "Library with CLI capabilities to generate documentation for Salesforce Apex classes.",
   "keywords": [
     "apex",
@@ -21,7 +21,7 @@
   "scripts": {
     "test": "npm run build && jest",
     "test:cov": "npm run build && jest --coverage",
-    "build": "rimraf ./lib && npm run lint && tsc --noEmit && pkgroll",
+    "build": "rimraf ./dist && npm run lint && tsc --noEmit && pkgroll",
     "lint": "eslint \"./src/**/*.{js,ts}\" --quiet --fix",
     "prepare": "npm run build",
     "version": "npm run format && git add -A src",
