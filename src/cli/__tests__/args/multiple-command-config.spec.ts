@@ -9,7 +9,7 @@ import {
 
 describe('when extracting arguments', () => {
   describe('and a configuration is provided for multiple commands', () => {
-    it('errors when a command was still passed through the cli', async () => {
+    it('if a subcommand was specified through the cli, it only extract the specified subcommand', async () => {
       function getFromProcess() {
         return ['markdown'];
       }
@@ -20,13 +20,22 @@ describe('when extracting arguments', () => {
             markdown: {
               sourceDir: 'force-app',
             },
+            openapi: {
+              sourceDir: 'force-app',
+            },
           },
         });
       }
 
       const result = await extractArgs(getFromProcess, extractConfig);
 
-      expect(E.isLeft(result)).toBeTruthy();
+      assertEither(result, (configs) => {
+        expect(configs).toHaveLength(1);
+        expect(configs[0].targetGenerator).toEqual('markdown');
+
+        const markdownConfig = configs[0] as UserDefinedMarkdownConfig;
+        expect(markdownConfig.sourceDir).toEqual('force-app');
+      });
     });
 
     it('extracts multiple configurations', async () => {
