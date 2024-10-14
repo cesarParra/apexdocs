@@ -1,5 +1,5 @@
 import { FileSystem } from '../file-system';
-import { processFiles } from '../apex-file-reader';
+import { processFiles } from '../source-code-file-reader';
 
 type File = {
   type: 'file';
@@ -124,6 +124,35 @@ describe('File Reader', () => {
     expect(result.length).toBe(2);
     expect(result[0].content).toBe('public class MyClass{}');
     expect(result[1].content).toBe('public class AnotherClass{}');
+  });
+
+  it('returns the file contents of all Object files', async () => {
+    const objectContent = `
+    <?xml version="1.0" encoding="UTF-8"?>
+    <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+        <deploymentStatus>Deployed</deploymentStatus>
+        <description>test object with one field for eclipse ide testing</description>
+        <label>MyFirstObject</label>
+        <pluralLabel>MyFirstObjects</pluralLabel>
+    </CustomObject>`;
+
+    const fileSystem = new TestFileSystem([
+      {
+        type: 'directory',
+        path: '',
+        files: [
+          {
+            type: 'file',
+            path: 'SomeObject__c.object-meta.xml\n',
+            content: objectContent,
+          },
+        ],
+      },
+    ]);
+
+    const result = await processFiles(fileSystem, '', false, []);
+    expect(result.length).toBe(1);
+    expect(result[0].content).toBe(objectContent);
   });
 
   it('skips files that match the excluded glob pattern', async () => {

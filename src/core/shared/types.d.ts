@@ -26,6 +26,7 @@ export type UserDefinedMarkdownConfig = {
   linkingStrategy: LinkingStrategy;
   excludeTags: string[];
   referenceGuideTitle: string;
+  /** Glob patterns to exclude files from the documentation. */
   exclude: string[];
 } & Partial<ConfigurableHooks>;
 
@@ -53,7 +54,16 @@ export type UserDefinedChangelogConfig = {
 
 export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig | UserDefinedChangelogConfig;
 
-export type UnparsedSourceFile = {
+export type UnparsedSourceFile = UnparsedObjectFile | UnparsedApexFile;
+
+export type UnparsedObjectFile = {
+  type: 'object';
+  filePath: string;
+  content: string;
+};
+
+export type UnparsedApexFile = {
+  type: 'apex';
   filePath: string;
   content: string;
   metadataContent: string | null;

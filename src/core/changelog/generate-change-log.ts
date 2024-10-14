@@ -1,4 +1,4 @@
-import { ParsedFile, Skip, UnparsedSourceFile, UserDefinedChangelogConfig } from '../shared/types';
+import { ParsedFile, Skip, UnparsedApexFile, UserDefinedChangelogConfig } from '../shared/types';
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
 import { reflectBundles } from '../reflection/reflect-source';
@@ -17,13 +17,13 @@ export type ChangeLogPageData = {
 };
 
 export function generateChangeLog(
-  oldBundles: UnparsedSourceFile[],
-  newBundles: UnparsedSourceFile[],
+  oldBundles: UnparsedApexFile[],
+  newBundles: UnparsedApexFile[],
   config: Omit<UserDefinedChangelogConfig, 'targetGenerator'>,
 ): TE.TaskEither<ReflectionErrors, ChangeLogPageData | Skip> {
   const filterOutOfScope = apply(filterScope, config.scope);
 
-  function reflect(sourceFiles: UnparsedSourceFile[]) {
+  function reflect(sourceFiles: UnparsedApexFile[]) {
     return pipe(reflectBundles(sourceFiles), TE.map(filterOutOfScope));
   }
 

@@ -6,7 +6,7 @@ import { Logger } from '#utils/logger';
 import ErrorLogger from '#utils/error-logger';
 import { reflect, ReflectionResult } from '@cparra/apex-reflection';
 import Manifest from '../../core/manifest';
-import { PageData, UnparsedSourceFile, UserDefinedOpenApiConfig } from '../../core/shared/types';
+import { PageData, UnparsedApexFile, UserDefinedOpenApiConfig } from '../../core/shared/types';
 import { OpenApiDocsProcessor } from '../../core/openapi/open-api-docs-processor';
 import { writeFiles } from '../file-writer';
 import { pipe } from 'fp-ts/function';
@@ -16,7 +16,7 @@ import { apply } from '#utils/fp';
 
 export default async function openApi(
   logger: Logger,
-  fileBodies: UnparsedSourceFile[],
+  fileBodies: UnparsedApexFile[],
   config: UserDefinedOpenApiConfig,
 ) {
   OpenApiSettings.build({
@@ -46,7 +46,7 @@ export default async function openApi(
   ErrorLogger.logErrors(logger, filteredTypes);
 }
 
-function reflectionWithLogger(logger: Logger, apexBundle: UnparsedSourceFile): ReflectionResult {
+function reflectionWithLogger(logger: Logger, apexBundle: UnparsedApexFile): ReflectionResult {
   const result = reflect(apexBundle.content);
   if (result.error) {
     logger.error(`${apexBundle.filePath} - Parsing error ${result.error?.message}`);

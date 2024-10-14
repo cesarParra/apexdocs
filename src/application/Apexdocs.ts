@@ -6,11 +6,11 @@ import markdown from './generators/markdown';
 import openApi from './generators/openapi';
 import changelog from './generators/changelog';
 
-import { processFiles } from './apex-file-reader';
+import { processApexFiles, processFiles } from './source-code-file-reader';
 import { DefaultFileSystem } from './file-system';
 import { Logger } from '#utils/logger';
 import {
-  UnparsedSourceFile,
+  UnparsedApexFile,
   UserDefinedChangelogConfig,
   UserDefinedConfig,
   UserDefinedMarkdownConfig,
@@ -51,25 +51,27 @@ const readFiles = apply(processFiles, new DefaultFileSystem());
 async function processMarkdown(config: UserDefinedMarkdownConfig) {
   return pipe(
     TE.tryCatch(
-      () => readFiles(config.sourceDir, config.includeMetadata, config.exclude),
+      () => readFiles(config.sourceDir, config.exclude, [processApexFiles(config.includeMetadata)]),
       (e) => new FileReadingError('An error occurred while reading files.', e),
     ),
-    TE.flatMap((fileBodies) => markdown(fileBodies, config)),
+    TE.flatMap((fileBodies) => markdown(fileBodies as UnparsedApexFile[], config)),
     TE.map(() => '✔️ Documentation generated successfully!'),
     TE.mapLeft(toErrors),
   );
 }
 
 async function processOpenApi(config: UserDefinedOpenApiConfig, logger: Logger) {
-  const fileBodies = await readFiles(config.sourceDir, false, config.exclude);
+  const fileBodies = (await readFiles(config.sourceDir, config.exclude, [
+    processApexFiles(false),
+  ])) as UnparsedApexFile[];
   return openApi(logger, fileBodies, config);
 }
 
 async function processChangeLog(config: UserDefinedChangelogConfig) {
-  async function loadFiles(): Promise<[UnparsedSourceFile[], UnparsedSourceFile[]]> {
+  async function loadFiles(): Promise<[UnparsedApexFile[], UnparsedApexFile[]]> {
     return [
-      await readFiles(config.previousVersionDir, false, config.exclude),
-      await readFiles(config.currentVersionDir, false, config.exclude),
+      (await readFiles(config.previousVersionDir, config.exclude, [processApexFiles(false)])) as UnparsedApexFile[],
+      (await readFiles(config.currentVersionDir, config.exclude, [processApexFiles(false)])) as UnparsedApexFile[],
     ];
   }
 

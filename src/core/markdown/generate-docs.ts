@@ -9,7 +9,7 @@ import {
   Frontmatter,
   PostHookDocumentationBundle,
   ReferenceGuidePageData,
-  UnparsedSourceFile,
+  UnparsedApexFile,
   TransformDocPage,
   TransformDocs,
   TransformReferenceGuide,
@@ -39,7 +39,7 @@ export type MarkdownGeneratorConfig = Omit<
   referenceGuideTemplate: string;
 };
 
-export function generateDocs(apexBundles: UnparsedSourceFile[], config: MarkdownGeneratorConfig) {
+export function generateDocs(apexBundles: UnparsedApexFile[], config: MarkdownGeneratorConfig) {
   const filterOutOfScope = apply(filterScope, config.scope);
   const convertToReferences = apply(parsedFilesToReferenceGuide, config);
   const convertToRenderableBundle = apply(parsedFilesToRenderableBundle, config);

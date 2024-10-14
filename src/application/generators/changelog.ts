@@ -1,5 +1,5 @@
 import { pipe } from 'fp-ts/function';
-import { PageData, Skip, UnparsedSourceFile, UserDefinedChangelogConfig } from '../../core/shared/types';
+import { PageData, Skip, UnparsedApexFile, UserDefinedChangelogConfig } from '../../core/shared/types';
 import * as TE from 'fp-ts/TaskEither';
 import { writeFiles } from '../file-writer';
 import { ChangeLogPageData, generateChangeLog } from '../../core/changelog/generate-change-log';
@@ -7,8 +7,8 @@ import { FileWritingError } from '../errors';
 import { isSkip } from '../../core/shared/utils';
 
 export default function generate(
-  oldBundles: UnparsedSourceFile[],
-  newBundles: UnparsedSourceFile[],
+  oldBundles: UnparsedApexFile[],
+  newBundles: UnparsedApexFile[],
   config: UserDefinedChangelogConfig,
 ) {
   function handleFile(file: ChangeLogPageData | Skip) {
