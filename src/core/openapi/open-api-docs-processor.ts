@@ -84,10 +84,10 @@ export class OpenApiDocsProcessor {
       return null;
     }
 
-    let endpointPath = urlMapping.value.replaceAll('"', '').replaceAll("'", '').replaceAll('/*', '/');
-    if (endpointPath.startsWith('/')) {
-      endpointPath = endpointPath.substring(1);
-    }
-    return endpointPath;
+    // The OpenApi path needs to start with a leading slash, but
+    // Salesforce @RestResource annotations already require a leading slash,
+    // so no need to check for it.
+    // See URL Guidelines: https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_classes_annotation_rest_resource.htm
+    return urlMapping.value.replaceAll('"', '').replaceAll("'", '').replaceAll('/*', '/');
   }
 }
