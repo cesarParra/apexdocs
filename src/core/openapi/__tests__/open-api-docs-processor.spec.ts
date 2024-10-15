@@ -39,7 +39,7 @@ it('should respect slashes', function () {
   const processor = new OpenApiDocsProcessor(noLogger);
   processor.onProcess(classMirror);
 
-  expect(processor.openApiModel.paths).toHaveProperty('v1/Account/');
+  expect(processor.openApiModel.paths).toHaveProperty('/v1/Account/');
 });
 
 it('should contain a path with a description when the class has an ApexDoc comment', function () {
