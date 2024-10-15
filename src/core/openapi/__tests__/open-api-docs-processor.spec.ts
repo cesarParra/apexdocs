@@ -55,5 +55,5 @@ it('should contain a path with a description when the class has an ApexDoc comme
   const processor = new OpenApiDocsProcessor(noLogger);
   processor.onProcess(classMirror);
 
-  expect(processor.openApiModel.paths['Account/'].description).toBe('My Description');
+  expect(processor.openApiModel.paths['/Account/'].description).toBe('My Description');
 });
