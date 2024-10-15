@@ -1,7 +1,7 @@
 /**
  * @description Order related operations
  */
-@RestResource(urlMapping='/Order/*')
+@RestResource(UrlMapping='/Order/*')
 global with sharing class SampleRestResourceWithoutApexDocs {
     @HttpGet
     global static String doGet(String param1, Reference1 param2) {

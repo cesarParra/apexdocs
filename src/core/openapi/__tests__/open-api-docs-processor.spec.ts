@@ -24,7 +24,22 @@ it('should add a path based on the @UrlResource annotation on the class', functi
   const processor = new OpenApiDocsProcessor(noLogger);
   processor.onProcess(classMirror);
 
-  expect(processor.openApiModel.paths).toHaveProperty('Account/');
+  expect(processor.openApiModel.paths).toHaveProperty('/Account/');
+});
+
+it('adds a leading slash to the path if it is missing', function () {
+  const annotationElementValue = {
+    key: 'urlMapping',
+    value: "'Account/*'",
+  };
+  const classMirror = new ClassMirrorBuilder()
+    .addAnnotation(new AnnotationBuilder().addElementValue(annotationElementValue).build())
+    .build();
+
+  const processor = new OpenApiDocsProcessor(noLogger);
+  processor.onProcess(classMirror);
+
+  expect(processor.openApiModel.paths).toHaveProperty('/Account/');
 });
 
 it('should respect slashes', function () {

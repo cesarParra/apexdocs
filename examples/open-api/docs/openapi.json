@@ -10,7 +10,7 @@
     }
   ],
   "paths": {
-    "AccountService/": {
+    "/AccountService/": {
       "description": "Account related operations",
       "get": {
         "tags": [
@@ -338,7 +338,7 @@
         }
       }
     },
-    "Contact/": {
+    "/Contact/": {
       "description": "Contact related operations",
       "get": {
         "tags": [
@@ -359,7 +359,7 @@
         }
       }
     },
-    "Order/": {
+    "/Order/": {
       "description": "Order related operations",
       "get": {
         "tags": [

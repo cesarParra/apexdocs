@@ -83,11 +83,6 @@ export class OpenApiDocsProcessor {
       this.logger.error(`Type does not contain urlMapping annotation ${type.name}`);
       return null;
     }
-
-    let endpointPath = urlMapping.value.replaceAll('"', '').replaceAll("'", '').replaceAll('/*', '/');
-    if (endpointPath.startsWith('/')) {
-      endpointPath = endpointPath.substring(1);
-    }
-    return endpointPath;
+    return `/${urlMapping.value.replaceAll('"', '').replaceAll("'", '').replaceAll('/*', '/').replace(/^\/+/, '')}`;
   }
 }
