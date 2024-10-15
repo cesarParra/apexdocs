@@ -1,5 +1,5 @@
 import { FileSystem } from '../file-system';
-import { processFiles } from '../source-code-file-reader';
+import { processApexFiles, processFiles, processObjectFiles } from '../source-code-file-reader';
 
 type File = {
   type: 'file';
@@ -70,7 +70,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await processFiles(fileSystem, '', false, []);
+    const result = await processFiles(fileSystem, '', [], [processApexFiles(false)]);
 
     expect(result.length).toBe(0);
   });
@@ -90,7 +90,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await processFiles(fileSystem, '', false, []);
+    const result = await processFiles(fileSystem, '', [], [processApexFiles(false)]);
     expect(result.length).toBe(0);
   });
 
@@ -120,7 +120,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await processFiles(fileSystem, '', false, []);
+    const result = await processFiles(fileSystem, '', [], [processApexFiles(false)]);
     expect(result.length).toBe(2);
     expect(result[0].content).toBe('public class MyClass{}');
     expect(result[1].content).toBe('public class AnotherClass{}');
@@ -143,14 +143,14 @@ describe('File Reader', () => {
         files: [
           {
             type: 'file',
-            path: 'SomeObject__c.object-meta.xml\n',
+            path: 'SomeObject__c.object-meta.xml',
             content: objectContent,
           },
         ],
       },
     ]);
 
-    const result = await processFiles(fileSystem, '', false, []);
+    const result = await processFiles(fileSystem, '', [], [processObjectFiles()]);
     expect(result.length).toBe(1);
     expect(result[0].content).toBe(objectContent);
   });
@@ -181,7 +181,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await processFiles(fileSystem, '', false, ['**/AnotherFile.cls']);
+    const result = await processFiles(fileSystem, '', ['**/AnotherFile.cls'], [processApexFiles(false)]);
     expect(result.length).toBe(1);
     expect(result[0].content).toBe('public class MyClass{}');
   });
@@ -234,7 +234,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await processFiles(fileSystem, '', false, []);
+    const result = await processFiles(fileSystem, '', [], [processApexFiles(false)]);
     expect(result.length).toBe(4);
   });
 });

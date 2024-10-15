@@ -1,7 +1,7 @@
 import { ParsedFile, Skip, UnparsedApexFile, UserDefinedChangelogConfig } from '../shared/types';
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
-import { reflectBundles } from '../reflection/reflect-source';
+import { reflectApexSource } from '../reflection/reflect-source';
 import { Changelog, hasChanges, processChangelog, VersionManifest } from './process-changelog';
 import { convertToRenderableChangelog, RenderableChangelog } from './renderable-changelog';
 import { CompilationRequest, Template } from '../template';
@@ -24,7 +24,7 @@ export function generateChangeLog(
   const filterOutOfScope = apply(filterScope, config.scope);
 
   function reflect(sourceFiles: UnparsedApexFile[]) {
-    return pipe(reflectBundles(sourceFiles), TE.map(filterOutOfScope));
+    return pipe(reflectApexSource(sourceFiles), TE.map(filterOutOfScope));
   }
 
   const convertToPageData = apply(toPageData, config.fileName);

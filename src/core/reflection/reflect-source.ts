@@ -25,7 +25,7 @@ async function reflectAsync(rawSource: string): Promise<Type> {
   });
 }
 
-export function reflectBundles(apexBundles: UnparsedApexFile[]) {
+export function reflectApexSource(apexBundles: UnparsedApexFile[]) {
   const semiGroupReflectionError: Semigroup<ReflectionErrors> = {
     concat: (x, y) => new ReflectionErrors([...x.errors, ...y.errors]),
   };
@@ -67,7 +67,7 @@ function addMetadata(
   return TE.fromEither(
     pipe(
       parsedFile.type,
-      (type) => addFileMetadataToTypeAnnotation(type, rawMetadataContent),
+      (type) => addFileMetadataToTypeAnnotation(type as Type, rawMetadataContent),
       E.map((type) => ({ ...parsedFile, type })),
       E.mapLeft((error) => errorToReflectionErrors(error, parsedFile.source.filePath)),
     ),

@@ -1,5 +1,6 @@
 import { Type } from '@cparra/apex-reflection';
 import { ChangeLogPageData } from '../changelog/generate-change-log';
+import { ObjectMetadata } from '../reflection/reflect-object-source';
 
 export type Generators = 'markdown' | 'openapi' | 'changelog';
 
@@ -72,12 +73,12 @@ export type UnparsedApexFile = {
 export type SourceFileMetadata = {
   filePath: string;
   name: string;
-  type: 'interface' | 'class' | 'enum';
+  type: 'interface' | 'class' | 'enum' | 'object';
 };
 
 export type ParsedFile = {
   source: SourceFileMetadata;
-  type: Type;
+  type: Type | ObjectMetadata;
 };
 
 export type DocPageReference = {
