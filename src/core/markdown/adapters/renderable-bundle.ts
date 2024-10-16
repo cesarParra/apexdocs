@@ -1,11 +1,19 @@
 import { DocPageReference, ParsedFile } from '../../shared/types';
-import { Link, ReferenceGuideReference, Renderable, RenderableBundle } from '../../renderables/types';
+import {
+  Link,
+  ReferenceGuideReference,
+  Renderable,
+  RenderableBundle,
+  RenderableContent,
+} from '../../renderables/types';
 import { typeToRenderable } from './apex-types';
 import { adaptDescribable } from '../../renderables/documentables';
 import { MarkdownGeneratorConfig } from '../generate-docs';
 import { apply } from '#utils/fp';
-import { Type } from '@cparra/apex-reflection';
 import { generateLink } from './generate-link';
+import { getTypeGroup } from '../../shared/utils';
+import { Type } from '@cparra/apex-reflection';
+import { ObjectMetadata } from '../../reflection/reflect-object-source';
 
 export function parsedFilesToRenderableBundle(
   config: MarkdownGeneratorConfig,
@@ -46,16 +54,24 @@ function addToReferenceGuide(
       acc[group] = [];
     }
     acc[group].push({
-      reference: references[parsedFile.type.name],
-      title: findLinkFromHome(parsedFile.type.name) as Link,
-      description: adaptDescribable(parsedFile.type.docComment?.descriptionLines, findLinkFromHome).description ?? null,
+      reference: references[parsedFile.source.name],
+      title: findLinkFromHome(parsedFile.source.name) as Link,
+      description: getRenderableDescription(parsedFile.type, findLinkFromHome),
     });
 
     return acc;
   };
 }
 
-function getTypeGroup(type: Type, config: MarkdownGeneratorConfig): string {
-  const groupAnnotation = type.docComment?.annotations.find((annotation) => annotation.name.toLowerCase() === 'group');
-  return groupAnnotation?.body ?? config.defaultGroupName;
+function getRenderableDescription(
+  type: Type | ObjectMetadata,
+  findLinkFromHome: (referenceName: string) => string | Link,
+): RenderableContent[] | null {
+  switch (type.type_name) {
+    case 'object':
+      // TODO
+      return null;
+    default:
+      return adaptDescribable(type.docComment?.descriptionLines, findLinkFromHome).description ?? null;
+  }
 }

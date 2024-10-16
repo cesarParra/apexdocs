@@ -1,5 +1,6 @@
 import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
 import { ParsedFile } from '../shared/types';
+import { isApexType } from '../shared/utils';
 
 type Named = { name: string };
 
@@ -7,7 +8,7 @@ export function sortTypesAndMembers(shouldSort: boolean, parsedFiles: ParsedFile
   return parsedFiles
     .map((parsedFile) => ({
       ...parsedFile,
-      type: sortTypeMember(parsedFile.type, shouldSort),
+      type: isApexType(parsedFile.type) ? sortTypeMember(parsedFile.type, shouldSort) : parsedFile.type,
     }))
     .sort((a, b) => sortByNames(shouldSort, a.type, b.type));
 }

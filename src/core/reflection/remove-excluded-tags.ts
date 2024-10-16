@@ -9,7 +9,7 @@ type AppliedRemoveTagFn = (tagName: string, removeFn: RemoveTagFn) => DocComment
 type RemoveTagFn = (docComment: DocComment) => DocComment;
 type Documentable = { docComment?: DocComment };
 
-export const removeExcludedTags = (excludedTags: string[], parsedFiles: ParsedFile[]): ParsedFile[] => {
+export const removeExcludedTags = (excludedTags: string[], parsedFiles: ParsedFile<Type>[]): ParsedFile<Type>[] => {
   return parsedFiles.map((parsedFile) => {
     return {
       ...parsedFile,

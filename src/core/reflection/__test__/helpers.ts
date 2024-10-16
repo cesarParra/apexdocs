@@ -1,7 +1,7 @@
-import { reflect } from '@cparra/apex-reflection';
+import { reflect, Type } from '@cparra/apex-reflection';
 import { ParsedFile } from '../../shared/types';
 
-export function parsedFileFromRawString(raw: string): ParsedFile {
+export function parsedFileFromRawString(raw: string): ParsedFile<Type> {
   const { error, typeMirror } = reflect(raw);
   if (error) {
     throw new Error(error.message);

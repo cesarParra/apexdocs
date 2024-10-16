@@ -9,7 +9,7 @@ import { changelogTemplate } from './templates/changelog-template';
 import { ReflectionErrors } from '../errors/errors';
 import { apply } from '#utils/fp';
 import { filterScope } from '../reflection/filter-scope';
-import { skip } from '../shared/utils';
+import { isApexType, skip } from '../shared/utils';
 
 export type ChangeLogPageData = {
   content: string;
@@ -52,7 +52,10 @@ export function generateChangeLog(
 function toManifests({ oldVersion, newVersion }: { oldVersion: ParsedFile[]; newVersion: ParsedFile[] }) {
   function parsedFilesToManifest(parsedFiles: ParsedFile[]): VersionManifest {
     return {
-      types: parsedFiles.map((parsedFile) => parsedFile.type),
+      types: parsedFiles
+        .map((parsedFile) => parsedFile.type)
+        // Changelog does not currently support object types
+        .filter((type) => isApexType(type)),
     };
   }
 

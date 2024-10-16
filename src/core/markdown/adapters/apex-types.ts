@@ -16,14 +16,17 @@ import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
 import { MarkdownGeneratorConfig } from '../generate-docs';
 import { SourceFileMetadata } from '../../shared/types';
+import { ObjectMetadata } from '../../reflection/reflect-object-source';
 
-type GetReturnRenderable<T extends Type> = T extends InterfaceMirror
+type GetReturnRenderable<T extends Type | ObjectMetadata> = T extends InterfaceMirror
   ? RenderableInterface
   : T extends ClassMirror
     ? RenderableClass
-    : RenderableEnum;
+    : T extends EnumMirror
+      ? RenderableEnum
+      : never; // TODO: Implement renderable object
 
-export function typeToRenderable<T extends Type>(
+export function typeToRenderable<T extends Type | ObjectMetadata>(
   parsedFile: { source: SourceFileMetadata; type: T },
   linkGenerator: GetRenderableContentByTypeName,
   config: MarkdownGeneratorConfig,
@@ -32,11 +35,13 @@ export function typeToRenderable<T extends Type>(
     const { type } = parsedFile;
     switch (type.type_name) {
       case 'enum':
-        return enumTypeToEnumSource(type as EnumMirror, linkGenerator) as RenderableEnum;
+        return enumTypeToEnumSource(type as EnumMirror, linkGenerator);
       case 'interface':
-        return interfaceTypeToInterfaceSource(type as InterfaceMirror, linkGenerator) as RenderableInterface;
+        return interfaceTypeToInterfaceSource(type as InterfaceMirror, linkGenerator);
       case 'class':
-        return classTypeToClassSource(type as ClassMirrorWithInheritanceChain, linkGenerator) as RenderableClass;
+        return classTypeToClassSource(type as ClassMirrorWithInheritanceChain, linkGenerator);
+      case 'object':
+        throw new Error('Not implemented');
     }
   }
 

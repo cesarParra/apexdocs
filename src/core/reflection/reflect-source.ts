@@ -34,8 +34,8 @@ export function reflectApexSource(apexBundles: UnparsedApexFile[]) {
   return pipe(apexBundles, A.traverse(Ap)(reflectBundle));
 }
 
-function reflectBundle(apexBundle: UnparsedApexFile): TE.TaskEither<ReflectionErrors, ParsedFile> {
-  const convertToParsedFile: (typeMirror: Type) => ParsedFile = apply(toParsedFile, apexBundle.filePath);
+function reflectBundle(apexBundle: UnparsedApexFile): TE.TaskEither<ReflectionErrors, ParsedFile<Type>> {
+  const convertToParsedFile: (typeMirror: Type) => ParsedFile<Type> = apply(toParsedFile, apexBundle.filePath);
   const withMetadata = apply(addMetadata, apexBundle.metadataContent);
 
   return pipe(apexBundle, reflectAsTask, TE.map(convertToParsedFile), TE.flatMap(withMetadata));
@@ -49,7 +49,7 @@ function reflectAsTask(apexBundle: UnparsedApexFile): TE.TaskEither<ReflectionEr
   );
 }
 
-function toParsedFile(filePath: string, typeMirror: Type): ParsedFile {
+function toParsedFile(filePath: string, typeMirror: Type): ParsedFile<Type> {
   return {
     source: {
       filePath: filePath,
@@ -62,8 +62,8 @@ function toParsedFile(filePath: string, typeMirror: Type): ParsedFile {
 
 function addMetadata(
   rawMetadataContent: string | null,
-  parsedFile: ParsedFile,
-): TE.TaskEither<ReflectionErrors, ParsedFile> {
+  parsedFile: ParsedFile<Type>,
+): TE.TaskEither<ReflectionErrors, ParsedFile<Type>> {
   return TE.fromEither(
     pipe(
       parsedFile.type,

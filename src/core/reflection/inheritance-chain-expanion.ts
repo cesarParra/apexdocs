@@ -3,7 +3,7 @@ import { createInheritanceChain } from './inheritance-chain';
 import { parsedFilesToTypes } from '../markdown/utils';
 import { ParsedFile } from '../shared/types';
 
-export const addInheritanceChainToTypes = (parsedFiles: ParsedFile[]): ParsedFile[] =>
+export const addInheritanceChainToTypes = (parsedFiles: ParsedFile<Type>[]): ParsedFile<Type>[] =>
   parsedFiles.map((parsedFile) => ({
     ...parsedFile,
     type: addInheritanceChain(parsedFile.type, parsedFilesToTypes(parsedFiles)),

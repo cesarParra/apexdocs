@@ -62,7 +62,12 @@ export function generateDocs(unparsedApexFiles: UnparsedSourceFile[], config: Ma
 
   return pipe(
     generateForApex(filterApexSourceFiles(unparsedApexFiles), config),
-    TE.map((parsedApexFiles) => [...parsedApexFiles, ...generateForObject(filterObjectSourceFiles(unparsedApexFiles))]),
+    TE.chain((parsedApexFiles) => {
+      return pipe(
+        generateForObject(filterObjectSourceFiles(unparsedApexFiles)),
+        TE.map((parsedObjectFiles) => [...parsedApexFiles, ...parsedObjectFiles]),
+      );
+    }),
     TE.map(sort),
     TE.bindTo('parsedFiles'),
     TE.bind('references', ({ parsedFiles }) => TE.right(convertToReferences(parsedFiles))),
@@ -89,6 +94,7 @@ function generateForApex(apexBundles: UnparsedApexFile[], config: MarkdownGenera
 }
 
 function generateForObject(objectBundles: UnparsedObjectFile[]) {
+  // TODO: Filter out non public
   return pipe(objectBundles, reflectObjectSources);
 }
 

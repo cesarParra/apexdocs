@@ -10,6 +10,7 @@ import * as A from 'fp-ts/Array';
 export type ObjectMetadata = {
   type_name: 'object';
   label: string;
+  name: string;
 };
 
 export function reflectObjectSources(objectSources: UnparsedObjectFile[]) {
@@ -27,9 +28,21 @@ function reflectObjectSource(objectSource: UnparsedObjectFile): TE.TaskEither<Re
       () => new XMLParser().parse(objectSource.content),
       (error) => new ReflectionErrors([new ReflectionError(objectSource.filePath, (error as Error).message)]),
     ),
-    TE.map((metadata) => addTypeName(metadata as ObjectMetadata)),
+    TE.map((metadata) => addName(metadata as ObjectMetadata, objectSource.filePath)),
+    TE.map((metadata) => addTypeName(metadata)),
     TE.map((metadata) => toParsedFile(objectSource.filePath, metadata)),
   );
+}
+
+function extractNameFromFilePath(filePath: string): string {
+  return filePath.split('/').pop()!.split('.').shift()!;
+}
+
+function addName(objectMetadata: ObjectMetadata, filePath: string): ObjectMetadata {
+  return {
+    ...objectMetadata,
+    name: extractNameFromFilePath(filePath),
+  };
 }
 
 function addTypeName(objectMetadata: ObjectMetadata): ObjectMetadata {
@@ -49,5 +62,3 @@ function toParsedFile(filePath: string, typeMirror: ObjectMetadata): ParsedFile 
     type: typeMirror,
   };
 }
-
-// TODO: Filter out non public

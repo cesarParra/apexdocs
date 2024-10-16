@@ -76,9 +76,9 @@ export type SourceFileMetadata = {
   type: 'interface' | 'class' | 'enum' | 'object';
 };
 
-export type ParsedFile = {
+export type ParsedFile<T extends Type | ObjectMetadata = Type | ObjectMetadata> = {
   source: SourceFileMetadata;
-  type: Type | ObjectMetadata;
+  type: T;
 };
 
 export type DocPageReference = {
@@ -95,7 +95,7 @@ export type DocPageReference = {
   referencePath: string;
 };
 
-type Frontmatter = string | Record<string, unknown> | null;
+export type Frontmatter = string | Record<string, unknown> | null;
 
 export type ReferenceGuidePageData = {
   frontmatter: Frontmatter;
