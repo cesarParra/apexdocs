@@ -1,6 +1,7 @@
 import { ClassMirror, EnumMirror, InterfaceMirror } from '@cparra/apex-reflection';
-import { filterScope } from '../filter-scope';
+
 import { parsedFileFromRawString } from './helpers';
+import { filterScope } from '../filter-scope';
 
 describe('When filtering scope', () => {
   it('filters out files with the @ignore annotation', () => {

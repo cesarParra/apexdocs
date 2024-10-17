@@ -8,9 +8,9 @@ import * as O from 'fp-ts/Option';
 import { ParsingError } from '@cparra/apex-reflection';
 import { apply } from '#utils/fp';
 import { Semigroup } from 'fp-ts/Semigroup';
-import { ParsedFile, UnparsedApexBundle } from '../shared/types';
-import { ReflectionError, ReflectionErrors } from '../errors/errors';
-import { parseApexMetadata } from '../parse-apex-metadata';
+import { ParsedFile, UnparsedApexBundle } from '../../shared/types';
+import { ReflectionError, ReflectionErrors } from '../../errors/errors';
+import { parseApexMetadata } from '../../parse-apex-metadata';
 
 async function reflectAsync(rawSource: string): Promise<Type> {
   return new Promise((resolve, reject) => {

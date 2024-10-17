@@ -1,5 +1,5 @@
-import Manifest from '../manifest';
-import { ParsedFile } from '../shared/types';
+import Manifest from '../../manifest';
+import { ParsedFile } from '../../shared/types';
 import { Type } from '@cparra/apex-reflection';
 
 export function filterScope(scopes: string[], parsedFiles: ParsedFile<Type>[]): ParsedFile<Type>[] {

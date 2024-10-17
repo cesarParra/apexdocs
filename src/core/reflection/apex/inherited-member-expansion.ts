@@ -1,7 +1,7 @@
 import { ClassMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
 import { pipe } from 'fp-ts/function';
-import { ParsedFile } from '../shared/types';
-import { parsedFilesToTypes } from '../markdown/utils';
+import { ParsedFile } from '../../shared/types';
+import { parsedFilesToTypes } from '../../markdown/utils';
 
 export const addInheritedMembersToTypes = (parsedFiles: ParsedFile<Type>[]) =>
   parsedFiles.map((parsedFile) => addInheritedMembers(parsedFilesToTypes(parsedFiles), parsedFile));

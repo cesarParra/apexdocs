@@ -4,7 +4,7 @@ import { minimatch } from 'minimatch';
 import { pipe } from 'fp-ts/function';
 
 /**
- * Reads from .cls files and returns their raw body.
+ * Reads from source code files and returns their raw body.
  */
 export function processFiles(fileSystem: FileSystem) {
   return function <T extends UnparsedApexBundle | UnparsedObjectBundle>(processors: FileProcessor<T>[]) {

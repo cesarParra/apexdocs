@@ -8,6 +8,7 @@ export function sortTypesAndMembers(shouldSort: boolean, parsedFiles: ParsedFile
   return parsedFiles
     .map((parsedFile) => ({
       ...parsedFile,
+      // TODO: Sort fields when they are added to the parser
       type: isApexType(parsedFile.type) ? sortTypeMember(parsedFile.type, shouldSort) : parsedFile.type,
     }))
     .sort((a, b) => sortByNames(shouldSort, a.type, b.type));

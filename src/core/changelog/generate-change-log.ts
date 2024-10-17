@@ -1,14 +1,14 @@
 import { ParsedFile, Skip, UnparsedApexBundle, UserDefinedChangelogConfig } from '../shared/types';
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
-import { reflectApexSource } from '../reflection/reflect-source';
+import { reflectApexSource } from '../reflection/apex/reflect-apex-source';
 import { Changelog, hasChanges, processChangelog, VersionManifest } from './process-changelog';
 import { convertToRenderableChangelog, RenderableChangelog } from './renderable-changelog';
 import { CompilationRequest, Template } from '../template';
 import { changelogTemplate } from './templates/changelog-template';
 import { ReflectionErrors } from '../errors/errors';
 import { apply } from '#utils/fp';
-import { filterScope } from '../reflection/filter-scope';
+import { filterScope } from '../reflection/apex/filter-scope';
 import { isApexType, skip } from '../shared/utils';
 
 export type ChangeLogPageData = {
