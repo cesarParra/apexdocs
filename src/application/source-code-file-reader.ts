@@ -94,6 +94,6 @@ class ObjectFileReader implements FileProcessor<UnparsedSObjectBundle> {
 
   async process(fileSystem: FileSystem, filePath: string): Promise<UnparsedSObjectBundle> {
     const rawTypeContent = await fileSystem.readFile(filePath);
-    return { type: 'object', filePath, content: rawTypeContent };
+    return { type: 'sobject', filePath, content: rawTypeContent };
   }
 }

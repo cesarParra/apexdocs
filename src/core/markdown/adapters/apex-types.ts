@@ -40,7 +40,7 @@ export function typeToRenderable<T extends Type | ObjectMetadata>(
         return interfaceTypeToInterfaceSource(type as InterfaceMirror, linkGenerator);
       case 'class':
         return classTypeToClassSource(type as ClassMirrorWithInheritanceChain, linkGenerator);
-      case 'object':
+      case 'sobject':
         throw new Error('Not implemented');
     }
   }

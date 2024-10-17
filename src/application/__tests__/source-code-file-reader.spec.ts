@@ -131,7 +131,7 @@ describe('File Reader', () => {
     <?xml version="1.0" encoding="UTF-8"?>
     <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
         <deploymentStatus>Deployed</deploymentStatus>
-        <description>test object with one field for eclipse ide testing</description>
+        <description>test object for testing</description>
         <label>MyFirstObject</label>
         <pluralLabel>MyFirstObjects</pluralLabel>
     </CustomObject>`;

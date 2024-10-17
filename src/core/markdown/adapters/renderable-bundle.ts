@@ -68,7 +68,7 @@ function getRenderableDescription(
   findLinkFromHome: (referenceName: string) => string | Link,
 ): RenderableContent[] | null {
   switch (type.type_name) {
-    case 'object':
+    case 'sobject':
       // TODO
       return null;
     default:

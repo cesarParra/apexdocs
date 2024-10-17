@@ -58,7 +58,7 @@ export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiCo
 export type UnparsedSourceBundle = UnparsedApexBundle | UnparsedSObjectBundle;
 
 export type UnparsedSObjectBundle = {
-  type: 'object';
+  type: 'sobject';
   filePath: string;
   content: string;
 };
@@ -73,7 +73,7 @@ export type UnparsedApexBundle = {
 export type SourceFileMetadata = {
   filePath: string;
   name: string;
-  type: 'interface' | 'class' | 'enum' | 'object';
+  type: 'interface' | 'class' | 'enum' | 'sobject';
 };
 
 export type ParsedFile<T extends Type | ObjectMetadata = Type | ObjectMetadata> = {

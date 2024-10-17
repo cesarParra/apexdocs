@@ -6,9 +6,10 @@ import { Semigroup } from 'fp-ts/Semigroup';
 import * as T from 'fp-ts/Task';
 import { pipe } from 'fp-ts/function';
 import * as A from 'fp-ts/Array';
+import * as E from 'fp-ts/Either';
 
 export type ObjectMetadata = {
-  type_name: 'object';
+  type_name: 'sobject';
   label: string;
   name: string;
 };
@@ -24,13 +25,11 @@ export function reflectSObjectSources(objectSources: UnparsedSObjectBundle[]) {
 
 function reflectSObjectSource(objectSource: UnparsedSObjectBundle): TE.TaskEither<ReflectionErrors, ParsedFile> {
   return pipe(
-    TE.tryCatch(
-      () => new XMLParser().parse(objectSource.content),
-      (error) => new ReflectionErrors([new ReflectionError(objectSource.filePath, (error as Error).message)]),
-    ),
+    TE.fromEither(E.tryCatch(() => new XMLParser().parse(objectSource.content), E.toError)),
     TE.map((metadata) => addName(metadata as ObjectMetadata, objectSource.filePath)),
     TE.map((metadata) => addTypeName(metadata)),
     TE.map((metadata) => toParsedFile(objectSource.filePath, metadata)),
+    TE.mapLeft((error) => new ReflectionErrors([new ReflectionError(objectSource.filePath, error.message)])),
   );
 }
 
@@ -48,7 +47,7 @@ function addName(objectMetadata: ObjectMetadata, filePath: string): ObjectMetada
 function addTypeName(objectMetadata: ObjectMetadata): ObjectMetadata {
   return {
     ...objectMetadata,
-    type_name: 'object',
+    type_name: 'sobject',
   };
 }
 

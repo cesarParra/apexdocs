@@ -57,7 +57,7 @@ export function generateDocs(unparsedApexFiles: UnparsedSourceBundle[], config: 
   }
 
   function filterObjectSourceFiles(sourceFiles: UnparsedSourceBundle[]): UnparsedSObjectBundle[] {
-    return sourceFiles.filter((sourceFile): sourceFile is UnparsedSObjectBundle => sourceFile.type === 'object');
+    return sourceFiles.filter((sourceFile): sourceFile is UnparsedSObjectBundle => sourceFile.type === 'sobject');
   }
 
   return pipe(

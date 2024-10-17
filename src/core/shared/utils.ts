@@ -17,7 +17,7 @@ export function isSkip(value: unknown): value is Skip {
 }
 
 export function isObjectType(type: Type | ObjectMetadata): type is ObjectMetadata {
-  return (type as ObjectMetadata).type_name === 'object';
+  return (type as ObjectMetadata).type_name === 'sobject';
 }
 
 export function isApexType(type: Type | ObjectMetadata): type is Type {
@@ -33,8 +33,8 @@ export function getTypeGroup(type: Type | ObjectMetadata, config: MarkdownGenera
   }
 
   switch (type.type_name) {
-    case 'object':
-      return 'Objects'; // TODO: Make configurable?
+    case 'sobject':
+      return 'SObjects'; // TODO: Make configurable?
     default:
       return getGroup(type, config);
   }
