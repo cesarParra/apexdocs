@@ -19,10 +19,10 @@ export function reflectSObjectSources(objectSources: UnparsedSObjectBundle[]) {
   };
   const Ap = TE.getApplicativeTaskValidation(T.ApplyPar, semiGroupReflectionError);
 
-  return pipe(objectSources, A.traverse(Ap)(reflectSobjectSource));
+  return pipe(objectSources, A.traverse(Ap)(reflectSObjectSource));
 }
 
-function reflectSobjectSource(objectSource: UnparsedSObjectBundle): TE.TaskEither<ReflectionErrors, ParsedFile> {
+function reflectSObjectSource(objectSource: UnparsedSObjectBundle): TE.TaskEither<ReflectionErrors, ParsedFile> {
   return pipe(
     TE.tryCatch(
       () => new XMLParser().parse(objectSource.content),

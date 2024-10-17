@@ -11,7 +11,7 @@ import { OpenApiDocsProcessor } from '../../core/openapi/open-api-docs-processor
 import { writeFiles } from '../file-writer';
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
-import { OpenApiSettings } from '../../core/openApiSettings';
+import { OpenApiSettings } from '../../core/openapi/openApiSettings';
 import { apply } from '#utils/fp';
 
 export default async function openApi(
