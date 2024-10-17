@@ -9,7 +9,7 @@ import {
   Frontmatter,
   PostHookDocumentationBundle,
   ReferenceGuidePageData,
-  UnparsedSourceFile,
+  UnparsedApexBundle,
   TransformDocPage,
   TransformDocs,
   TransformReferenceGuide,
@@ -17,20 +17,23 @@ import {
   DocPageReference,
   TransformReference,
   ParsedFile,
+  UnparsedSObjectBundle,
+  UnparsedSourceBundle,
 } from '../shared/types';
 import { parsedFilesToRenderableBundle } from './adapters/renderable-bundle';
-import { reflectBundles } from '../reflection/reflect-source';
-import { addInheritanceChainToTypes } from '../reflection/inheritance-chain-expanion';
-import { addInheritedMembersToTypes } from '../reflection/inherited-member-expansion';
+import { reflectApexSource } from '../reflection/apex/reflect-apex-source';
+import { addInheritanceChainToTypes } from '../reflection/apex/inheritance-chain-expanion';
+import { addInheritedMembersToTypes } from '../reflection/apex/inherited-member-expansion';
 import { convertToDocumentationBundle } from './adapters/renderable-to-page-data';
-import { filterScope } from '../reflection/filter-scope';
+import { filterScope } from '../reflection/apex/filter-scope';
 import { Template } from '../template';
 import { hookableTemplate } from './templates/hookable';
 import { sortTypesAndMembers } from '../reflection/sort-types-and-members';
 import { isSkip } from '../shared/utils';
 import { parsedFilesToReferenceGuide } from './adapters/reference-guide';
-import { removeExcludedTags } from '../reflection/remove-excluded-tags';
+import { removeExcludedTags } from '../reflection/apex/remove-excluded-tags';
 import { HookError } from '../errors/errors';
+import { reflectSObjectSources } from '../reflection/sobject/reflect-sobject-source';
 
 export type MarkdownGeneratorConfig = Omit<
   UserDefinedMarkdownConfig,
@@ -39,8 +42,7 @@ export type MarkdownGeneratorConfig = Omit<
   referenceGuideTemplate: string;
 };
 
-export function generateDocs(apexBundles: UnparsedSourceFile[], config: MarkdownGeneratorConfig) {
-  const filterOutOfScope = apply(filterScope, config.scope);
+export function generateDocs(unparsedApexFiles: UnparsedSourceBundle[], config: MarkdownGeneratorConfig) {
   const convertToReferences = apply(parsedFilesToReferenceGuide, config);
   const convertToRenderableBundle = apply(parsedFilesToRenderableBundle, config);
   const convertToDocumentationBundleForTemplate = apply(
@@ -49,16 +51,24 @@ export function generateDocs(apexBundles: UnparsedSourceFile[], config: Markdown
     config.referenceGuideTemplate,
   );
   const sort = apply(sortTypesAndMembers, config.sortAlphabetically);
-  const removeExcluded = apply(removeExcludedTags, config.excludeTags);
+
+  function filterApexSourceFiles(sourceFiles: UnparsedSourceBundle[]): UnparsedApexBundle[] {
+    return sourceFiles.filter((sourceFile): sourceFile is UnparsedApexBundle => sourceFile.type === 'apex');
+  }
+
+  function filterObjectSourceFiles(sourceFiles: UnparsedSourceBundle[]): UnparsedSObjectBundle[] {
+    return sourceFiles.filter((sourceFile): sourceFile is UnparsedSObjectBundle => sourceFile.type === 'sobject');
+  }
 
   return pipe(
-    apexBundles,
-    reflectBundles,
-    TE.map(filterOutOfScope),
-    TE.map(addInheritedMembersToTypes),
-    TE.map(addInheritanceChainToTypes),
+    generateForApex(filterApexSourceFiles(unparsedApexFiles), config),
+    TE.chain((parsedApexFiles) => {
+      return pipe(
+        generateForObject(filterObjectSourceFiles(unparsedApexFiles)),
+        TE.map((parsedObjectFiles) => [...parsedApexFiles, ...parsedObjectFiles]),
+      );
+    }),
     TE.map(sort),
-    TE.map(removeExcluded),
     TE.bindTo('parsedFiles'),
     TE.bind('references', ({ parsedFiles }) => TE.right(convertToReferences(parsedFiles))),
     TE.flatMap(({ parsedFiles, references }) => transformReferenceHook(config)({ references, parsedFiles })),
@@ -67,6 +77,25 @@ export function generateDocs(apexBundles: UnparsedSourceFile[], config: Markdown
     TE.flatMap(transformDocumentationBundleHook(config)),
     TE.map(postHookCompile),
   );
+}
+
+function generateForApex(apexBundles: UnparsedApexBundle[], config: MarkdownGeneratorConfig) {
+  const filterOutOfScope = apply(filterScope, config.scope);
+  const removeExcluded = apply(removeExcludedTags, config.excludeTags);
+
+  return pipe(
+    apexBundles,
+    reflectApexSource,
+    TE.map(filterOutOfScope),
+    TE.map(addInheritedMembersToTypes),
+    TE.map(addInheritanceChainToTypes),
+    TE.map(removeExcluded),
+  );
+}
+
+function generateForObject(objectBundles: UnparsedSObjectBundle[]) {
+  // TODO: Filter out non public
+  return pipe(objectBundles, reflectSObjectSources);
 }
 
 function transformReferenceHook(config: MarkdownGeneratorConfig) {

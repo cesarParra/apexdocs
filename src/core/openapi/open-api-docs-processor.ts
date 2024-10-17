@@ -2,7 +2,7 @@ import { FileContainer } from './file-container';
 import { ClassMirror, Type } from '@cparra/apex-reflection';
 import { Logger } from '#utils/logger';
 import { OpenApi } from './open-api';
-import { OpenApiSettings } from '../openApiSettings';
+import { OpenApiSettings } from './openApiSettings';
 import { MethodParser } from './parsers/MethodParser';
 import { camel2title } from '#utils/string-utils';
 import { createOpenApiFile } from './openapi-type-file';

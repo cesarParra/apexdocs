@@ -3,13 +3,13 @@ import { match } from 'fp-ts/boolean';
 import { ClassMirror, DocComment, InterfaceMirror, Type } from '@cparra/apex-reflection';
 import { pipe } from 'fp-ts/function';
 import { apply } from '#utils/fp';
-import { ParsedFile } from '../shared/types';
+import { ParsedFile } from '../../shared/types';
 
 type AppliedRemoveTagFn = (tagName: string, removeFn: RemoveTagFn) => DocComment;
 type RemoveTagFn = (docComment: DocComment) => DocComment;
 type Documentable = { docComment?: DocComment };
 
-export const removeExcludedTags = (excludedTags: string[], parsedFiles: ParsedFile[]): ParsedFile[] => {
+export const removeExcludedTags = (excludedTags: string[], parsedFiles: ParsedFile<Type>[]): ParsedFile<Type>[] => {
   return parsedFiles.map((parsedFile) => {
     return {
       ...parsedFile,

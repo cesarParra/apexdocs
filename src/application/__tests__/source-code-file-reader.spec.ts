@@ -1,5 +1,5 @@
 import { FileSystem } from '../file-system';
-import { processFiles } from '../apex-file-reader';
+import { processApexFiles, processFiles, processObjectFiles } from '../source-code-file-reader';
 
 type File = {
   type: 'file';
@@ -70,7 +70,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await processFiles(fileSystem, '', false, []);
+    const result = await processFiles(fileSystem)([processApexFiles(false)])('', []);
 
     expect(result.length).toBe(0);
   });
@@ -90,7 +90,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await processFiles(fileSystem, '', false, []);
+    const result = await processFiles(fileSystem)([processApexFiles(false)])('', []);
     expect(result.length).toBe(0);
   });
 
@@ -120,10 +120,39 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await processFiles(fileSystem, '', false, []);
+    const result = await processFiles(fileSystem)([processApexFiles(false)])('', []);
     expect(result.length).toBe(2);
     expect(result[0].content).toBe('public class MyClass{}');
     expect(result[1].content).toBe('public class AnotherClass{}');
+  });
+
+  it('returns the file contents of all Object files', async () => {
+    const objectContent = `
+    <?xml version="1.0" encoding="UTF-8"?>
+    <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+        <deploymentStatus>Deployed</deploymentStatus>
+        <description>test object for testing</description>
+        <label>MyFirstObject</label>
+        <pluralLabel>MyFirstObjects</pluralLabel>
+    </CustomObject>`;
+
+    const fileSystem = new TestFileSystem([
+      {
+        type: 'directory',
+        path: '',
+        files: [
+          {
+            type: 'file',
+            path: 'SomeObject__c.object-meta.xml',
+            content: objectContent,
+          },
+        ],
+      },
+    ]);
+
+    const result = await processFiles(fileSystem)([processObjectFiles()])('', []);
+    expect(result.length).toBe(1);
+    expect(result[0].content).toBe(objectContent);
   });
 
   it('skips files that match the excluded glob pattern', async () => {
@@ -152,7 +181,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await processFiles(fileSystem, '', false, ['**/AnotherFile.cls']);
+    const result = await processFiles(fileSystem)([processApexFiles(false)])('', ['**/AnotherFile.cls']);
     expect(result.length).toBe(1);
     expect(result[0].content).toBe('public class MyClass{}');
   });
@@ -205,7 +234,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await processFiles(fileSystem, '', false, []);
+    const result = await processFiles(fileSystem)([processApexFiles(false)])('', []);
     expect(result.length).toBe(4);
   });
 });

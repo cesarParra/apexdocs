@@ -122,7 +122,6 @@ function extractArgsForCommandsProvidedInConfig(
           return pipe(
             extractMultiCommandConfig(extractFromProcessFn, 'markdown', generatorConfig),
             E.map((cliArgs) => {
-              console.log('markdown', cliArgs);
               return cliArgs;
             }),
             E.map((cliArgs) => ({ ...configOnlyMarkdownDefaults, ...generatorConfig, ...cliArgs })),
@@ -136,7 +135,6 @@ function extractArgsForCommandsProvidedInConfig(
           return pipe(
             extractMultiCommandConfig(extractFromProcessFn, 'changelog', generatorConfig),
             E.map((cliArgs) => {
-              console.log('changelog', cliArgs);
               return cliArgs;
             }),
             E.map((cliArgs) => ({ ...configOnlyChangelogDefaults, ...generatorConfig, ...cliArgs })),
@@ -224,7 +222,6 @@ function extractMultiCommandConfig(
   }
 
   const options = getOptions(command);
-  console.log('config', config);
   return E.tryCatch(() => {
     return yargs(extractFromProcessFn())
       .config(config)

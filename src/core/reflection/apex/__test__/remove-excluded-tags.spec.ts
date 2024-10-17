@@ -1,6 +1,6 @@
 import { parsedFileFromRawString } from './helpers';
-import { removeExcludedTags } from '../remove-excluded-tags';
 import { ClassMirror, InterfaceMirror } from '@cparra/apex-reflection';
+import { removeExcludedTags } from '../remove-excluded-tags';
 
 describe('when removing excluded tags', () => {
   describe('from any type', () => {
