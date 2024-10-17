@@ -9,6 +9,7 @@ const sObjectContent = `
         <description>test object for testing</description>
         <label>MyFirstObject</label>
         <pluralLabel>MyFirstObjects</pluralLabel>
+        <visibility>Public</visibility>
     </CustomObject>`;
 
 describe('when parsing SObject metadata', () => {
@@ -23,6 +24,120 @@ describe('when parsing SObject metadata', () => {
 
     assertEither(result, (data) => expect(data.length).toBe(1));
     assertEither(result, (data) => expect(data[0].source.type).toBe('sobject'));
+    assertEither(result, (data) => expect(data[0].type.type_name).toBe('sobject'));
+  });
+
+  test('the resulting type contains the file path', async () => {
+    const unparsed: UnparsedSObjectBundle = {
+      type: 'sobject',
+      filePath: 'src/object/MyFirstObject__c.object-meta.xml',
+      content: sObjectContent,
+    };
+
+    const result = await reflectSObjectSources([unparsed])();
+
+    assertEither(result, (data) => expect(data[0].source.filePath).toBe('src/object/MyFirstObject__c.object-meta.xml'));
+  });
+
+  test('the resulting type contains the correct label', async () => {
+    const unparsed: UnparsedSObjectBundle = {
+      type: 'sobject',
+      filePath: 'src/object/MyFirstObject__c.object-meta.xml',
+      content: sObjectContent,
+    };
+
+    const result = await reflectSObjectSources([unparsed])();
+
+    assertEither(result, (data) => {
+      expect(data[0].type.label).toBe('MyFirstObject');
+    });
+  });
+
+  test('the resulting type contains the correct name', async () => {
+    const unparsed: UnparsedSObjectBundle = {
+      type: 'sobject',
+      filePath: 'src/object/MyFirstObject__c.object-meta.xml',
+      content: sObjectContent,
+    };
+
+    const result = await reflectSObjectSources([unparsed])();
+
+    assertEither(result, (data) => {
+      expect(data[0].type.name).toBe('MyFirstObject__c');
+    });
+  });
+
+  test('the resulting type contains the deployment status', async () => {
+    const unparsed: UnparsedSObjectBundle = {
+      type: 'sobject',
+      filePath: 'src/object/MyFirstObject__c.object-meta.xml',
+      content: sObjectContent,
+    };
+
+    const result = await reflectSObjectSources([unparsed])();
+
+    assertEither(result, (data) => {
+      expect(data[0].type.deploymentStatus).toBe('Deployed');
+    });
+  });
+
+  test('the deployment status is "Deployed" by default', async () => {
+    const sObjectContent = `
+    <?xml version="1.0" encoding="UTF-8"?>
+    <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+        <description>test object for testing</description>
+        <label>MyFirstObject</label>
+        <pluralLabel>MyFirstObjects</pluralLabel>
+    </CustomObject>`;
+
+    const unparsed: UnparsedSObjectBundle = {
+      type: 'sobject',
+      filePath: 'src/object/MyFirstObject__c.object-meta.xml',
+      content: sObjectContent,
+    };
+
+    const result = await reflectSObjectSources([unparsed])();
+
+    assertEither(result, (data) => {
+      expect(data[0].type.deploymentStatus).toBe('Deployed');
+    });
+  });
+
+  test('the resulting type contains the visibility', async () => {
+    const unparsed: UnparsedSObjectBundle = {
+      type: 'sobject',
+      filePath: 'src/object/MyFirstObject__c.object-meta.xml',
+      content: sObjectContent,
+    };
+
+    const result = await reflectSObjectSources([unparsed])();
+
+    assertEither(result, (data) => {
+      expect(data[0].type.visibility).toBe('Public');
+    });
+  });
+
+  test('the visibility is "Public" by default', async () => {
+    const sObjectContent = `
+    <?xml version="1.0" encoding="UTF-8"?>
+    <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+        <deploymentStatus>Deployed</deploymentStatus>
+        <description>test object for testing</description>
+        <label>MyFirstObject</label>
+        <pluralLabel>MyFirstObjects</pluralLabel>
+    </CustomObject>`;
+
+    const unparsed: UnparsedSObjectBundle = {
+      type: 'sobject',
+      filePath: 'src/object/MyFirstObject__c.object-meta.xml',
+      content: sObjectContent,
+    };
+
+    const result = await reflectSObjectSources([unparsed])();
+
+    assertEither(result, (data) => {
+      expect(data[0].type.visibility).toBe('Public');
+    });
   });
 });
 

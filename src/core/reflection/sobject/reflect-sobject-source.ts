@@ -10,11 +10,15 @@ import * as E from 'fp-ts/Either';
 
 export type ObjectMetadata = {
   type_name: 'sobject';
+  deploymentStatus: string;
+  visibility: string;
   label: string;
   name: string;
 };
 
-export function reflectSObjectSources(objectSources: UnparsedSObjectBundle[]) {
+export function reflectSObjectSources(
+  objectSources: UnparsedSObjectBundle[],
+): TE.TaskEither<ReflectionErrors, ParsedFile<ObjectMetadata>[]> {
   const semiGroupReflectionError: Semigroup<ReflectionErrors> = {
     concat: (x, y) => new ReflectionErrors([...x.errors, ...y.errors]),
   };
@@ -23,14 +27,25 @@ export function reflectSObjectSources(objectSources: UnparsedSObjectBundle[]) {
   return pipe(objectSources, A.traverse(Ap)(reflectSObjectSource));
 }
 
-function reflectSObjectSource(objectSource: UnparsedSObjectBundle): TE.TaskEither<ReflectionErrors, ParsedFile> {
+function reflectSObjectSource(
+  objectSource: UnparsedSObjectBundle,
+): TE.TaskEither<ReflectionErrors, ParsedFile<ObjectMetadata>> {
   return pipe(
     TE.fromEither(E.tryCatch(() => new XMLParser().parse(objectSource.content), E.toError)),
-    TE.map((metadata) => addName(metadata as ObjectMetadata, objectSource.filePath)),
+    TE.map(toObjectMetadata),
+    TE.map((metadata) => addName(metadata, objectSource.filePath)),
     TE.map((metadata) => addTypeName(metadata)),
     TE.map((metadata) => toParsedFile(objectSource.filePath, metadata)),
     TE.mapLeft((error) => new ReflectionErrors([new ReflectionError(objectSource.filePath, error.message)])),
   );
+}
+
+function toObjectMetadata(parserResult: { CustomObject: object }): ObjectMetadata {
+  const defaultValues = {
+    deploymentStatus: 'Deployed',
+    visibility: 'Public',
+  };
+  return { ...defaultValues, ...parserResult.CustomObject } as ObjectMetadata;
 }
 
 function extractNameFromFilePath(filePath: string): string {
@@ -51,11 +66,11 @@ function addTypeName(objectMetadata: ObjectMetadata): ObjectMetadata {
   };
 }
 
-function toParsedFile(filePath: string, typeMirror: ObjectMetadata): ParsedFile {
+function toParsedFile(filePath: string, typeMirror: ObjectMetadata): ParsedFile<ObjectMetadata> {
   return {
     source: {
       filePath: filePath,
-      name: typeMirror.label,
+      name: typeMirror.name,
       type: typeMirror.type_name,
     },
     type: typeMirror,
