@@ -1,6 +1,6 @@
 import { Type } from '@cparra/apex-reflection';
 import { ChangeLogPageData } from '../changelog/generate-change-log';
-import { ObjectMetadata } from '../reflection/reflect-object-source';
+import { ObjectMetadata } from '../reflection/sobject/reflect-sobject-source';
 
 export type Generators = 'markdown' | 'openapi' | 'changelog';
 
@@ -55,9 +55,9 @@ export type UserDefinedChangelogConfig = {
 
 export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig | UserDefinedChangelogConfig;
 
-export type UnparsedSourceBundle = UnparsedApexBundle | UnparsedObjectBundle;
+export type UnparsedSourceBundle = UnparsedApexBundle | UnparsedSObjectBundle;
 
-export type UnparsedObjectBundle = {
+export type UnparsedSObjectBundle = {
   type: 'object';
   filePath: string;
   content: string;

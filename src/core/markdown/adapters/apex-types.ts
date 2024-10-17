@@ -16,7 +16,7 @@ import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
 import { MarkdownGeneratorConfig } from '../generate-docs';
 import { SourceFileMetadata } from '../../shared/types';
-import { ObjectMetadata } from '../../reflection/reflect-object-source';
+import { ObjectMetadata } from '../../reflection/sobject/reflect-sobject-source';
 
 type GetReturnRenderable<T extends Type | ObjectMetadata> = T extends InterfaceMirror
   ? RenderableInterface

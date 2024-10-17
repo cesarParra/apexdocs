@@ -17,7 +17,7 @@ import {
   DocPageReference,
   TransformReference,
   ParsedFile,
-  UnparsedObjectBundle,
+  UnparsedSObjectBundle,
   UnparsedSourceBundle,
 } from '../shared/types';
 import { parsedFilesToRenderableBundle } from './adapters/renderable-bundle';
@@ -33,7 +33,7 @@ import { isSkip } from '../shared/utils';
 import { parsedFilesToReferenceGuide } from './adapters/reference-guide';
 import { removeExcludedTags } from '../reflection/apex/remove-excluded-tags';
 import { HookError } from '../errors/errors';
-import { reflectObjectSources } from '../reflection/reflect-object-source';
+import { reflectSObjectSources } from '../reflection/sobject/reflect-sobject-source';
 
 export type MarkdownGeneratorConfig = Omit<
   UserDefinedMarkdownConfig,
@@ -56,8 +56,8 @@ export function generateDocs(unparsedApexFiles: UnparsedSourceBundle[], config: 
     return sourceFiles.filter((sourceFile): sourceFile is UnparsedApexBundle => sourceFile.type === 'apex');
   }
 
-  function filterObjectSourceFiles(sourceFiles: UnparsedSourceBundle[]): UnparsedObjectBundle[] {
-    return sourceFiles.filter((sourceFile): sourceFile is UnparsedObjectBundle => sourceFile.type === 'object');
+  function filterObjectSourceFiles(sourceFiles: UnparsedSourceBundle[]): UnparsedSObjectBundle[] {
+    return sourceFiles.filter((sourceFile): sourceFile is UnparsedSObjectBundle => sourceFile.type === 'object');
   }
 
   return pipe(
@@ -93,9 +93,9 @@ function generateForApex(apexBundles: UnparsedApexBundle[], config: MarkdownGene
   );
 }
 
-function generateForObject(objectBundles: UnparsedObjectBundle[]) {
+function generateForObject(objectBundles: UnparsedSObjectBundle[]) {
   // TODO: Filter out non public
-  return pipe(objectBundles, reflectObjectSources);
+  return pipe(objectBundles, reflectSObjectSources);
 }
 
 function transformReferenceHook(config: MarkdownGeneratorConfig) {

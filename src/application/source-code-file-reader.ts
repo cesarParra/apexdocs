@@ -1,5 +1,5 @@
 import { FileSystem } from './file-system';
-import { UnparsedApexBundle, UnparsedObjectBundle } from '../core/shared/types';
+import { UnparsedApexBundle, UnparsedSObjectBundle } from '../core/shared/types';
 import { minimatch } from 'minimatch';
 import { pipe } from 'fp-ts/function';
 
@@ -7,7 +7,7 @@ import { pipe } from 'fp-ts/function';
  * Reads from source code files and returns their raw body.
  */
 export function processFiles(fileSystem: FileSystem) {
-  return function <T extends UnparsedApexBundle | UnparsedObjectBundle>(processors: FileProcessor<T>[]) {
+  return function <T extends UnparsedApexBundle | UnparsedSObjectBundle>(processors: FileProcessor<T>[]) {
     return async function (rootPath: string, exclude: string[]): Promise<T[]> {
       return pipe(
         await getFilePaths(fileSystem, rootPath),
@@ -18,7 +18,7 @@ export function processFiles(fileSystem: FileSystem) {
   };
 }
 
-async function readFiles<T extends UnparsedApexBundle | UnparsedObjectBundle>(
+async function readFiles<T extends UnparsedApexBundle | UnparsedSObjectBundle>(
   fileSystem: FileSystem,
   filePaths: string[],
   processors: FileProcessor<T>[],
@@ -51,7 +51,7 @@ function isExcluded(filePath: string, exclude: string[]): boolean {
   return exclude.some((pattern) => minimatch(filePath, pattern));
 }
 
-interface FileProcessor<T extends UnparsedApexBundle | UnparsedObjectBundle> {
+interface FileProcessor<T extends UnparsedApexBundle | UnparsedSObjectBundle> {
   isSupportedFile: (currentFile: string) => boolean;
   process: (fileSystem: FileSystem, filePath: string) => Promise<T>;
 }
@@ -81,18 +81,18 @@ class ApexFileReader implements FileProcessor<UnparsedApexBundle> {
   }
 }
 
-export function processObjectFiles(): FileProcessor<UnparsedObjectBundle> {
+export function processObjectFiles(): FileProcessor<UnparsedSObjectBundle> {
   return new ObjectFileReader();
 }
 
-class ObjectFileReader implements FileProcessor<UnparsedObjectBundle> {
+class ObjectFileReader implements FileProcessor<UnparsedSObjectBundle> {
   OBJECT_FILE_EXTENSION = '.object-meta.xml';
 
   isSupportedFile(currentFile: string): boolean {
     return currentFile.endsWith(this.OBJECT_FILE_EXTENSION);
   }
 
-  async process(fileSystem: FileSystem, filePath: string): Promise<UnparsedObjectBundle> {
+  async process(fileSystem: FileSystem, filePath: string): Promise<UnparsedSObjectBundle> {
     const rawTypeContent = await fileSystem.readFile(filePath);
     return { type: 'object', filePath, content: rawTypeContent };
   }

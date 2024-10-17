@@ -1,6 +1,6 @@
 import { Skip } from './types';
 import { Type } from '@cparra/apex-reflection';
-import { ObjectMetadata } from '../reflection/reflect-object-source';
+import { ObjectMetadata } from '../reflection/sobject/reflect-sobject-source';
 import { MarkdownGeneratorConfig } from '../markdown/generate-docs';
 
 /**
