@@ -18,7 +18,6 @@ import {
 } from '../core/shared/types';
 import { ReflectionError, ReflectionErrors, HookError } from '../core/errors/errors';
 import { FileReadingError, FileWritingError } from './errors';
-import { apply } from '#utils/fp';
 
 /**
  * Application entry-point to generate documentation out of Apex source files.
@@ -46,32 +45,31 @@ export class Apexdocs {
   }
 }
 
-const readFiles = apply(processFiles, new DefaultFileSystem());
+const readFiles = processFiles(new DefaultFileSystem());
 
 async function processMarkdown(config: UserDefinedMarkdownConfig) {
+  // TODO: Also process Object files
   return pipe(
     TE.tryCatch(
-      () => readFiles(config.sourceDir, config.exclude, [processApexFiles(config.includeMetadata)]),
+      () => readFiles([processApexFiles(config.includeMetadata)])(config.sourceDir, config.exclude),
       (e) => new FileReadingError('An error occurred while reading files.', e),
     ),
-    TE.flatMap((fileBodies) => markdown(fileBodies as UnparsedApexFile[], config)),
+    TE.flatMap((fileBodies) => markdown(fileBodies, config)),
     TE.map(() => '✔️ Documentation generated successfully!'),
     TE.mapLeft(toErrors),
   );
 }
 
 async function processOpenApi(config: UserDefinedOpenApiConfig, logger: Logger) {
-  const fileBodies = (await readFiles(config.sourceDir, config.exclude, [
-    processApexFiles(false),
-  ])) as UnparsedApexFile[];
+  const fileBodies = await readFiles([processApexFiles(false)])(config.sourceDir, config.exclude);
   return openApi(logger, fileBodies, config);
 }
 
 async function processChangeLog(config: UserDefinedChangelogConfig) {
   async function loadFiles(): Promise<[UnparsedApexFile[], UnparsedApexFile[]]> {
     return [
-      (await readFiles(config.previousVersionDir, config.exclude, [processApexFiles(false)])) as UnparsedApexFile[],
-      (await readFiles(config.currentVersionDir, config.exclude, [processApexFiles(false)])) as UnparsedApexFile[],
+      await readFiles([processApexFiles(false)])(config.previousVersionDir, config.exclude),
+      await readFiles([processApexFiles(false)])(config.currentVersionDir, config.exclude),
     ];
   }
 

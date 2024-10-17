@@ -70,7 +70,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await processFiles(fileSystem, '', [], [processApexFiles(false)]);
+    const result = await processFiles(fileSystem)([processApexFiles(false)])('', []);
 
     expect(result.length).toBe(0);
   });
@@ -90,7 +90,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await processFiles(fileSystem, '', [], [processApexFiles(false)]);
+    const result = await processFiles(fileSystem)([processApexFiles(false)])('', []);
     expect(result.length).toBe(0);
   });
 
@@ -120,7 +120,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await processFiles(fileSystem, '', [], [processApexFiles(false)]);
+    const result = await processFiles(fileSystem)([processApexFiles(false)])('', []);
     expect(result.length).toBe(2);
     expect(result[0].content).toBe('public class MyClass{}');
     expect(result[1].content).toBe('public class AnotherClass{}');
@@ -150,7 +150,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await processFiles(fileSystem, '', [], [processObjectFiles()]);
+    const result = await processFiles(fileSystem)([processObjectFiles()])('', []);
     expect(result.length).toBe(1);
     expect(result[0].content).toBe(objectContent);
   });
@@ -181,7 +181,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await processFiles(fileSystem, '', ['**/AnotherFile.cls'], [processApexFiles(false)]);
+    const result = await processFiles(fileSystem)([processApexFiles(false)])('', ['**/AnotherFile.cls']);
     expect(result.length).toBe(1);
     expect(result[0].content).toBe('public class MyClass{}');
   });
@@ -234,7 +234,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = await processFiles(fileSystem, '', [], [processApexFiles(false)]);
+    const result = await processFiles(fileSystem)([processApexFiles(false)])('', []);
     expect(result.length).toBe(4);
   });
 });

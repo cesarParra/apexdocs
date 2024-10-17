@@ -1,30 +1,29 @@
 import { FileSystem } from './file-system';
-import { UnparsedApexFile, UnparsedSourceFile } from '../core/shared/types';
+import { UnparsedApexFile, UnparsedObjectFile } from '../core/shared/types';
 import { minimatch } from 'minimatch';
 import { pipe } from 'fp-ts/function';
 
 /**
  * Reads from .cls files and returns their raw body.
  */
-export async function processFiles(
-  fileSystem: FileSystem,
-  rootPath: string,
-  exclude: string[],
-  processors: FileProcessor[],
-): Promise<UnparsedSourceFile[]> {
-  return pipe(
-    await getFilePaths(fileSystem, rootPath),
-    (filePaths) => filePaths.filter((filePath) => !isExcluded(filePath, exclude)),
-    (filteredFilePaths) => readFiles(fileSystem, filteredFilePaths, processors),
-  );
+export function processFiles(fileSystem: FileSystem) {
+  return function <T extends UnparsedApexFile | UnparsedObjectFile>(processors: FileProcessor<T>[]) {
+    return async function (rootPath: string, exclude: string[]): Promise<T[]> {
+      return pipe(
+        await getFilePaths(fileSystem, rootPath),
+        (filePaths) => filePaths.filter((filePath) => !isExcluded(filePath, exclude)),
+        (filteredFilePaths) => readFiles(fileSystem, filteredFilePaths, processors),
+      );
+    };
+  };
 }
 
-async function readFiles(
+async function readFiles<T extends UnparsedApexFile | UnparsedObjectFile>(
   fileSystem: FileSystem,
   filePaths: string[],
-  processors: FileProcessor[],
-): Promise<UnparsedSourceFile[]> {
-  const files: UnparsedSourceFile[] = [];
+  processors: FileProcessor<T>[],
+): Promise<T[]> {
+  const files: T[] = [];
   for (const filePath of filePaths) {
     const processor = processors.find((p) => p.isSupportedFile(filePath));
     if (processor) {
@@ -52,16 +51,16 @@ function isExcluded(filePath: string, exclude: string[]): boolean {
   return exclude.some((pattern) => minimatch(filePath, pattern));
 }
 
-interface FileProcessor {
+interface FileProcessor<T extends UnparsedApexFile | UnparsedObjectFile> {
   isSupportedFile: (currentFile: string) => boolean;
-  process: (fileSystem: FileSystem, filePath: string) => Promise<UnparsedSourceFile>;
+  process: (fileSystem: FileSystem, filePath: string) => Promise<T>;
 }
 
-export function processApexFiles(includeMetadata: boolean): FileProcessor {
+export function processApexFiles(includeMetadata: boolean): FileProcessor<UnparsedApexFile> {
   return new ApexFileReader(includeMetadata);
 }
 
-class ApexFileReader implements FileProcessor {
+class ApexFileReader implements FileProcessor<UnparsedApexFile> {
   APEX_FILE_EXTENSION = '.cls';
 
   constructor(public includeMetadata: boolean) {}
@@ -82,18 +81,18 @@ class ApexFileReader implements FileProcessor {
   }
 }
 
-export function processObjectFiles(): FileProcessor {
+export function processObjectFiles(): FileProcessor<UnparsedObjectFile> {
   return new ObjectFileReader();
 }
 
-class ObjectFileReader implements FileProcessor {
+class ObjectFileReader implements FileProcessor<UnparsedObjectFile> {
   OBJECT_FILE_EXTENSION = '.object-meta.xml';
 
   isSupportedFile(currentFile: string): boolean {
     return currentFile.endsWith(this.OBJECT_FILE_EXTENSION);
   }
 
-  async process(fileSystem: FileSystem, filePath: string): Promise<UnparsedSourceFile> {
+  async process(fileSystem: FileSystem, filePath: string): Promise<UnparsedObjectFile> {
     const rawTypeContent = await fileSystem.readFile(filePath);
     return { type: 'object', filePath, content: rawTypeContent };
   }

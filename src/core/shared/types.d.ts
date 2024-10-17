@@ -55,7 +55,7 @@ export type UserDefinedChangelogConfig = {
 
 export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig | UserDefinedChangelogConfig;
 
-export type UnparsedSourceFile = UnparsedObjectFile | UnparsedApexFile;
+export type UnparsedSourceFile = UnparsedApexFile | UnparsedObjectFile;
 
 export type UnparsedObjectFile = {
   type: 'object';
