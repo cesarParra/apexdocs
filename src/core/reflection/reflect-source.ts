@@ -8,7 +8,7 @@ import * as O from 'fp-ts/Option';
 import { ParsingError } from '@cparra/apex-reflection';
 import { apply } from '#utils/fp';
 import { Semigroup } from 'fp-ts/Semigroup';
-import { ParsedFile, UnparsedApexFile } from '../shared/types';
+import { ParsedFile, UnparsedApexBundle } from '../shared/types';
 import { ReflectionError, ReflectionErrors } from '../errors/errors';
 import { parseApexMetadata } from '../parse-apex-metadata';
 
@@ -25,7 +25,7 @@ async function reflectAsync(rawSource: string): Promise<Type> {
   });
 }
 
-export function reflectApexSource(apexBundles: UnparsedApexFile[]) {
+export function reflectApexSource(apexBundles: UnparsedApexBundle[]) {
   const semiGroupReflectionError: Semigroup<ReflectionErrors> = {
     concat: (x, y) => new ReflectionErrors([...x.errors, ...y.errors]),
   };
@@ -34,14 +34,14 @@ export function reflectApexSource(apexBundles: UnparsedApexFile[]) {
   return pipe(apexBundles, A.traverse(Ap)(reflectBundle));
 }
 
-function reflectBundle(apexBundle: UnparsedApexFile): TE.TaskEither<ReflectionErrors, ParsedFile<Type>> {
+function reflectBundle(apexBundle: UnparsedApexBundle): TE.TaskEither<ReflectionErrors, ParsedFile<Type>> {
   const convertToParsedFile: (typeMirror: Type) => ParsedFile<Type> = apply(toParsedFile, apexBundle.filePath);
   const withMetadata = apply(addMetadata, apexBundle.metadataContent);
 
   return pipe(apexBundle, reflectAsTask, TE.map(convertToParsedFile), TE.flatMap(withMetadata));
 }
 
-function reflectAsTask(apexBundle: UnparsedApexFile): TE.TaskEither<ReflectionErrors, Type> {
+function reflectAsTask(apexBundle: UnparsedApexBundle): TE.TaskEither<ReflectionErrors, Type> {
   return TE.tryCatch(
     () => reflectAsync(apexBundle.content),
     (error) =>

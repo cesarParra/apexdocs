@@ -1,6 +1,6 @@
 import { DocPageData, PostHookDocumentationBundle } from '../../shared/types';
 import { extendExpect } from './expect-extensions';
-import { apexBundleFromRawString, generateDocs } from './test-helpers';
+import { unparsedApexBundleFromRawString, generateDocs } from './test-helpers';
 import { assertEither } from '../../test-helpers/assert-either';
 
 function aSingleDoc(result: PostHookDocumentationBundle): DocPageData {
@@ -22,7 +22,7 @@ describe('When generating documentation', () => {
       ];
 
       for (const [input, expected] of properties) {
-        const result = await generateDocs([apexBundleFromRawString(input)])();
+        const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
         assertEither(result, (data) => expect(aSingleDoc(data).outputDocPath).toContain(expected));
       }
     });
@@ -35,7 +35,7 @@ describe('When generating documentation', () => {
       ];
 
       for (const [input, expected] of properties) {
-        const result = await generateDocs([apexBundleFromRawString(input)])();
+        const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
         assertEither(result, (data) => expect(aSingleDoc(data).outputDocPath).toContain(expected));
       }
     });
@@ -66,7 +66,7 @@ describe('When generating documentation', () => {
       ];
 
       for (const [input, expected] of properties) {
-        const result = await generateDocs([apexBundleFromRawString(input)])();
+        const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
         assertEither(result, (data) => expect(aSingleDoc(data).outputDocPath).toContain(expected));
       }
     });
@@ -81,7 +81,7 @@ describe('When generating documentation', () => {
       ];
 
       for (const [input, expected] of properties) {
-        const result = await generateDocs([apexBundleFromRawString(input)])();
+        const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
         assertEither(result, (data) => expect(aSingleDoc(data).source.type).toBe(expected));
       }
     });
@@ -90,9 +90,12 @@ describe('When generating documentation', () => {
       const input1 = 'global class MyClass {}';
       const input2 = 'public class AnotherClass {}';
 
-      const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)], {
-        scope: ['global'],
-      })();
+      const result = await generateDocs(
+        [unparsedApexBundleFromRawString(input1), unparsedApexBundleFromRawString(input2)],
+        {
+          scope: ['global'],
+        },
+      )();
       expect(result).documentationBundleHasLength(1);
     });
 
@@ -103,7 +106,7 @@ describe('When generating documentation', () => {
         */
       public class MyClass {}`;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(0);
     });
   });
@@ -117,7 +120,7 @@ describe('When generating documentation', () => {
       ];
 
       for (const [input, expected] of properties) {
-        const result = await generateDocs([apexBundleFromRawString(input)])();
+        const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
 
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) => expect(data).firstDocContains(expected));
@@ -133,7 +136,7 @@ describe('When generating documentation', () => {
         }
        `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
 
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('NAMESPACEACCESSIBLE'));
@@ -150,7 +153,7 @@ describe('When generating documentation', () => {
         </ApexClass>
         `;
 
-      const result = await generateDocs([apexBundleFromRawString(input, metadata)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input, metadata)])();
 
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('APIVERSION'));
@@ -165,7 +168,7 @@ describe('When generating documentation', () => {
           public class MyClass {}
          `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
 
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('This is a description'));
@@ -178,7 +181,7 @@ describe('When generating documentation', () => {
             */
           public class MyClass {}`;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('This is a description'));
     });
@@ -191,7 +194,7 @@ describe('When generating documentation', () => {
           public class MyClass {}
         `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('Custom Tag'));
       assertEither(result, (data) => expect(data).firstDocContains('My Value'));
@@ -204,7 +207,7 @@ describe('When generating documentation', () => {
            */
           public class MyClass {}`;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('Group'));
       assertEither(result, (data) => expect(data).firstDocContains('MyGroup'));
@@ -217,7 +220,7 @@ describe('When generating documentation', () => {
            */
           public class MyClass {}`;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('Author'));
       assertEither(result, (data) => expect(data).firstDocContains('John Doe'));
@@ -230,7 +233,7 @@ describe('When generating documentation', () => {
            */
           public class MyClass {}`;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('Date'));
       assertEither(result, (data) => expect(data).firstDocContains('2021-01-01'));
@@ -246,7 +249,10 @@ describe('When generating documentation', () => {
 
       const input2 = 'public class ClassRef {}';
 
-      const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
+      const result = await generateDocs([
+        unparsedApexBundleFromRawString(input1),
+        unparsedApexBundleFromRawString(input2),
+      ])();
       expect(result).documentationBundleHasLength(2);
       assertEither(result, (data) =>
         expect(data).firstDocContains('This is a description with a [ClassRef](ClassRef.md) reference'),
@@ -261,7 +267,7 @@ describe('When generating documentation', () => {
           public class MyClass {}
           `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) =>
         expect(data).firstDocContains(
@@ -280,7 +286,10 @@ describe('When generating documentation', () => {
 
       const input2 = 'public class ClassRef {}';
 
-      const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
+      const result = await generateDocs([
+        unparsedApexBundleFromRawString(input1),
+        unparsedApexBundleFromRawString(input2),
+      ])();
       expect(result).documentationBundleHasLength(2);
       assertEither(result, (data) => expect(data).firstDocContains('See'));
       assertEither(result, (data) => expect(data).firstDocContains('[ClassRef](ClassRef.md)'));
@@ -294,7 +303,7 @@ describe('When generating documentation', () => {
         public class MyClass {}
         `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
 
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('See'));
@@ -304,7 +313,7 @@ describe('When generating documentation', () => {
     it('displays the namespace if present in the config', async () => {
       const input = 'public class MyClass {}';
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { namespace: 'MyNamespace' })();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)], { namespace: 'MyNamespace' })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Namespace'));
       assertEither(result, (data) => expect(data).firstDocContains('MyNamespace'));
@@ -313,7 +322,7 @@ describe('When generating documentation', () => {
     it('does not display the namespace if not present in the config', async () => {
       const input = 'public class MyClass {}';
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContainsNot('## Namespace'));
     });
@@ -333,7 +342,7 @@ describe('When generating documentation', () => {
           public class MyClass {}
           `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('```mermaid'));
       assertEither(result, (data) => expect(data).firstDocContains('graph TD'));
@@ -353,7 +362,7 @@ describe('When generating documentation', () => {
             */
           public class MyClass {}`;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
 
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('```apex'));
@@ -368,7 +377,7 @@ describe('When generating documentation', () => {
         public class MyClass {}
         `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], {
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)], {
         excludeTags: ['see'],
       })();
 

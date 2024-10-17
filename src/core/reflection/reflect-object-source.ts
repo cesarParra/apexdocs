@@ -1,4 +1,4 @@
-import { ParsedFile, UnparsedObjectFile } from '../shared/types';
+import { ParsedFile, UnparsedObjectBundle } from '../shared/types';
 import { XMLParser } from 'fast-xml-parser';
 import * as TE from 'fp-ts/TaskEither';
 import { ReflectionError, ReflectionErrors } from '../errors/errors';
@@ -13,7 +13,7 @@ export type ObjectMetadata = {
   name: string;
 };
 
-export function reflectObjectSources(objectSources: UnparsedObjectFile[]) {
+export function reflectObjectSources(objectSources: UnparsedObjectBundle[]) {
   const semiGroupReflectionError: Semigroup<ReflectionErrors> = {
     concat: (x, y) => new ReflectionErrors([...x.errors, ...y.errors]),
   };
@@ -22,7 +22,7 @@ export function reflectObjectSources(objectSources: UnparsedObjectFile[]) {
   return pipe(objectSources, A.traverse(Ap)(reflectObjectSource));
 }
 
-function reflectObjectSource(objectSource: UnparsedObjectFile): TE.TaskEither<ReflectionErrors, ParsedFile> {
+function reflectObjectSource(objectSource: UnparsedObjectBundle): TE.TaskEither<ReflectionErrors, ParsedFile> {
   return pipe(
     TE.tryCatch(
       () => new XMLParser().parse(objectSource.content),

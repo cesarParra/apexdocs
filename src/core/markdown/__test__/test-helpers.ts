@@ -1,8 +1,8 @@
-import { UnparsedApexFile } from '../../shared/types';
+import { UnparsedApexBundle } from '../../shared/types';
 import { generateDocs as gen, MarkdownGeneratorConfig } from '../generate-docs';
 import { referenceGuideTemplate } from '../templates/reference-guide';
 
-export function apexBundleFromRawString(raw: string, rawMetadata?: string): UnparsedApexFile {
+export function unparsedApexBundleFromRawString(raw: string, rawMetadata?: string): UnparsedApexBundle {
   return {
     type: 'apex',
     filePath: 'test.cls',
@@ -11,7 +11,7 @@ export function apexBundleFromRawString(raw: string, rawMetadata?: string): Unpa
   };
 }
 
-export function generateDocs(apexBundles: UnparsedApexFile[], config?: Partial<MarkdownGeneratorConfig>) {
+export function generateDocs(apexBundles: UnparsedApexBundle[], config?: Partial<MarkdownGeneratorConfig>) {
   return gen(apexBundles, {
     targetDir: 'target',
     scope: ['global', 'public'],

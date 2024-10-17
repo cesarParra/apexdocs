@@ -1,4 +1,4 @@
-import { UnparsedApexFile } from '../../shared/types';
+import { UnparsedApexBundle } from '../../shared/types';
 import { ChangeLogPageData, generateChangeLog } from '../generate-change-log';
 import { assertEither } from '../../test-helpers/assert-either';
 import { isSkip } from '../../shared/utils';
@@ -34,8 +34,8 @@ describe('when generating a changelog', () => {
 
   describe('that does not include new classes', () => {
     it('should not have a section for new classes', async () => {
-      const oldBundle: UnparsedApexFile[] = [];
-      const newBundle: UnparsedApexFile[] = [];
+      const oldBundle: UnparsedApexBundle[] = [];
+      const newBundle: UnparsedApexBundle[] = [];
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
@@ -47,8 +47,8 @@ describe('when generating a changelog', () => {
     it('should include a section for new classes', async () => {
       const newClassSource = 'class Test {}';
 
-      const oldBundle: UnparsedApexFile[] = [];
-      const newBundle: UnparsedApexFile[] = [
+      const oldBundle: UnparsedApexBundle[] = [];
+      const newBundle: UnparsedApexBundle[] = [
         { type: 'apex', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
@@ -60,8 +60,8 @@ describe('when generating a changelog', () => {
     it('should include the new class name', async () => {
       const newClassSource = 'class Test {}';
 
-      const oldBundle: UnparsedApexFile[] = [];
-      const newBundle: UnparsedApexFile[] = [
+      const oldBundle: UnparsedApexBundle[] = [];
+      const newBundle: UnparsedApexBundle[] = [
         { type: 'apex', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
@@ -78,8 +78,8 @@ describe('when generating a changelog', () => {
         class Test {}
       `;
 
-      const oldBundle: UnparsedApexFile[] = [];
-      const newBundle: UnparsedApexFile[] = [
+      const oldBundle: UnparsedApexBundle[] = [];
+      const newBundle: UnparsedApexBundle[] = [
         { type: 'apex', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
@@ -93,8 +93,8 @@ describe('when generating a changelog', () => {
     it('should include a section for new interfaces', async () => {
       const newInterfaceSource = 'interface Test {}';
 
-      const oldBundle: UnparsedApexFile[] = [];
-      const newBundle: UnparsedApexFile[] = [
+      const oldBundle: UnparsedApexBundle[] = [];
+      const newBundle: UnparsedApexBundle[] = [
         { type: 'apex', content: newInterfaceSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
@@ -106,8 +106,8 @@ describe('when generating a changelog', () => {
     it('should include the new interface name', async () => {
       const newInterfaceSource = 'interface Test {}';
 
-      const oldBundle: UnparsedApexFile[] = [];
-      const newBundle: UnparsedApexFile[] = [
+      const oldBundle: UnparsedApexBundle[] = [];
+      const newBundle: UnparsedApexBundle[] = [
         { type: 'apex', content: newInterfaceSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
@@ -124,8 +124,8 @@ describe('when generating a changelog', () => {
         interface Test {}
       `;
 
-      const oldBundle: UnparsedApexFile[] = [];
-      const newBundle: UnparsedApexFile[] = [
+      const oldBundle: UnparsedApexBundle[] = [];
+      const newBundle: UnparsedApexBundle[] = [
         { type: 'apex', content: newInterfaceSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
@@ -141,8 +141,8 @@ describe('when generating a changelog', () => {
     it('should include a section for new enums', async () => {
       const newEnumSource = 'enum Test {}';
 
-      const oldBundle: UnparsedApexFile[] = [];
-      const newBundle: UnparsedApexFile[] = [
+      const oldBundle: UnparsedApexBundle[] = [];
+      const newBundle: UnparsedApexBundle[] = [
         { type: 'apex', content: newEnumSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
@@ -154,8 +154,8 @@ describe('when generating a changelog', () => {
     it('should include the new enum name', async () => {
       const newEnumSource = 'enum Test {}';
 
-      const oldBundle: UnparsedApexFile[] = [];
-      const newBundle: UnparsedApexFile[] = [
+      const oldBundle: UnparsedApexBundle[] = [];
+      const newBundle: UnparsedApexBundle[] = [
         { type: 'apex', content: newEnumSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
@@ -172,8 +172,8 @@ describe('when generating a changelog', () => {
         enum Test {}
       `;
 
-      const oldBundle: UnparsedApexFile[] = [];
-      const newBundle: UnparsedApexFile[] = [
+      const oldBundle: UnparsedApexBundle[] = [];
+      const newBundle: UnparsedApexBundle[] = [
         { type: 'apex', content: newEnumSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
@@ -187,8 +187,8 @@ describe('when generating a changelog', () => {
     it('should not include them', async () => {
       const newClassSource = 'class Test {}';
 
-      const oldBundle: UnparsedApexFile[] = [];
-      const newBundle: UnparsedApexFile[] = [
+      const oldBundle: UnparsedApexBundle[] = [];
+      const newBundle: UnparsedApexBundle[] = [
         { type: 'apex', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
@@ -202,10 +202,10 @@ describe('when generating a changelog', () => {
     it('should include a section for removed types', async () => {
       const oldClassSource = 'class Test {}';
 
-      const oldBundle: UnparsedApexFile[] = [
+      const oldBundle: UnparsedApexBundle[] = [
         { type: 'apex', content: oldClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
-      const newBundle: UnparsedApexFile[] = [];
+      const newBundle: UnparsedApexBundle[] = [];
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
@@ -215,10 +215,10 @@ describe('when generating a changelog', () => {
     it('should include the removed type name', async () => {
       const oldClassSource = 'class Test {}';
 
-      const oldBundle: UnparsedApexFile[] = [
+      const oldBundle: UnparsedApexBundle[] = [
         { type: 'apex', content: oldClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
-      const newBundle: UnparsedApexFile[] = [];
+      const newBundle: UnparsedApexBundle[] = [];
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
@@ -231,11 +231,11 @@ describe('when generating a changelog', () => {
       const oldClassSource = 'class Test {}';
       const newClassSource = 'class Test { void myMethod() {} }';
 
-      const oldBundle: UnparsedApexFile[] = [
+      const oldBundle: UnparsedApexBundle[] = [
         { type: 'apex', content: oldClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
-      const newBundle: UnparsedApexFile[] = [
+      const newBundle: UnparsedApexBundle[] = [
         { type: 'apex', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
@@ -250,11 +250,11 @@ describe('when generating a changelog', () => {
       const oldClassSource = 'class Test {}';
       const newClassSource = 'class Test { void myMethod() {} }';
 
-      const oldBundle: UnparsedApexFile[] = [
+      const oldBundle: UnparsedApexBundle[] = [
         { type: 'apex', content: oldClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
-      const newBundle: UnparsedApexFile[] = [
+      const newBundle: UnparsedApexBundle[] = [
         { type: 'apex', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
@@ -267,11 +267,11 @@ describe('when generating a changelog', () => {
       const oldClassSource = 'class Test {}';
       const newClassSource = 'class Test { void myMethod() {} }';
 
-      const oldBundle: UnparsedApexFile[] = [
+      const oldBundle: UnparsedApexBundle[] = [
         { type: 'apex', content: oldClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
-      const newBundle: UnparsedApexFile[] = [
+      const newBundle: UnparsedApexBundle[] = [
         { type: 'apex', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 

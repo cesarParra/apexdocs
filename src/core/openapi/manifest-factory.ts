@@ -1,7 +1,7 @@
 import Manifest from '../manifest';
 import { TypeParser } from './parser';
 import { ReflectionResult } from '@cparra/apex-reflection';
-import { UnparsedApexFile } from '../shared/types';
+import { UnparsedApexBundle } from '../shared/types';
 
 /**
  * Builds a new Manifest object, sourcing its types from the received TypeParser.
@@ -10,7 +10,7 @@ import { UnparsedApexFile } from '../shared/types';
  */
 export function createManifest(
   typeParser: TypeParser,
-  reflect: (apexBundle: UnparsedApexFile) => ReflectionResult,
+  reflect: (apexBundle: UnparsedApexBundle) => ReflectionResult,
 ): Manifest {
   return new Manifest(typeParser.parse(reflect));
 }

@@ -10,7 +10,7 @@ import { processApexFiles, processFiles } from './source-code-file-reader';
 import { DefaultFileSystem } from './file-system';
 import { Logger } from '#utils/logger';
 import {
-  UnparsedApexFile,
+  UnparsedApexBundle,
   UserDefinedChangelogConfig,
   UserDefinedConfig,
   UserDefinedMarkdownConfig,
@@ -66,7 +66,7 @@ async function processOpenApi(config: UserDefinedOpenApiConfig, logger: Logger) 
 }
 
 async function processChangeLog(config: UserDefinedChangelogConfig) {
-  async function loadFiles(): Promise<[UnparsedApexFile[], UnparsedApexFile[]]> {
+  async function loadFiles(): Promise<[UnparsedApexBundle[], UnparsedApexBundle[]]> {
     return [
       await readFiles([processApexFiles(false)])(config.previousVersionDir, config.exclude),
       await readFiles([processApexFiles(false)])(config.currentVersionDir, config.exclude),

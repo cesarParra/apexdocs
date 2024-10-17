@@ -55,15 +55,15 @@ export type UserDefinedChangelogConfig = {
 
 export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig | UserDefinedChangelogConfig;
 
-export type UnparsedSourceFile = UnparsedApexFile | UnparsedObjectFile;
+export type UnparsedSourceBundle = UnparsedApexBundle | UnparsedObjectBundle;
 
-export type UnparsedObjectFile = {
+export type UnparsedObjectBundle = {
   type: 'object';
   filePath: string;
   content: string;
 };
 
-export type UnparsedApexFile = {
+export type UnparsedApexBundle = {
   type: 'apex';
   filePath: string;
   content: string;

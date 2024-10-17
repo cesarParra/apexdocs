@@ -1,5 +1,5 @@
 import { extendExpect } from './expect-extensions';
-import { apexBundleFromRawString, generateDocs } from './test-helpers';
+import { unparsedApexBundleFromRawString, generateDocs } from './test-helpers';
 import { assertEither } from '../../test-helpers/assert-either';
 
 describe('Generates enum documentation', () => {
@@ -16,7 +16,7 @@ describe('Generates enum documentation', () => {
       }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Values'));
       assertEither(result, (data) => expect(data).firstDocContains('VALUE1'));
@@ -31,7 +31,7 @@ describe('Generates enum documentation', () => {
       }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: true })();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)], { sortAlphabetically: true })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Values'));
       assertEither(result, (data) => {
@@ -49,7 +49,7 @@ describe('Generates enum documentation', () => {
       }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: false })();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)], { sortAlphabetically: false })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Values'));
       assertEither(result, (data) => {

@@ -9,7 +9,7 @@ import {
   Frontmatter,
   PostHookDocumentationBundle,
   ReferenceGuidePageData,
-  UnparsedApexFile,
+  UnparsedApexBundle,
   TransformDocPage,
   TransformDocs,
   TransformReferenceGuide,
@@ -17,8 +17,8 @@ import {
   DocPageReference,
   TransformReference,
   ParsedFile,
-  UnparsedObjectFile,
-  UnparsedSourceFile,
+  UnparsedObjectBundle,
+  UnparsedSourceBundle,
 } from '../shared/types';
 import { parsedFilesToRenderableBundle } from './adapters/renderable-bundle';
 import { reflectApexSource } from '../reflection/reflect-source';
@@ -42,7 +42,7 @@ export type MarkdownGeneratorConfig = Omit<
   referenceGuideTemplate: string;
 };
 
-export function generateDocs(unparsedApexFiles: UnparsedSourceFile[], config: MarkdownGeneratorConfig) {
+export function generateDocs(unparsedApexFiles: UnparsedSourceBundle[], config: MarkdownGeneratorConfig) {
   const convertToReferences = apply(parsedFilesToReferenceGuide, config);
   const convertToRenderableBundle = apply(parsedFilesToRenderableBundle, config);
   const convertToDocumentationBundleForTemplate = apply(
@@ -52,12 +52,12 @@ export function generateDocs(unparsedApexFiles: UnparsedSourceFile[], config: Ma
   );
   const sort = apply(sortTypesAndMembers, config.sortAlphabetically);
 
-  function filterApexSourceFiles(sourceFiles: UnparsedSourceFile[]): UnparsedApexFile[] {
-    return sourceFiles.filter((sourceFile): sourceFile is UnparsedApexFile => sourceFile.type === 'apex');
+  function filterApexSourceFiles(sourceFiles: UnparsedSourceBundle[]): UnparsedApexBundle[] {
+    return sourceFiles.filter((sourceFile): sourceFile is UnparsedApexBundle => sourceFile.type === 'apex');
   }
 
-  function filterObjectSourceFiles(sourceFiles: UnparsedSourceFile[]): UnparsedObjectFile[] {
-    return sourceFiles.filter((sourceFile): sourceFile is UnparsedObjectFile => sourceFile.type === 'object');
+  function filterObjectSourceFiles(sourceFiles: UnparsedSourceBundle[]): UnparsedObjectBundle[] {
+    return sourceFiles.filter((sourceFile): sourceFile is UnparsedObjectBundle => sourceFile.type === 'object');
   }
 
   return pipe(
@@ -79,7 +79,7 @@ export function generateDocs(unparsedApexFiles: UnparsedSourceFile[], config: Ma
   );
 }
 
-function generateForApex(apexBundles: UnparsedApexFile[], config: MarkdownGeneratorConfig) {
+function generateForApex(apexBundles: UnparsedApexBundle[], config: MarkdownGeneratorConfig) {
   const filterOutOfScope = apply(filterScope, config.scope);
   const removeExcluded = apply(removeExcludedTags, config.excludeTags);
 
@@ -93,7 +93,7 @@ function generateForApex(apexBundles: UnparsedApexFile[], config: MarkdownGenera
   );
 }
 
-function generateForObject(objectBundles: UnparsedObjectFile[]) {
+function generateForObject(objectBundles: UnparsedObjectBundle[]) {
   // TODO: Filter out non public
   return pipe(objectBundles, reflectObjectSources);
 }
