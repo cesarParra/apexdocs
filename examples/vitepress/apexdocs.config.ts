@@ -33,6 +33,7 @@ export default {
   }),
   markdown: defineMarkdownConfig({
     sourceDir: 'force-app',
+    includeMetadata: false,
     scope: ['global', 'public', 'protected', 'private', 'namespaceaccessible'],
     sortAlphabetically: true,
     namespace: 'apexdocs',

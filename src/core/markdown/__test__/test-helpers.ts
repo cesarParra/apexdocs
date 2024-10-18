@@ -1,16 +1,17 @@
-import { UnparsedSourceFile } from '../../shared/types';
+import { UnparsedApexBundle } from '../../shared/types';
 import { generateDocs as gen, MarkdownGeneratorConfig } from '../generate-docs';
 import { referenceGuideTemplate } from '../templates/reference-guide';
 
-export function apexBundleFromRawString(raw: string, rawMetadata?: string): UnparsedSourceFile {
+export function unparsedApexBundleFromRawString(raw: string, rawMetadata?: string): UnparsedApexBundle {
   return {
+    type: 'apex',
     filePath: 'test.cls',
     content: raw,
     metadataContent: rawMetadata ?? null,
   };
 }
 
-export function generateDocs(apexBundles: UnparsedSourceFile[], config?: Partial<MarkdownGeneratorConfig>) {
+export function generateDocs(apexBundles: UnparsedApexBundle[], config?: Partial<MarkdownGeneratorConfig>) {
   return gen(apexBundles, {
     targetDir: 'target',
     scope: ['global', 'public'],

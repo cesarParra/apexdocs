@@ -1,5 +1,5 @@
 import { ClassMirrorBuilder } from '../../../test-helpers/ClassMirrorBuilder';
-import { createInheritanceChain } from '../../reflection/inheritance-chain';
+import { createInheritanceChain } from '../../reflection/apex/inheritance-chain';
 
 describe('inheritance chain for classes', () => {
   test('returns an empty list of the class does not extend any other class', () => {

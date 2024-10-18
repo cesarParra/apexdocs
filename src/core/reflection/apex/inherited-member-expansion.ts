@@ -1,12 +1,12 @@
 import { ClassMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
 import { pipe } from 'fp-ts/function';
-import { ParsedFile } from '../shared/types';
-import { parsedFilesToTypes } from '../markdown/utils';
+import { ParsedFile } from '../../shared/types';
+import { parsedFilesToTypes } from '../../markdown/utils';
 
-export const addInheritedMembersToTypes = (parsedFiles: ParsedFile[]) =>
+export const addInheritedMembersToTypes = (parsedFiles: ParsedFile<Type>[]) =>
   parsedFiles.map((parsedFile) => addInheritedMembers(parsedFilesToTypes(parsedFiles), parsedFile));
 
-export function addInheritedMembers(repository: Type[], parsedFile: ParsedFile): ParsedFile {
+export function addInheritedMembers(repository: Type[], parsedFile: ParsedFile<Type>): ParsedFile<Type> {
   function addInheritedMembersToType<T extends Type>(repository: Type[], current: T): T {
     if (current.type_name === 'enum') {
       return current;

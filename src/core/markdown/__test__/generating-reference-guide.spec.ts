@@ -1,7 +1,7 @@
 import { extendExpect } from './expect-extensions';
 import { pipe } from 'fp-ts/function';
 import * as E from 'fp-ts/Either';
-import { apexBundleFromRawString, generateDocs } from './test-helpers';
+import { unparsedApexBundleFromRawString, generateDocs } from './test-helpers';
 import { ReferenceGuidePageData } from '../../shared/types';
 import { assertEither } from '../../test-helpers/assert-either';
 
@@ -38,7 +38,10 @@ describe('When generating the Reference Guide', () => {
       public class MyClass {}
       `;
 
-    const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
+    const result = await generateDocs([
+      unparsedApexBundleFromRawString(input1),
+      unparsedApexBundleFromRawString(input2),
+    ])();
     expect(result).documentationBundleHasLength(2);
 
     assertEither(result, (data) =>
@@ -57,7 +60,7 @@ describe('When generating the Reference Guide', () => {
       }
       `;
 
-    const result = await generateDocs([apexBundleFromRawString(input)])();
+    const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
     expect(result).documentationBundleHasLength(1);
     assertEither(result, (data) =>
       expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('## Miscellaneous'),
@@ -75,7 +78,7 @@ describe('When generating the Reference Guide', () => {
       }
       `;
 
-    const result = await generateDocs([apexBundleFromRawString(input)])();
+    const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
     expect(result).documentationBundleHasLength(1);
     assertEither(result, (data) =>
       expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('## MyGroup'),
@@ -100,7 +103,10 @@ describe('When generating the Reference Guide', () => {
       public class MyClass {}
       `;
 
-    const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
+    const result = await generateDocs([
+      unparsedApexBundleFromRawString(input1),
+      unparsedApexBundleFromRawString(input2),
+    ])();
     expect(result).documentationBundleHasLength(2);
     pipe(
       result,
@@ -133,7 +139,10 @@ describe('When generating the Reference Guide', () => {
       public class MyClass {}
       `;
 
-    const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
+    const result = await generateDocs([
+      unparsedApexBundleFromRawString(input1),
+      unparsedApexBundleFromRawString(input2),
+    ])();
     expect(result).documentationBundleHasLength(2);
     assertEither(result, (data) =>
       expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('## Group1'),
@@ -162,7 +171,10 @@ describe('When generating the Reference Guide', () => {
       public class MyClass {}
       `;
 
-    const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
+    const result = await generateDocs([
+      unparsedApexBundleFromRawString(input1),
+      unparsedApexBundleFromRawString(input2),
+    ])();
     expect(result).documentationBundleHasLength(2);
     assertEither(result, (data) =>
       expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('This is a description'),
@@ -188,7 +200,10 @@ describe('When generating the Reference Guide', () => {
       public class MyClass {}
       `;
 
-    const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
+    const result = await generateDocs([
+      unparsedApexBundleFromRawString(input1),
+      unparsedApexBundleFromRawString(input2),
+    ])();
     expect(result).documentationBundleHasLength(2);
     assertEither(result, (data) =>
       expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('with a [MyClass](group2/MyClass.md)'),

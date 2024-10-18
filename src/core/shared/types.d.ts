@@ -1,5 +1,6 @@
 import { Type } from '@cparra/apex-reflection';
 import { ChangeLogPageData } from '../changelog/generate-change-log';
+import { ObjectMetadata } from '../reflection/sobject/reflect-sobject-source';
 
 export type Generators = 'markdown' | 'openapi' | 'changelog';
 
@@ -26,6 +27,7 @@ export type UserDefinedMarkdownConfig = {
   linkingStrategy: LinkingStrategy;
   excludeTags: string[];
   referenceGuideTitle: string;
+  /** Glob patterns to exclude files from the documentation. */
   exclude: string[];
 } & Partial<ConfigurableHooks>;
 
@@ -53,7 +55,16 @@ export type UserDefinedChangelogConfig = {
 
 export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig | UserDefinedChangelogConfig;
 
-export type UnparsedSourceFile = {
+export type UnparsedSourceBundle = UnparsedApexBundle | UnparsedSObjectBundle;
+
+export type UnparsedSObjectBundle = {
+  type: 'sobject';
+  filePath: string;
+  content: string;
+};
+
+export type UnparsedApexBundle = {
+  type: 'apex';
   filePath: string;
   content: string;
   metadataContent: string | null;
@@ -62,12 +73,12 @@ export type UnparsedSourceFile = {
 export type SourceFileMetadata = {
   filePath: string;
   name: string;
-  type: 'interface' | 'class' | 'enum';
+  type: 'interface' | 'class' | 'enum' | 'sobject';
 };
 
-export type ParsedFile = {
+export type ParsedFile<T extends Type | ObjectMetadata = Type | ObjectMetadata> = {
   source: SourceFileMetadata;
-  type: Type;
+  type: T;
 };
 
 export type DocPageReference = {
@@ -84,7 +95,7 @@ export type DocPageReference = {
   referencePath: string;
 };
 
-type Frontmatter = string | Record<string, unknown> | null;
+export type Frontmatter = string | Record<string, unknown> | null;
 
 export type ReferenceGuidePageData = {
   frontmatter: Frontmatter;

@@ -1,4 +1,4 @@
-import { SettingsConfig } from '../core/openApiSettings';
+import { SettingsConfig } from '../core/openapi/openApiSettings';
 
 /**
  * Builder class to create SettingsConfig objects.

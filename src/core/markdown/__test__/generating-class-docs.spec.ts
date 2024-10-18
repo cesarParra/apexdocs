@@ -1,5 +1,5 @@
 import { extendExpect } from './expect-extensions';
-import { apexBundleFromRawString, generateDocs } from './test-helpers';
+import { unparsedApexBundleFromRawString, generateDocs } from './test-helpers';
 import { assertEither } from '../../test-helpers/assert-either';
 
 describe('When generating documentation for a class', () => {
@@ -15,7 +15,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Methods'));
     });
@@ -28,7 +28,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: true })();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)], { sortAlphabetically: true })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aMethodIndex = data.docs[0].content.indexOf('aMethod');
@@ -45,7 +45,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: false })();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)], { sortAlphabetically: false })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aMethodIndex = data.docs[0].content.indexOf('aMethod');
@@ -61,7 +61,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Properties'));
     });
@@ -74,7 +74,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: true })();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)], { sortAlphabetically: true })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aPropertyIndex = data.docs[0].content.indexOf('aProperty');
@@ -91,7 +91,7 @@ describe('When generating documentation for a class', () => {
         }  
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: false })();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)], { sortAlphabetically: false })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aPropertyIndex = data.docs[0].content.indexOf('aProperty');
@@ -107,7 +107,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Fields'));
     });
@@ -120,7 +120,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: true })();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)], { sortAlphabetically: true })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aFieldIndex = data.docs[0].content.indexOf('aField');
@@ -137,7 +137,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: false })();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)], { sortAlphabetically: false })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aFieldIndex = data.docs[0].content.indexOf('aField');
@@ -153,7 +153,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Constructors'));
     });
@@ -165,7 +165,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Classes'));
     });
@@ -178,7 +178,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: true })();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)], { sortAlphabetically: true })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aInnerClassIndex = data.docs[0].content.indexOf('AInnerClass');
@@ -195,7 +195,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: false })();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)], { sortAlphabetically: false })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aInnerClassIndex = data.docs[0].content.indexOf('AInnerClass');
@@ -211,7 +211,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Interfaces'));
     });
@@ -224,7 +224,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: true })();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)], { sortAlphabetically: true })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aInnerInterfaceIndex = data.docs[0].content.indexOf('AInnerInterface');
@@ -241,7 +241,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: false })();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)], { sortAlphabetically: false })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aInnerInterfaceIndex = data.docs[0].content.indexOf('AInnerInterface');
@@ -257,7 +257,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('## Enums'));
     });
@@ -270,7 +270,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: true })();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)], { sortAlphabetically: true })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aInnerEnumIndex = data.docs[0].content.indexOf('AInnerEnum');
@@ -287,7 +287,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)], { sortAlphabetically: false })();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)], { sortAlphabetically: false })();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => {
         const aInnerEnumIndex = data.docs[0].content.indexOf('AInnerEnum');
@@ -313,7 +313,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('```mermaid'));
       assertEither(result, (data) => expect(data).firstDocContains('graph TD'));
@@ -334,7 +334,7 @@ describe('When generating documentation for a class', () => {
         }
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input)])();
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('```apex'));
       assertEither(result, (data) => expect(data).firstDocContains('public class MyClass'));
@@ -351,7 +351,10 @@ describe('When generating documentation for a class', () => {
         public class AnotherClass extends MyClass {}
       `;
 
-      const result = await generateDocs([apexBundleFromRawString(input1), apexBundleFromRawString(input2)])();
+      const result = await generateDocs([
+        unparsedApexBundleFromRawString(input1),
+        unparsedApexBundleFromRawString(input2),
+      ])();
       expect(result).documentationBundleHasLength(2);
       assertEither(result, (data) =>
         expect(data.docs.find((doc) => doc.source.name === 'AnotherClass')?.content).toContain('Inherited'),
