@@ -1,133 +1,21 @@
 import { FileSystem } from '../file-system';
-import { processApexFiles, processFiles, processObjectFiles } from '../source-code-file-reader';
-
-type File = {
-  type: 'file';
-  path: string;
-  content: string;
-};
-
-type Directory = {
-  type: 'directory';
-  path: string;
-  files: (File | Directory)[];
-};
-
-type Path = File | Directory;
+import { processFiles, SourceComponentAdapter } from '../source-code-file-reader';
 
 class TestFileSystem implements FileSystem {
-  constructor(private readonly paths: Path[]) {}
+  constructor(private readonly sourceComponents: SourceComponentAdapter[]) {}
 
-  async isDirectory(path: string): Promise<boolean> {
-    const directory = this.findPath(path);
-    return directory ? directory.type === 'directory' : false;
+  getComponents(): SourceComponentAdapter[] {
+    return this.sourceComponents;
   }
 
-  joinPath(...paths: string[]): string {
-    return paths.join('/');
-  }
-
-  async readDirectory(sourceDirectory: string): Promise<string[]> {
-    const directory = this.findPath(sourceDirectory);
-    if (!directory || directory.type !== 'directory') {
-      throw new Error('Directory not found');
-    }
-    return directory.files.map((f) => f.path);
-  }
-
-  async readFile(path: string): Promise<string> {
-    const file = this.findPath(path);
-    if (!file || file.type !== 'file') {
-      throw new Error('File not found');
-    }
-    return file.content;
-  }
-
-  exists(path: string): boolean {
-    return this.paths.some((p) => p.path === path);
-  }
-
-  findPath(path: string): Path | undefined {
-    const splitPath = path.split('/');
-    let currentPath = this.paths.find((p) => p.path === splitPath[0]);
-    for (let i = 1; i < splitPath.length; i++) {
-      if (!currentPath || currentPath.type !== 'directory') {
-        return undefined;
-      }
-      currentPath = currentPath.files.find((f) => f.path === splitPath[i]);
-    }
-    return currentPath;
-  }
-}
-
-describe('File Reader', () => {
-  it('returns an empty list when there are no files in the directory', async () => {
-    const fileSystem = new TestFileSystem([
-      {
-        type: 'directory',
-        path: '',
-        files: [],
-      },
-    ]);
-
-    const result = await processFiles(fileSystem)([processApexFiles(false)])('', []);
-
-    expect(result.length).toBe(0);
-  });
-
-  it('returns an empty list when there are no Apex files in the directory', async () => {
-    const fileSystem = new TestFileSystem([
-      {
-        type: 'directory',
-        path: '',
-        files: [
-          {
-            type: 'file',
-            path: 'SomeFile.md',
-            content: '## Some Markdown',
-          },
-        ],
-      },
-    ]);
-
-    const result = await processFiles(fileSystem)([processApexFiles(false)])('', []);
-    expect(result.length).toBe(0);
-  });
-
-  it('returns the file contents for all Apex files', async () => {
-    const fileSystem = new TestFileSystem([
-      {
-        type: 'directory',
-        path: '',
-        files: [
-          {
-            type: 'file',
-            path: 'SomeFile.cls',
-            content: 'public class MyClass{}',
-          },
-          {
-            type: 'directory',
-            path: 'subdir',
-            files: [
-              {
-                type: 'file',
-                path: 'AnotherFile.cls',
-                content: 'public class AnotherClass{}',
-              },
-            ],
-          },
-        ],
-      },
-    ]);
-
-    const result = await processFiles(fileSystem)([processApexFiles(false)])('', []);
-    expect(result.length).toBe(2);
-    expect(result[0].content).toBe('public class MyClass{}');
-    expect(result[1].content).toBe('public class AnotherClass{}');
-  });
-
-  it('returns the file contents of all Object files', async () => {
-    const objectContent = `
+  readFile(path: string): string {
+    switch (path) {
+      case 'Speaker.cls':
+        return 'public class Speaker{}';
+      case 'AnotherSpeaker.cls':
+        return 'public class AnotherSpeaker{}';
+      case 'SomeObject__c.object-meta.xml':
+        return `
     <?xml version="1.0" encoding="UTF-8"?>
     <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
         <deploymentStatus>Deployed</deploymentStatus>
@@ -135,106 +23,108 @@ describe('File Reader', () => {
         <label>MyFirstObject</label>
         <pluralLabel>MyFirstObjects</pluralLabel>
     </CustomObject>`;
+      default:
+        return '';
+    }
+  }
+}
 
+describe('File Reader', () => {
+  it('returns an empty list when no source components are found', async () => {
+    const fileSystem = new TestFileSystem([]);
+
+    const result = processFiles(fileSystem)(['ApexClass'])('', []);
+
+    expect(result.length).toBe(0);
+  });
+
+  it('returns an empty list when reading Apex files and there are none', async () => {
     const fileSystem = new TestFileSystem([
       {
-        type: 'directory',
-        path: '',
-        files: [
-          {
-            type: 'file',
-            path: 'SomeObject__c.object-meta.xml',
-            content: objectContent,
-          },
-        ],
+        name: 'Speaker__c',
+        type: {
+          id: 'customobject',
+          name: 'CustomObject',
+        },
+        xml: 'force-app/main/default/objects/Speaker__c/Speaker__c.object-meta.xml',
+        content: 'force-app/main/default/objects/Speaker__c',
       },
     ]);
 
-    const result = await processFiles(fileSystem)([processObjectFiles()])('', []);
+    const result = processFiles(fileSystem)(['ApexClass'])('', []);
+    expect(result.length).toBe(0);
+  });
+
+  it('returns the file contents for all Apex files', async () => {
+    const fileSystem = new TestFileSystem([
+      {
+        name: 'Speaker',
+        type: {
+          id: 'apexclass',
+          name: 'ApexClass',
+        },
+        xml: 'Speaker.cls-meta.xml',
+        content: 'Speaker.cls',
+      },
+      {
+        name: 'AnotherSpeaker',
+        type: {
+          id: 'apexclass',
+          name: 'ApexClass',
+        },
+        xml: 'AnotherSpeaker.cls-meta.xml',
+        content: 'AnotherSpeaker.cls',
+      },
+    ]);
+
+    const result = processFiles(fileSystem)(['ApexClass'])('', []);
+    expect(result.length).toBe(2);
+    expect(result[0].content).toBe('public class Speaker{}');
+    expect(result[1].content).toBe('public class AnotherSpeaker{}');
+  });
+
+  it('returns the file contents of all Object files', async () => {
+    const fileSystem = new TestFileSystem([
+      {
+        name: 'SomeObject__c',
+        type: {
+          id: 'customobject',
+          name: 'CustomObject',
+        },
+        xml: 'SomeObject__c.object-meta.xml',
+        content: '',
+      },
+    ]);
+
+    const result = processFiles(fileSystem)(['CustomObject'])('', []);
     expect(result.length).toBe(1);
-    expect(result[0].content).toBe(objectContent);
+    expect(result[0].content).toContain('test object for testing');
   });
 
   it('skips files that match the excluded glob pattern', async () => {
     const fileSystem = new TestFileSystem([
       {
-        type: 'directory',
-        path: '',
-        files: [
-          {
-            type: 'file',
-            path: 'SomeFile.cls',
-            content: 'public class MyClass{}',
-          },
-          {
-            type: 'directory',
-            path: 'subdir',
-            files: [
-              {
-                type: 'file',
-                path: 'AnotherFile.cls',
-                content: 'public class AnotherClass{}',
-              },
-            ],
-          },
-        ],
+        name: 'Speaker',
+        type: {
+          id: 'apexclass',
+          name: 'ApexClass',
+        },
+        xml: 'Speaker.cls-meta.xml',
+        content: 'Speaker.cls',
       },
-    ]);
-
-    const result = await processFiles(fileSystem)([processApexFiles(false)])('', ['**/AnotherFile.cls']);
-    expect(result.length).toBe(1);
-    expect(result[0].content).toBe('public class MyClass{}');
-  });
-
-  it('returns the file contents for all Apex  when there are multiple directories', async () => {
-    const fileSystem = new TestFileSystem([
       {
-        type: 'directory',
-        path: '',
-        files: [
-          {
-            type: 'file',
-            path: 'SomeFile.cls',
-            content: 'public class MyClass{}',
-          },
-          {
-            type: 'directory',
-            path: 'subdir',
-            files: [
-              {
-                type: 'file',
-                path: 'AnotherFile.cls',
-                content: 'public class AnotherClass{}',
-              },
-            ],
-          },
-          {
-            type: 'directory',
-            path: 'subdir2',
-            files: [
-              {
-                type: 'file',
-                path: 'SomeFile2.cls',
-                content: 'public class MyClass{}',
-              },
-              {
-                type: 'directory',
-                path: 'subdir',
-                files: [
-                  {
-                    type: 'file',
-                    path: 'AnotherFile2.cls',
-                    content: 'public class AnotherClass{}',
-                  },
-                ],
-              },
-            ],
-          },
-        ],
+        name: 'AnotherSpeaker',
+        type: {
+          id: 'apexclass',
+          name: 'ApexClass',
+        },
+        xml: 'AnotherSpeaker.cls-meta.xml',
+        content: 'AnotherSpeaker.cls',
       },
     ]);
 
-    const result = await processFiles(fileSystem)([processApexFiles(false)])('', []);
-    expect(result.length).toBe(4);
+    const result = processFiles(fileSystem)(['ApexClass'])('', ['**/Speaker.cls']);
+    expect(result.length).toBe(1);
+    expect(result[0].content).toBe('public class AnotherSpeaker{}');
   });
 });

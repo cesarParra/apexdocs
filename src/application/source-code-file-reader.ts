@@ -1,4 +1,3 @@
-import { MetadataResolver, SourceComponent } from '@salesforce/source-deploy-retrieve';
 import { FileSystem } from './file-system';
 import { UnparsedApexBundle, UnparsedSObjectBundle } from '../core/shared/types';
 import { minimatch } from 'minimatch';
@@ -6,6 +5,20 @@ import { flow, pipe } from 'fp-ts/function';
 import { apply } from '#utils/fp';
 
 type ComponentTypes = 'ApexClass' | 'CustomObject';
+
+/**
+ * Simplified representation of a source component, with only
+ * the required information we need.
+ */
+export type SourceComponentAdapter = {
+  name: string;
+  type: {
+    id: string;
+    name: string;
+  };
+  xml?: string;
+  content?: string;
+};
 
 type ApexClassApexSourceComponent = {
   type: 'ApexClass';
@@ -20,13 +33,9 @@ type CustomObjectSourceComponent = {
   contentPath: string;
 };
 
-function getMetadata(rootPath: string): SourceComponent[] {
-  return new MetadataResolver().getComponentsFromPath(rootPath);
-}
-
 function getApexSourceComponents(
   includeMetadata: boolean,
-  sourceComponents: SourceComponent[],
+  sourceComponents: SourceComponentAdapter[],
 ): ApexClassApexSourceComponent[] {
   return sourceComponents
     .filter((component) => component.type.name === 'ApexClass')
@@ -57,7 +66,7 @@ function toUnparsedApexBundle(
   });
 }
 
-function getCustomObjectSourceComponents(sourceComponents: SourceComponent[]): CustomObjectSourceComponent[] {
+function getCustomObjectSourceComponents(sourceComponents: SourceComponentAdapter[]): CustomObjectSourceComponent[] {
   return sourceComponents
     .filter((component) => component.type.name === 'CustomObject')
     .map((component) => ({
@@ -90,7 +99,7 @@ export function processFiles(fileSystem: FileSystem) {
   ) {
     const converters: Record<
       ComponentTypes,
-      (components: SourceComponent[]) => (UnparsedApexBundle | UnparsedSObjectBundle)[]
+      (components: SourceComponentAdapter[]) => (UnparsedApexBundle | UnparsedSObjectBundle)[]
     > = {
       ApexClass: flow(apply(getApexSourceComponents, options.includeMetadata), (apexSourceComponents) =>
         toUnparsedApexBundle(fileSystem, apexSourceComponents),
@@ -104,12 +113,10 @@ export function processFiles(fileSystem: FileSystem) {
 
     return function (rootPath: string, exclude: string[]) {
       return pipe(
-        getMetadata(rootPath),
+        fileSystem.getComponents(rootPath),
         (components) => components.filter((component) => !isExcluded(component.content!, exclude)),
         (components) => convertersToUse.map((converter) => converter(components)),
-        (bundles) => {
-          return bundles.reduce((acc, bundle) => [...acc, ...bundle], []);
-        },
+        (bundles) => bundles.flat(),
       );
     };
   };
