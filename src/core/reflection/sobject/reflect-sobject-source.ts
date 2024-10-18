@@ -43,25 +43,30 @@ function reflectSObjectSource(
 }
 
 function validate(parseResult: unknown): E.Either<Error, { CustomObject: object }> {
-  if (typeof parseResult !== 'object' || parseResult === null) {
-    return E.left(new Error('Invalid SObject metadata'));
+  const err = E.left(new Error('Invalid SObject metadata'));
+  function isObject(value: unknown) {
+    return typeof value === 'object' && value !== null ? E.right(value) : err;
   }
 
-  // Confirm that the object has a CustomObject property
-  if (!('CustomObject' in parseResult)) {
-    return E.left(new Error('Invalid SObject metadata'));
+  function hasTheCustomObjectKey(value: object) {
+    return 'CustomObject' in value ? E.right(value) : err;
   }
 
-  // Confirm that the CustomObject property is an object that contains that "label" property
-  if (typeof (parseResult as { CustomObject: object }).CustomObject !== 'object') {
-    return E.left(new Error('Invalid SObject metadata'));
+  function theCustomObjectKeyIsAnObject(value: Record<'CustomObject', unknown>) {
+    return typeof value.CustomObject === 'object' ? E.right(value as Record<'CustomObject', object>) : err;
   }
 
-  if (!('label' in (parseResult as { CustomObject: object }).CustomObject)) {
-    return E.left(new Error('Invalid SObject metadata'));
+  function theCustomObjectContainsTheLabelKey(value: Record<'CustomObject', object>) {
+    return 'label' in value.CustomObject ? E.right(value) : err;
   }
 
-  return E.right(parseResult as { CustomObject: object });
+  return pipe(
+    parseResult,
+    isObject,
+    E.chain(hasTheCustomObjectKey),
+    E.chain(theCustomObjectKeyIsAnObject),
+    E.chain(theCustomObjectContainsTheLabelKey),
+  );
 }
 
 function toObjectMetadata(parserResult: { CustomObject: object }): ObjectMetadata {
