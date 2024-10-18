@@ -1,6 +1,7 @@
 import { reflectSObjectSources } from '../reflect-sobject-source';
 import { UnparsedSObjectBundle } from '../../../shared/types';
 import { assertEither } from '../../../test-helpers/assert-either';
+import * as E from 'fp-ts/Either';
 
 const sObjectContent = `
     <?xml version="1.0" encoding="UTF-8"?>
@@ -138,6 +139,49 @@ describe('when parsing SObject metadata', () => {
     assertEither(result, (data) => {
       expect(data[0].type.visibility).toBe('Public');
     });
+  });
+
+  test('an error is thrown when the XML is in an invalid format', async () => {
+    const sObjectContent = `
+    <?xml version="1.0" encoding="UTF-8"?>
+    <SomethingInvalid xmlns="http://soap.sforce.com/2006/04/metadata">
+        <deploymentStatus>Deployed</deploymentStatus>
+        <description>test object for testing</description>
+        <label>MyFirstObject</label>
+        <pluralLabel>MyFirstObjects</pluralLabel>
+        <visibility>Public</visibility>
+    </SomethingInvalid>`;
+
+    const unparsed: UnparsedSObjectBundle = {
+      type: 'sobject',
+      filePath: 'src/object/MyFirstObject__c.object-meta.xml',
+      content: sObjectContent,
+    };
+
+    const result = await reflectSObjectSources([unparsed])();
+
+    expect(E.isLeft(result)).toBe(true);
+  });
+
+  test('an error is thrown when the label is missing', async () => {
+    const sObjectContent = `
+    <?xml version="1.0" encoding="UTF-8"?>
+    <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+        <deploymentStatus>Deployed</deploymentStatus>
+        <description>test object for testing</description>
+        <pluralLabel>MyFirstObjects</pluralLabel>
+        <visibility>Public</visibility>
+    </CustomObject>`;
+
+    const unparsed: UnparsedSObjectBundle = {
+      type: 'sobject',
+      filePath: 'src/object/MyFirstObject__c.object-meta.xml',
+      content: sObjectContent,
+    };
+
+    const result = await reflectSObjectSources([unparsed])();
+
+    expect(E.isLeft(result)).toBe(true);
   });
 });
 

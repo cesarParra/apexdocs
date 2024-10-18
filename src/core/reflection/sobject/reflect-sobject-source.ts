@@ -31,13 +31,37 @@ function reflectSObjectSource(
   objectSource: UnparsedSObjectBundle,
 ): TE.TaskEither<ReflectionErrors, ParsedFile<ObjectMetadata>> {
   return pipe(
-    TE.fromEither(E.tryCatch(() => new XMLParser().parse(objectSource.content), E.toError)),
-    TE.map(toObjectMetadata),
-    TE.map((metadata) => addName(metadata, objectSource.filePath)),
-    TE.map((metadata) => addTypeName(metadata)),
-    TE.map((metadata) => toParsedFile(objectSource.filePath, metadata)),
-    TE.mapLeft((error) => new ReflectionErrors([new ReflectionError(objectSource.filePath, error.message)])),
+    E.tryCatch(() => new XMLParser().parse(objectSource.content), E.toError),
+    E.flatMap(validate),
+    E.map(toObjectMetadata),
+    E.map((metadata) => addName(metadata, objectSource.filePath)),
+    E.map(addTypeName),
+    E.map((metadata) => toParsedFile(objectSource.filePath, metadata)),
+    E.mapLeft((error) => new ReflectionErrors([new ReflectionError(objectSource.filePath, error.message)])),
+    TE.fromEither,
   );
+}
+
+function validate(parseResult: unknown): E.Either<Error, { CustomObject: object }> {
+  if (typeof parseResult !== 'object' || parseResult === null) {
+    return E.left(new Error('Invalid SObject metadata'));
+  }
+
+  // Confirm that the object has a CustomObject property
+  if (!('CustomObject' in parseResult)) {
+    return E.left(new Error('Invalid SObject metadata'));
+  }
+
+  // Confirm that the CustomObject property is an object that contains that "label" property
+  if (typeof (parseResult as { CustomObject: object }).CustomObject !== 'object') {
+    return E.left(new Error('Invalid SObject metadata'));
+  }
+
+  if (!('label' in (parseResult as { CustomObject: object }).CustomObject)) {
+    return E.left(new Error('Invalid SObject metadata'));
+  }
+
+  return E.right(parseResult as { CustomObject: object });
 }
 
 function toObjectMetadata(parserResult: { CustomObject: object }): ObjectMetadata {
