@@ -6,7 +6,7 @@ import markdown from './generators/markdown';
 import openApi from './generators/openapi';
 import changelog from './generators/changelog';
 
-import { processApexFiles, processFiles } from './source-code-file-reader';
+import { processFiles } from './source-code-file-reader';
 import { DefaultFileSystem } from './file-system';
 import { Logger } from '#utils/logger';
 import {
@@ -51,7 +51,14 @@ async function processMarkdown(config: UserDefinedMarkdownConfig) {
   // TODO: Also process Object files
   return pipe(
     TE.tryCatch(
-      () => readFiles([processApexFiles(config.includeMetadata)])(config.sourceDir, config.exclude),
+      // TODO: We do not need to deal with promises anymore (in this step)
+      () =>
+        Promise.resolve(
+          readFiles(['ApexClass'], { includeMetadata: config.includeMetadata })(
+            config.sourceDir,
+            config.exclude,
+          ) as UnparsedApexBundle[],
+        ),
       (e) => new FileReadingError('An error occurred while reading files.', e),
     ),
     TE.flatMap((fileBodies) => markdown(fileBodies, config)),
@@ -61,20 +68,21 @@ async function processMarkdown(config: UserDefinedMarkdownConfig) {
 }
 
 async function processOpenApi(config: UserDefinedOpenApiConfig, logger: Logger) {
-  const fileBodies = await readFiles([processApexFiles(false)])(config.sourceDir, config.exclude);
+  const fileBodies = readFiles(['ApexClass'])(config.sourceDir, config.exclude) as UnparsedApexBundle[];
   return openApi(logger, fileBodies, config);
 }
 
 async function processChangeLog(config: UserDefinedChangelogConfig) {
-  async function loadFiles(): Promise<[UnparsedApexBundle[], UnparsedApexBundle[]]> {
+  function loadFiles(): [UnparsedApexBundle[], UnparsedApexBundle[]] {
     return [
-      await readFiles([processApexFiles(false)])(config.previousVersionDir, config.exclude),
-      await readFiles([processApexFiles(false)])(config.currentVersionDir, config.exclude),
+      readFiles(['ApexClass'])(config.previousVersionDir, config.exclude) as UnparsedApexBundle[],
+      readFiles(['ApexClass'])(config.currentVersionDir, config.exclude) as UnparsedApexBundle[],
     ];
   }
 
   return pipe(
-    TE.tryCatch(loadFiles, (e) => new FileReadingError('An error occurred while reading files.', e)),
+    E.tryCatch(loadFiles, (e) => new FileReadingError('An error occurred while reading files.', e)),
+    TE.fromEither,
     TE.flatMap(([previous, current]) => changelog(previous, current, config)),
     TE.mapLeft(toErrors),
   );

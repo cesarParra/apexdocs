@@ -1,99 +1,120 @@
+import { MetadataResolver, SourceComponent } from '@salesforce/source-deploy-retrieve';
 import { FileSystem } from './file-system';
 import { UnparsedApexBundle, UnparsedSObjectBundle } from '../core/shared/types';
 import { minimatch } from 'minimatch';
-import { pipe } from 'fp-ts/function';
+import { flow, pipe } from 'fp-ts/function';
+import { apply } from '#utils/fp';
+
+type ComponentTypes = 'ApexClass' | 'CustomObject';
+
+type ApexClassApexSourceComponent = {
+  type: 'ApexClass';
+  name: string;
+  xmlPath?: string;
+  contentPath: string;
+};
+
+type CustomObjectSourceComponent = {
+  type: 'CustomObject';
+  name: string;
+  contentPath: string;
+};
+
+function getMetadata(rootPath: string): SourceComponent[] {
+  return new MetadataResolver().getComponentsFromPath(rootPath);
+}
+
+function getApexSourceComponents(
+  includeMetadata: boolean,
+  sourceComponents: SourceComponent[],
+): ApexClassApexSourceComponent[] {
+  return sourceComponents
+    .filter((component) => component.type.name === 'ApexClass')
+    .map((component) => ({
+      type: 'ApexClass' as const,
+      name: component.name,
+      xmlPath: includeMetadata ? component.xml : undefined,
+      contentPath: component.content!,
+    }));
+}
+
+function toUnparsedApexBundle(
+  fileSystem: FileSystem,
+  apexSourceComponents: ApexClassApexSourceComponent[],
+): UnparsedApexBundle[] {
+  return apexSourceComponents.map((component) => {
+    const apexComponentTuple: [string, string | null] = [
+      fileSystem.readFile(component.contentPath),
+      component.xmlPath ? fileSystem.readFile(component.xmlPath) : null,
+    ];
+
+    return {
+      type: 'apex',
+      filePath: component.contentPath,
+      content: apexComponentTuple[0],
+      metadataContent: apexComponentTuple[1],
+    };
+  });
+}
+
+function getCustomObjectSourceComponents(sourceComponents: SourceComponent[]): CustomObjectSourceComponent[] {
+  return sourceComponents
+    .filter((component) => component.type.name === 'CustomObject')
+    .map((component) => ({
+      name: component.name,
+      type: 'CustomObject' as const,
+      contentPath: component.xml!,
+    }));
+}
+
+function toUnparsedSObjectBundle(
+  fileSystem: FileSystem,
+  customObjectSourceComponents: CustomObjectSourceComponent[],
+): UnparsedSObjectBundle[] {
+  return customObjectSourceComponents.map((component) => {
+    return {
+      type: 'sobject',
+      filePath: component.contentPath,
+      content: fileSystem.readFile(component.contentPath),
+    };
+  });
+}
 
 /**
  * Reads from source code files and returns their raw body.
  */
 export function processFiles(fileSystem: FileSystem) {
-  return function <T extends UnparsedApexBundle | UnparsedSObjectBundle>(processors: FileProcessor<T>[]) {
-    return async function (rootPath: string, exclude: string[]): Promise<T[]> {
+  return function <T extends ComponentTypes[]>(
+    componentTypesToRetrieve: T,
+    options: { includeMetadata: boolean } = { includeMetadata: false },
+  ) {
+    const converters: Record<
+      ComponentTypes,
+      (components: SourceComponent[]) => (UnparsedApexBundle | UnparsedSObjectBundle)[]
+    > = {
+      ApexClass: flow(apply(getApexSourceComponents, options.includeMetadata), (apexSourceComponents) =>
+        toUnparsedApexBundle(fileSystem, apexSourceComponents),
+      ),
+      CustomObject: flow(getCustomObjectSourceComponents, (customObjectSourceComponents) =>
+        toUnparsedSObjectBundle(fileSystem, customObjectSourceComponents),
+      ),
+    };
+
+    const convertersToUse = componentTypesToRetrieve.map((componentType) => converters[componentType]);
+
+    return function (rootPath: string, exclude: string[]) {
       return pipe(
-        await getFilePaths(fileSystem, rootPath),
-        (filePaths) => filePaths.filter((filePath) => !isExcluded(filePath, exclude)),
-        (filteredFilePaths) => readFiles(fileSystem, filteredFilePaths, processors),
+        getMetadata(rootPath),
+        (components) => components.filter((component) => !isExcluded(component.content!, exclude)),
+        (components) => convertersToUse.map((converter) => converter(components)),
+        (bundles) => {
+          return bundles.reduce((acc, bundle) => [...acc, ...bundle], []);
+        },
       );
     };
   };
 }
 
-async function readFiles<T extends UnparsedApexBundle | UnparsedSObjectBundle>(
-  fileSystem: FileSystem,
-  filePaths: string[],
-  processors: FileProcessor<T>[],
-): Promise<T[]> {
-  const files: T[] = [];
-  for (const filePath of filePaths) {
-    const processor = processors.find((p) => p.isSupportedFile(filePath));
-    if (processor) {
-      files.push(await processor.process(fileSystem, filePath));
-    }
-  }
-  return files;
-}
-
-async function getFilePaths(fileSystem: FileSystem, rootPath: string): Promise<string[]> {
-  const directoryContents = await fileSystem.readDirectory(rootPath);
-  const paths: string[] = [];
-  for (const filePath of directoryContents) {
-    const currentPath = fileSystem.joinPath(rootPath, filePath);
-    if (await fileSystem.isDirectory(currentPath)) {
-      paths.push(...(await getFilePaths(fileSystem, currentPath)));
-    } else {
-      paths.push(currentPath);
-    }
-  }
-  return paths;
-}
-
 function isExcluded(filePath: string, exclude: string[]): boolean {
   return exclude.some((pattern) => minimatch(filePath, pattern));
-}
-
-interface FileProcessor<T extends UnparsedApexBundle | UnparsedSObjectBundle> {
-  isSupportedFile: (currentFile: string) => boolean;
-  process: (fileSystem: FileSystem, filePath: string) => Promise<T>;
-}
-
-export function processApexFiles(includeMetadata: boolean): FileProcessor<UnparsedApexBundle> {
-  return new ApexFileReader(includeMetadata);
-}
-
-class ApexFileReader implements FileProcessor<UnparsedApexBundle> {
-  APEX_FILE_EXTENSION = '.cls';
-
-  constructor(public includeMetadata: boolean) {}
-
-  isSupportedFile(currentFile: string): boolean {
-    return currentFile.endsWith(this.APEX_FILE_EXTENSION);
-  }
-
-  async process(fileSystem: FileSystem, filePath: string): Promise<UnparsedApexBundle> {
-    const rawTypeContent = await fileSystem.readFile(filePath);
-    const metadataPath = `${filePath}-meta.xml`;
-    let rawMetadataContent = null;
-    if (this.includeMetadata) {
-      rawMetadataContent = fileSystem.exists(metadataPath) ? await fileSystem.readFile(metadataPath) : null;
-    }
-
-    return { type: 'apex', filePath, content: rawTypeContent, metadataContent: rawMetadataContent };
-  }
-}
-
-export function processObjectFiles(): FileProcessor<UnparsedSObjectBundle> {
-  return new ObjectFileReader();
-}
-
-class ObjectFileReader implements FileProcessor<UnparsedSObjectBundle> {
-  OBJECT_FILE_EXTENSION = '.object-meta.xml';
-
-  isSupportedFile(currentFile: string): boolean {
-    return currentFile.endsWith(this.OBJECT_FILE_EXTENSION);
-  }
-
-  async process(fileSystem: FileSystem, filePath: string): Promise<UnparsedSObjectBundle> {
-    const rawTypeContent = await fileSystem.readFile(filePath);
-    return { type: 'sobject', filePath, content: rawTypeContent };
-  }
 }
