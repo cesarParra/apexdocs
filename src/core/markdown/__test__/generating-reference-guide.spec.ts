@@ -1,11 +1,14 @@
 import { extendExpect } from './expect-extensions';
 import { pipe } from 'fp-ts/function';
 import * as E from 'fp-ts/Either';
-import { unparsedApexBundleFromRawString, generateDocs } from './test-helpers';
+import {
+  unparsedApexBundleFromRawString,
+  generateDocs,
+  customObjectGenerator,
+  unparsedObjectBundleFromRawString,
+} from './test-helpers';
 import { ReferenceGuidePageData } from '../../shared/types';
 import { assertEither } from '../../test-helpers/assert-either';
-
-// TODO: Test that it contains the SObject content
 
 describe('When generating the Reference Guide', () => {
   beforeAll(() => {
@@ -40,11 +43,17 @@ describe('When generating the Reference Guide', () => {
       public class MyClass {}
       `;
 
+    const input3 = {
+      rawContent: customObjectGenerator(),
+      filePath: 'src/object/TestObject__c.object-meta.xml',
+    };
+
     const result = await generateDocs([
       unparsedApexBundleFromRawString(input1),
       unparsedApexBundleFromRawString(input2),
+      unparsedObjectBundleFromRawString(input3),
     ])();
-    expect(result).documentationBundleHasLength(2);
+    expect(result).documentationBundleHasLength(3);
 
     assertEither(result, (data) =>
       expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('[MyEnum](miscellaneous/MyEnum.md)'),
@@ -52,9 +61,14 @@ describe('When generating the Reference Guide', () => {
     assertEither(result, (data) =>
       expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('[MyClass](miscellaneous/MyClass.md)'),
     );
+    assertEither(result, (data) =>
+      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain(
+        '[TestObject__c](custom-objects/TestObject__c.md)',
+      ),
+    );
   });
 
-  it('groups things under Miscellaneous if no group is provided', async () => {
+  it('groups Apex code under Miscellaneous if no group is provided', async () => {
     const input = `
       public enum MyEnum {
         VALUE1,
@@ -69,7 +83,7 @@ describe('When generating the Reference Guide', () => {
     );
   });
 
-  it('group things under the provided group', async () => {
+  it('group Apex code under the provided group', async () => {
     const input = `
       /**
         * @group MyGroup
@@ -84,6 +98,34 @@ describe('When generating the Reference Guide', () => {
     expect(result).documentationBundleHasLength(1);
     assertEither(result, (data) =>
       expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('## MyGroup'),
+    );
+  });
+
+  it('group SObjects under the Custom Objects group by default', async () => {
+    const input = {
+      rawContent: customObjectGenerator(),
+      filePath: 'src/object/TestObject__c.object-meta.xml',
+    };
+
+    const result = await generateDocs([unparsedObjectBundleFromRawString(input)])();
+    expect(result).documentationBundleHasLength(1);
+    assertEither(result, (data) =>
+      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('## Custom Objects'),
+    );
+  });
+
+  it('groups SObjects under the provided group', async () => {
+    const input = {
+      rawContent: customObjectGenerator(),
+      filePath: 'src/object/TestObject__c.object-meta.xml',
+    };
+
+    const result = await generateDocs([unparsedObjectBundleFromRawString(input)], {
+      customObjectsGroupName: 'MyCustomObjects',
+    })();
+    expect(result).documentationBundleHasLength(1);
+    assertEither(result, (data) =>
+      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('## MyCustomObjects'),
     );
   });
 
@@ -141,16 +183,26 @@ describe('When generating the Reference Guide', () => {
       public class MyClass {}
       `;
 
+    const input3 = {
+      rawContent: customObjectGenerator(),
+      filePath: 'src/object/ATestObject__c.object-meta.xml',
+    };
+
     const result = await generateDocs([
       unparsedApexBundleFromRawString(input1),
       unparsedApexBundleFromRawString(input2),
+      unparsedObjectBundleFromRawString(input3),
     ])();
-    expect(result).documentationBundleHasLength(2);
+
+    expect(result).documentationBundleHasLength(3);
     assertEither(result, (data) =>
       expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('## Group1'),
     );
     assertEither(result, (data) =>
       expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('MyClass'),
+    );
+    assertEither(result, (data) =>
+      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('ATestObject__c'),
     );
     assertEither(result, (data) => expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('MyEnum'));
   });
@@ -173,13 +225,23 @@ describe('When generating the Reference Guide', () => {
       public class MyClass {}
       `;
 
+    const input3 = {
+      rawContent: customObjectGenerator(),
+      filePath: 'src/object/ATestObject__c.object-meta.xml',
+    };
+
     const result = await generateDocs([
       unparsedApexBundleFromRawString(input1),
       unparsedApexBundleFromRawString(input2),
+      unparsedObjectBundleFromRawString(input3),
     ])();
-    expect(result).documentationBundleHasLength(2);
+
+    expect(result).documentationBundleHasLength(3);
     assertEither(result, (data) =>
       expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('This is a description'),
+    );
+    assertEither(result, (data) =>
+      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('test object for testing'),
     );
   });
 

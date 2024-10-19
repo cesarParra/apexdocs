@@ -184,5 +184,3 @@ describe('when parsing SObject metadata', () => {
     expect(E.isLeft(result)).toBe(true);
   });
 });
-
-// TODO: Test that things are validated
