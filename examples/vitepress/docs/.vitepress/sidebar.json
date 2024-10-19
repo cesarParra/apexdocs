@@ -36,39 +36,6 @@
         ]
       },
       {
-        "text": "Custom Objects",
-        "items": [
-          {
-            "text": "Event__c",
-            "link": "custom-objects/Event__c.md"
-          },
-          {
-            "text": "Price_Component__c",
-            "link": "custom-objects/Price_Component__c.md"
-          },
-          {
-            "text": "Product__c",
-            "link": "custom-objects/Product__c.md"
-          },
-          {
-            "text": "Product_Price_Component__c",
-            "link": "custom-objects/Product_Price_Component__c.md"
-          },
-          {
-            "text": "Sales_Order__c",
-            "link": "custom-objects/Sales_Order__c.md"
-          },
-          {
-            "text": "Sales_Order_Line__c",
-            "link": "custom-objects/Sales_Order_Line__c.md"
-          },
-          {
-            "text": "Speaker__c",
-            "link": "custom-objects/Speaker__c.md"
-          }
-        ]
-      },
-      {
         "text": "SampleGroup",
         "items": [
           {
@@ -85,6 +52,39 @@
             "link": "sample-enums/SampleEnum.md"
           }
         ]
+      }
+    ]
+  },
+  {
+    "text": "Object Reference",
+    "items": [
+      {
+        "text": "Event__c",
+        "link": "custom-objects/Event__c.md"
+      },
+      {
+        "text": "Price_Component__c",
+        "link": "custom-objects/Price_Component__c.md"
+      },
+      {
+        "text": "Product__c",
+        "link": "custom-objects/Product__c.md"
+      },
+      {
+        "text": "Product_Price_Component__c",
+        "link": "custom-objects/Product_Price_Component__c.md"
+      },
+      {
+        "text": "Sales_Order__c",
+        "link": "custom-objects/Sales_Order__c.md"
+      },
+      {
+        "text": "Sales_Order_Line__c",
+        "link": "custom-objects/Sales_Order_Line__c.md"
+      },
+      {
+        "text": "Speaker__c",
+        "link": "custom-objects/Speaker__c.md"
       }
     ]
   }

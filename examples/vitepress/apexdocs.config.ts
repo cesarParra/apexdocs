@@ -51,14 +51,21 @@ export default {
     },
     excludeTags: ['internal'],
     transformDocs: async (docs) => {
+      const apexOnlyDocs = docs.filter((doc) => doc.type !== 'customobject');
+      const objectOnlyDocs = docs.filter((doc) => doc.type === 'customobject');
+
       // Update sidebar
       const sidebar = [
         {
           text: 'API Reference',
-          items: Array.from(extractGroups(docs)).map(([groupName, groupDocs]) => ({
+          items: Array.from(extractGroups(apexOnlyDocs)).map(([groupName, groupDocs]) => ({
             text: groupName,
             items: groupDocs.map(toSidebarLink),
           })),
+        },
+        {
+          text: 'Object Reference',
+          items: objectOnlyDocs.map(toSidebarLink),
         },
       ];
       await writeFileAsync('./docs/.vitepress/sidebar.json', JSON.stringify(sidebar, null, 2));
