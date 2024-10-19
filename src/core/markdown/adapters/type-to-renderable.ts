@@ -12,6 +12,7 @@ import {
   GetRenderableContentByTypeName,
   RenderableCustomObject,
   RenderableCustomField,
+  RenderableContent,
 } from '../../renderables/types';
 import { adaptDescribable, adaptDocumentable } from '../../renderables/documentables';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
@@ -272,16 +273,23 @@ function objectMetadataToRenderable(
     fields: {
       headingLevel: 2,
       heading: 'Fields',
-      value: objectMetadata.fields.map((field) => fieldMetadataToRenderable(field.type)),
+      value: objectMetadata.fields.map((field) => fieldMetadataToRenderable(field.type, config)),
     },
   };
 }
 
-function fieldMetadataToRenderable(field: CustomFieldMetadata): RenderableCustomField {
+function fieldMetadataToRenderable(field: CustomFieldMetadata, config: MarkdownGeneratorConfig): RenderableCustomField {
+  function getApiName() {
+    if (config.namespace) {
+      return `${config.namespace}__${field.name}`;
+    }
+    return field.name;
+  }
+
   return {
     label: field.label,
     description: field.description ? [field.description] : [],
-    apiName: field.name,
+    apiName: getApiName(),
     type: 'field',
   };
 }

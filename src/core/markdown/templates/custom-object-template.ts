@@ -8,11 +8,23 @@ export const customObjectTemplate = `
 
 {{#if hasFields}}
 {{ heading fields.headingLevel fields.heading }}
-| Field Name | Details |
-|-------|-------------|
-{{#each fields.value}}
-| **{{ label }}** | {{{renderContent description}}} |
-{{/each}}
+<table>
+<tbody>
+  <tr>
+    <th>Field</th>
+    <th>API Name</th>
+    <th>Details</th>
+  </tr>
+  {{#each fields.value}}
+  <tr>
+   <td>{{label}}</td>
+   <td><code>{{{apiName}}}</code></td>
+    <td>{{{renderContent description}}}</td>
+  </tr>
+  {{/each}}
+</tbody>
+</table>
+
 {{/if}}
 
 `.trim();
