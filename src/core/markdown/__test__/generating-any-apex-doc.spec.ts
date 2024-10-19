@@ -1,26 +1,6 @@
-import { DocPageData, PostHookDocumentationBundle } from '../../shared/types';
 import { extendExpect } from './expect-extensions';
-import { unparsedApexBundleFromRawString, generateDocs, unparsedObjectBundleFromRawString } from './test-helpers';
+import { unparsedApexBundleFromRawString, generateDocs } from './test-helpers';
 import { assertEither } from '../../test-helpers/assert-either';
-
-function customObjectGenerator(
-  config: { deploymentStatus: string; visibility: string } = { deploymentStatus: 'Deployed', visibility: 'Public' },
-) {
-  return `
-    <?xml version="1.0" encoding="UTF-8"?>
-    <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
-        <deploymentStatus>${config.deploymentStatus}</deploymentStatus>
-        <description>test object for testing</description>
-        <label>MyTestObject</label>
-        <pluralLabel>MyFirstObjects</pluralLabel>
-        <visibility>${config.visibility}</visibility>
-    </CustomObject>`;
-}
-
-function aSingleDoc(result: PostHookDocumentationBundle): DocPageData {
-  expect(result.docs).toHaveLength(1);
-  return result.docs[0];
-}
 
 describe('When generating documentation', () => {
   beforeAll(() => {
