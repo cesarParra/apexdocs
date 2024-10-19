@@ -1,4 +1,4 @@
-import { UnparsedApexBundle } from '../../shared/types';
+import { UnparsedApexBundle, UnparsedSObjectBundle, UnparsedSourceBundle } from '../../shared/types';
 import { generateDocs as gen, MarkdownGeneratorConfig } from '../generate-docs';
 import { referenceGuideTemplate } from '../templates/reference-guide';
 
@@ -11,7 +11,18 @@ export function unparsedApexBundleFromRawString(raw: string, rawMetadata?: strin
   };
 }
 
-export function generateDocs(apexBundles: UnparsedApexBundle[], config?: Partial<MarkdownGeneratorConfig>) {
+export function unparsedObjectBundleFromRawString(meta: {
+  rawContent: string;
+  filePath: string;
+}): UnparsedSObjectBundle {
+  return {
+    type: 'sobject',
+    filePath: meta.filePath,
+    content: meta.rawContent,
+  };
+}
+
+export function generateDocs(apexBundles: UnparsedSourceBundle[], config?: Partial<MarkdownGeneratorConfig>) {
   return gen(apexBundles, {
     targetDir: 'target',
     scope: ['global', 'public'],

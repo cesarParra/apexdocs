@@ -5,6 +5,8 @@ import { unparsedApexBundleFromRawString, generateDocs } from './test-helpers';
 import { ReferenceGuidePageData } from '../../shared/types';
 import { assertEither } from '../../test-helpers/assert-either';
 
+// TODO: Test that it contains the SObject content
+
 describe('When generating the Reference Guide', () => {
   beforeAll(() => {
     extendExpect();

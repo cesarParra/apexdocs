@@ -33,7 +33,7 @@ import { isSkip } from '../shared/utils';
 import { parsedFilesToReferenceGuide } from './adapters/reference-guide';
 import { removeExcludedTags } from '../reflection/apex/remove-excluded-tags';
 import { HookError } from '../errors/errors';
-import { reflectSObjectSources } from '../reflection/sobject/reflect-sobject-source';
+import { ObjectMetadata, reflectSObjectSources } from '../reflection/sobject/reflect-sobject-source';
 
 export type MarkdownGeneratorConfig = Omit<
   UserDefinedMarkdownConfig,
@@ -94,8 +94,15 @@ function generateForApex(apexBundles: UnparsedApexBundle[], config: MarkdownGene
 }
 
 function generateForObject(objectBundles: UnparsedSObjectBundle[]) {
-  // TODO: Filter out non public
-  return pipe(objectBundles, reflectSObjectSources);
+  function filterNonPublished(parsedFiles: ParsedFile<ObjectMetadata>[]): ParsedFile<ObjectMetadata>[] {
+    return parsedFiles.filter((parsedFile) => parsedFile.type.deploymentStatus === 'Deployed');
+  }
+
+  function filterNonPublic(parsedFiles: ParsedFile<ObjectMetadata>[]): ParsedFile<ObjectMetadata>[] {
+    return parsedFiles.filter((parsedFile) => parsedFile.type.visibility === 'Public');
+  }
+
+  return pipe(objectBundles, reflectSObjectSources, TE.map(filterNonPublished), TE.map(filterNonPublic));
 }
 
 function transformReferenceHook(config: MarkdownGeneratorConfig) {
