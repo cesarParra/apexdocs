@@ -177,11 +177,22 @@ export type RenderableEnum = RenderableType & {
   values: RenderableSection<EnumValue[]>;
 };
 
-export type RenderableSObject = Omit<RenderableType, 'meta'> & {
+export type RenderableCustomObject = Omit<RenderableType, 'meta'> & {
   apiName: string;
   type: 'sobject';
+  hasFields: boolean;
+  fields: RenderableSection<RenderableCustomField[]>;
 };
 
-export type Renderable = (RenderableClass | RenderableInterface | RenderableEnum | RenderableSObject) & {
+export type RenderableCustomField = {
+  label: string;
+  apiName: string;
+  description: RenderableContent[];
+  type: 'field';
+
+  // TODO: Whatever else we want to add to the field descriptions
+};
+
+export type Renderable = (RenderableClass | RenderableInterface | RenderableEnum | RenderableCustomObject) & {
   filePath: string;
 };

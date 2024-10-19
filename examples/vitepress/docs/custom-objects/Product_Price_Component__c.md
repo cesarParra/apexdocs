@@ -6,3 +6,9 @@ title: Product_Price_Component__c
 
 ## API Name
 `apexdocs__Product_Price_Component__c`
+
+## Fields
+| Field | Description |
+|-------|-------------|
+| **Price Component** |  |
+| **Product** |  |

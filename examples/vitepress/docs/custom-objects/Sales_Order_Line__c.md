@@ -8,3 +8,12 @@ Represents a line item on a sales order.
 
 ## API Name
 `apexdocs__Sales_Order_Line__c`
+
+## Fields
+| Field | Description |
+|-------|-------------|
+| **Amount** |  |
+| **Product** |  |
+| **Sales Order** |  |
+| **Source Price Component** |  |
+| **Type** |  |

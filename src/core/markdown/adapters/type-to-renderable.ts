@@ -10,7 +10,8 @@ import {
   FieldMirrorWithInheritance,
   PropertyMirrorWithInheritance,
   GetRenderableContentByTypeName,
-  RenderableSObject,
+  RenderableCustomObject,
+  RenderableCustomField,
 } from '../../renderables/types';
 import { adaptDescribable, adaptDocumentable } from '../../renderables/documentables';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
@@ -19,6 +20,7 @@ import { MarkdownGeneratorConfig } from '../generate-docs';
 import { SourceFileMetadata } from '../../shared/types';
 import { ObjectMetadata } from '../../reflection/sobject/reflect-sobject-source';
 import { getTypeGroup } from '../../shared/utils';
+import { CustomFieldMetadata } from '../../reflection/sobject/reflect-custom-field-source';
 
 type GetReturnRenderable<T extends Type | ObjectMetadata> = T extends InterfaceMirror
   ? RenderableInterface
@@ -26,14 +28,14 @@ type GetReturnRenderable<T extends Type | ObjectMetadata> = T extends InterfaceM
     ? RenderableClass
     : T extends EnumMirror
       ? RenderableEnum
-      : RenderableSObject;
+      : RenderableCustomObject;
 
 export function typeToRenderable<T extends Type | ObjectMetadata>(
   parsedFile: { source: SourceFileMetadata; type: T },
   linkGenerator: GetRenderableContentByTypeName,
   config: MarkdownGeneratorConfig,
 ): GetReturnRenderable<T> & { filePath: string; namespace?: string } {
-  function getRenderable(): RenderableInterface | RenderableClass | RenderableEnum | RenderableSObject {
+  function getRenderable(): RenderableInterface | RenderableClass | RenderableEnum | RenderableCustomObject {
     const { type } = parsedFile;
     switch (type.type_name) {
       case 'enum':
@@ -96,30 +98,6 @@ function enumTypeToEnumSource(
         ...adaptDescribable(value.docComment?.descriptionLines, linkGenerator),
         value: value.name,
       })),
-    },
-  };
-}
-
-function objectMetadataToRenderable(
-  objectMetadata: ObjectMetadata,
-  config: MarkdownGeneratorConfig,
-): RenderableSObject {
-  function getApiName() {
-    if (config.namespace) {
-      return `${config.namespace}__${objectMetadata.name}`;
-    }
-    return objectMetadata.name;
-  }
-
-  return {
-    type: 'sobject',
-    headingLevel: 1,
-    apiName: getApiName(),
-    heading: objectMetadata.label,
-    name: objectMetadata.name,
-    doc: {
-      description: objectMetadata.description ? [objectMetadata.description] : [],
-      group: getTypeGroup(objectMetadata, config),
     },
   };
 }
@@ -266,5 +244,44 @@ function singleGroup<T extends Groupable, K>(
     heading: groupName,
     groupDescription: members[0].groupDescription, // All fields in the group have the same description
     value: toFlat(members, adapter, linkGenerator, headingLevel + 1),
+  };
+}
+
+function objectMetadataToRenderable(
+  objectMetadata: ObjectMetadata,
+  config: MarkdownGeneratorConfig,
+): RenderableCustomObject {
+  function getApiName() {
+    if (config.namespace) {
+      return `${config.namespace}__${objectMetadata.name}`;
+    }
+    return objectMetadata.name;
+  }
+
+  return {
+    type: 'sobject',
+    headingLevel: 1,
+    apiName: getApiName(),
+    heading: objectMetadata.label,
+    name: objectMetadata.name,
+    doc: {
+      description: objectMetadata.description ? [objectMetadata.description] : [],
+      group: getTypeGroup(objectMetadata, config),
+    },
+    hasFields: objectMetadata.fields.length > 0,
+    fields: {
+      headingLevel: 2,
+      heading: 'Fields',
+      value: objectMetadata.fields.map((field) => fieldMetadataToRenderable(field.type)),
+    },
+  };
+}
+
+function fieldMetadataToRenderable(field: CustomFieldMetadata): RenderableCustomField {
+  return {
+    label: field.label,
+    description: field.description ? [field.description] : [],
+    apiName: field.name,
+    type: 'field',
   };
 }
