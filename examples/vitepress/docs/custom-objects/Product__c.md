@@ -10,7 +10,7 @@ Product that is sold or available for sale.
 `apexdocs__Product__c`
 
 ## Fields
-| Field | Description |
+| Field Name | Details |
 |-------|-------------|
 | **Description** |  |
 | **Event** |  |

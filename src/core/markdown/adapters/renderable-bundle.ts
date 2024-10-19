@@ -70,7 +70,7 @@ function getRenderableDescription(
   findLinkFromHome: (referenceName: string) => string | Link,
 ): RenderableContent[] | null {
   switch (type.type_name) {
-    case 'sobject':
+    case 'customobject':
       return type.description ? [type.description] : null;
     default:
       return adaptDescribable(type.docComment?.descriptionLines, findLinkFromHome).description ?? null;

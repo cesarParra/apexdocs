@@ -93,7 +93,7 @@ function toUnparsedSObjectBundle(
 ): UnparsedCustomObjectBundle[] {
   return customObjectSourceComponents.map((component) => {
     return {
-      type: 'sobject',
+      type: 'customobject',
       name: component.name,
       filePath: component.contentPath,
       content: fileSystem.readFile(component.contentPath),

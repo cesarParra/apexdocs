@@ -44,7 +44,7 @@ export function typeToRenderable<T extends Type | ObjectMetadata>(
         return interfaceTypeToInterfaceSource(type as InterfaceMirror, linkGenerator);
       case 'class':
         return classTypeToClassSource(type as ClassMirrorWithInheritanceChain, linkGenerator);
-      case 'sobject':
+      case 'customobject':
         return objectMetadataToRenderable(type as ObjectMetadata, config);
     }
   }
@@ -259,7 +259,7 @@ function objectMetadataToRenderable(
   }
 
   return {
-    type: 'sobject',
+    type: 'customobject',
     headingLevel: 1,
     apiName: getApiName(),
     heading: objectMetadata.label,

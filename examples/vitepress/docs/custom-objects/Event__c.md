@@ -10,7 +10,7 @@ Represents an event that people can register for.
 `apexdocs__Event__c`
 
 ## Fields
-| Field | Description |
+| Field Name | Details |
 |-------|-------------|
 | **Description** |  |
 | **End Date** |  |

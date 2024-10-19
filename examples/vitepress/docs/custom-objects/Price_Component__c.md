@@ -8,7 +8,7 @@ title: Price_Component__c
 `apexdocs__Price_Component__c`
 
 ## Fields
-| Field | Description |
+| Field Name | Details |
 |-------|-------------|
 | **Description** |  |
 | **Expression** | The Expression that determines if this price should take effect or not. |

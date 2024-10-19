@@ -18,7 +18,7 @@ export function isSkip(value: unknown): value is Skip {
 }
 
 export function isObjectType(type: Type | ObjectMetadata | CustomFieldMetadata): type is ObjectMetadata {
-  return (type as ObjectMetadata).type_name === 'sobject';
+  return (type as ObjectMetadata).type_name === 'customobject';
 }
 
 export function isApexType(type: Type | ObjectMetadata | CustomFieldMetadata): type is Type {
@@ -34,7 +34,7 @@ export function getTypeGroup(type: Type | ObjectMetadata, config: MarkdownGenera
   }
 
   switch (type.type_name) {
-    case 'sobject':
+    case 'customobject':
       return config.customObjectsGroupName;
     default:
       return getGroup(type, config);

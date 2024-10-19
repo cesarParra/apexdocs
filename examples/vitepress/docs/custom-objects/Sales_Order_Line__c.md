@@ -10,7 +10,7 @@ Represents a line item on a sales order.
 `apexdocs__Sales_Order_Line__c`
 
 ## Fields
-| Field | Description |
+| Field Name | Details |
 |-------|-------------|
 | **Amount** |  |
 | **Product** |  |

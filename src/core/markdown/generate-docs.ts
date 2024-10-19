@@ -64,7 +64,7 @@ export function generateDocs(unparsedApexFiles: UnparsedSourceBundle[], config: 
   ): (UnparsedCustomObjectBundle | UnparsedCustomFieldBundle)[] {
     return sourceFiles.filter(
       (sourceFile): sourceFile is UnparsedCustomObjectBundle =>
-        sourceFile.type === 'sobject' || sourceFile.type === 'customfield',
+        sourceFile.type === 'customobject' || sourceFile.type === 'customfield',
     );
   }
 
@@ -122,7 +122,7 @@ function generateForObject(objectBundles: (UnparsedCustomObjectBundle | Unparsed
   }
 
   const customObjects = objectBundles.filter(
-    (object): object is UnparsedCustomObjectBundle => object.type === 'sobject',
+    (object): object is UnparsedCustomObjectBundle => object.type === 'customobject',
   );
 
   const customFields = objectBundles.filter(

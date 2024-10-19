@@ -16,7 +16,7 @@ const sObjectContent = `
 describe('when parsing SObject metadata', () => {
   test('the resulting type is "sobject"', async () => {
     const unparsed: UnparsedCustomObjectBundle = {
-      type: 'sobject',
+      type: 'customobject',
       name: 'MyFirstObject__c',
       filePath: 'src/object/MyFirstObject__c.object-meta.xml',
       content: sObjectContent,
@@ -25,13 +25,13 @@ describe('when parsing SObject metadata', () => {
     const result = await reflectSObjectSources([unparsed])();
 
     assertEither(result, (data) => expect(data.length).toBe(1));
-    assertEither(result, (data) => expect(data[0].source.type).toBe('sobject'));
-    assertEither(result, (data) => expect(data[0].type.type_name).toBe('sobject'));
+    assertEither(result, (data) => expect(data[0].source.type).toBe('customobject'));
+    assertEither(result, (data) => expect(data[0].type.type_name).toBe('customobject'));
   });
 
   test('the resulting type contains the file path', async () => {
     const unparsed: UnparsedCustomObjectBundle = {
-      type: 'sobject',
+      type: 'customobject',
       name: 'MyFirstObject__c',
       filePath: 'src/object/MyFirstObject__c.object-meta.xml',
       content: sObjectContent,
@@ -44,7 +44,7 @@ describe('when parsing SObject metadata', () => {
 
   test('the resulting type contains the correct label', async () => {
     const unparsed: UnparsedCustomObjectBundle = {
-      type: 'sobject',
+      type: 'customobject',
       name: 'MyFirstObject__c',
       filePath: 'src/object/MyFirstObject__c.object-meta.xml',
       content: sObjectContent,
@@ -59,7 +59,7 @@ describe('when parsing SObject metadata', () => {
 
   test('the resulting type contains the correct name', async () => {
     const unparsed: UnparsedCustomObjectBundle = {
-      type: 'sobject',
+      type: 'customobject',
       name: 'MyFirstObject__c',
       filePath: 'src/object/MyFirstObject__c.object-meta.xml',
       content: sObjectContent,
@@ -74,7 +74,7 @@ describe('when parsing SObject metadata', () => {
 
   test('the resulting type contains the deployment status', async () => {
     const unparsed: UnparsedCustomObjectBundle = {
-      type: 'sobject',
+      type: 'customobject',
       name: 'MyFirstObject__c',
       filePath: 'src/object/MyFirstObject__c.object-meta.xml',
       content: sObjectContent,
@@ -97,7 +97,7 @@ describe('when parsing SObject metadata', () => {
     </CustomObject>`;
 
     const unparsed: UnparsedCustomObjectBundle = {
-      type: 'sobject',
+      type: 'customobject',
       name: 'MyFirstObject__c',
       filePath: 'src/object/MyFirstObject__c.object-meta.xml',
       content: sObjectContent,
@@ -112,7 +112,7 @@ describe('when parsing SObject metadata', () => {
 
   test('the resulting type contains the visibility', async () => {
     const unparsed: UnparsedCustomObjectBundle = {
-      type: 'sobject',
+      type: 'customobject',
       name: 'MyFirstObject__c',
       filePath: 'src/object/MyFirstObject__c.object-meta.xml',
       content: sObjectContent,
@@ -136,7 +136,7 @@ describe('when parsing SObject metadata', () => {
     </CustomObject>`;
 
     const unparsed: UnparsedCustomObjectBundle = {
-      type: 'sobject',
+      type: 'customobject',
       name: 'MyFirstObject__c',
       filePath: 'src/object/MyFirstObject__c.object-meta.xml',
       content: sObjectContent,
@@ -161,7 +161,7 @@ describe('when parsing SObject metadata', () => {
     </SomethingInvalid>`;
 
     const unparsed: UnparsedCustomObjectBundle = {
-      type: 'sobject',
+      type: 'customobject',
       name: 'MyFirstObject__c',
       filePath: 'src/object/MyFirstObject__c.object-meta.xml',
       content: sObjectContent,
@@ -183,7 +183,7 @@ describe('when parsing SObject metadata', () => {
     </CustomObject>`;
 
     const unparsed: UnparsedCustomObjectBundle = {
-      type: 'sobject',
+      type: 'customobject',
       name: 'MyFirstObject__c',
       filePath: 'src/object/MyFirstObject__c.object-meta.xml',
       content: sObjectContent,

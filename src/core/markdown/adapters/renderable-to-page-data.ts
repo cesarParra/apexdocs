@@ -63,6 +63,7 @@ function renderableToPageData(referenceGuideReference: ReferenceGuideReference[]
       frontmatter: null,
       content: docContents,
       group: renderable.doc.group ?? markdownDefaults.defaultGroupName,
+      type: renderable.type,
     };
   }
 
@@ -78,7 +79,7 @@ function resolveApexTypeTemplate(renderable: Renderable): CompilationRequest {
         return interfaceMarkdownTemplate;
       case 'class':
         return classMarkdownTemplate;
-      case 'sobject':
+      case 'customobject':
         return customObjectTemplate;
     }
   }

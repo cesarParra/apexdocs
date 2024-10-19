@@ -134,7 +134,7 @@ describe('When generating documentation', () => {
             rawContent: customObjectGenerator(),
             filePath: 'src/object/MyFirstObject__c.object-meta.xml',
           },
-          'sobject',
+          'customobject',
         ],
       ];
 

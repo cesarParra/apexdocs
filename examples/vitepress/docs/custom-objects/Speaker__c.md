@@ -10,7 +10,7 @@ Represents a speaker at an event.
 `apexdocs__Speaker__c`
 
 ## Fields
-| Field | Description |
+| Field Name | Details |
 |-------|-------------|
 | **About** |  |
 | **Event** |  |

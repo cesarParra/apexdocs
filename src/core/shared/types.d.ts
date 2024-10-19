@@ -60,7 +60,7 @@ export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiCo
 export type UnparsedSourceBundle = UnparsedApexBundle | UnparsedCustomObjectBundle | UnparsedCustomFieldBundle;
 
 export type UnparsedCustomObjectBundle = {
-  type: 'sobject';
+  type: 'customobject';
   name: string;
   filePath: string;
   content: string;
@@ -85,7 +85,7 @@ export type UnparsedApexBundle = {
 export type SourceFileMetadata = {
   filePath: string;
   name: string;
-  type: 'interface' | 'class' | 'enum' | 'sobject' | 'customfield';
+  type: 'interface' | 'class' | 'enum' | 'customobject' | 'customfield';
 };
 
 export type ParsedFile<
@@ -123,9 +123,10 @@ export type DocPageData = {
   outputDocPath: string;
   frontmatter: Frontmatter;
   content: string;
+  type: 'class' | 'interface' | 'enum' | 'customobject';
 };
 
-export type OpenApiPageData = Omit<DocPageData, 'source'>;
+export type OpenApiPageData = Omit<DocPageData, 'source' | 'type'>;
 
 export type PageData = DocPageData | OpenApiPageData | ReferenceGuidePageData | ChangeLogPageData;
 

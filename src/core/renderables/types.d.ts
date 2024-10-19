@@ -179,7 +179,7 @@ export type RenderableEnum = RenderableType & {
 
 export type RenderableCustomObject = Omit<RenderableType, 'meta'> & {
   apiName: string;
-  type: 'sobject';
+  type: 'customobject';
   hasFields: boolean;
   fields: RenderableSection<RenderableCustomField[]>;
 };

@@ -10,7 +10,7 @@ import * as E from 'fp-ts/Either';
 import { CustomFieldMetadata } from './reflect-custom-field-source';
 
 export type ObjectMetadata = {
-  type_name: 'sobject';
+  type_name: 'customobject';
   deploymentStatus: string;
   visibility: string;
   label: string;
@@ -93,7 +93,7 @@ function addName(objectMetadata: ObjectMetadata, name: string): ObjectMetadata {
 function addTypeName(objectMetadata: ObjectMetadata): ObjectMetadata {
   return {
     ...objectMetadata,
-    type_name: 'sobject',
+    type_name: 'customobject',
   };
 }
 

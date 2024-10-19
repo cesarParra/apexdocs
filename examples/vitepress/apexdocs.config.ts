@@ -55,15 +55,10 @@ export default {
       const sidebar = [
         {
           text: 'API Reference',
-          items: [
-            {
-              text: 'Groups',
-              items: Array.from(extractGroups(docs)).map(([groupName, groupDocs]) => ({
-                text: groupName,
-                items: groupDocs.map(toSidebarLink),
-              })),
-            },
-          ],
+          items: Array.from(extractGroups(docs)).map(([groupName, groupDocs]) => ({
+            text: groupName,
+            items: groupDocs.map(toSidebarLink),
+          })),
         },
       ];
       await writeFileAsync('./docs/.vitepress/sidebar.json', JSON.stringify(sidebar, null, 2));

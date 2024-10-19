@@ -17,7 +17,7 @@ export function unparsedObjectBundleFromRawString(meta: {
   filePath: string;
 }): UnparsedCustomObjectBundle {
   return {
-    type: 'sobject',
+    type: 'customobject',
     name: 'TestObject__c',
     filePath: meta.filePath,
     content: meta.rawContent,
