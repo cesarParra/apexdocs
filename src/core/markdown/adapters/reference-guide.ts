@@ -1,10 +1,12 @@
 import { MarkdownGeneratorConfig } from '../generate-docs';
 import { DocPageReference, ParsedFile } from '../../shared/types';
 import { getTypeGroup } from '../../shared/utils';
+import { ObjectMetadata } from '../../reflection/sobject/reflect-sobject-source';
+import { Type } from '@cparra/apex-reflection';
 
 export function parsedFilesToReferenceGuide(
   config: MarkdownGeneratorConfig,
-  parsedFiles: ParsedFile[],
+  parsedFiles: ParsedFile<Type | ObjectMetadata>[],
 ): Record<string, DocPageReference> {
   return parsedFiles.reduce<Record<string, DocPageReference>>((acc, parsedFile) => {
     acc[parsedFile.source.name] = parsedFileToDocPageReference(config, parsedFile);
@@ -12,7 +14,10 @@ export function parsedFilesToReferenceGuide(
   }, {});
 }
 
-function parsedFileToDocPageReference(config: MarkdownGeneratorConfig, parsedFile: ParsedFile): DocPageReference {
+function parsedFileToDocPageReference(
+  config: MarkdownGeneratorConfig,
+  parsedFile: ParsedFile<Type | ObjectMetadata>,
+): DocPageReference {
   const path = `${slugify(getTypeGroup(parsedFile.type, config))}/${parsedFile.source.name}.md`;
   return {
     source: parsedFile.source,

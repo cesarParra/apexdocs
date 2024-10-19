@@ -17,19 +17,21 @@ import { ObjectMetadata } from '../../reflection/sobject/reflect-sobject-source'
 
 export function parsedFilesToRenderableBundle(
   config: MarkdownGeneratorConfig,
-  parsedFiles: ParsedFile[],
+  parsedFiles: ParsedFile<Type | ObjectMetadata>[],
   references: Record<string, DocPageReference>,
 ): RenderableBundle {
   const referenceFinder = apply(generateLink(config.linkingStrategy), references);
 
-  function toReferenceGuide(parsedFiles: ParsedFile[]): Record<string, ReferenceGuideReference[]> {
+  function toReferenceGuide(
+    parsedFiles: ParsedFile<Type | ObjectMetadata>[],
+  ): Record<string, ReferenceGuideReference[]> {
     return parsedFiles.reduce<Record<string, ReferenceGuideReference[]>>(
       addToReferenceGuide(apply(referenceFinder, '__base__'), config, references),
       {},
     );
   }
 
-  function toRenderables(parsedFiles: ParsedFile[]): Renderable[] {
+  function toRenderables(parsedFiles: ParsedFile<Type | ObjectMetadata>[]): Renderable[] {
     return parsedFiles.reduce<Renderable[]>((acc, parsedFile) => {
       const renderable = typeToRenderable(parsedFile, apply(referenceFinder, parsedFile.source.name), config);
       acc.push(renderable);
@@ -48,7 +50,7 @@ function addToReferenceGuide(
   config: MarkdownGeneratorConfig,
   references: Record<string, DocPageReference>,
 ) {
-  return (acc: Record<string, ReferenceGuideReference[]>, parsedFile: ParsedFile) => {
+  return (acc: Record<string, ReferenceGuideReference[]>, parsedFile: ParsedFile<Type | ObjectMetadata>) => {
     const group: string = getTypeGroup(parsedFile.type, config);
     if (!acc[group]) {
       acc[group] = [];

@@ -1,6 +1,7 @@
 import { Type } from '@cparra/apex-reflection';
 import { ChangeLogPageData } from '../changelog/generate-change-log';
 import { ObjectMetadata } from '../reflection/sobject/reflect-sobject-source';
+import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 
 export type Generators = 'markdown' | 'openapi' | 'changelog';
 
@@ -84,10 +85,12 @@ export type UnparsedApexBundle = {
 export type SourceFileMetadata = {
   filePath: string;
   name: string;
-  type: 'interface' | 'class' | 'enum' | 'sobject';
+  type: 'interface' | 'class' | 'enum' | 'sobject' | 'customfield';
 };
 
-export type ParsedFile<T extends Type | ObjectMetadata = Type | ObjectMetadata> = {
+export type ParsedFile<
+  T extends Type | ObjectMetadata | CustomFieldMetadata = Type | ObjectMetadata | CustomFieldMetadata,
+> = {
   source: SourceFileMetadata;
   type: T;
 };

@@ -51,7 +51,7 @@ async function processMarkdown(config: UserDefinedMarkdownConfig) {
   return pipe(
     E.tryCatch(
       () =>
-        readFiles(['ApexClass', 'CustomObject'], { includeMetadata: config.includeMetadata })(
+        readFiles(['ApexClass', 'CustomObject', 'CustomField'], { includeMetadata: config.includeMetadata })(
           config.sourceDir,
           config.exclude,
         ),

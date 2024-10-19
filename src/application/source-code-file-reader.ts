@@ -4,7 +4,6 @@ import { minimatch } from 'minimatch';
 import { flow, pipe } from 'fp-ts/function';
 import { apply } from '#utils/fp';
 
-// TODO: If custom object is passed, then let's automatically also add custom field.
 type ComponentTypes = 'ApexClass' | 'CustomObject' | 'CustomField';
 
 /**

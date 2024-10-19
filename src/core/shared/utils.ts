@@ -2,6 +2,7 @@ import { Skip } from './types';
 import { Type } from '@cparra/apex-reflection';
 import { ObjectMetadata } from '../reflection/sobject/reflect-sobject-source';
 import { MarkdownGeneratorConfig } from '../markdown/generate-docs';
+import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 
 /**
  * Represents a file to be skipped.
@@ -16,11 +17,11 @@ export function isSkip(value: unknown): value is Skip {
   return Object.prototype.hasOwnProperty.call(value, '_tag') && (value as Skip)._tag === 'Skip';
 }
 
-export function isObjectType(type: Type | ObjectMetadata): type is ObjectMetadata {
+export function isObjectType(type: Type | ObjectMetadata | CustomFieldMetadata): type is ObjectMetadata {
   return (type as ObjectMetadata).type_name === 'sobject';
 }
 
-export function isApexType(type: Type | ObjectMetadata): type is Type {
+export function isApexType(type: Type | ObjectMetadata | CustomFieldMetadata): type is Type {
   return !isObjectType(type);
 }
 

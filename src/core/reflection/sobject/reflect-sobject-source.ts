@@ -7,6 +7,7 @@ import * as T from 'fp-ts/Task';
 import { pipe } from 'fp-ts/function';
 import * as A from 'fp-ts/Array';
 import * as E from 'fp-ts/Either';
+import { CustomFieldMetadata } from './reflect-custom-field-source';
 
 export type ObjectMetadata = {
   type_name: 'sobject';
@@ -15,6 +16,7 @@ export type ObjectMetadata = {
   label: string;
   name: string;
   description: string | null;
+  fields: ParsedFile<CustomFieldMetadata>[];
 };
 
 export function reflectSObjectSources(
@@ -75,6 +77,8 @@ function toObjectMetadata(parserResult: { CustomObject: object }): ObjectMetadat
   const defaultValues = {
     deploymentStatus: 'Deployed',
     visibility: 'Public',
+    description: null,
+    fields: [] as ParsedFile<CustomFieldMetadata>[],
   };
   return { ...defaultValues, ...parserResult.CustomObject } as ObjectMetadata;
 }
