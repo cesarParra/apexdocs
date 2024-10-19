@@ -14,6 +14,7 @@ export type ObjectMetadata = {
   visibility: string;
   label: string;
   name: string;
+  description: string | null;
 };
 
 export function reflectSObjectSources(

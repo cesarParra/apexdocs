@@ -6,7 +6,7 @@ import {
   RenderableBundle,
   RenderableContent,
 } from '../../renderables/types';
-import { typeToRenderable } from './apex-types';
+import { typeToRenderable } from './type-to-renderable';
 import { adaptDescribable } from '../../renderables/documentables';
 import { MarkdownGeneratorConfig } from '../generate-docs';
 import { apply } from '#utils/fp';

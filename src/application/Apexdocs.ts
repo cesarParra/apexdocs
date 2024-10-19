@@ -48,19 +48,16 @@ export class Apexdocs {
 const readFiles = processFiles(new DefaultFileSystem());
 
 async function processMarkdown(config: UserDefinedMarkdownConfig) {
-  // TODO: Also process Object files
   return pipe(
-    TE.tryCatch(
-      // TODO: We do not need to deal with promises anymore (in this step)
+    E.tryCatch(
       () =>
-        Promise.resolve(
-          readFiles(['ApexClass'], { includeMetadata: config.includeMetadata })(
-            config.sourceDir,
-            config.exclude,
-          ) as UnparsedApexBundle[],
+        readFiles(['ApexClass', 'CustomObject'], { includeMetadata: config.includeMetadata })(
+          config.sourceDir,
+          config.exclude,
         ),
       (e) => new FileReadingError('An error occurred while reading files.', e),
     ),
+    TE.fromEither,
     TE.flatMap((fileBodies) => markdown(fileBodies, config)),
     TE.map(() => '✔️ Documentation generated successfully!'),
     TE.mapLeft(toErrors),

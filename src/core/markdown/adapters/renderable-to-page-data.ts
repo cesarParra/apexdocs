@@ -77,6 +77,8 @@ function resolveApexTypeTemplate(renderable: Renderable): CompilationRequest {
         return interfaceMarkdownTemplate;
       case 'class':
         return classMarkdownTemplate;
+      case 'sobject':
+        throw new Error('SObject type not supported');
     }
   }
 

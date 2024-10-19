@@ -10,6 +10,7 @@ import {
   FieldMirrorWithInheritance,
   PropertyMirrorWithInheritance,
   GetRenderableContentByTypeName,
+  RenderableSObject,
 } from '../../renderables/types';
 import { adaptDescribable, adaptDocumentable } from '../../renderables/documentables';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
@@ -24,14 +25,14 @@ type GetReturnRenderable<T extends Type | ObjectMetadata> = T extends InterfaceM
     ? RenderableClass
     : T extends EnumMirror
       ? RenderableEnum
-      : never; // TODO: Implement renderable object
+      : RenderableSObject;
 
 export function typeToRenderable<T extends Type | ObjectMetadata>(
   parsedFile: { source: SourceFileMetadata; type: T },
   linkGenerator: GetRenderableContentByTypeName,
   config: MarkdownGeneratorConfig,
 ): GetReturnRenderable<T> & { filePath: string; namespace?: string } {
-  function getRenderable(): RenderableInterface | RenderableClass | RenderableEnum {
+  function getRenderable(): RenderableInterface | RenderableClass | RenderableEnum | RenderableSObject {
     const { type } = parsedFile;
     switch (type.type_name) {
       case 'enum':
@@ -41,7 +42,7 @@ export function typeToRenderable<T extends Type | ObjectMetadata>(
       case 'class':
         return classTypeToClassSource(type as ClassMirrorWithInheritanceChain, linkGenerator);
       case 'sobject':
-        throw new Error('Not implemented');
+        return objectMetadataToRenderable(type as ObjectMetadata);
     }
   }
 
@@ -93,6 +94,18 @@ function enumTypeToEnumSource(
         ...adaptDescribable(value.docComment?.descriptionLines, linkGenerator),
         value: value.name,
       })),
+    },
+  };
+}
+
+function objectMetadataToRenderable(objectMetadata: ObjectMetadata): RenderableSObject {
+  return {
+    type: 'sobject',
+    headingLevel: 1,
+    heading: objectMetadata.name,
+    name: objectMetadata.label,
+    doc: {
+      description: objectMetadata.description ? [objectMetadata.description] : [],
     },
   };
 }
