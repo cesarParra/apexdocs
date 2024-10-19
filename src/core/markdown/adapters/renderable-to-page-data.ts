@@ -6,6 +6,7 @@ import { enumMarkdownTemplate } from '../templates/enum-template';
 import { interfaceMarkdownTemplate } from '../templates/interface-template';
 import { classMarkdownTemplate } from '../templates/class-template';
 import { markdownDefaults } from '../../../defaults';
+import { sObjectTemplate } from '../templates/sobject-template';
 
 export const convertToDocumentationBundle = (
   referenceGuideTitle: string,
@@ -78,7 +79,7 @@ function resolveApexTypeTemplate(renderable: Renderable): CompilationRequest {
       case 'class':
         return classMarkdownTemplate;
       case 'sobject':
-        throw new Error('SObject type not supported');
+        return sObjectTemplate;
     }
   }
 

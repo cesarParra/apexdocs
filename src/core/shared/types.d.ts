@@ -21,7 +21,8 @@ export type UserDefinedMarkdownConfig = {
   targetDir: string;
   scope: string[];
   namespace?: string;
-  defaultGroupName: string;
+  defaultGroupName: string; // TODO: Deprecate and rename
+  customObjectsGroupName: string;
   sortAlphabetically: boolean;
   includeMetadata: boolean;
   linkingStrategy: LinkingStrategy;

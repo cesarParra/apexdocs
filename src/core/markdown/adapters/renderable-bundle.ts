@@ -69,8 +69,7 @@ function getRenderableDescription(
 ): RenderableContent[] | null {
   switch (type.type_name) {
     case 'sobject':
-      // TODO
-      return null;
+      return type.description ? [type.description] : null;
     default:
       return adaptDescribable(type.docComment?.descriptionLines, findLinkFromHome).description ?? null;
   }

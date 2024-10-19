@@ -57,24 +57,7 @@ export default {
           text: 'API Reference',
           items: [
             {
-              text: 'Grouped By Type',
-              items: [
-                {
-                  text: 'Classes',
-                  items: docs.filter((doc) => doc.source.type === 'class').map(toSidebarLink),
-                },
-                {
-                  text: 'Interfaces',
-                  items: docs.filter((doc) => doc.source.type === 'interface').map(toSidebarLink),
-                },
-                {
-                  text: 'Enums',
-                  items: docs.filter((doc) => doc.source.type === 'enum').map(toSidebarLink),
-                },
-              ],
-            },
-            {
-              text: 'Grouped by Group',
+              text: 'Groups',
               items: Array.from(extractGroups(docs)).map(([groupName, groupDocs]) => ({
                 text: groupName,
                 items: groupDocs.map(toSidebarLink),

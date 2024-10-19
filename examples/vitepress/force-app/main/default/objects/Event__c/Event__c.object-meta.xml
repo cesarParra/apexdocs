@@ -159,6 +159,7 @@
         <type>Text</type>
     </nameField>
     <pluralLabel>Events</pluralLabel>
+    <description>Represents an event that people can register for.</description>
     <searchLayouts></searchLayouts>
     <sharingModel>ReadWrite</sharingModel>
     <startsWith>Vowel</startsWith>

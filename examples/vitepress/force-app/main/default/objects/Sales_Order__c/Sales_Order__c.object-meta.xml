@@ -157,6 +157,7 @@
     <enableStreamingApi>true</enableStreamingApi>
     <externalSharingModel>Private</externalSharingModel>
     <label>Sales Order</label>
+    <description>Custom object for tracking sales orders.</description>
     <nameField>
         <displayFormat>SO-{0000}</displayFormat>
         <label>Sales Order Name</label>

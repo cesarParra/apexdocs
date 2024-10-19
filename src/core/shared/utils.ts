@@ -34,7 +34,7 @@ export function getTypeGroup(type: Type | ObjectMetadata, config: MarkdownGenera
 
   switch (type.type_name) {
     case 'sobject':
-      return 'SObjects'; // TODO: Make configurable?
+      return config.customObjectsGroupName;
     default:
       return getGroup(type, config);
   }

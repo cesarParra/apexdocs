@@ -154,6 +154,7 @@
     <enableStreamingApi>true</enableStreamingApi>
     <externalSharingModel>ControlledByParent</externalSharingModel>
     <label>Sales Order Line</label>
+    <description>Represents a line item on a sales order.</description>
     <nameField>
         <displayFormat>SOL-{0000}</displayFormat>
         <label>Sales Order Line Name</label>

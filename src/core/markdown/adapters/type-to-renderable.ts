@@ -18,6 +18,7 @@ import { adaptFieldOrProperty } from './fields-and-properties';
 import { MarkdownGeneratorConfig } from '../generate-docs';
 import { SourceFileMetadata } from '../../shared/types';
 import { ObjectMetadata } from '../../reflection/sobject/reflect-sobject-source';
+import { getTypeGroup } from '../../shared/utils';
 
 type GetReturnRenderable<T extends Type | ObjectMetadata> = T extends InterfaceMirror
   ? RenderableInterface
@@ -42,13 +43,14 @@ export function typeToRenderable<T extends Type | ObjectMetadata>(
       case 'class':
         return classTypeToClassSource(type as ClassMirrorWithInheritanceChain, linkGenerator);
       case 'sobject':
-        return objectMetadataToRenderable(type as ObjectMetadata);
+        return objectMetadataToRenderable(type as ObjectMetadata, config);
     }
   }
 
   return {
     ...(getRenderable() as GetReturnRenderable<T>),
     filePath: parsedFile.source.filePath,
+    // TODO: How to handle namespace for sobjects? Remember that only custom objects should get them (as opposed to standard)
     namespace: config.namespace,
   };
 }
@@ -98,14 +100,26 @@ function enumTypeToEnumSource(
   };
 }
 
-function objectMetadataToRenderable(objectMetadata: ObjectMetadata): RenderableSObject {
+function objectMetadataToRenderable(
+  objectMetadata: ObjectMetadata,
+  config: MarkdownGeneratorConfig,
+): RenderableSObject {
+  function getApiName() {
+    if (config.namespace) {
+      return `${config.namespace}__${objectMetadata.name}`;
+    }
+    return objectMetadata.name;
+  }
+
   return {
     type: 'sobject',
     headingLevel: 1,
-    heading: objectMetadata.name,
-    name: objectMetadata.label,
+    apiName: getApiName(),
+    heading: objectMetadata.label,
+    name: objectMetadata.name,
     doc: {
       description: objectMetadata.description ? [objectMetadata.description] : [],
+      group: getTypeGroup(objectMetadata, config),
     },
   };
 }

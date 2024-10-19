@@ -157,6 +157,7 @@
     <enableStreamingApi>true</enableStreamingApi>
     <externalSharingModel>Private</externalSharingModel>
     <label>Product (Custom)</label>
+    <description>Product that is sold or available for sale.</description>
     <nameField>
         <label>Product Name</label>
         <type>Text</type>

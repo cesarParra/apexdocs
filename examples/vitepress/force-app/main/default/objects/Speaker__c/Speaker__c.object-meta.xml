@@ -154,6 +154,7 @@
     <enableStreamingApi>true</enableStreamingApi>
     <externalSharingModel>ControlledByParent</externalSharingModel>
     <label>Speaker</label>
+    <description>Represents a speaker at an event.</description>
     <nameField>
         <displayFormat>SPEAK-{0000}</displayFormat>
         <label>Speaker Name</label>

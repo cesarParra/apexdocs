@@ -16,6 +16,7 @@ export function generateDocs(apexBundles: UnparsedApexBundle[], config?: Partial
     targetDir: 'target',
     scope: ['global', 'public'],
     defaultGroupName: 'Miscellaneous',
+    customObjectsGroupName: 'Custom Objects',
     sortAlphabetically: false,
     referenceGuideTemplate: referenceGuideTemplate,
     linkingStrategy: 'relative',

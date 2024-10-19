@@ -13,6 +13,7 @@ const defaultMarkdownGeneratorConfig: MarkdownGeneratorConfig = {
   scope: ['global', 'public'],
   namespace: '',
   defaultGroupName: 'Miscellaneous',
+  customObjectsGroupName: 'Custom Objects',
   referenceGuideTemplate: '',
   sortAlphabetically: false,
   linkingStrategy: 'relative',

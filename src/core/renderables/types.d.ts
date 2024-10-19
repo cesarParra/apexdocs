@@ -178,6 +178,7 @@ export type RenderableEnum = RenderableType & {
 };
 
 export type RenderableSObject = Omit<RenderableType, 'meta'> & {
+  apiName: string;
   type: 'sobject';
 };
 
