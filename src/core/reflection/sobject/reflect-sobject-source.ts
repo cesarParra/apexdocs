@@ -1,4 +1,4 @@
-import { ParsedFile, UnparsedSObjectBundle } from '../../shared/types';
+import { ParsedFile, UnparsedCustomObjectBundle } from '../../shared/types';
 import { XMLParser } from 'fast-xml-parser';
 import * as TE from 'fp-ts/TaskEither';
 import { ReflectionError, ReflectionErrors } from '../../errors/errors';
@@ -18,7 +18,7 @@ export type ObjectMetadata = {
 };
 
 export function reflectSObjectSources(
-  objectSources: UnparsedSObjectBundle[],
+  objectSources: UnparsedCustomObjectBundle[],
 ): TE.TaskEither<ReflectionErrors, ParsedFile<ObjectMetadata>[]> {
   const semiGroupReflectionError: Semigroup<ReflectionErrors> = {
     concat: (x, y) => new ReflectionErrors([...x.errors, ...y.errors]),
@@ -29,13 +29,13 @@ export function reflectSObjectSources(
 }
 
 function reflectSObjectSource(
-  objectSource: UnparsedSObjectBundle,
+  objectSource: UnparsedCustomObjectBundle,
 ): TE.TaskEither<ReflectionErrors, ParsedFile<ObjectMetadata>> {
   return pipe(
     E.tryCatch(() => new XMLParser().parse(objectSource.content), E.toError),
     E.flatMap(validate),
     E.map(toObjectMetadata),
-    E.map((metadata) => addName(metadata, objectSource.filePath)),
+    E.map((metadata) => addName(metadata, objectSource.name)),
     E.map(addTypeName),
     E.map((metadata) => toParsedFile(objectSource.filePath, metadata)),
     E.mapLeft((error) => new ReflectionErrors([new ReflectionError(objectSource.filePath, error.message)])),
@@ -45,6 +45,7 @@ function reflectSObjectSource(
 
 function validate(parseResult: unknown): E.Either<Error, { CustomObject: object }> {
   const err = E.left(new Error('Invalid SObject metadata'));
+
   function isObject(value: unknown) {
     return typeof value === 'object' && value !== null ? E.right(value) : err;
   }
@@ -78,14 +79,10 @@ function toObjectMetadata(parserResult: { CustomObject: object }): ObjectMetadat
   return { ...defaultValues, ...parserResult.CustomObject } as ObjectMetadata;
 }
 
-function extractNameFromFilePath(filePath: string): string {
-  return filePath.split('/').pop()!.split('.').shift()!;
-}
-
-function addName(objectMetadata: ObjectMetadata, filePath: string): ObjectMetadata {
+function addName(objectMetadata: ObjectMetadata, name: string): ObjectMetadata {
   return {
     ...objectMetadata,
-    name: extractNameFromFilePath(filePath),
+    name,
   };
 }
 

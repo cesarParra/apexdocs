@@ -1,10 +1,11 @@
 import { FileSystem } from './file-system';
-import { UnparsedApexBundle, UnparsedSObjectBundle } from '../core/shared/types';
+import { UnparsedApexBundle, UnparsedCustomFieldBundle, UnparsedCustomObjectBundle } from '../core/shared/types';
 import { minimatch } from 'minimatch';
 import { flow, pipe } from 'fp-ts/function';
 import { apply } from '#utils/fp';
 
-type ComponentTypes = 'ApexClass' | 'CustomObject';
+// TODO: If custom object is passed, then let's automatically also add custom field.
+type ComponentTypes = 'ApexClass' | 'CustomObject' | 'CustomField';
 
 /**
  * Simplified representation of a source component, with only
@@ -18,6 +19,9 @@ export type SourceComponentAdapter = {
   };
   xml?: string;
   content?: string;
+  parent?: {
+    name: string;
+  };
 };
 
 type ApexClassApexSourceComponent = {
@@ -31,6 +35,13 @@ type CustomObjectSourceComponent = {
   type: 'CustomObject';
   name: string;
   contentPath: string;
+};
+
+type CustomFieldSourceComponent = {
+  type: 'CustomField';
+  name: string;
+  contentPath: string;
+  parentName: string;
 };
 
 function getApexSourceComponents(
@@ -59,6 +70,7 @@ function toUnparsedApexBundle(
 
     return {
       type: 'apex',
+      name: component.name,
       filePath: component.contentPath,
       content: apexComponentTuple[0],
       metadataContent: apexComponentTuple[1],
@@ -79,27 +91,54 @@ function getCustomObjectSourceComponents(sourceComponents: SourceComponentAdapte
 function toUnparsedSObjectBundle(
   fileSystem: FileSystem,
   customObjectSourceComponents: CustomObjectSourceComponent[],
-): UnparsedSObjectBundle[] {
+): UnparsedCustomObjectBundle[] {
   return customObjectSourceComponents.map((component) => {
     return {
       type: 'sobject',
+      name: component.name,
       filePath: component.contentPath,
       content: fileSystem.readFile(component.contentPath),
     };
   });
 }
 
+function getCustomFieldSourceComponents(sourceComponents: SourceComponentAdapter[]): CustomFieldSourceComponent[] {
+  return sourceComponents
+    .filter((component) => component.type.name === 'CustomField')
+    .map((component) => ({
+      name: component.name,
+      type: 'CustomField' as const,
+      contentPath: component.xml!,
+      parentName: component.parent!.name,
+    }));
+}
+
+function toUnparsedCustomFieldBundle(
+  fileSystem: FileSystem,
+  customFieldSourceComponents: CustomFieldSourceComponent[],
+): UnparsedCustomFieldBundle[] {
+  return customFieldSourceComponents.map((component) => ({
+    type: 'customfield',
+    name: component.name,
+    filePath: component.contentPath,
+    content: fileSystem.readFile(component.contentPath),
+    parentName: component.parentName,
+  }));
+}
+
 /**
  * Reads from source code files and returns their raw body.
  */
 export function processFiles(fileSystem: FileSystem) {
-  return function <T extends ComponentTypes[]>(
+  return <T extends ComponentTypes[]>(
     componentTypesToRetrieve: T,
     options: { includeMetadata: boolean } = { includeMetadata: false },
-  ) {
+  ) => {
     const converters: Record<
       ComponentTypes,
-      (components: SourceComponentAdapter[]) => (UnparsedApexBundle | UnparsedSObjectBundle)[]
+      (
+        components: SourceComponentAdapter[],
+      ) => (UnparsedApexBundle | UnparsedCustomObjectBundle | UnparsedCustomFieldBundle)[]
     > = {
       ApexClass: flow(apply(getApexSourceComponents, options.includeMetadata), (apexSourceComponents) =>
         toUnparsedApexBundle(fileSystem, apexSourceComponents),
@@ -107,11 +146,14 @@ export function processFiles(fileSystem: FileSystem) {
       CustomObject: flow(getCustomObjectSourceComponents, (customObjectSourceComponents) =>
         toUnparsedSObjectBundle(fileSystem, customObjectSourceComponents),
       ),
+      CustomField: flow(getCustomFieldSourceComponents, (customFieldSourceComponents) =>
+        toUnparsedCustomFieldBundle(fileSystem, customFieldSourceComponents),
+      ),
     };
 
     const convertersToUse = componentTypesToRetrieve.map((componentType) => converters[componentType]);
 
-    return function (rootPath: string, exclude: string[]) {
+    return (rootPath: string, exclude: string[]) => {
       return pipe(
         fileSystem.getComponents(rootPath),
         (components) => components.filter((component) => !isExcluded(component.content!, exclude)),

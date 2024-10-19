@@ -56,16 +56,26 @@ export type UserDefinedChangelogConfig = {
 
 export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig | UserDefinedChangelogConfig;
 
-export type UnparsedSourceBundle = UnparsedApexBundle | UnparsedSObjectBundle;
+export type UnparsedSourceBundle = UnparsedApexBundle | UnparsedCustomObjectBundle | UnparsedCustomFieldBundle;
 
-export type UnparsedSObjectBundle = {
+export type UnparsedCustomObjectBundle = {
   type: 'sobject';
+  name: string;
   filePath: string;
   content: string;
 };
 
+export type UnparsedCustomFieldBundle = {
+  type: 'customfield';
+  name: string;
+  filePath: string;
+  content: string;
+  parentName: string;
+};
+
 export type UnparsedApexBundle = {
   type: 'apex';
+  name: string;
   filePath: string;
   content: string;
   metadataContent: string | null;

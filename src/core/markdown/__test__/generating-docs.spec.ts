@@ -32,36 +32,6 @@ describe('When generating documentation', () => {
       }
     });
 
-    it('SObject code is named after the path', async () => {
-      const properties: [
-        {
-          rawContent: string;
-          filePath: string;
-        },
-        string,
-      ][] = [
-        [
-          {
-            rawContent: customObjectGenerator(),
-            filePath: 'src/object/MyFirstObject__c.object-meta.xml',
-          },
-          'MyFirstObject__c.md',
-        ],
-        [
-          {
-            rawContent: customObjectGenerator(),
-            filePath: 'src/object/MySecondObject__c.object-meta.xml',
-          },
-          'MySecondObject__c.md',
-        ],
-      ];
-
-      for (const [input, expected] of properties) {
-        const result = await generateDocs([unparsedObjectBundleFromRawString(input)])();
-        assertEither(result, (data) => expect(aSingleDoc(data).outputDocPath).toContain(expected));
-      }
-    });
-
     it('Apex code is placed in the miscellaneous folder if no group is provided', async () => {
       const properties: [string, string][] = [
         ['public class MyClass {}', 'miscellaneous'],

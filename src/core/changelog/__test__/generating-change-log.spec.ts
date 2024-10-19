@@ -49,7 +49,7 @@ describe('when generating a changelog', () => {
 
       const oldBundle: UnparsedApexBundle[] = [];
       const newBundle: UnparsedApexBundle[] = [
-        { type: 'apex', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
+        { type: 'apex', name: 'Test', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
@@ -62,7 +62,7 @@ describe('when generating a changelog', () => {
 
       const oldBundle: UnparsedApexBundle[] = [];
       const newBundle: UnparsedApexBundle[] = [
-        { type: 'apex', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
+        { type: 'apex', name: 'Test', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
@@ -80,7 +80,7 @@ describe('when generating a changelog', () => {
 
       const oldBundle: UnparsedApexBundle[] = [];
       const newBundle: UnparsedApexBundle[] = [
-        { type: 'apex', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
+        { type: 'apex', name: 'Test', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
@@ -95,7 +95,7 @@ describe('when generating a changelog', () => {
 
       const oldBundle: UnparsedApexBundle[] = [];
       const newBundle: UnparsedApexBundle[] = [
-        { type: 'apex', content: newInterfaceSource, filePath: 'Test.cls', metadataContent: null },
+        { type: 'apex', name: 'Test', content: newInterfaceSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
@@ -108,7 +108,7 @@ describe('when generating a changelog', () => {
 
       const oldBundle: UnparsedApexBundle[] = [];
       const newBundle: UnparsedApexBundle[] = [
-        { type: 'apex', content: newInterfaceSource, filePath: 'Test.cls', metadataContent: null },
+        { type: 'apex', name: 'Test', content: newInterfaceSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
@@ -126,7 +126,7 @@ describe('when generating a changelog', () => {
 
       const oldBundle: UnparsedApexBundle[] = [];
       const newBundle: UnparsedApexBundle[] = [
-        { type: 'apex', content: newInterfaceSource, filePath: 'Test.cls', metadataContent: null },
+        { type: 'apex', name: 'Test', content: newInterfaceSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
@@ -143,7 +143,7 @@ describe('when generating a changelog', () => {
 
       const oldBundle: UnparsedApexBundle[] = [];
       const newBundle: UnparsedApexBundle[] = [
-        { type: 'apex', content: newEnumSource, filePath: 'Test.cls', metadataContent: null },
+        { type: 'apex', name: 'Test', content: newEnumSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
@@ -156,7 +156,7 @@ describe('when generating a changelog', () => {
 
       const oldBundle: UnparsedApexBundle[] = [];
       const newBundle: UnparsedApexBundle[] = [
-        { type: 'apex', content: newEnumSource, filePath: 'Test.cls', metadataContent: null },
+        { type: 'apex', name: 'Test', content: newEnumSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
@@ -174,7 +174,7 @@ describe('when generating a changelog', () => {
 
       const oldBundle: UnparsedApexBundle[] = [];
       const newBundle: UnparsedApexBundle[] = [
-        { type: 'apex', content: newEnumSource, filePath: 'Test.cls', metadataContent: null },
+        { type: 'apex', name: 'Test', content: newEnumSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
@@ -189,7 +189,7 @@ describe('when generating a changelog', () => {
 
       const oldBundle: UnparsedApexBundle[] = [];
       const newBundle: UnparsedApexBundle[] = [
-        { type: 'apex', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
+        { type: 'apex', name: 'Test', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
       const result = await generateChangeLog(oldBundle, newBundle, { ...config, scope: ['global'] })();
@@ -203,7 +203,7 @@ describe('when generating a changelog', () => {
       const oldClassSource = 'class Test {}';
 
       const oldBundle: UnparsedApexBundle[] = [
-        { type: 'apex', content: oldClassSource, filePath: 'Test.cls', metadataContent: null },
+        { type: 'apex', name: 'Test', content: oldClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
       const newBundle: UnparsedApexBundle[] = [];
 
@@ -216,7 +216,7 @@ describe('when generating a changelog', () => {
       const oldClassSource = 'class Test {}';
 
       const oldBundle: UnparsedApexBundle[] = [
-        { type: 'apex', content: oldClassSource, filePath: 'Test.cls', metadataContent: null },
+        { type: 'apex', name: 'Test', content: oldClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
       const newBundle: UnparsedApexBundle[] = [];
 
@@ -232,11 +232,11 @@ describe('when generating a changelog', () => {
       const newClassSource = 'class Test { void myMethod() {} }';
 
       const oldBundle: UnparsedApexBundle[] = [
-        { type: 'apex', content: oldClassSource, filePath: 'Test.cls', metadataContent: null },
+        { type: 'apex', name: 'Test', content: oldClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
       const newBundle: UnparsedApexBundle[] = [
-        { type: 'apex', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
+        { type: 'apex', name: 'Test', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
@@ -251,11 +251,11 @@ describe('when generating a changelog', () => {
       const newClassSource = 'class Test { void myMethod() {} }';
 
       const oldBundle: UnparsedApexBundle[] = [
-        { type: 'apex', content: oldClassSource, filePath: 'Test.cls', metadataContent: null },
+        { type: 'apex', name: 'Test', content: oldClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
       const newBundle: UnparsedApexBundle[] = [
-        { type: 'apex', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
+        { type: 'apex', name: 'Test', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();
@@ -268,11 +268,11 @@ describe('when generating a changelog', () => {
       const newClassSource = 'class Test { void myMethod() {} }';
 
       const oldBundle: UnparsedApexBundle[] = [
-        { type: 'apex', content: oldClassSource, filePath: 'Test.cls', metadataContent: null },
+        { type: 'apex', name: 'Test', content: oldClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
       const newBundle: UnparsedApexBundle[] = [
-        { type: 'apex', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
+        { type: 'apex', name: 'Test', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
       const result = await generateChangeLog(oldBundle, newBundle, config)();

@@ -17,7 +17,7 @@ import {
   DocPageReference,
   TransformReference,
   ParsedFile,
-  UnparsedSObjectBundle,
+  UnparsedCustomObjectBundle,
   UnparsedSourceBundle,
 } from '../shared/types';
 import { parsedFilesToRenderableBundle } from './adapters/renderable-bundle';
@@ -56,8 +56,8 @@ export function generateDocs(unparsedApexFiles: UnparsedSourceBundle[], config: 
     return sourceFiles.filter((sourceFile): sourceFile is UnparsedApexBundle => sourceFile.type === 'apex');
   }
 
-  function filterObjectSourceFiles(sourceFiles: UnparsedSourceBundle[]): UnparsedSObjectBundle[] {
-    return sourceFiles.filter((sourceFile): sourceFile is UnparsedSObjectBundle => sourceFile.type === 'sobject');
+  function filterObjectSourceFiles(sourceFiles: UnparsedSourceBundle[]): UnparsedCustomObjectBundle[] {
+    return sourceFiles.filter((sourceFile): sourceFile is UnparsedCustomObjectBundle => sourceFile.type === 'sobject');
   }
 
   return pipe(
@@ -93,7 +93,7 @@ function generateForApex(apexBundles: UnparsedApexBundle[], config: MarkdownGene
   );
 }
 
-function generateForObject(objectBundles: UnparsedSObjectBundle[]) {
+function generateForObject(objectBundles: UnparsedCustomObjectBundle[]) {
   function filterNonPublished(parsedFiles: ParsedFile<ObjectMetadata>[]): ParsedFile<ObjectMetadata>[] {
     return parsedFiles.filter((parsedFile) => parsedFile.type.deploymentStatus === 'Deployed');
   }

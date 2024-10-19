@@ -185,7 +185,7 @@ describe('When generating the Reference Guide', () => {
 
     const input3 = {
       rawContent: customObjectGenerator(),
-      filePath: 'src/object/ATestObject__c.object-meta.xml',
+      filePath: 'src/object/TestObject__c.object-meta.xml',
     };
 
     const result = await generateDocs([
@@ -202,7 +202,7 @@ describe('When generating the Reference Guide', () => {
       expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('MyClass'),
     );
     assertEither(result, (data) =>
-      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('ATestObject__c'),
+      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('TestObject__c'),
     );
     assertEither(result, (data) => expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('MyEnum'));
   });
