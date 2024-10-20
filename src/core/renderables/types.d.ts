@@ -185,12 +185,12 @@ export type RenderableCustomObject = Omit<RenderableType, 'meta'> & {
 };
 
 export type RenderableCustomField = {
-  label: string;
+  headingLevel: number;
+  heading: string;
   apiName: string;
   description: RenderableContent[];
   type: 'field';
-
-  // TODO: Whatever else we want to add to the field descriptions
+  fieldType: string;
 };
 
 export type Renderable = (RenderableClass | RenderableInterface | RenderableEnum | RenderableCustomObject) & {

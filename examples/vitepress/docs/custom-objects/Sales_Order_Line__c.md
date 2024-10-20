@@ -10,37 +10,56 @@ Represents a line item on a sales order.
 `apexdocs__Sales_Order_Line__c`
 
 ## Fields
-<table>
-<tbody>
-  <tr>
-    <th>Field</th>
-    <th>API Name</th>
-    <th>Details</th>
-  </tr>
-  <tr>
-   <td>Amount</td>
-   <td><code>apexdocs__Amount__c</code></td>
-    <td></td>
-  </tr>
-  <tr>
-   <td>Product</td>
-   <td><code>apexdocs__Product__c</code></td>
-    <td></td>
-  </tr>
-  <tr>
-   <td>Sales Order</td>
-   <td><code>apexdocs__Sales_Order__c</code></td>
-    <td></td>
-  </tr>
-  <tr>
-   <td>Source Price Component</td>
-   <td><code>apexdocs__Source_Price_Component__c</code></td>
-    <td></td>
-  </tr>
-  <tr>
-   <td>Type</td>
-   <td><code>apexdocs__Type__c</code></td>
-    <td></td>
-  </tr>
-</tbody>
-</table>
+### Amount
+
+**API Name**
+
+`apexdocs__Amount__c`
+
+**Type**
+
+*Currency*
+
+---
+### Product
+
+**API Name**
+
+`apexdocs__Product__c`
+
+**Type**
+
+*Lookup*
+
+---
+### Sales Order
+
+**API Name**
+
+`apexdocs__Sales_Order__c`
+
+**Type**
+
+*MasterDetail*
+
+---
+### Source Price Component
+
+**API Name**
+
+`apexdocs__Source_Price_Component__c`
+
+**Type**
+
+*Lookup*
+
+---
+### Type
+
+**API Name**
+
+`apexdocs__Type__c`
+
+**Type**
+
+*Picklist*

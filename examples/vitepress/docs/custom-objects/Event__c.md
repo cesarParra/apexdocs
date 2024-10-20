@@ -10,37 +10,56 @@ Represents an event that people can register for.
 `apexdocs__Event__c`
 
 ## Fields
-<table>
-<tbody>
-  <tr>
-    <th>Field</th>
-    <th>API Name</th>
-    <th>Details</th>
-  </tr>
-  <tr>
-   <td>Description</td>
-   <td><code>apexdocs__Description__c</code></td>
-    <td></td>
-  </tr>
-  <tr>
-   <td>End Date</td>
-   <td><code>apexdocs__End_Date__c</code></td>
-    <td></td>
-  </tr>
-  <tr>
-   <td>Location</td>
-   <td><code>apexdocs__Location__c</code></td>
-    <td></td>
-  </tr>
-  <tr>
-   <td>Start Date</td>
-   <td><code>apexdocs__Start_Date__c</code></td>
-    <td></td>
-  </tr>
-  <tr>
-   <td>Tag Line</td>
-   <td><code>apexdocs__Tag_Line__c</code></td>
-    <td></td>
-  </tr>
-</tbody>
-</table>
+### Description
+
+**API Name**
+
+`apexdocs__Description__c`
+
+**Type**
+
+*LongTextArea*
+
+---
+### End Date
+
+**API Name**
+
+`apexdocs__End_Date__c`
+
+**Type**
+
+*Date*
+
+---
+### Location
+
+**API Name**
+
+`apexdocs__Location__c`
+
+**Type**
+
+*Location*
+
+---
+### Start Date
+
+**API Name**
+
+`apexdocs__Start_Date__c`
+
+**Type**
+
+*Date*
+
+---
+### Tag Line
+
+**API Name**
+
+`apexdocs__Tag_Line__c`
+
+**Type**
+
+*Text*

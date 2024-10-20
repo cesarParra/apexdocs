@@ -251,17 +251,10 @@ function objectMetadataToRenderable(
   objectMetadata: ObjectMetadata,
   config: MarkdownGeneratorConfig,
 ): RenderableCustomObject {
-  function getApiName() {
-    if (config.namespace) {
-      return `${config.namespace}__${objectMetadata.name}`;
-    }
-    return objectMetadata.name;
-  }
-
   return {
     type: 'customobject',
     headingLevel: 1,
-    apiName: getApiName(),
+    apiName: getApiName(objectMetadata.name, config),
     heading: objectMetadata.label,
     name: objectMetadata.name,
     doc: {
@@ -272,23 +265,36 @@ function objectMetadataToRenderable(
     fields: {
       headingLevel: 2,
       heading: 'Fields',
-      value: objectMetadata.fields.map((field) => fieldMetadataToRenderable(field.type, config)),
+      value: objectMetadata.fields.map((field) => fieldMetadataToRenderable(field.type, config, 3)),
     },
   };
 }
 
-function fieldMetadataToRenderable(field: CustomFieldMetadata, config: MarkdownGeneratorConfig): RenderableCustomField {
-  function getApiName() {
-    if (config.namespace) {
-      return `${config.namespace}__${field.name}`;
-    }
-    return field.name;
-  }
-
+function fieldMetadataToRenderable(
+  field: CustomFieldMetadata,
+  config: MarkdownGeneratorConfig,
+  headingLevel: number,
+): RenderableCustomField {
   return {
-    label: field.label,
-    description: field.description ? [field.description] : [],
-    apiName: getApiName(),
     type: 'field',
+    headingLevel: headingLevel,
+    heading: field.label,
+    description: field.description ? [field.description] : [],
+    apiName: getApiName(field.name, config),
+    fieldType: field.type,
   };
+}
+
+function getApiName(currentName: string, config: MarkdownGeneratorConfig) {
+  if (config.namespace) {
+    // first remove any `__c` suffix
+    const name = currentName.replace(/__c$/, '');
+    // if the name still has an __, it's already namespaced
+    if (name.includes('__')) {
+      return name;
+    }
+
+    return `${config.namespace}__${currentName}`;
+  }
+  return currentName;
 }

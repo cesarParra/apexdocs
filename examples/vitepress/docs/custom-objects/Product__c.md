@@ -10,27 +10,34 @@ Product that is sold or available for sale.
 `apexdocs__Product__c`
 
 ## Fields
-<table>
-<tbody>
-  <tr>
-    <th>Field</th>
-    <th>API Name</th>
-    <th>Details</th>
-  </tr>
-  <tr>
-   <td>Description</td>
-   <td><code>apexdocs__Description__c</code></td>
-    <td></td>
-  </tr>
-  <tr>
-   <td>Event</td>
-   <td><code>apexdocs__Event__c</code></td>
-    <td></td>
-  </tr>
-  <tr>
-   <td>Features</td>
-   <td><code>apexdocs__Features__c</code></td>
-    <td></td>
-  </tr>
-</tbody>
-</table>
+### Description
+
+**API Name**
+
+`apexdocs__Description__c`
+
+**Type**
+
+*Text*
+
+---
+### Event
+
+**API Name**
+
+`apexdocs__Event__c`
+
+**Type**
+
+*Lookup*
+
+---
+### Features
+
+**API Name**
+
+`apexdocs__Features__c`
+
+**Type**
+
+*LongTextArea*

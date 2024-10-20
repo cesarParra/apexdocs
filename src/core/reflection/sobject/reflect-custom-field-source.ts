@@ -13,7 +13,6 @@ export type CustomFieldMetadata = {
   description: string | null;
   name: string;
   label: string;
-  // TODO: Make sure the type is displayed in the end result
   type: string;
   parentName: string;
 };
