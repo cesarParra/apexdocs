@@ -19,7 +19,7 @@ import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
 import { MarkdownGeneratorConfig } from '../generate-docs';
 import { SourceFileMetadata } from '../../shared/types';
-import { ObjectMetadata } from '../../reflection/sobject/reflect-sobject-source';
+import { ObjectMetadata } from '../../reflection/sobject/reflect-custom-object-sources';
 import { getTypeGroup } from '../../shared/utils';
 import { CustomFieldMetadata } from '../../reflection/sobject/reflect-custom-field-source';
 
@@ -53,7 +53,6 @@ export function typeToRenderable<T extends Type | ObjectMetadata>(
   return {
     ...(getRenderable() as GetReturnRenderable<T>),
     filePath: parsedFile.source.filePath,
-    // TODO: How to handle namespace for sobjects? Remember that only custom objects should get them (as opposed to standard)
     namespace: config.namespace,
   };
 }

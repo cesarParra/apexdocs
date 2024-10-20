@@ -13,11 +13,9 @@ export type CustomFieldMetadata = {
   description: string | null;
   name: string;
   label: string;
+  // TODO: Make sure the type is displayed in the end result
   type: string;
   parentName: string;
-
-  // TODO: Whatever else we want to put around fields
-  // TODO: E.g. if it is required, picklist values, etc.
 };
 
 export function reflectCustomFieldSources(
@@ -36,13 +34,46 @@ function reflectCustomFieldSource(
 ): TE.TaskEither<ReflectionErrors, ParsedFile<CustomFieldMetadata>> {
   return pipe(
     E.tryCatch(() => new XMLParser().parse(customFieldSource.content), E.toError),
-    // TODO: Validate
+    E.flatMap(validate),
     E.map(toCustomFieldMetadata),
     E.map((metadata) => addName(metadata, customFieldSource.name)),
     E.map((metadata) => addParentName(metadata, customFieldSource.parentName)),
     E.map((metadata) => toParsedFile(customFieldSource.filePath, metadata)),
     E.mapLeft((error) => new ReflectionErrors([new ReflectionError(customFieldSource.filePath, error.message)])),
     TE.fromEither,
+  );
+}
+
+function validate(parsedResult: unknown): E.Either<Error, { CustomField: object }> {
+  const err = E.left(new Error('Invalid custom field metadata'));
+
+  function isObject(value: unknown) {
+    return typeof value === 'object' && value !== null ? E.right(value) : err;
+  }
+
+  function hasTheCustomFieldKey(value: object) {
+    return 'CustomField' in value ? E.right(value) : err;
+  }
+
+  function theCustomFieldKeyIsAnObject(value: Record<'CustomField', unknown>) {
+    return typeof value.CustomField === 'object' ? E.right(value as Record<'CustomField', object>) : err;
+  }
+
+  function theCustomFieldObjectContainsTheLabelKey(value: Record<'CustomField', object>) {
+    return 'label' in value.CustomField ? E.right(value) : err;
+  }
+
+  function theCustomFieldObjectContainsTheTypeKey(value: Record<'CustomField', object>) {
+    return 'type' in value.CustomField ? E.right(value) : err;
+  }
+
+  return pipe(
+    parsedResult,
+    isObject,
+    E.chain(hasTheCustomFieldKey),
+    E.chain(theCustomFieldKeyIsAnObject),
+    E.chain(theCustomFieldObjectContainsTheLabelKey),
+    E.chain(theCustomFieldObjectContainsTheTypeKey),
   );
 }
 

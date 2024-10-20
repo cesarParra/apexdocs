@@ -13,7 +13,7 @@ import { apply } from '#utils/fp';
 import { generateLink } from './generate-link';
 import { getTypeGroup } from '../../shared/utils';
 import { Type } from '@cparra/apex-reflection';
-import { ObjectMetadata } from '../../reflection/sobject/reflect-sobject-source';
+import { ObjectMetadata } from '../../reflection/sobject/reflect-custom-object-sources';
 
 export function parsedFilesToRenderableBundle(
   config: MarkdownGeneratorConfig,

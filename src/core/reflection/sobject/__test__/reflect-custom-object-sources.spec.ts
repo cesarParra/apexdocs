@@ -1,4 +1,4 @@
-import { reflectSObjectSources } from '../reflect-sobject-source';
+import { reflectCustomObjectSources } from '../reflect-custom-object-sources';
 import { UnparsedCustomObjectBundle } from '../../../shared/types';
 import { assertEither } from '../../../test-helpers/assert-either';
 import * as E from 'fp-ts/Either';
@@ -14,21 +14,6 @@ const sObjectContent = `
     </CustomObject>`;
 
 describe('when parsing SObject metadata', () => {
-  test('the resulting type is "sobject"', async () => {
-    const unparsed: UnparsedCustomObjectBundle = {
-      type: 'customobject',
-      name: 'MyFirstObject__c',
-      filePath: 'src/object/MyFirstObject__c.object-meta.xml',
-      content: sObjectContent,
-    };
-
-    const result = await reflectSObjectSources([unparsed])();
-
-    assertEither(result, (data) => expect(data.length).toBe(1));
-    assertEither(result, (data) => expect(data[0].source.type).toBe('customobject'));
-    assertEither(result, (data) => expect(data[0].type.type_name).toBe('customobject'));
-  });
-
   test('the resulting type contains the file path', async () => {
     const unparsed: UnparsedCustomObjectBundle = {
       type: 'customobject',
@@ -37,7 +22,7 @@ describe('when parsing SObject metadata', () => {
       content: sObjectContent,
     };
 
-    const result = await reflectSObjectSources([unparsed])();
+    const result = await reflectCustomObjectSources([unparsed])();
 
     assertEither(result, (data) => expect(data[0].source.filePath).toBe('src/object/MyFirstObject__c.object-meta.xml'));
   });
@@ -50,7 +35,7 @@ describe('when parsing SObject metadata', () => {
       content: sObjectContent,
     };
 
-    const result = await reflectSObjectSources([unparsed])();
+    const result = await reflectCustomObjectSources([unparsed])();
 
     assertEither(result, (data) => {
       expect(data[0].type.label).toBe('MyFirstObject');
@@ -65,7 +50,7 @@ describe('when parsing SObject metadata', () => {
       content: sObjectContent,
     };
 
-    const result = await reflectSObjectSources([unparsed])();
+    const result = await reflectCustomObjectSources([unparsed])();
 
     assertEither(result, (data) => {
       expect(data[0].type.name).toBe('MyFirstObject__c');
@@ -80,7 +65,7 @@ describe('when parsing SObject metadata', () => {
       content: sObjectContent,
     };
 
-    const result = await reflectSObjectSources([unparsed])();
+    const result = await reflectCustomObjectSources([unparsed])();
 
     assertEither(result, (data) => {
       expect(data[0].type.deploymentStatus).toBe('Deployed');
@@ -103,7 +88,7 @@ describe('when parsing SObject metadata', () => {
       content: sObjectContent,
     };
 
-    const result = await reflectSObjectSources([unparsed])();
+    const result = await reflectCustomObjectSources([unparsed])();
 
     assertEither(result, (data) => {
       expect(data[0].type.deploymentStatus).toBe('Deployed');
@@ -118,7 +103,7 @@ describe('when parsing SObject metadata', () => {
       content: sObjectContent,
     };
 
-    const result = await reflectSObjectSources([unparsed])();
+    const result = await reflectCustomObjectSources([unparsed])();
 
     assertEither(result, (data) => {
       expect(data[0].type.visibility).toBe('Public');
@@ -142,7 +127,7 @@ describe('when parsing SObject metadata', () => {
       content: sObjectContent,
     };
 
-    const result = await reflectSObjectSources([unparsed])();
+    const result = await reflectCustomObjectSources([unparsed])();
 
     assertEither(result, (data) => {
       expect(data[0].type.visibility).toBe('Public');
@@ -167,7 +152,7 @@ describe('when parsing SObject metadata', () => {
       content: sObjectContent,
     };
 
-    const result = await reflectSObjectSources([unparsed])();
+    const result = await reflectCustomObjectSources([unparsed])();
 
     expect(E.isLeft(result)).toBe(true);
   });
@@ -189,7 +174,7 @@ describe('when parsing SObject metadata', () => {
       content: sObjectContent,
     };
 
-    const result = await reflectSObjectSources([unparsed])();
+    const result = await reflectCustomObjectSources([unparsed])();
 
     expect(E.isLeft(result)).toBe(true);
   });

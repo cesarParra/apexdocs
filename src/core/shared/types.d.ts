@@ -1,6 +1,6 @@
 import { Type } from '@cparra/apex-reflection';
 import { ChangeLogPageData } from '../changelog/generate-change-log';
-import { ObjectMetadata } from '../reflection/sobject/reflect-sobject-source';
+import { ObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 
 export type Generators = 'markdown' | 'openapi' | 'changelog';

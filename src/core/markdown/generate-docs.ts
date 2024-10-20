@@ -34,7 +34,7 @@ import { isSkip } from '../shared/utils';
 import { parsedFilesToReferenceGuide } from './adapters/reference-guide';
 import { removeExcludedTags } from '../reflection/apex/remove-excluded-tags';
 import { HookError, ReflectionErrors } from '../errors/errors';
-import { ObjectMetadata, reflectSObjectSources } from '../reflection/sobject/reflect-sobject-source';
+import { ObjectMetadata, reflectCustomObjectSources } from '../reflection/sobject/reflect-custom-object-sources';
 import { CustomFieldMetadata, reflectCustomFieldSources } from '../reflection/sobject/reflect-custom-field-source';
 import { Type } from '@cparra/apex-reflection';
 
@@ -137,7 +137,7 @@ function generateForObject(objectBundles: (UnparsedCustomObjectBundle | Unparsed
 
   return pipe(
     customObjects,
-    reflectSObjectSources,
+    reflectCustomObjectSources,
     TE.map(filterNonPublished),
     TE.map(filterNonPublic),
     TE.bindTo('objects'),

@@ -1,7 +1,7 @@
 import { MarkdownGeneratorConfig } from '../generate-docs';
 import { DocPageReference, ParsedFile } from '../../shared/types';
 import { getTypeGroup } from '../../shared/utils';
-import { ObjectMetadata } from '../../reflection/sobject/reflect-sobject-source';
+import { ObjectMetadata } from '../../reflection/sobject/reflect-custom-object-sources';
 import { Type } from '@cparra/apex-reflection';
 
 export function parsedFilesToReferenceGuide(

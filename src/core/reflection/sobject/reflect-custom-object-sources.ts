@@ -19,7 +19,7 @@ export type ObjectMetadata = {
   fields: ParsedFile<CustomFieldMetadata>[];
 };
 
-export function reflectSObjectSources(
+export function reflectCustomObjectSources(
   objectSources: UnparsedCustomObjectBundle[],
 ): TE.TaskEither<ReflectionErrors, ParsedFile<ObjectMetadata>[]> {
   const semiGroupReflectionError: Semigroup<ReflectionErrors> = {
@@ -27,10 +27,10 @@ export function reflectSObjectSources(
   };
   const Ap = TE.getApplicativeTaskValidation(T.ApplyPar, semiGroupReflectionError);
 
-  return pipe(objectSources, A.traverse(Ap)(reflectSObjectSource));
+  return pipe(objectSources, A.traverse(Ap)(reflectCustomObjectSource));
 }
 
-function reflectSObjectSource(
+function reflectCustomObjectSource(
   objectSource: UnparsedCustomObjectBundle,
 ): TE.TaskEither<ReflectionErrors, ParsedFile<ObjectMetadata>> {
   return pipe(
