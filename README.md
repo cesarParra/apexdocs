@@ -9,10 +9,64 @@
 </div>
 
 ApexDocs is a non-opinionated documentation generator for Salesforce Apex classes.
-It can output documentation in Markdown
-format,
-which allows you to use the Static Site Generator of your choice to create a documentation site that fits your needs,
-hosted in any static web hosting service.
+It can output documentation in Markdown format, which allows you to use the Static Site Generator of your choice to
+create a documentation site that fits your needs, hosted in any static web hosting service.
+
+## 👀 Examples
+
+ApexDocs generates Markdown files, which can be integrated into any Static Site Generation (SSG) engine,
+(e.g. Jekyll, Vitepress, Hugo, Docosaurus, etc.) to create a documentation site that fits your needs.
+
+This gives you the flexibility to create beautiful leveraging your preferred SSG engine, which
+usually provides a wide range of themes, dark mode support, and other features out of the box.
+
+<div align="center">
+  <img src="imgs/vitepress-light.png" alt="Vitepress Light" width="45%" />
+  <img src="imgs/vitepress-dark.png" alt="Vitepress Dark" width="45%" />
+</div>
+
+*These are examples of documentation sites generated using Vitepress.
+Head over to the `examples/vitepress` folder to see the code.*
+
+The extra flexibility also lets you integrate the output documentation with your existing documentation site,
+allowing you to match the look and feel of your existing site.
+
+<div align="center">
+    <img src="imgs/integration.png" alt="Integration" width="70%" />
+</div>
+
+OpenApi REST definitions can be visualized using a tool like ReDoc, Swagger UI, or any other OpenApi viewer.
+
+<div align="center">
+    <img src="imgs/redocly.png" alt="OpenApi" width="70%" />
+</div>
+
+This repo contains several other example implementations in the `examples` directory, showcasing how to integrate
+with different tools.
+
+* [Examples](./examples)
+
+### In the wild
+
+Here are some live projects using ApexDocs:
+
+- [Trailhead Apex Recipes](https://github.com/trailheadapps/apex-recipes)
+- [Salesforce Commerce Apex Reference](https://developer.salesforce.com/docs/commerce/salesforce-commerce/references/comm-apex-reference/cart-reference.html)
+- [Expression (API)](https://cesarparra.github.io/expression/)
+- [Nimble AMS Docs](https://nimbleuser.github.io/nams-api-docs/#/api-reference/)
+
+## 🚀 Features
+
+* Generate documentation for Salesforce Apex classes as Markdown files
+* Generate an OpenApi REST specification based on `@RestResource` classes
+* Generate a changelog based on the differences between two versions of your Salesforce Apex classes
+* Support for grouping blocks of related code within a class
+* Support for ignoring files and members from being documented
+* Namespace support
+* Configuration file support
+* Single line ApexDoc Blocks
+* Custom tag support
+* And much, much more!
 
 ## 💿 Installation
 
@@ -48,38 +102,6 @@ Run the following command to generate a changelog for your Salesforce Apex class
 ```bash
 apexdocs changelog --previousVersionDir force-app-previous --currentVersionDir force-app
 ```
-
-## 🚀 Features
-
-* Generate documentation for Salesforce Apex classes as Markdown files
-* Generate an OpenApi REST specification based on `@RestResource` classes
-* Generate a changelog based on the differences between two versions of your Salesforce Apex classes
-* Support for grouping blocks of related code within a class
-* Support for ignoring files and members from being documented
-* Namespace support
-* Configuration file support
-* Single line ApexDoc Blocks
-* Custom tag support
-* And much, much more!
-
-## 👀 Demo
-
-ApexDocs generates Markdown files, which can be integrated into any Static Site Generation engine,
-(e.g. Jekyll, Vitepress, Hugo, Docosaurus, etc.) to create a documentation site that fits your needs.
-
-This repo contains several example implementations in the `examples` directory, showcasing how to integrate
-with some of these tools.
-
-* [Examples](./examples)
-
-### In the wild
-
-Here are some live projects using ApexDocs:
-
-- [Trailhead Apex Recipes](https://github.com/trailheadapps/apex-recipes)
-- [Salesforce Commerce Apex Reference](https://developer.salesforce.com/docs/commerce/salesforce-commerce/references/comm-apex-reference/cart-reference.html)
-- [Expression (API)](https://cesarparra.github.io/expression/)
-- [Nimble AMS Docs](https://nimbleuser.github.io/nams-api-docs/#/api-reference/)
 
 ## ▶️ Available Commands
 

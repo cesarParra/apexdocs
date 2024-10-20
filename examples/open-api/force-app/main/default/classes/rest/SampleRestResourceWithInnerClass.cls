@@ -1,7 +1,7 @@
 /**
  * @description Contact related operations
  */
-@RestResource(urlMapping='/Contact/*')
+@RestResource(UrlMapping='/Contact/*')
 global with sharing class SampleRestResourceWithInnerClass {
     /**
      * @description This is a sample HTTP Get method
