@@ -1,5 +1,7 @@
 import { Type } from '@cparra/apex-reflection';
 import { ChangeLogPageData } from '../changelog/generate-change-log';
+import { ObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
+import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 
 export type Generators = 'markdown' | 'openapi' | 'changelog';
 
@@ -21,11 +23,13 @@ export type UserDefinedMarkdownConfig = {
   scope: string[];
   namespace?: string;
   defaultGroupName: string;
+  customObjectsGroupName: string;
   sortAlphabetically: boolean;
   includeMetadata: boolean;
   linkingStrategy: LinkingStrategy;
   excludeTags: string[];
   referenceGuideTitle: string;
+  /** Glob patterns to exclude files from the documentation. */
   exclude: string[];
 } & Partial<ConfigurableHooks>;
 
@@ -53,7 +57,26 @@ export type UserDefinedChangelogConfig = {
 
 export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig | UserDefinedChangelogConfig;
 
-export type UnparsedSourceFile = {
+export type UnparsedSourceBundle = UnparsedApexBundle | UnparsedCustomObjectBundle | UnparsedCustomFieldBundle;
+
+export type UnparsedCustomObjectBundle = {
+  type: 'customobject';
+  name: string;
+  filePath: string;
+  content: string;
+};
+
+export type UnparsedCustomFieldBundle = {
+  type: 'customfield';
+  name: string;
+  filePath: string;
+  content: string;
+  parentName: string;
+};
+
+export type UnparsedApexBundle = {
+  type: 'apex';
+  name: string;
   filePath: string;
   content: string;
   metadataContent: string | null;
@@ -62,12 +85,14 @@ export type UnparsedSourceFile = {
 export type SourceFileMetadata = {
   filePath: string;
   name: string;
-  type: 'interface' | 'class' | 'enum';
+  type: 'interface' | 'class' | 'enum' | 'customobject' | 'customfield';
 };
 
-export type ParsedFile = {
+export type ParsedFile<
+  T extends Type | ObjectMetadata | CustomFieldMetadata = Type | ObjectMetadata | CustomFieldMetadata,
+> = {
   source: SourceFileMetadata;
-  type: Type;
+  type: T;
 };
 
 export type DocPageReference = {
@@ -84,7 +109,7 @@ export type DocPageReference = {
   referencePath: string;
 };
 
-type Frontmatter = string | Record<string, unknown> | null;
+export type Frontmatter = string | Record<string, unknown> | null;
 
 export type ReferenceGuidePageData = {
   frontmatter: Frontmatter;
@@ -98,9 +123,10 @@ export type DocPageData = {
   outputDocPath: string;
   frontmatter: Frontmatter;
   content: string;
+  type: 'class' | 'interface' | 'enum' | 'customobject';
 };
 
-export type OpenApiPageData = Omit<DocPageData, 'source'>;
+export type OpenApiPageData = Omit<DocPageData, 'source' | 'type'>;
 
 export type PageData = DocPageData | OpenApiPageData | ReferenceGuidePageData | ChangeLogPageData;
 

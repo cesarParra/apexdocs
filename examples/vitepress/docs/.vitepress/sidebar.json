@@ -3,116 +3,88 @@
     "text": "API Reference",
     "items": [
       {
-        "text": "Grouped By Type",
+        "text": "Miscellaneous",
         "items": [
           {
-            "text": "Classes",
-            "items": [
-              {
-                "text": "BaseClass",
-                "link": "miscellaneous/BaseClass.md"
-              },
-              {
-                "text": "MultiInheritanceClass",
-                "link": "miscellaneous/MultiInheritanceClass.md"
-              },
-              {
-                "text": "SampleClass",
-                "link": "samplegroup/SampleClass.md"
-              },
-              {
-                "text": "SampleException",
-                "link": "miscellaneous/SampleException.md"
-              },
-              {
-                "text": "Url",
-                "link": "miscellaneous/Url.md"
-              }
-            ]
+            "text": "BaseClass",
+            "link": "miscellaneous/BaseClass.md"
           },
           {
-            "text": "Interfaces",
-            "items": [
-              {
-                "text": "ParentInterface",
-                "link": "miscellaneous/ParentInterface.md"
-              },
-              {
-                "text": "SampleInterface",
-                "link": "miscellaneous/SampleInterface.md"
-              }
-            ]
+            "text": "MultiInheritanceClass",
+            "link": "miscellaneous/MultiInheritanceClass.md"
           },
           {
-            "text": "Enums",
-            "items": [
-              {
-                "text": "ReferencedEnum",
-                "link": "miscellaneous/ReferencedEnum.md"
-              },
-              {
-                "text": "SampleEnum",
-                "link": "sample-enums/SampleEnum.md"
-              }
-            ]
+            "text": "ParentInterface",
+            "link": "miscellaneous/ParentInterface.md"
+          },
+          {
+            "text": "ReferencedEnum",
+            "link": "miscellaneous/ReferencedEnum.md"
+          },
+          {
+            "text": "SampleException",
+            "link": "miscellaneous/SampleException.md"
+          },
+          {
+            "text": "SampleInterface",
+            "link": "miscellaneous/SampleInterface.md"
+          },
+          {
+            "text": "Url",
+            "link": "miscellaneous/Url.md"
           }
         ]
       },
       {
-        "text": "Grouped by Group",
+        "text": "SampleGroup",
         "items": [
           {
-            "text": "Miscellaneous",
-            "items": [
-              {
-                "text": "BaseClass",
-                "link": "miscellaneous/BaseClass.md"
-              },
-              {
-                "text": "MultiInheritanceClass",
-                "link": "miscellaneous/MultiInheritanceClass.md"
-              },
-              {
-                "text": "ParentInterface",
-                "link": "miscellaneous/ParentInterface.md"
-              },
-              {
-                "text": "ReferencedEnum",
-                "link": "miscellaneous/ReferencedEnum.md"
-              },
-              {
-                "text": "SampleException",
-                "link": "miscellaneous/SampleException.md"
-              },
-              {
-                "text": "SampleInterface",
-                "link": "miscellaneous/SampleInterface.md"
-              },
-              {
-                "text": "Url",
-                "link": "miscellaneous/Url.md"
-              }
-            ]
-          },
-          {
-            "text": "SampleGroup",
-            "items": [
-              {
-                "text": "SampleClass",
-                "link": "samplegroup/SampleClass.md"
-              }
-            ]
-          },
-          {
-            "text": "Sample Enums",
-            "items": [
-              {
-                "text": "SampleEnum",
-                "link": "sample-enums/SampleEnum.md"
-              }
-            ]
+            "text": "SampleClass",
+            "link": "samplegroup/SampleClass.md"
           }
         ]
+      },
+      {
+        "text": "Sample Enums",
+        "items": [
+          {
+            "text": "SampleEnum",
+            "link": "sample-enums/SampleEnum.md"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "text": "Object Reference",
+    "items": [
+      {
+        "text": "Event__c",
+        "link": "custom-objects/Event__c.md"
+      },
+      {
+        "text": "Price_Component__c",
+        "link": "custom-objects/Price_Component__c.md"
+      },
+      {
+        "text": "Product__c",
+        "link": "custom-objects/Product__c.md"
+      },
+      {
+        "text": "Product_Price_Component__c",
+        "link": "custom-objects/Product_Price_Component__c.md"
+      },
+      {
+        "text": "Sales_Order__c",
+        "link": "custom-objects/Sales_Order__c.md"
+      },
+      {
+        "text": "Sales_Order_Line__c",
+        "link": "custom-objects/Sales_Order_Line__c.md"
+      },
+      {
+        "text": "Speaker__c",
+        "link": "custom-objects/Speaker__c.md"
       }
     ]
   }

@@ -82,7 +82,7 @@ type RenderableDocumentation = {
   annotations?: Annotation[];
   description?: RenderableContent[];
   customTags?: CustomTag[];
-  example: RenderableSection<RenderableContent[] | undefined>;
+  example?: RenderableSection<RenderableContent[] | undefined>;
   group?: string;
   author?: string;
   date?: string;
@@ -131,7 +131,7 @@ type RenderableMethod = {
   inherited?: boolean;
 };
 
-type RenderableField = {
+type RenderableApexField = {
   headingLevel: number;
   heading: string;
   type: RenderableSection<StringOrLink>;
@@ -159,8 +159,8 @@ export type RenderableClass = RenderableType & {
     isGrouped: boolean;
   };
   methods: RenderableSection<RenderableMethod[] | GroupedMember<RenderableMethod>[]> & { isGrouped: boolean };
-  fields: RenderableSection<RenderableField[] | GroupedMember<RenderableField>[]> & { isGrouped: boolean };
-  properties: RenderableSection<RenderableField[] | GroupedMember<RenderableField>[]> & { isGrouped: boolean };
+  fields: RenderableSection<RenderableApexField[] | GroupedMember<RenderableApexField>[]> & { isGrouped: boolean };
+  properties: RenderableSection<RenderableApexField[] | GroupedMember<RenderableApexField>[]> & { isGrouped: boolean };
   innerClasses: RenderableSection<RenderableClass[]>;
   innerEnums: RenderableSection<RenderableEnum[]>;
   innerInterfaces: RenderableSection<RenderableInterface[]>;
@@ -177,4 +177,22 @@ export type RenderableEnum = RenderableType & {
   values: RenderableSection<EnumValue[]>;
 };
 
-export type Renderable = (RenderableClass | RenderableInterface | RenderableEnum) & { filePath: string };
+export type RenderableCustomObject = Omit<RenderableType, 'meta'> & {
+  apiName: string;
+  type: 'customobject';
+  hasFields: boolean;
+  fields: RenderableSection<RenderableCustomField[]>;
+};
+
+export type RenderableCustomField = {
+  headingLevel: number;
+  heading: string;
+  apiName: string;
+  description: RenderableContent[];
+  type: 'field';
+  fieldType: string;
+};
+
+export type Renderable = (RenderableClass | RenderableInterface | RenderableEnum | RenderableCustomObject) & {
+  filePath: string;
+};

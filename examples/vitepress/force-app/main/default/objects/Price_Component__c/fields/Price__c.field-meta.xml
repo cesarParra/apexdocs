@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Price__c</fullName>
+    <description>Use this when the Price Component represents a Flat Price. To represent a Percentage use the Percent field.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Use this when the Price Component represents a Flat Price. To represent a Percentage use the Percent field.</inlineHelpText>
+    <label>Price</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackTrending>false</trackTrending>
+    <type>Currency</type>
+</CustomField>

@@ -1,3 +1,5 @@
 import { ParsedFile } from '../shared/types';
+import { Type } from '@cparra/apex-reflection';
 
-export const parsedFilesToTypes = (parsedFiles: ParsedFile[]) => parsedFiles.map((parsedFile) => parsedFile.type);
+export const parsedFilesToTypes = <T extends Type>(parsedFiles: ParsedFile<T>[]) =>
+  parsedFiles.map((parsedFile) => parsedFile.type);

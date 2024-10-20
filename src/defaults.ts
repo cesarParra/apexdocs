@@ -6,10 +6,11 @@ export const markdownDefaults = {
   ...commonDefaults,
   scope: ['global'],
   defaultGroupName: 'Miscellaneous',
+  customObjectsGroupName: 'Custom Objects',
   includeMetadata: false,
   sortAlphabetically: false,
   linkingStrategy: 'relative' as const,
-  referenceGuideTitle: 'Apex Reference Guide',
+  referenceGuideTitle: 'Reference Guide',
   excludeTags: [],
   exclude: [],
 };

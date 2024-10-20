@@ -1,15 +1,15 @@
-import { ParsedFile, Skip, UnparsedSourceFile, UserDefinedChangelogConfig } from '../shared/types';
+import { ParsedFile, Skip, UnparsedApexBundle, UserDefinedChangelogConfig } from '../shared/types';
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
-import { reflectBundles } from '../reflection/reflect-source';
+import { reflectApexSource } from '../reflection/apex/reflect-apex-source';
 import { Changelog, hasChanges, processChangelog, VersionManifest } from './process-changelog';
 import { convertToRenderableChangelog, RenderableChangelog } from './renderable-changelog';
 import { CompilationRequest, Template } from '../template';
 import { changelogTemplate } from './templates/changelog-template';
 import { ReflectionErrors } from '../errors/errors';
 import { apply } from '#utils/fp';
-import { filterScope } from '../reflection/filter-scope';
-import { skip } from '../shared/utils';
+import { filterScope } from '../reflection/apex/filter-scope';
+import { isApexType, skip } from '../shared/utils';
 
 export type ChangeLogPageData = {
   content: string;
@@ -17,14 +17,14 @@ export type ChangeLogPageData = {
 };
 
 export function generateChangeLog(
-  oldBundles: UnparsedSourceFile[],
-  newBundles: UnparsedSourceFile[],
+  oldBundles: UnparsedApexBundle[],
+  newBundles: UnparsedApexBundle[],
   config: Omit<UserDefinedChangelogConfig, 'targetGenerator'>,
 ): TE.TaskEither<ReflectionErrors, ChangeLogPageData | Skip> {
   const filterOutOfScope = apply(filterScope, config.scope);
 
-  function reflect(sourceFiles: UnparsedSourceFile[]) {
-    return pipe(reflectBundles(sourceFiles), TE.map(filterOutOfScope));
+  function reflect(sourceFiles: UnparsedApexBundle[]) {
+    return pipe(reflectApexSource(sourceFiles), TE.map(filterOutOfScope));
   }
 
   const convertToPageData = apply(toPageData, config.fileName);
@@ -52,7 +52,10 @@ export function generateChangeLog(
 function toManifests({ oldVersion, newVersion }: { oldVersion: ParsedFile[]; newVersion: ParsedFile[] }) {
   function parsedFilesToManifest(parsedFiles: ParsedFile[]): VersionManifest {
     return {
-      types: parsedFiles.map((parsedFile) => parsedFile.type),
+      types: parsedFiles
+        .map((parsedFile) => parsedFile.type)
+        // Changelog does not currently support object types
+        .filter((type) => isApexType(type)),
     };
   }
 

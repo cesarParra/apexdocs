@@ -1,4 +1,4 @@
-import { typeToRenderable } from '../apex-types';
+import { typeToRenderable } from '../type-to-renderable';
 import { InterfaceMirrorBuilder } from '../../../../test-helpers/InterfaceMirrorBuilder';
 import { AnnotationBuilder } from '../../../../test-helpers/AnnotationBuilder';
 import { MethodMirrorBuilder, ParameterBuilder } from '../../../../test-helpers/MethodMirrorBuilder';
@@ -13,6 +13,7 @@ const defaultMarkdownGeneratorConfig: MarkdownGeneratorConfig = {
   scope: ['global', 'public'],
   namespace: '',
   defaultGroupName: 'Miscellaneous',
+  customObjectsGroupName: 'Custom Objects',
   referenceGuideTemplate: '',
   sortAlphabetically: false,
   linkingStrategy: 'relative',

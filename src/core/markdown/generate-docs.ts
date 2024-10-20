@@ -9,7 +9,7 @@ import {
   Frontmatter,
   PostHookDocumentationBundle,
   ReferenceGuidePageData,
-  UnparsedSourceFile,
+  UnparsedApexBundle,
   TransformDocPage,
   TransformDocs,
   TransformReferenceGuide,
@@ -17,20 +17,26 @@ import {
   DocPageReference,
   TransformReference,
   ParsedFile,
+  UnparsedCustomObjectBundle,
+  UnparsedSourceBundle,
+  UnparsedCustomFieldBundle,
 } from '../shared/types';
 import { parsedFilesToRenderableBundle } from './adapters/renderable-bundle';
-import { reflectBundles } from '../reflection/reflect-source';
-import { addInheritanceChainToTypes } from '../reflection/inheritance-chain-expanion';
-import { addInheritedMembersToTypes } from '../reflection/inherited-member-expansion';
+import { reflectApexSource } from '../reflection/apex/reflect-apex-source';
+import { addInheritanceChainToTypes } from '../reflection/apex/inheritance-chain-expanion';
+import { addInheritedMembersToTypes } from '../reflection/apex/inherited-member-expansion';
 import { convertToDocumentationBundle } from './adapters/renderable-to-page-data';
-import { filterScope } from '../reflection/filter-scope';
+import { filterScope } from '../reflection/apex/filter-scope';
 import { Template } from '../template';
 import { hookableTemplate } from './templates/hookable';
 import { sortTypesAndMembers } from '../reflection/sort-types-and-members';
 import { isSkip } from '../shared/utils';
 import { parsedFilesToReferenceGuide } from './adapters/reference-guide';
-import { removeExcludedTags } from '../reflection/remove-excluded-tags';
-import { HookError } from '../errors/errors';
+import { removeExcludedTags } from '../reflection/apex/remove-excluded-tags';
+import { HookError, ReflectionErrors } from '../errors/errors';
+import { ObjectMetadata, reflectCustomObjectSources } from '../reflection/sobject/reflect-custom-object-sources';
+import { CustomFieldMetadata, reflectCustomFieldSources } from '../reflection/sobject/reflect-custom-field-source';
+import { Type } from '@cparra/apex-reflection';
 
 export type MarkdownGeneratorConfig = Omit<
   UserDefinedMarkdownConfig,
@@ -39,8 +45,7 @@ export type MarkdownGeneratorConfig = Omit<
   referenceGuideTemplate: string;
 };
 
-export function generateDocs(apexBundles: UnparsedSourceFile[], config: MarkdownGeneratorConfig) {
-  const filterOutOfScope = apply(filterScope, config.scope);
+export function generateDocs(unparsedApexFiles: UnparsedSourceBundle[], config: MarkdownGeneratorConfig) {
   const convertToReferences = apply(parsedFilesToReferenceGuide, config);
   const convertToRenderableBundle = apply(parsedFilesToRenderableBundle, config);
   const convertToDocumentationBundleForTemplate = apply(
@@ -49,23 +54,107 @@ export function generateDocs(apexBundles: UnparsedSourceFile[], config: Markdown
     config.referenceGuideTemplate,
   );
   const sort = apply(sortTypesAndMembers, config.sortAlphabetically);
+
+  function filterApexSourceFiles(sourceFiles: UnparsedSourceBundle[]): UnparsedApexBundle[] {
+    return sourceFiles.filter((sourceFile): sourceFile is UnparsedApexBundle => sourceFile.type === 'apex');
+  }
+
+  function filterCustomObjectsAndFields(
+    sourceFiles: UnparsedSourceBundle[],
+  ): (UnparsedCustomObjectBundle | UnparsedCustomFieldBundle)[] {
+    return sourceFiles.filter(
+      (sourceFile): sourceFile is UnparsedCustomObjectBundle =>
+        sourceFile.type === 'customobject' || sourceFile.type === 'customfield',
+    );
+  }
+
+  function filterOutCustomFields(parsedFiles: ParsedFile[]): ParsedFile<Type | ObjectMetadata>[] {
+    return parsedFiles.filter(
+      (parsedFile): parsedFile is ParsedFile<Type | ObjectMetadata> => parsedFile.source.type !== 'customfield',
+    );
+  }
+
+  return pipe(
+    generateForApex(filterApexSourceFiles(unparsedApexFiles), config),
+    TE.chain((parsedApexFiles) => {
+      return pipe(
+        generateForObject(filterCustomObjectsAndFields(unparsedApexFiles)),
+        TE.map((parsedObjectFiles) => [...parsedApexFiles, ...parsedObjectFiles]),
+      );
+    }),
+    TE.map((parsedFiles) => sort(filterOutCustomFields(parsedFiles))),
+    TE.bindTo('parsedFiles'),
+    TE.bind('references', ({ parsedFiles }) =>
+      TE.right(
+        // Custom fields should not show up in the reference guide
+        convertToReferences(parsedFiles),
+      ),
+    ),
+    TE.flatMap(({ parsedFiles, references }) => transformReferenceHook(config)({ references, parsedFiles })),
+    TE.map(({ parsedFiles, references }) => convertToRenderableBundle(filterOutCustomFields(parsedFiles), references)),
+    TE.map(convertToDocumentationBundleForTemplate),
+    TE.flatMap(transformDocumentationBundleHook(config)),
+    TE.map(postHookCompile),
+  );
+}
+
+function generateForApex(apexBundles: UnparsedApexBundle[], config: MarkdownGeneratorConfig) {
+  const filterOutOfScope = apply(filterScope, config.scope);
   const removeExcluded = apply(removeExcludedTags, config.excludeTags);
 
   return pipe(
     apexBundles,
-    reflectBundles,
+    reflectApexSource,
     TE.map(filterOutOfScope),
     TE.map(addInheritedMembersToTypes),
     TE.map(addInheritanceChainToTypes),
-    TE.map(sort),
     TE.map(removeExcluded),
-    TE.bindTo('parsedFiles'),
-    TE.bind('references', ({ parsedFiles }) => TE.right(convertToReferences(parsedFiles))),
-    TE.flatMap(({ parsedFiles, references }) => transformReferenceHook(config)({ references, parsedFiles })),
-    TE.map(({ parsedFiles, references }) => convertToRenderableBundle(parsedFiles, references)),
-    TE.map(convertToDocumentationBundleForTemplate),
-    TE.flatMap(transformDocumentationBundleHook(config)),
-    TE.map(postHookCompile),
+  );
+}
+
+function generateForObject(objectBundles: (UnparsedCustomObjectBundle | UnparsedCustomFieldBundle)[]) {
+  function filterNonPublished(parsedFiles: ParsedFile<ObjectMetadata>[]): ParsedFile<ObjectMetadata>[] {
+    return parsedFiles.filter((parsedFile) => parsedFile.type.deploymentStatus === 'Deployed');
+  }
+
+  function filterNonPublic(parsedFiles: ParsedFile<ObjectMetadata>[]): ParsedFile<ObjectMetadata>[] {
+    return parsedFiles.filter((parsedFile) => parsedFile.type.visibility === 'Public');
+  }
+
+  const customObjects = objectBundles.filter(
+    (object): object is UnparsedCustomObjectBundle => object.type === 'customobject',
+  );
+
+  const customFields = objectBundles.filter(
+    (object): object is UnparsedCustomFieldBundle => object.type === 'customfield',
+  );
+
+  function generateForFields(
+    fields: UnparsedCustomFieldBundle[],
+  ): TE.TaskEither<ReflectionErrors, ParsedFile<CustomFieldMetadata>[]> {
+    return pipe(fields, reflectCustomFieldSources);
+  }
+
+  return pipe(
+    customObjects,
+    reflectCustomObjectSources,
+    TE.map(filterNonPublished),
+    TE.map(filterNonPublic),
+    TE.bindTo('objects'),
+    TE.bind('fields', () => generateForFields(customFields)),
+    // Locate the fields for each object by using the parentName property
+    TE.map(({ objects, fields }) => {
+      return objects.map((object) => {
+        const objectFields = fields.filter((field) => field.type.parentName === object.type.name);
+        return {
+          ...object,
+          type: {
+            ...object.type,
+            fields: objectFields,
+          },
+        } as ParsedFile<ObjectMetadata>;
+      });
+    }),
   );
 }
 

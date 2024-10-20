@@ -28,6 +28,11 @@ export const markdownOptions: { [key: string]: Options } = {
     default: markdownDefaults.defaultGroupName,
     describe: 'Defines the @group name to be used when a file does not specify it.',
   },
+  customObjectGroupName: {
+    type: 'string',
+    default: markdownDefaults.customObjectsGroupName,
+    describe: 'The name under which custom objects will be grouped in the Reference Guide',
+  },
   namespace: {
     type: 'string',
     describe: 'The package namespace, if any. If provided, it will be added to the generated files.',

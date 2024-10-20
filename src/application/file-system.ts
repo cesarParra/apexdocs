@@ -1,69 +1,38 @@
 import * as fs from 'fs';
-import * as path from 'path';
+import { MetadataResolver } from '@salesforce/source-deploy-retrieve';
+import { SourceComponentAdapter } from './source-code-file-reader';
+import { pipe } from 'fp-ts/function';
+import * as nodePath from 'path';
 
 export interface FileSystem {
-  isDirectory: (path: string) => Promise<boolean>;
-  readDirectory: (sourceDirectory: string) => Promise<string[]>;
-  readFile: (path: string) => Promise<string>;
-  joinPath: (...paths: string[]) => string;
-  exists: (path: string) => boolean;
-}
-
-function stat(path: string): Promise<fs.Stats> {
-  return new Promise((resolve, reject) => {
-    fs.stat(path, (err, stats) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(stats);
-      }
-    });
-  });
-}
-
-function readdir(path: string): Promise<string[]> {
-  return new Promise((resolve, reject) => {
-    fs.readdir(path, (err, files) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(files);
-      }
-    });
-  });
-}
-
-function readFile(path: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    fs.readFile(path, (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data.toString());
-      }
-    });
-  });
+  getComponents(path: string): SourceComponentAdapter[];
+  readFile: (path: string) => string;
 }
 
 export class DefaultFileSystem implements FileSystem {
-  async isDirectory(pathToRead: string): Promise<boolean> {
-    const stats = await stat(pathToRead);
-    return stats.isDirectory();
+  getComponents(path: string): SourceComponentAdapter[] {
+    const components = new MetadataResolver().getComponentsFromPath(path);
+
+    const fieldComponents = pipe(
+      components,
+      (components) => components.filter((component) => component.type.name === 'CustomObject'),
+      (components) => components.map((component) => component.content),
+      (contents) => contents.filter((content) => content !== undefined),
+      (contents) => contents.map((content) => nodePath.join(content!, 'fields')),
+      (potentialFieldLocations) =>
+        potentialFieldLocations.filter((potentialFieldLocation) => fs.existsSync(potentialFieldLocation)),
+      (potentialFieldLocations) =>
+        potentialFieldLocations.map((potentialFieldLocation) =>
+          new MetadataResolver().getComponentsFromPath(potentialFieldLocation),
+        ),
+      (fieldComponents) => fieldComponents.flat(),
+      (fieldComponents) => fieldComponents.filter((fieldComponent) => fieldComponent.type.name === 'CustomField'),
+    );
+
+    return [...components, ...fieldComponents];
   }
 
-  readDirectory(sourceDirectory: string): Promise<string[]> {
-    return readdir(sourceDirectory);
-  }
-
-  readFile(pathToRead: string): Promise<string> {
-    return readFile(pathToRead);
-  }
-
-  joinPath(...paths: string[]): string {
-    return path.join(...paths);
-  }
-
-  exists(path: string): boolean {
-    return fs.existsSync(path);
+  readFile(pathToRead: string): string {
+    return fs.readFileSync(pathToRead, 'utf8');
   }
 }

@@ -2,7 +2,7 @@ import {
   CodeBlock,
   FieldMirrorWithInheritance,
   PropertyMirrorWithInheritance,
-  RenderableField,
+  RenderableApexField,
   GetRenderableContentByTypeName,
 } from '../../renderables/types';
 import { adaptDocumentable } from '../../renderables/documentables';
@@ -11,7 +11,7 @@ export function adaptFieldOrProperty(
   field: FieldMirrorWithInheritance | PropertyMirrorWithInheritance,
   linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number,
-): RenderableField {
+): RenderableApexField {
   function buildSignature(): CodeBlock {
     const { access_modifier, name } = field;
     const memberModifiers = field.memberModifiers.join(' ');

@@ -9,10 +9,64 @@
 </div>
 
 ApexDocs is a non-opinionated documentation generator for Salesforce Apex classes.
-It can output documentation in Markdown
-format,
-which allows you to use the Static Site Generator of your choice to create a documentation site that fits your needs,
-hosted in any static web hosting service.
+It can output documentation in Markdown format, which allows you to use the Static Site Generator of your choice to
+create a documentation site that fits your needs, hosted in any static web hosting service.
+
+## 👀 Examples
+
+ApexDocs generates Markdown files, which can be integrated into any Static Site Generation (SSG) engine,
+(e.g. Jekyll, Vitepress, Hugo, Docosaurus, etc.) to create a documentation site that fits your needs.
+
+This gives you the flexibility to create beautiful leveraging your preferred SSG engine, which
+usually provides a wide range of themes, dark mode support, and other features out of the box.
+
+<div align="center">
+  <img src="imgs/vitepress-light.png" alt="Vitepress Light" width="45%" />
+  <img src="imgs/vitepress-dark.png" alt="Vitepress Dark" width="45%" />
+</div>
+
+*These are examples of documentation sites generated using Vitepress.
+Head over to the `examples/vitepress` folder to see the code.*
+
+The extra flexibility also lets you integrate the output documentation with your existing documentation site,
+allowing you to match the look and feel of your existing site.
+
+<div align="center">
+    <img src="imgs/integration.png" alt="Integration" width="70%" />
+</div>
+
+OpenApi REST definitions can be visualized using a tool like ReDoc, Swagger UI, or any other OpenApi viewer.
+
+<div align="center">
+    <img src="imgs/redocly.png" alt="OpenApi" width="70%" />
+</div>
+
+This repo contains several other example implementations in the `examples` directory, showcasing how to integrate
+with different tools.
+
+* [Examples](./examples)
+
+### In the wild
+
+Here are some live projects using ApexDocs:
+
+- [Trailhead Apex Recipes](https://github.com/trailheadapps/apex-recipes)
+- [Salesforce Commerce Apex Reference](https://developer.salesforce.com/docs/commerce/salesforce-commerce/references/comm-apex-reference/cart-reference.html)
+- [Expression (API)](https://cesarparra.github.io/expression/)
+- [Nimble AMS Docs](https://nimbleuser.github.io/nams-api-docs/#/api-reference/)
+
+## 🚀 Features
+
+* Generate documentation for Salesforce Apex classes as Markdown files
+* Generate an OpenApi REST specification based on `@RestResource` classes
+* Generate a changelog based on the differences between two versions of your Salesforce Apex classes
+* Support for grouping blocks of related code within a class
+* Support for ignoring files and members from being documented
+* Namespace support
+* Configuration file support
+* Single line ApexDoc Blocks
+* Custom tag support
+* And much, much more!
 
 ## 💿 Installation
 
@@ -26,7 +80,7 @@ npm i -g @cparra/apexdocs
 
 #### Markdown
 
-Run the following command to generate markdown files for your global Salesforce Apex classes:
+Run the following command to generate markdown files for your global Salesforce Apex classes and custom objects:
 
 ```bash
 apexdocs markdown -s force-app
@@ -49,38 +103,6 @@ Run the following command to generate a changelog for your Salesforce Apex class
 apexdocs changelog --previousVersionDir force-app-previous --currentVersionDir force-app
 ```
 
-## 🚀 Features
-
-* Generate documentation for Salesforce Apex classes as Markdown files
-* Generate an OpenApi REST specification based on `@RestResource` classes
-* Generate a changelog based on the differences between two versions of your Salesforce Apex classes
-* Support for grouping blocks of related code within a class
-* Support for ignoring files and members from being documented
-* Namespace support
-* Configuration file support
-* Single line ApexDoc Blocks
-* Custom tag support
-* And much, much more!
-
-## 👀 Demo
-
-ApexDocs generates Markdown files, which can be integrated into any Static Site Generation engine,
-(e.g. Jekyll, Vitepress, Hugo, Docosaurus, etc.) to create a documentation site that fits your needs.
-
-This repo contains several example implementations in the `examples` directory, showcasing how to integrate
-with some of these tools.
-
-* [Examples](./examples)
-
-### In the wild
-
-Here are some live projects using ApexDocs:
-
-- [Trailhead Apex Recipes](https://github.com/trailheadapps/apex-recipes)
-- [Salesforce Commerce Apex Reference](https://developer.salesforce.com/docs/commerce/salesforce-commerce/references/comm-apex-reference/cart-reference.html)
-- [Expression (API)](https://cesarparra.github.io/expression/)
-- [Nimble AMS Docs](https://nimbleuser.github.io/nams-api-docs/#/api-reference/)
-
 ## ▶️ Available Commands
 
 ### Markdown
@@ -89,16 +111,17 @@ Here are some live projects using ApexDocs:
 
 #### Flags
 
-| Flag                   | Alias | Description                                                                                                                                                                                              | Default         | Required |
-|------------------------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------|----------|
-| `--sourceDir`          | `-s`  | The directory where the source files are located.                                                                                                                                                        | N/A             | Yes      |
-| `--targetDir`          | `-t`  | The directory where the generated files will be placed.                                                                                                                                                  | `docs`          | No       |
-| `--scope`              | `-p`  | A list of scopes to document. Values should be separated by a space, e.g --scope global public namespaceaccessible.                                                                                      | `global`        | No       |
-| `--defaultGroupName`   | N/A   | The default group name to use when a group is not specified.                                                                                                                                             | `Miscellaneous` | No       |
-| `--namespace`          | N/A   | The package namespace, if any. If provided, it will be added to the generated files.                                                                                                                     | N/A             | No       |
-| `--sortAlphabetically` | N/A   | Sorts files appearing in the Reference Guide alphabetically, as well as the members of a class, interface or enum alphabetically. If false, the members will be displayed in the same order as the code. | `false`         | No       |
-| `--includeMetadata `   | N/A   | Whether to include the file's meta.xml information: Whether it is active and and the API version                                                                                                         | `false`         | No       |
-| `--linkingStrategy`    | N/A   | The strategy to use when linking to other classes. Possible values are `relative`, `no-link`, and `none`                                                                                                 | `relative`      | No       |
+| Flag                      | Alias | Description                                                                                                                                                                                              | Default          | Required |
+|---------------------------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|----------|
+| `--sourceDir`             | `-s`  | The directory where the source files are located.                                                                                                                                                        | N/A              | Yes      |
+| `--targetDir`             | `-t`  | The directory where the generated files will be placed.                                                                                                                                                  | `docs`           | No       |
+| `--scope`                 | `-p`  | A list of scopes to document. Values should be separated by a space, e.g --scope global public namespaceaccessible.                                                                                      | `global`         | No       |
+| `--defaultGroupName`      | N/A   | The default group name to use when a group is not specified.                                                                                                                                             | `Miscellaneous`  | No       |
+| `--namespace`             | N/A   | The package namespace, if any. If provided, it will be added to the generated files.                                                                                                                     | N/A              | No       |
+| `--sortAlphabetically`    | N/A   | Sorts files appearing in the Reference Guide alphabetically, as well as the members of a class, interface or enum alphabetically. If false, the members will be displayed in the same order as the code. | `false`          | No       |
+| `--includeMetadata `      | N/A   | Whether to include the file's meta.xml information: Whether it is active and and the API version                                                                                                         | `false`          | No       |
+| `--linkingStrategy`       | N/A   | The strategy to use when linking to other classes. Possible values are `relative`, `no-link`, and `none`                                                                                                 | `relative`       | No       |
+| `--customObjectGroupName` | N/A   | The name under which custom objects will be grouped in the Reference Guide                                                                                                                               | `Custom Objects` | No       |
 
 ##### Linking Strategy
 
@@ -267,6 +290,25 @@ Then you only need to run the top level `apexdocs` command, and it will generate
 Note that you can still run the individual commands if you only want to generate one type of documentation by
 providing the subcommand, e.g `apexdocs markdown` or `apexdocs changelog`.
 
+### Excluding Files from Being Documented
+
+Any pattern included in the `.forceignore` file will be excluded from the documentation.
+
+Additionally, you can exclude one or multiple files from being documented by providing a list of glob patterns to
+the `exclude` property in the configuration file.
+
+```typescript
+import { defineMarkdownConfig } from "@cparra/apexdocs";
+
+export default defineMarkdownConfig({
+  sourceDir: 'force-app',
+  targetDir: 'docs',
+  scope: ['global', 'public'],
+  exclude: ['**/MyClass.cls', '**/MyOtherClass.cls'],
+  ...
+});
+```
+
 ### Excluding Tags from Appearing in the Documentation
 
 Note: Only works for Markdown documentation.
@@ -282,23 +324,6 @@ export default defineMarkdownConfig({
   targetDir: 'docs',
   scope: ['global', 'public'],
   excludeTags: ['internal', 'ignore'],
-  ...
-});
-```
-
-### Excluding Files from Being Documented
-
-You can exclude one or multiple files from being documented by providing a list of glob patterns to
-the `exclude` property in the configuration file.
-
-```typescript
-import { defineMarkdownConfig } from "@cparra/apexdocs";
-
-export default defineMarkdownConfig({
-  sourceDir: 'force-app',
-  targetDir: 'docs',
-  scope: ['global', 'public'],
-  exclude: ['**/MyClass.cls', '**/MyOtherClass.cls'],
   ...
 });
 ```
