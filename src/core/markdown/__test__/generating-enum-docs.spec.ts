@@ -2,9 +2,6 @@ import { extendExpect } from './expect-extensions';
 import { unparsedApexBundleFromRawString, generateDocs } from './test-helpers';
 import { assertEither } from '../../test-helpers/assert-either';
 
-// TODO: Create a test similar to this.
-// TODO: Make sure to test the output for every single type of field supported
-
 describe('Generates enum documentation', () => {
   beforeAll(() => {
     extendExpect();

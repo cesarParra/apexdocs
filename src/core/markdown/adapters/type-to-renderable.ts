@@ -12,7 +12,6 @@ import {
   GetRenderableContentByTypeName,
   RenderableCustomObject,
   RenderableCustomField,
-  RenderableContent,
 } from '../../renderables/types';
 import { adaptDescribable, adaptDocumentable } from '../../renderables/documentables';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
