@@ -82,12 +82,12 @@ export function generateDocs(unparsedApexFiles: UnparsedSourceBundle[], config: 
         TE.map((parsedObjectFiles) => [...parsedApexFiles, ...parsedObjectFiles]),
       );
     }),
-    TE.map(sort),
+    TE.map((parsedFiles) => sort(filterOutCustomFields(parsedFiles))),
     TE.bindTo('parsedFiles'),
     TE.bind('references', ({ parsedFiles }) =>
       TE.right(
         // Custom fields should not show up in the reference guide
-        convertToReferences(filterOutCustomFields(parsedFiles)),
+        convertToReferences(parsedFiles),
       ),
     ),
     TE.flatMap(({ parsedFiles, references }) => transformReferenceHook(config)({ references, parsedFiles })),

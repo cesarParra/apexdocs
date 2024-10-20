@@ -22,7 +22,7 @@ export type UserDefinedMarkdownConfig = {
   targetDir: string;
   scope: string[];
   namespace?: string;
-  defaultGroupName: string; // TODO: Deprecate and rename
+  defaultGroupName: string;
   customObjectsGroupName: string;
   sortAlphabetically: boolean;
   includeMetadata: boolean;
