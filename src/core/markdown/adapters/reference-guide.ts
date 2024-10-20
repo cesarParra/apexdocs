@@ -1,30 +1,30 @@
 import { MarkdownGeneratorConfig } from '../generate-docs';
 import { DocPageReference, ParsedFile } from '../../shared/types';
+import { getTypeGroup } from '../../shared/utils';
+import { ObjectMetadata } from '../../reflection/sobject/reflect-custom-object-sources';
 import { Type } from '@cparra/apex-reflection';
 
 export function parsedFilesToReferenceGuide(
   config: MarkdownGeneratorConfig,
-  parsedFiles: ParsedFile[],
+  parsedFiles: ParsedFile<Type | ObjectMetadata>[],
 ): Record<string, DocPageReference> {
   return parsedFiles.reduce<Record<string, DocPageReference>>((acc, parsedFile) => {
-    acc[parsedFile.type.name] = parsedFileToDocPageReference(config, parsedFile);
+    acc[parsedFile.source.name] = parsedFileToDocPageReference(config, parsedFile);
     return acc;
   }, {});
 }
 
-function parsedFileToDocPageReference(config: MarkdownGeneratorConfig, parsedFile: ParsedFile): DocPageReference {
-  const path = `${slugify(getTypeGroup(parsedFile.type, config))}/${parsedFile.type.name}.md`;
+function parsedFileToDocPageReference(
+  config: MarkdownGeneratorConfig,
+  parsedFile: ParsedFile<Type | ObjectMetadata>,
+): DocPageReference {
+  const path = `${slugify(getTypeGroup(parsedFile.type, config))}/${parsedFile.source.name}.md`;
   return {
     source: parsedFile.source,
-    displayName: parsedFile.type.name,
+    displayName: parsedFile.source.name,
     outputDocPath: path,
     referencePath: path,
   };
-}
-
-function getTypeGroup(type: Type, config: MarkdownGeneratorConfig): string {
-  const groupAnnotation = type.docComment?.annotations.find((annotation) => annotation.name.toLowerCase() === 'group');
-  return groupAnnotation?.body ?? config.defaultGroupName;
 }
 
 function slugify(text: string): string {

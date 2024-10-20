@@ -6,6 +6,7 @@ import { enumMarkdownTemplate } from '../templates/enum-template';
 import { interfaceMarkdownTemplate } from '../templates/interface-template';
 import { classMarkdownTemplate } from '../templates/class-template';
 import { markdownDefaults } from '../../../defaults';
+import { customObjectTemplate } from '../templates/custom-object-template';
 
 export const convertToDocumentationBundle = (
   referenceGuideTitle: string,
@@ -62,6 +63,7 @@ function renderableToPageData(referenceGuideReference: ReferenceGuideReference[]
       frontmatter: null,
       content: docContents,
       group: renderable.doc.group ?? markdownDefaults.defaultGroupName,
+      type: renderable.type,
     };
   }
 
@@ -77,6 +79,8 @@ function resolveApexTypeTemplate(renderable: Renderable): CompilationRequest {
         return interfaceMarkdownTemplate;
       case 'class':
         return classMarkdownTemplate;
+      case 'customobject':
+        return customObjectTemplate;
     }
   }
 

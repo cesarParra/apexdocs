@@ -1,13 +1,21 @@
 import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
 import { ParsedFile } from '../shared/types';
+import { isApexType } from '../shared/utils';
+import { ObjectMetadata } from './sobject/reflect-custom-object-sources';
+import { CustomFieldMetadata } from './sobject/reflect-custom-field-source';
 
 type Named = { name: string };
 
-export function sortTypesAndMembers(shouldSort: boolean, parsedFiles: ParsedFile[]): ParsedFile[] {
+export function sortTypesAndMembers(
+  shouldSort: boolean,
+  parsedFiles: ParsedFile<Type | ObjectMetadata>[],
+): ParsedFile<Type | ObjectMetadata>[] {
   return parsedFiles
     .map((parsedFile) => ({
       ...parsedFile,
-      type: sortTypeMember(parsedFile.type, shouldSort),
+      type: isApexType(parsedFile.type)
+        ? sortTypeMember(parsedFile.type, shouldSort)
+        : sortCustomObjectFields(parsedFile.type, shouldSort),
     }))
     .sort((a, b) => sortByNames(shouldSort, a.type, b.type));
 }
@@ -32,6 +40,17 @@ function sortTypeMember(type: Type, shouldSort: boolean): Type {
     case 'class':
       return sortClassMembers(shouldSort, type as ClassMirror);
   }
+}
+
+function sortCustomObjectFields(type: ObjectMetadata, shouldSort: boolean): ObjectMetadata {
+  return {
+    ...type,
+    fields: sortFields(type.fields, shouldSort),
+  };
+}
+
+function sortFields(fields: ParsedFile<CustomFieldMetadata>[], shouldSort: boolean): ParsedFile<CustomFieldMetadata>[] {
+  return fields.sort((a, b) => sortByNames(shouldSort, a.type, b.type));
 }
 
 function sortEnumValues(shouldSort: boolean, enumType: EnumMirror): EnumMirror {
