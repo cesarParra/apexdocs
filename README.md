@@ -80,7 +80,7 @@ npm i -g @cparra/apexdocs
 
 #### Markdown
 
-Run the following command to generate markdown files for your global Salesforce Apex classes:
+Run the following command to generate markdown files for your global Salesforce Apex classes and custom objects:
 
 ```bash
 apexdocs markdown -s force-app
