@@ -1,16 +1,18 @@
 import { ParsedFile, UnparsedCustomFieldBundle, UnparsedCustomObjectBundle } from '../../shared/types';
-import { ObjectMetadata, reflectCustomObjectSources } from './reflect-custom-object-sources';
+import { CustomObjectMetadata, reflectCustomObjectSources } from './reflect-custom-object-sources';
 import * as TE from 'fp-ts/TaskEither';
 import { ReflectionErrors } from '../../errors/errors';
 import { CustomFieldMetadata, reflectCustomFieldSources } from './reflect-custom-field-source';
 import { pipe } from 'fp-ts/function';
 
-export function reflectCustomFieldsAndObjects(objectBundles: (UnparsedCustomObjectBundle | UnparsedCustomFieldBundle)[]) {
-  function filterNonPublished(parsedFiles: ParsedFile<ObjectMetadata>[]): ParsedFile<ObjectMetadata>[] {
+export function reflectCustomFieldsAndObjects(
+  objectBundles: (UnparsedCustomObjectBundle | UnparsedCustomFieldBundle)[],
+) {
+  function filterNonPublished(parsedFiles: ParsedFile<CustomObjectMetadata>[]): ParsedFile<CustomObjectMetadata>[] {
     return parsedFiles.filter((parsedFile) => parsedFile.type.deploymentStatus === 'Deployed');
   }
 
-  function filterNonPublic(parsedFiles: ParsedFile<ObjectMetadata>[]): ParsedFile<ObjectMetadata>[] {
+  function filterNonPublic(parsedFiles: ParsedFile<CustomObjectMetadata>[]): ParsedFile<CustomObjectMetadata>[] {
     return parsedFiles.filter((parsedFile) => parsedFile.type.visibility === 'Public');
   }
 
@@ -45,7 +47,7 @@ export function reflectCustomFieldsAndObjects(objectBundles: (UnparsedCustomObje
             ...object.type,
             fields: objectFields,
           },
-        } as ParsedFile<ObjectMetadata>;
+        } as ParsedFile<CustomObjectMetadata>;
       });
     }),
   );

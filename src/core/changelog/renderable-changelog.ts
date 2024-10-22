@@ -1,7 +1,8 @@
 import { Changelog, MemberModificationType, NewOrModifiedMember } from './process-changelog';
-import { Type } from '@cparra/apex-reflection';
+import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
 import { RenderableContent } from '../renderables/types';
 import { adaptDescribable } from '../renderables/documentables';
+import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 
 type NewTypeRenderable = {
   name: string;
@@ -40,14 +41,17 @@ export type RenderableChangelog = {
   newOrModifiedMembers: NewOrModifiedMembersSection | null;
 };
 
-export function convertToRenderableChangelog(changelog: Changelog, newManifest: Type[]): RenderableChangelog {
+export function convertToRenderableChangelog(
+  changelog: Changelog,
+  newManifest: (Type | CustomObjectMetadata)[],
+): RenderableChangelog {
   const allNewTypes = changelog.newTypes.map(
     (newType) => newManifest.find((type) => type.name.toLowerCase() === newType.toLowerCase())!,
   );
 
-  const newClasses = allNewTypes.filter((type) => type.type_name === 'class');
-  const newInterfaces = allNewTypes.filter((type) => type.type_name === 'interface');
-  const newEnums = allNewTypes.filter((type) => type.type_name === 'enum');
+  const newClasses = allNewTypes.filter((type): type is ClassMirror => type.type_name === 'class');
+  const newInterfaces = allNewTypes.filter((type): type is InterfaceMirror => type.type_name === 'interface');
+  const newEnums = allNewTypes.filter((type): type is EnumMirror => type.type_name === 'enum');
 
   return {
     newClasses:

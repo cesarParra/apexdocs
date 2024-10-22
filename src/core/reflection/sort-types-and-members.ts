@@ -1,15 +1,15 @@
 import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
 import { ParsedFile } from '../shared/types';
 import { isApexType } from '../shared/utils';
-import { ObjectMetadata } from './sobject/reflect-custom-object-sources';
+import { CustomObjectMetadata } from './sobject/reflect-custom-object-sources';
 import { CustomFieldMetadata } from './sobject/reflect-custom-field-source';
 
 type Named = { name: string };
 
 export function sortTypesAndMembers(
   shouldSort: boolean,
-  parsedFiles: ParsedFile<Type | ObjectMetadata>[],
-): ParsedFile<Type | ObjectMetadata>[] {
+  parsedFiles: ParsedFile<Type | CustomObjectMetadata>[],
+): ParsedFile<Type | CustomObjectMetadata>[] {
   return parsedFiles
     .map((parsedFile) => ({
       ...parsedFile,
@@ -42,7 +42,7 @@ function sortTypeMember(type: Type, shouldSort: boolean): Type {
   }
 }
 
-function sortCustomObjectFields(type: ObjectMetadata, shouldSort: boolean): ObjectMetadata {
+function sortCustomObjectFields(type: CustomObjectMetadata, shouldSort: boolean): CustomObjectMetadata {
   return {
     ...type,
     fields: sortFields(type.fields, shouldSort),

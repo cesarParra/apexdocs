@@ -18,11 +18,11 @@ import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
 import { MarkdownGeneratorConfig } from '../generate-docs';
 import { SourceFileMetadata } from '../../shared/types';
-import { ObjectMetadata } from '../../reflection/sobject/reflect-custom-object-sources';
+import { CustomObjectMetadata } from '../../reflection/sobject/reflect-custom-object-sources';
 import { getTypeGroup } from '../../shared/utils';
 import { CustomFieldMetadata } from '../../reflection/sobject/reflect-custom-field-source';
 
-type GetReturnRenderable<T extends Type | ObjectMetadata> = T extends InterfaceMirror
+type GetReturnRenderable<T extends Type | CustomObjectMetadata> = T extends InterfaceMirror
   ? RenderableInterface
   : T extends ClassMirror
     ? RenderableClass
@@ -30,7 +30,7 @@ type GetReturnRenderable<T extends Type | ObjectMetadata> = T extends InterfaceM
       ? RenderableEnum
       : RenderableCustomObject;
 
-export function typeToRenderable<T extends Type | ObjectMetadata>(
+export function typeToRenderable<T extends Type | CustomObjectMetadata>(
   parsedFile: { source: SourceFileMetadata; type: T },
   linkGenerator: GetRenderableContentByTypeName,
   config: MarkdownGeneratorConfig,
@@ -45,7 +45,7 @@ export function typeToRenderable<T extends Type | ObjectMetadata>(
       case 'class':
         return classTypeToClassSource(type as ClassMirrorWithInheritanceChain, linkGenerator);
       case 'customobject':
-        return objectMetadataToRenderable(type as ObjectMetadata, config);
+        return objectMetadataToRenderable(type as CustomObjectMetadata, config);
     }
   }
 
@@ -247,7 +247,7 @@ function singleGroup<T extends Groupable, K>(
 }
 
 function objectMetadataToRenderable(
-  objectMetadata: ObjectMetadata,
+  objectMetadata: CustomObjectMetadata,
   config: MarkdownGeneratorConfig,
 ): RenderableCustomObject {
   return {

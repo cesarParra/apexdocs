@@ -1,9 +1,10 @@
 import { ClassMirror, EnumMirror, MethodMirror, Type } from '@cparra/apex-reflection';
 import { pipe } from 'fp-ts/function';
 import { areMethodsEqual } from './method-changes-checker';
+import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 
 export type VersionManifest = {
-  types: Type[];
+  types: (Type | CustomObjectMetadata)[];
 };
 
 type ModificationTypes =

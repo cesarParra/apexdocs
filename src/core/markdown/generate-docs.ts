@@ -34,7 +34,7 @@ import { isSkip } from '../shared/utils';
 import { parsedFilesToReferenceGuide } from './adapters/reference-guide';
 import { removeExcludedTags } from '../reflection/apex/remove-excluded-tags';
 import { HookError } from '../errors/errors';
-import { ObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
+import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { Type } from '@cparra/apex-reflection';
 import { reflectCustomFieldsAndObjects } from '../reflection/sobject/reflectCustomFieldsAndObjects';
 
@@ -68,9 +68,9 @@ export function generateDocs(unparsedBundles: UnparsedSourceBundle[], config: Ma
     );
   }
 
-  function filterOutCustomFields(parsedFiles: ParsedFile[]): ParsedFile<Type | ObjectMetadata>[] {
+  function filterOutCustomFields(parsedFiles: ParsedFile[]): ParsedFile<Type | CustomObjectMetadata>[] {
     return parsedFiles.filter(
-      (parsedFile): parsedFile is ParsedFile<Type | ObjectMetadata> => parsedFile.source.type !== 'customfield',
+      (parsedFile): parsedFile is ParsedFile<Type | CustomObjectMetadata> => parsedFile.source.type !== 'customfield',
     );
   }
 

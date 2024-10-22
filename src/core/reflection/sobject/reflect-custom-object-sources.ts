@@ -9,7 +9,7 @@ import * as A from 'fp-ts/Array';
 import * as E from 'fp-ts/Either';
 import { CustomFieldMetadata } from './reflect-custom-field-source';
 
-export type ObjectMetadata = {
+export type CustomObjectMetadata = {
   type_name: 'customobject';
   deploymentStatus: string;
   visibility: string;
@@ -21,7 +21,7 @@ export type ObjectMetadata = {
 
 export function reflectCustomObjectSources(
   objectBundles: UnparsedCustomObjectBundle[],
-): TE.TaskEither<ReflectionErrors, ParsedFile<ObjectMetadata>[]> {
+): TE.TaskEither<ReflectionErrors, ParsedFile<CustomObjectMetadata>[]> {
   const semiGroupReflectionError: Semigroup<ReflectionErrors> = {
     concat: (x, y) => new ReflectionErrors([...x.errors, ...y.errors]),
   };
@@ -32,7 +32,7 @@ export function reflectCustomObjectSources(
 
 function reflectCustomObjectSource(
   objectSource: UnparsedCustomObjectBundle,
-): TE.TaskEither<ReflectionErrors, ParsedFile<ObjectMetadata>> {
+): TE.TaskEither<ReflectionErrors, ParsedFile<CustomObjectMetadata>> {
   return pipe(
     E.tryCatch(() => new XMLParser().parse(objectSource.content), E.toError),
     E.flatMap(validate),
@@ -73,31 +73,31 @@ function validate(parseResult: unknown): E.Either<Error, { CustomObject: object 
   );
 }
 
-function toObjectMetadata(parserResult: { CustomObject: object }): ObjectMetadata {
+function toObjectMetadata(parserResult: { CustomObject: object }): CustomObjectMetadata {
   const defaultValues = {
     deploymentStatus: 'Deployed',
     visibility: 'Public',
     description: null,
     fields: [] as ParsedFile<CustomFieldMetadata>[],
   };
-  return { ...defaultValues, ...parserResult.CustomObject } as ObjectMetadata;
+  return { ...defaultValues, ...parserResult.CustomObject } as CustomObjectMetadata;
 }
 
-function addName(objectMetadata: ObjectMetadata, name: string): ObjectMetadata {
+function addName(objectMetadata: CustomObjectMetadata, name: string): CustomObjectMetadata {
   return {
     ...objectMetadata,
     name,
   };
 }
 
-function addTypeName(objectMetadata: ObjectMetadata): ObjectMetadata {
+function addTypeName(objectMetadata: CustomObjectMetadata): CustomObjectMetadata {
   return {
     ...objectMetadata,
     type_name: 'customobject',
   };
 }
 
-function toParsedFile(filePath: string, typeMirror: ObjectMetadata): ParsedFile<ObjectMetadata> {
+function toParsedFile(filePath: string, typeMirror: CustomObjectMetadata): ParsedFile<CustomObjectMetadata> {
   return {
     source: {
       filePath: filePath,
