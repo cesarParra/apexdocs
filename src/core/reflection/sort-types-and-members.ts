@@ -2,7 +2,6 @@ import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-ref
 import { ParsedFile } from '../shared/types';
 import { isApexType } from '../shared/utils';
 import { CustomObjectMetadata } from './sobject/reflect-custom-object-sources';
-import { CustomFieldMetadata } from './sobject/reflect-custom-field-source';
 
 type Named = { name: string };
 
@@ -45,12 +44,8 @@ function sortTypeMember(type: Type, shouldSort: boolean): Type {
 function sortCustomObjectFields(type: CustomObjectMetadata, shouldSort: boolean): CustomObjectMetadata {
   return {
     ...type,
-    fields: sortFields(type.fields, shouldSort),
+    fields: sortNamed(shouldSort, type.fields),
   };
-}
-
-function sortFields(fields: ParsedFile<CustomFieldMetadata>[], shouldSort: boolean): ParsedFile<CustomFieldMetadata>[] {
-  return fields.sort((a, b) => sortByNames(shouldSort, a.type, b.type));
 }
 
 function sortEnumValues(shouldSort: boolean, enumType: EnumMirror): EnumMirror {

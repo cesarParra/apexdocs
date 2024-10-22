@@ -1,6 +1,7 @@
 import { processChangelog } from '../process-changelog';
 import { reflect, Type } from '@cparra/apex-reflection';
 import { CustomObjectMetadata } from '../../reflection/sobject/reflect-custom-object-sources';
+import { CustomFieldMetadata } from '../../reflection/sobject/reflect-custom-field-source';
 
 function apexTypeFromRawString(raw: string): Type {
   const result = reflect(raw);
@@ -11,11 +12,30 @@ function apexTypeFromRawString(raw: string): Type {
   return result.typeMirror!;
 }
 
+class CustomFieldMetadataBuilder {
+  build(): CustomFieldMetadata {
+    return {
+      type: 'Text',
+      type_name: 'customfield',
+      label: 'My Field',
+      name: 'MyField',
+      description: null,
+      parentName: 'MyObject',
+    };
+  }
+}
+
 class CustomObjectMetadataBuilder {
   label: string = 'MyObject';
+  fields: CustomFieldMetadata[] = [];
 
   withLabel(label: string): CustomObjectMetadataBuilder {
     this.label = label;
+    return this;
+  }
+
+  withField(field: CustomFieldMetadata): CustomObjectMetadataBuilder {
+    this.fields.push(field);
     return this;
   }
 
@@ -27,7 +47,7 @@ class CustomObjectMetadataBuilder {
       label: this.label,
       name: 'MyObject',
       description: null,
-      fields: [],
+      fields: this.fields,
     };
   }
 }
@@ -161,7 +181,28 @@ describe('when generating a changelog', () => {
       ]);
     });
 
-    // [] - Lists all new fields of an object
+    it('lists all new fields of a custom object', () => {
+      const oldObject = new CustomObjectMetadataBuilder().build();
+      const newField = new CustomFieldMetadataBuilder().build();
+      const newObject = new CustomObjectMetadataBuilder().withField(newField).build();
+      const oldVersion = { types: [oldObject] };
+      const newVersion = { types: [newObject] };
+
+      const changeLog = processChangelog(oldVersion, newVersion);
+
+      expect(changeLog.customObjectModifications).toEqual([
+        {
+          typeName: newObject.name,
+          modifications: [
+            {
+              __typename: 'NewField',
+              name: newField.name,
+            },
+          ],
+        },
+      ]);
+    });
+
     // [] - Lists all removed fields of an object
     // [] - Lists changed field labels
   });

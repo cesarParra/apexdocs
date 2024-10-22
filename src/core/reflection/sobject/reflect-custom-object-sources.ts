@@ -16,7 +16,7 @@ export type CustomObjectMetadata = {
   label: string;
   name: string;
   description: string | null;
-  fields: ParsedFile<CustomFieldMetadata>[];
+  fields: CustomFieldMetadata[];
 };
 
 export function reflectCustomObjectSources(
@@ -78,7 +78,7 @@ function toObjectMetadata(parserResult: { CustomObject: object }): CustomObjectM
     deploymentStatus: 'Deployed',
     visibility: 'Public',
     description: null,
-    fields: [] as ParsedFile<CustomFieldMetadata>[],
+    fields: [] as CustomFieldMetadata[],
   };
   return { ...defaultValues, ...parserResult.CustomObject } as CustomObjectMetadata;
 }

@@ -1,4 +1,4 @@
-import { ClassMirror, EnumMirror, MethodMirror, Type } from '@cparra/apex-reflection';
+import { ClassMirror, EnumMirror, InterfaceMirror, MethodMirror, Type } from '@cparra/apex-reflection';
 import { pipe } from 'fp-ts/function';
 import { areMethodsEqual } from './method-changes-checker';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
@@ -54,7 +54,7 @@ export function processChangelog(oldVersion: VersionManifest, newVersion: Versio
     newOrModifiedApexMembers: getNewOrModifiedApexMembers(oldVersion, newVersion),
     newCustomObjects: getNewCustomObjects(oldVersion, newVersion),
     removedCustomObjects: getRemovedCustomObjects(oldVersion, newVersion),
-    customObjectModifications: getModifiedCustomObjectLabels(oldVersion, newVersion),
+    customObjectModifications: getCustomObjectModifications(oldVersion, newVersion),
   };
 }
 
@@ -98,27 +98,48 @@ function getNewOrModifiedApexMembers(oldVersion: VersionManifest, newVersion: Ve
   );
 }
 
-function getModifiedCustomObjectLabels(
-  oldVersion: VersionManifest,
-  newVersion: VersionManifest,
-): NewOrModifiedMember[] {
-  return pipe(getCustomObjectsInBothVersions(oldVersion, newVersion), (customObjectsInBoth) =>
-    customObjectsInBoth
-      .filter(({ oldType, newType }) => oldType.label.toLowerCase() !== newType.label.toLowerCase())
-      .map(({ newType }) => ({
-        typeName: newType.name,
-        modifications: [{ __typename: 'LabelChanged', name: newType.label }],
-      })),
+function getCustomObjectModifications(oldVersion: VersionManifest, newVersion: VersionManifest): NewOrModifiedMember[] {
+  return pipe(
+    getCustomObjectsInBothVersions(oldVersion, newVersion),
+    (customObjectsInBoth) => [
+      ...getModifiedCustomObjectLabels(customObjectsInBoth),
+      ...getNewOrRemovedCustomFields(customObjectsInBoth),
+    ],
+    (customObjectModifications) => customObjectModifications.filter((member) => member.modifications.length > 0),
   );
+}
+
+function getModifiedCustomObjectLabels(typesInBoth: TypeInBoth<CustomObjectMetadata>[]): NewOrModifiedMember[] {
+  return typesInBoth
+    .filter(({ oldType, newType }) => oldType.label.toLowerCase() !== newType.label.toLowerCase())
+    .map(({ newType }) => ({
+      typeName: newType.name,
+      modifications: [{ __typename: 'LabelChanged', name: newType.label }],
+    }));
+}
+
+function getNewOrRemovedCustomFields(typesInBoth: TypeInBoth<CustomObjectMetadata>[]): NewOrModifiedMember[] {
+  return typesInBoth.map(({ oldType, newType }) => {
+    const oldCustomObject = oldType;
+    const newCustomObject = newType;
+
+    return {
+      typeName: newType.name,
+      modifications: [
+        ...getNewValues(oldCustomObject, newCustomObject, 'fields', 'NewField'),
+        ...getRemovedValues(oldCustomObject, newCustomObject, 'fields', 'RemovedField'),
+      ],
+    };
+  });
 }
 
 function getNewOrModifiedEnumValues(typesInBoth: TypeInBoth<Type>[]): NewOrModifiedMember[] {
   return pipe(
-    typesInBoth.filter((typeInBoth) => typeInBoth.oldType.type_name === 'enum'),
+    typesInBoth.filter((typeInBoth): typeInBoth is TypeInBoth<EnumMirror> => typeInBoth.oldType.type_name === 'enum'),
     (enumsInBoth) =>
       enumsInBoth.map(({ oldType, newType }) => {
-        const oldEnum = oldType as EnumMirror;
-        const newEnum = newType as EnumMirror;
+        const oldEnum = oldType;
+        const newEnum = newType;
         return {
           typeName: newType.name,
           modifications: [
@@ -133,24 +154,25 @@ function getNewOrModifiedEnumValues(typesInBoth: TypeInBoth<Type>[]): NewOrModif
 function getNewOrModifiedMethods(typesInBoth: TypeInBoth<Type>[]): NewOrModifiedMember[] {
   return pipe(
     typesInBoth.filter(
-      (typeInBoth) => typeInBoth.oldType.type_name === 'class' || typeInBoth.oldType.type_name === 'interface',
+      (typeInBoth): typeInBoth is TypeInBoth<ClassMirror | InterfaceMirror> =>
+        typeInBoth.oldType.type_name === 'class' || typeInBoth.oldType.type_name === 'interface',
     ),
     (typesInBoth) =>
       typesInBoth.map(({ oldType, newType }) => {
-        const oldMethodAware = oldType as MethodAware;
-        const newMethodAware = newType as MethodAware;
+        const oldMethodAware = oldType;
+        const newMethodAware = newType;
 
         return {
           typeName: newType.name,
           modifications: [
-            ...getNewValues<MethodMirror, MethodAware, 'methods'>(
+            ...getNewValues<MethodMirror, InterfaceMirror | ClassMirror, 'methods'>(
               oldMethodAware,
               newMethodAware,
               'methods',
               'NewMethod',
               areMethodsEqual,
             ),
-            ...getRemovedValues<MethodMirror, MethodAware, 'methods'>(
+            ...getRemovedValues<MethodMirror, InterfaceMirror | ClassMirror, 'methods'>(
               oldMethodAware,
               newMethodAware,
               'methods',
@@ -228,12 +250,12 @@ function areEqualByName<T extends NameAware>(oldValue: T, newValue: T): boolean 
   return oldValue.name.toLowerCase() === newValue.name.toLowerCase();
 }
 
-function getNewValues<Named extends NameAware, T extends Record<K, Named[]>, K extends keyof T>(
+function getNewValues<Searchable extends NameAware, T extends Record<K, Searchable[]>, K extends keyof T>(
   oldPlaceToSearch: T,
   newPlaceToSearch: T,
   keyToSearch: K,
   typeName: ModificationTypes,
-  areEqualFn: AreEqualFn<Named> = areEqualByName,
+  areEqualFn: AreEqualFn<Searchable> = areEqualByName,
 ): MemberModificationType[] {
   return newPlaceToSearch[keyToSearch]
     .filter((newValue) => !oldPlaceToSearch[keyToSearch].some((oldValue) => areEqualFn(oldValue, newValue)))
@@ -253,7 +275,3 @@ function getRemovedValues<Named extends NameAware, T extends Record<K, Named[]>,
     .map((value) => value.name)
     .map((name) => ({ __typename: typeName, name }));
 }
-
-type MethodAware = {
-  methods: MethodMirror[];
-};

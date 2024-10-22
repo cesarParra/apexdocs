@@ -137,5 +137,7 @@ function toRenderableModificationDescription(memberModificationType: MemberModif
       return `New Type: ${memberModificationType.name}`;
     case 'RemovedType':
       return `Removed Type: ${memberModificationType.name}`;
+    case 'LabelChanged':
+      return `Label Changed to ${memberModificationType.name}`;
   }
 }

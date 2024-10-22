@@ -264,7 +264,7 @@ function objectMetadataToRenderable(
     fields: {
       headingLevel: 2,
       heading: 'Fields',
-      value: objectMetadata.fields.map((field) => fieldMetadataToRenderable(field.type, config, 3)),
+      value: objectMetadata.fields.map((field) => fieldMetadataToRenderable(field, config, 3)),
     },
   };
 }

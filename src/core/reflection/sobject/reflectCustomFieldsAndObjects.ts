@@ -4,10 +4,11 @@ import * as TE from 'fp-ts/TaskEither';
 import { ReflectionErrors } from '../../errors/errors';
 import { CustomFieldMetadata, reflectCustomFieldSources } from './reflect-custom-field-source';
 import { pipe } from 'fp-ts/function';
+import { TaskEither } from 'fp-ts/TaskEither';
 
 export function reflectCustomFieldsAndObjects(
   objectBundles: (UnparsedCustomObjectBundle | UnparsedCustomFieldBundle)[],
-) {
+): TaskEither<ReflectionErrors, ParsedFile<CustomObjectMetadata>[]> {
   function filterNonPublished(parsedFiles: ParsedFile<CustomObjectMetadata>[]): ParsedFile<CustomObjectMetadata>[] {
     return parsedFiles.filter((parsedFile) => parsedFile.type.deploymentStatus === 'Deployed');
   }
@@ -45,9 +46,9 @@ export function reflectCustomFieldsAndObjects(
           ...object,
           type: {
             ...object.type,
-            fields: objectFields,
+            fields: objectFields.map((field) => field.type),
           },
-        } as ParsedFile<CustomObjectMetadata>;
+        };
       });
     }),
   );
