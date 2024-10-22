@@ -13,6 +13,8 @@ const config = {
   skipIfNoChanges: false,
 };
 
+// TODO: new integration tests here
+
 describe('when generating a changelog', () => {
   it('should not skip when skipIfNoChanges, even if there are no changes', async () => {
     const result = await generateChangeLog([], [], { ...config })();

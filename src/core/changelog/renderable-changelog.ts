@@ -45,7 +45,7 @@ export function convertToRenderableChangelog(
   changelog: Changelog,
   newManifest: (Type | CustomObjectMetadata)[],
 ): RenderableChangelog {
-  const allNewTypes = changelog.newTypes.map(
+  const allNewTypes = changelog.newApexTypes.map(
     (newType) => newManifest.find((type) => type.name.toLowerCase() === newType.toLowerCase())!,
   );
 
@@ -82,15 +82,15 @@ export function convertToRenderableChangelog(
           }
         : null,
     removedTypes:
-      changelog.removedTypes.length > 0
-        ? { heading: 'Removed Types', description: 'These types have been removed.', types: changelog.removedTypes }
+      changelog.removedApexTypes.length > 0
+        ? { heading: 'Removed Types', description: 'These types have been removed.', types: changelog.removedApexTypes }
         : null,
     newOrModifiedMembers:
-      changelog.newOrModifiedMembers.length > 0
+      changelog.newOrModifiedApexMembers.length > 0
         ? {
             heading: 'New or Modified Members in Existing Types',
             description: 'These members have been added or modified.',
-            modifications: changelog.newOrModifiedMembers.map(toRenderableModification),
+            modifications: changelog.newOrModifiedApexMembers.map(toRenderableModification),
           }
         : null,
   };

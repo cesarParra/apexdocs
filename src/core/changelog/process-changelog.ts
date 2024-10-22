@@ -30,22 +30,26 @@ export type NewOrModifiedMember = {
 };
 
 export type Changelog = {
-  newTypes: string[];
-  removedTypes: string[];
-  newOrModifiedMembers: NewOrModifiedMember[];
+  newApexTypes: string[];
+  removedApexTypes: string[];
+  newOrModifiedApexMembers: NewOrModifiedMember[];
+  newCustomObjects: string[];
 };
 
 export function hasChanges(changelog: Changelog): boolean {
   return (
-    changelog.newTypes.length > 0 || changelog.removedTypes.length > 0 || changelog.newOrModifiedMembers.length > 0
+    changelog.newApexTypes.length > 0 ||
+    changelog.removedApexTypes.length > 0 ||
+    changelog.newOrModifiedApexMembers.length > 0
   );
 }
 
 export function processChangelog(oldVersion: VersionManifest, newVersion: VersionManifest): Changelog {
   return {
-    newTypes: getNewTypes(oldVersion, newVersion),
-    removedTypes: getRemovedTypes(oldVersion, newVersion),
-    newOrModifiedMembers: getNewOrModifiedMembers(oldVersion, newVersion),
+    newApexTypes: getNewTypes(oldVersion, newVersion),
+    removedApexTypes: getRemovedTypes(oldVersion, newVersion),
+    newOrModifiedApexMembers: getNewOrModifiedMembers(oldVersion, newVersion),
+    newCustomObjects: [],
   };
 }
 
