@@ -47,29 +47,31 @@ export function hasChanges(changelog: Changelog): boolean {
 
 export function processChangelog(oldVersion: VersionManifest, newVersion: VersionManifest): Changelog {
   return {
-    newApexTypes: getNewTypes(oldVersion, newVersion),
-    removedApexTypes: getRemovedTypes(oldVersion, newVersion),
-    newOrModifiedApexMembers: getNewOrModifiedMembers(oldVersion, newVersion),
-    newCustomObjects: [],
+    newApexTypes: getNewApexTypes(oldVersion, newVersion),
+    removedApexTypes: getRemovedApexTypes(oldVersion, newVersion),
+    newOrModifiedApexMembers: getNewOrModifiedApexMembers(oldVersion, newVersion),
+    newCustomObjects: getNewCustomObjects(oldVersion, newVersion),
     removedCustomObjects: [],
   };
 }
 
-function getNewTypes(oldVersion: VersionManifest, newVersion: VersionManifest): string[] {
+function getNewApexTypes(oldVersion: VersionManifest, newVersion: VersionManifest): string[] {
   return newVersion.types
+    .filter((newType): newType is Type => newType.type_name !== 'customobject')
     .filter((newType) => !oldVersion.types.some((oldType) => oldType.name.toLowerCase() === newType.name.toLowerCase()))
     .map((type) => type.name);
 }
 
-function getRemovedTypes(oldVersion: VersionManifest, newVersion: VersionManifest): string[] {
+function getRemovedApexTypes(oldVersion: VersionManifest, newVersion: VersionManifest): string[] {
   return oldVersion.types
+    .filter((newType): newType is Type => newType.type_name !== 'customobject')
     .filter((oldType) => !newVersion.types.some((newType) => newType.name.toLowerCase() === oldType.name.toLowerCase()))
     .map((type) => type.name);
 }
 
-function getNewOrModifiedMembers(oldVersion: VersionManifest, newVersion: VersionManifest): NewOrModifiedMember[] {
+function getNewOrModifiedApexMembers(oldVersion: VersionManifest, newVersion: VersionManifest): NewOrModifiedMember[] {
   return pipe(
-    getTypesInBothVersions(oldVersion, newVersion),
+    getApexTypesInBothVersions(oldVersion, newVersion),
     (typesInBoth) => [
       ...getNewOrModifiedEnumValues(typesInBoth),
       ...getNewOrModifiedMethods(typesInBoth),
@@ -95,6 +97,13 @@ function getNewOrModifiedEnumValues(typesInBoth: TypeInBoth[]): NewOrModifiedMem
         };
       }),
   );
+}
+
+function getNewCustomObjects(oldVersion: VersionManifest, newVersion: VersionManifest): string[] {
+  return newVersion.types
+    .filter((newType): newType is CustomObjectMetadata => newType.type_name === 'customobject')
+    .filter((newType) => !oldVersion.types.some((oldType) => oldType.name.toLowerCase() === newType.name.toLowerCase()))
+    .map((type) => type.name);
 }
 
 function getNewOrModifiedMethods(typesInBoth: TypeInBoth[]): NewOrModifiedMember[] {
@@ -162,8 +171,9 @@ type TypeInBoth = {
   newType: Type;
 };
 
-function getTypesInBothVersions(oldVersion: VersionManifest, newVersion: VersionManifest): TypeInBoth[] {
+function getApexTypesInBothVersions(oldVersion: VersionManifest, newVersion: VersionManifest): TypeInBoth[] {
   return oldVersion.types
+    .filter((newType): newType is Type => newType.type_name !== 'customobject')
     .map((oldType) => ({
       oldType,
       newType: newVersion.types.find((newType) => newType.name.toLowerCase() === oldType.name.toLowerCase()),
