@@ -123,7 +123,16 @@ describe('when generating a changelog', () => {
       expect(changeLog.newCustomObjects).toEqual([newObject.name]);
     });
 
-    // [] - Lists all removed objects
+    it('lists all removed custom objects', () => {
+      const oldObject = new CustomObjectMetadataBuilder().build();
+      const oldVersion = { types: [oldObject] };
+      const newVersion = { types: [] };
+
+      const changeLog = processChangelog(oldVersion, newVersion);
+
+      expect(changeLog.removedCustomObjects).toEqual([oldObject.name]);
+    });
+
     // [] - Lists changed object labels
     // [] - Lists all new fields of an object
     // [] - Lists all removed fields of an object

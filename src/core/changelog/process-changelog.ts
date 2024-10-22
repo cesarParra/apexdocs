@@ -51,7 +51,7 @@ export function processChangelog(oldVersion: VersionManifest, newVersion: Versio
     removedApexTypes: getRemovedApexTypes(oldVersion, newVersion),
     newOrModifiedApexMembers: getNewOrModifiedApexMembers(oldVersion, newVersion),
     newCustomObjects: getNewCustomObjects(oldVersion, newVersion),
-    removedCustomObjects: [],
+    removedCustomObjects: getRemovedCustomObjects(oldVersion, newVersion),
   };
 }
 
@@ -65,6 +65,20 @@ function getNewApexTypes(oldVersion: VersionManifest, newVersion: VersionManifes
 function getRemovedApexTypes(oldVersion: VersionManifest, newVersion: VersionManifest): string[] {
   return oldVersion.types
     .filter((newType): newType is Type => newType.type_name !== 'customobject')
+    .filter((oldType) => !newVersion.types.some((newType) => newType.name.toLowerCase() === oldType.name.toLowerCase()))
+    .map((type) => type.name);
+}
+
+function getNewCustomObjects(oldVersion: VersionManifest, newVersion: VersionManifest): string[] {
+  return newVersion.types
+    .filter((newType): newType is CustomObjectMetadata => newType.type_name === 'customobject')
+    .filter((newType) => !oldVersion.types.some((oldType) => oldType.name.toLowerCase() === newType.name.toLowerCase()))
+    .map((type) => type.name);
+}
+
+function getRemovedCustomObjects(oldVersion: VersionManifest, newVersion: VersionManifest): string[] {
+  return oldVersion.types
+    .filter((newType): newType is CustomObjectMetadata => newType.type_name === 'customobject')
     .filter((oldType) => !newVersion.types.some((newType) => newType.name.toLowerCase() === oldType.name.toLowerCase()))
     .map((type) => type.name);
 }
@@ -97,13 +111,6 @@ function getNewOrModifiedEnumValues(typesInBoth: TypeInBoth[]): NewOrModifiedMem
         };
       }),
   );
-}
-
-function getNewCustomObjects(oldVersion: VersionManifest, newVersion: VersionManifest): string[] {
-  return newVersion.types
-    .filter((newType): newType is CustomObjectMetadata => newType.type_name === 'customobject')
-    .filter((newType) => !oldVersion.types.some((oldType) => oldType.name.toLowerCase() === newType.name.toLowerCase()))
-    .map((type) => type.name);
 }
 
 function getNewOrModifiedMethods(typesInBoth: TypeInBoth[]): NewOrModifiedMember[] {
