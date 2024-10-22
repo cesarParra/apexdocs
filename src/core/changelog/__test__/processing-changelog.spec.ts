@@ -12,12 +12,19 @@ function apexTypeFromRawString(raw: string): Type {
 }
 
 class CustomObjectMetadataBuilder {
+  label: string = 'MyObject';
+
+  withLabel(label: string): CustomObjectMetadataBuilder {
+    this.label = label;
+    return this;
+  }
+
   build(): CustomObjectMetadata {
     return {
       type_name: 'customobject',
       deploymentStatus: 'Deployed',
       visibility: 'Public',
-      label: 'MyObject',
+      label: this.label,
       name: 'MyObject',
       description: null,
       fields: [],
@@ -133,7 +140,27 @@ describe('when generating a changelog', () => {
       expect(changeLog.removedCustomObjects).toEqual([oldObject.name]);
     });
 
-    // [] - Lists changed object labels
+    it('lists changed custom object labels', () => {
+      const oldObject = new CustomObjectMetadataBuilder().withLabel('OldLabel').build();
+      const newObject = new CustomObjectMetadataBuilder().withLabel('NewLabel').build();
+      const oldVersion = { types: [oldObject] };
+      const newVersion = { types: [newObject] };
+
+      const changeLog = processChangelog(oldVersion, newVersion);
+
+      expect(changeLog.customObjectModifications).toEqual([
+        {
+          typeName: oldObject.name,
+          modifications: [
+            {
+              __typename: 'LabelChanged',
+              name: 'NewLabel',
+            },
+          ],
+        },
+      ]);
+    });
+
     // [] - Lists all new fields of an object
     // [] - Lists all removed fields of an object
     // [] - Lists changed field labels

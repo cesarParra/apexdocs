@@ -17,7 +17,8 @@ type ModificationTypes =
   | 'NewProperty'
   | 'RemovedProperty'
   | 'NewField'
-  | 'RemovedField';
+  | 'RemovedField'
+  | 'LabelChanged';
 
 export type MemberModificationType = {
   __typename: ModificationTypes;
@@ -35,6 +36,7 @@ export type Changelog = {
   newOrModifiedApexMembers: NewOrModifiedMember[];
   newCustomObjects: string[];
   removedCustomObjects: string[];
+  customObjectModifications: NewOrModifiedMember[];
 };
 
 export function hasChanges(changelog: Changelog): boolean {
@@ -52,6 +54,7 @@ export function processChangelog(oldVersion: VersionManifest, newVersion: Versio
     newOrModifiedApexMembers: getNewOrModifiedApexMembers(oldVersion, newVersion),
     newCustomObjects: getNewCustomObjects(oldVersion, newVersion),
     removedCustomObjects: getRemovedCustomObjects(oldVersion, newVersion),
+    customObjectModifications: getModifiedCustomObjectLabels(oldVersion, newVersion),
   };
 }
 
@@ -95,7 +98,21 @@ function getNewOrModifiedApexMembers(oldVersion: VersionManifest, newVersion: Ve
   );
 }
 
-function getNewOrModifiedEnumValues(typesInBoth: TypeInBoth[]): NewOrModifiedMember[] {
+function getModifiedCustomObjectLabels(
+  oldVersion: VersionManifest,
+  newVersion: VersionManifest,
+): NewOrModifiedMember[] {
+  return pipe(getCustomObjectsInBothVersions(oldVersion, newVersion), (customObjectsInBoth) =>
+    customObjectsInBoth
+      .filter(({ oldType, newType }) => oldType.label.toLowerCase() !== newType.label.toLowerCase())
+      .map(({ newType }) => ({
+        typeName: newType.name,
+        modifications: [{ __typename: 'LabelChanged', name: newType.label }],
+      })),
+  );
+}
+
+function getNewOrModifiedEnumValues(typesInBoth: TypeInBoth<Type>[]): NewOrModifiedMember[] {
   return pipe(
     typesInBoth.filter((typeInBoth) => typeInBoth.oldType.type_name === 'enum'),
     (enumsInBoth) =>
@@ -113,7 +130,7 @@ function getNewOrModifiedEnumValues(typesInBoth: TypeInBoth[]): NewOrModifiedMem
   );
 }
 
-function getNewOrModifiedMethods(typesInBoth: TypeInBoth[]): NewOrModifiedMember[] {
+function getNewOrModifiedMethods(typesInBoth: TypeInBoth<Type>[]): NewOrModifiedMember[] {
   return pipe(
     typesInBoth.filter(
       (typeInBoth) => typeInBoth.oldType.type_name === 'class' || typeInBoth.oldType.type_name === 'interface',
@@ -146,7 +163,7 @@ function getNewOrModifiedMethods(typesInBoth: TypeInBoth[]): NewOrModifiedMember
   );
 }
 
-function getNewOrModifiedClassMembers(typesInBoth: TypeInBoth[]): NewOrModifiedMember[] {
+function getNewOrModifiedClassMembers(typesInBoth: TypeInBoth<Type>[]): NewOrModifiedMember[] {
   return pipe(
     typesInBoth.filter((typeInBoth) => typeInBoth.oldType.type_name === 'class'),
     (classesInBoth) =>
@@ -173,19 +190,32 @@ function getNewOrModifiedClassMembers(typesInBoth: TypeInBoth[]): NewOrModifiedM
   );
 }
 
-type TypeInBoth = {
-  oldType: Type;
-  newType: Type;
+type TypeInBoth<T extends Type | CustomObjectMetadata> = {
+  oldType: T;
+  newType: T;
 };
 
-function getApexTypesInBothVersions(oldVersion: VersionManifest, newVersion: VersionManifest): TypeInBoth[] {
+function getApexTypesInBothVersions(oldVersion: VersionManifest, newVersion: VersionManifest): TypeInBoth<Type>[] {
   return oldVersion.types
     .filter((newType): newType is Type => newType.type_name !== 'customobject')
     .map((oldType) => ({
       oldType,
       newType: newVersion.types.find((newType) => newType.name.toLowerCase() === oldType.name.toLowerCase()),
     }))
-    .filter((type) => type.newType !== undefined) as TypeInBoth[];
+    .filter((type): type is TypeInBoth<Type> => type.newType !== undefined);
+}
+
+function getCustomObjectsInBothVersions(
+  oldVersion: VersionManifest,
+  newVersion: VersionManifest,
+): TypeInBoth<CustomObjectMetadata>[] {
+  return oldVersion.types
+    .filter((newType): newType is CustomObjectMetadata => newType.type_name === 'customobject')
+    .map((oldType) => ({
+      oldType,
+      newType: newVersion.types.find((newType) => newType.name.toLowerCase() === oldType.name.toLowerCase()),
+    }))
+    .filter((type): type is TypeInBoth<CustomObjectMetadata> => type.newType !== undefined);
 }
 
 type NameAware = {
@@ -193,6 +223,7 @@ type NameAware = {
 };
 
 type AreEqualFn<T> = (oldValue: T, newValue: T) => boolean;
+
 function areEqualByName<T extends NameAware>(oldValue: T, newValue: T): boolean {
   return oldValue.name.toLowerCase() === newValue.name.toLowerCase();
 }
