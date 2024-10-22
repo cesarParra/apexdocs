@@ -34,6 +34,7 @@ export type Changelog = {
   removedApexTypes: string[];
   newOrModifiedApexMembers: NewOrModifiedMember[];
   newCustomObjects: string[];
+  removedCustomObjects: string[];
 };
 
 export function hasChanges(changelog: Changelog): boolean {
@@ -50,6 +51,7 @@ export function processChangelog(oldVersion: VersionManifest, newVersion: Versio
     removedApexTypes: getRemovedTypes(oldVersion, newVersion),
     newOrModifiedApexMembers: getNewOrModifiedMembers(oldVersion, newVersion),
     newCustomObjects: [],
+    removedCustomObjects: [],
   };
 }
 

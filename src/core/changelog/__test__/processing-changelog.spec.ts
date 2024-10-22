@@ -103,7 +103,15 @@ describe('when generating a changelog', () => {
 
       expect(changeLog.newCustomObjects).toEqual([]);
     });
-    // [] - Has no removed objects when both the old and new versions are the same
+
+    it('has no removed objects when both the old and new versions are the same', () => {
+      const oldVersion = { types: [new CustomObjectMetadataBuilder().build()] };
+      const newVersion = { types: [new CustomObjectMetadataBuilder().build()] };
+
+      const changeLog = processChangelog(oldVersion, newVersion);
+
+      expect(changeLog.removedCustomObjects).toEqual([]);
+    });
     // [] - Lists all new objects
     // [] - Lists all removed objects
     // [] - Lists changed object labels
