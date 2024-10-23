@@ -203,7 +203,27 @@ describe('when generating a changelog', () => {
       ]);
     });
 
-    // [] - Lists all removed fields of an object
+    it('lists all removed fields of a custom object', () => {
+      const oldField = new CustomFieldMetadataBuilder().build();
+      const oldObject = new CustomObjectMetadataBuilder().withField(oldField).build();
+      const newObject = new CustomObjectMetadataBuilder().build();
+      const oldVersion = { types: [oldObject] };
+      const newVersion = { types: [newObject] };
+
+      const changeLog = processChangelog(oldVersion, newVersion);
+
+      expect(changeLog.customObjectModifications).toEqual([
+        {
+          typeName: oldObject.name,
+          modifications: [
+            {
+              __typename: 'RemovedField',
+              name: oldField.name,
+            },
+          ],
+        },
+      ]);
+    });
     // [] - Lists changed field labels
   });
 
