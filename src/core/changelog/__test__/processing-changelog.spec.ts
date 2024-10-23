@@ -17,7 +17,7 @@ class CustomFieldMetadataBuilder {
     return {
       type: 'Text',
       type_name: 'customfield',
-      label: 'My Field',
+      label: 'MyField',
       name: 'MyField',
       description: null,
       parentName: 'MyObject',
@@ -173,7 +173,7 @@ describe('when generating a changelog', () => {
           typeName: oldObject.name,
           modifications: [
             {
-              __typename: 'LabelChanged',
+              __typename: 'CustomObjectLabelChanged',
               name: 'NewLabel',
             },
           ],
@@ -224,7 +224,6 @@ describe('when generating a changelog', () => {
         },
       ]);
     });
-    // [] - Lists changed field labels
   });
 
   describe('with enum code', () => {

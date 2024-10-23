@@ -9,7 +9,7 @@ type NewTypeRenderable = {
   description?: RenderableContent[];
 };
 
-type NewTypeSection<T extends 'class' | 'interface' | 'enum'> = {
+type NewTypeSection<T extends 'class' | 'interface' | 'enum' | 'customobject'> = {
   __type: T;
   heading: string;
   description: string;
@@ -39,19 +39,25 @@ export type RenderableChangelog = {
   newEnums: NewTypeSection<'enum'> | null;
   removedTypes: RemovedTypeSection | null;
   newOrModifiedMembers: NewOrModifiedMembersSection | null;
+  newCustomObjects: NewTypeSection<'customobject'> | null;
+  // todo: removed custom objects
+  // todo: changed custom objects
 };
 
 export function convertToRenderableChangelog(
   changelog: Changelog,
   newManifest: (Type | CustomObjectMetadata)[],
 ): RenderableChangelog {
-  const allNewTypes = changelog.newApexTypes.map(
+  const allNewTypes = [...changelog.newApexTypes, ...changelog.newCustomObjects].map(
     (newType) => newManifest.find((type) => type.name.toLowerCase() === newType.toLowerCase())!,
   );
 
   const newClasses = allNewTypes.filter((type): type is ClassMirror => type.type_name === 'class');
   const newInterfaces = allNewTypes.filter((type): type is InterfaceMirror => type.type_name === 'interface');
   const newEnums = allNewTypes.filter((type): type is EnumMirror => type.type_name === 'enum');
+  const newCustomObjects = allNewTypes.filter(
+    (type): type is CustomObjectMetadata => type.type_name === 'customobject',
+  );
 
   return {
     newClasses:
@@ -91,6 +97,18 @@ export function convertToRenderableChangelog(
             heading: 'New or Modified Members in Existing Types',
             description: 'These members have been added or modified.',
             modifications: changelog.newOrModifiedApexMembers.map(toRenderableModification),
+          }
+        : null,
+    newCustomObjects:
+      newCustomObjects.length > 0
+        ? {
+            __type: 'customobject',
+            heading: 'New Custom Objects',
+            description: 'These custom objects are new.',
+            types: newCustomObjects.map((type) => ({
+              name: type.name,
+              description: type.description ? [type.description] : undefined,
+            })),
           }
         : null,
   };
@@ -137,7 +155,7 @@ function toRenderableModificationDescription(memberModificationType: MemberModif
       return `New Type: ${memberModificationType.name}`;
     case 'RemovedType':
       return `Removed Type: ${memberModificationType.name}`;
-    case 'LabelChanged':
+    case 'CustomObjectLabelChanged':
       return `Label Changed to ${memberModificationType.name}`;
   }
 }

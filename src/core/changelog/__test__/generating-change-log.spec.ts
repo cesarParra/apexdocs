@@ -1,4 +1,4 @@
-import { UnparsedApexBundle } from '../../shared/types';
+import { UnparsedApexBundle, UnparsedCustomObjectBundle } from '../../shared/types';
 import { ChangeLogPageData, generateChangeLog } from '../generate-change-log';
 import { assertEither } from '../../test-helpers/assert-either';
 import { isSkip } from '../../shared/utils';
@@ -13,7 +13,19 @@ const config = {
   skipIfNoChanges: false,
 };
 
-// TODO: new integration tests here
+export function customObjectGenerator(
+  config: { deploymentStatus: string; visibility: string } = { deploymentStatus: 'Deployed', visibility: 'Public' },
+) {
+  return `
+    <?xml version="1.0" encoding="UTF-8"?>
+    <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+        <deploymentStatus>${config.deploymentStatus}</deploymentStatus>
+        <description>test object for testing</description>
+        <label>MyTestObject</label>
+        <pluralLabel>MyFirstObjects</pluralLabel>
+        <visibility>${config.visibility}</visibility>
+    </CustomObject>`;
+}
 
 describe('when generating a changelog', () => {
   it('should not skip when skipIfNoChanges, even if there are no changes', async () => {
@@ -182,6 +194,21 @@ describe('when generating a changelog', () => {
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('This is a test enum.'));
+    });
+  });
+
+  describe('that include new custom objects', () => {
+    it('should include a section for new custom objects', async () => {
+      const newObjectSource = customObjectGenerator();
+
+      const oldBundle: UnparsedCustomObjectBundle[] = [];
+      const newBundle: UnparsedCustomObjectBundle[] = [
+        { type: 'customobject', name: 'MyTestObject', content: newObjectSource, filePath: 'MyTestObject.object' },
+      ];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('## New Custom Objects'));
     });
   });
 

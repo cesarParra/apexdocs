@@ -37,6 +37,18 @@ export const changelogTemplate = `
 {{/each}}
 {{/if}}
 
+{{#if newCustomObjects}}
+## {{newCustomObjects.heading}}
+
+{{newCustomObjects.description}}
+
+{{#each newCustomObjects.types}}
+### {{this.name}}
+
+{{{renderContent this.description}}}
+{{/each}}
+{{/if}}
+
 {{#if removedTypes}}
 ## Removed Types
 

@@ -18,7 +18,7 @@ type ModificationTypes =
   | 'RemovedProperty'
   | 'NewField'
   | 'RemovedField'
-  | 'LabelChanged';
+  | 'CustomObjectLabelChanged';
 
 export type MemberModificationType = {
   __typename: ModificationTypes;
@@ -114,7 +114,7 @@ function getModifiedCustomObjectLabels(typesInBoth: TypeInBoth<CustomObjectMetad
     .filter(({ oldType, newType }) => oldType.label.toLowerCase() !== newType.label.toLowerCase())
     .map(({ newType }) => ({
       typeName: newType.name,
-      modifications: [{ __typename: 'LabelChanged', name: newType.label }],
+      modifications: [{ __typename: 'CustomObjectLabelChanged', name: newType.label }],
     }));
 }
 
