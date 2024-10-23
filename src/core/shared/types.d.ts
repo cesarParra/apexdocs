@@ -16,9 +16,8 @@ type LinkingStrategy =
   // No logic will be applied, the reference path will be used as is.
   | 'none';
 
-export type UserDefinedMarkdownConfig = {
+export type CliConfigurableMarkdownConfig = {
   sourceDir: string;
-  targetGenerator: 'markdown';
   targetDir: string;
   scope: string[];
   namespace?: string;
@@ -27,11 +26,15 @@ export type UserDefinedMarkdownConfig = {
   sortAlphabetically: boolean;
   includeMetadata: boolean;
   linkingStrategy: LinkingStrategy;
-  excludeTags: string[];
   referenceGuideTitle: string;
-  /** Glob patterns to exclude files from the documentation. */
+};
+
+export type UserDefinedMarkdownConfig = {
+  targetGenerator: 'markdown' /** Glob patterns to exclude files from the documentation. */;
+  excludeTags: string[];
   exclude: string[];
-} & Partial<ConfigurableHooks>;
+} & CliConfigurableMarkdownConfig &
+  Partial<ConfigurableHooks>;
 
 export type UserDefinedOpenApiConfig = {
   targetGenerator: 'openapi';
