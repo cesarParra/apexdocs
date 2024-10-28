@@ -254,7 +254,7 @@ function objectMetadataToRenderable(
     type: 'customobject',
     headingLevel: 1,
     apiName: getApiName(objectMetadata.name, config),
-    heading: objectMetadata.label,
+    heading: objectMetadata.label ?? objectMetadata.name,
     name: objectMetadata.name,
     doc: {
       description: objectMetadata.description ? [objectMetadata.description] : [],
@@ -277,10 +277,10 @@ function fieldMetadataToRenderable(
   return {
     type: 'field',
     headingLevel: headingLevel,
-    heading: field.label,
+    heading: field.label ?? field.name,
     description: field.description ? [field.description] : [],
     apiName: getApiName(field.name, config),
-    fieldType: field.type,
+    fieldType: field.type ?? '',
   };
 }
 
