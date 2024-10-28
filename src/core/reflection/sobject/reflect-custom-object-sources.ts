@@ -13,7 +13,7 @@ export type ObjectMetadata = {
   type_name: 'customobject';
   deploymentStatus: string;
   visibility: string;
-  label: string;
+  label?: string | null;
   name: string;
   description: string | null;
   fields: ParsedFile<CustomFieldMetadata>[];
@@ -45,7 +45,7 @@ function reflectCustomObjectSource(
   );
 }
 
-function validate(parseResult: unknown): E.Either<Error, { CustomObject: object }> {
+function validate(parseResult: unknown): E.Either<Error, { CustomObject: unknown }> {
   const err = E.left(new Error('Invalid SObject metadata'));
 
   function isObject(value: unknown) {
@@ -56,31 +56,19 @@ function validate(parseResult: unknown): E.Either<Error, { CustomObject: object 
     return 'CustomObject' in value ? E.right(value) : err;
   }
 
-  function theCustomObjectKeyIsAnObject(value: Record<'CustomObject', unknown>) {
-    return typeof value.CustomObject === 'object' ? E.right(value as Record<'CustomObject', object>) : err;
-  }
-
-  function theCustomObjectContainsTheLabelKey(value: Record<'CustomObject', object>) {
-    return 'label' in value.CustomObject ? E.right(value) : err;
-  }
-
-  return pipe(
-    parseResult,
-    isObject,
-    E.chain(hasTheCustomObjectKey),
-    E.chain(theCustomObjectKeyIsAnObject),
-    E.chain(theCustomObjectContainsTheLabelKey),
-  );
+  return pipe(parseResult, isObject, E.chain(hasTheCustomObjectKey));
 }
 
-function toObjectMetadata(parserResult: { CustomObject: object }): ObjectMetadata {
+function toObjectMetadata(parserResult: { CustomObject: unknown }): ObjectMetadata {
+  const customObject = typeof parserResult.CustomObject === 'object' ? parserResult.CustomObject : {};
+
   const defaultValues = {
     deploymentStatus: 'Deployed',
     visibility: 'Public',
     description: null,
     fields: [] as ParsedFile<CustomFieldMetadata>[],
   };
-  return { ...defaultValues, ...parserResult.CustomObject } as ObjectMetadata;
+  return { ...defaultValues, ...customObject } as ObjectMetadata;
 }
 
 function addName(objectMetadata: ObjectMetadata, name: string): ObjectMetadata {

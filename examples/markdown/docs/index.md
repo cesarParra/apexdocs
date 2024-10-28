@@ -2,6 +2,10 @@
 
 ## Custom Objects
 
+### [Account](custom-objects/Account.md)
+
+### [Contact](custom-objects/Contact.md)
+
 ### [Event__c](custom-objects/Event__c.md)
 
 Represents an event that people can register for.

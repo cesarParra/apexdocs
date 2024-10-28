@@ -155,7 +155,16 @@ export function processFiles(fileSystem: FileSystem) {
     return (rootPath: string, exclude: string[]) => {
       return pipe(
         fileSystem.getComponents(rootPath),
-        (components) => components.filter((component) => !isExcluded(component.content!, exclude)),
+        (components) => {
+          return components.map((component) => {
+            const pathLocation = component.type.name === 'ApexClass' ? component.content : component.xml;
+            return {
+              ...component,
+              filePath: pathLocation!,
+            };
+          });
+        },
+        (components) => components.filter((component) => !isExcluded(component.filePath, exclude)),
         (components) => convertersToUse.map((converter) => converter(components)),
         (bundles) => bundles.flat(),
       );

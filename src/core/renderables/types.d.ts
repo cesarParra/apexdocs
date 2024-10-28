@@ -190,7 +190,7 @@ export type RenderableCustomField = {
   apiName: string;
   description: RenderableContent[];
   type: 'field';
-  fieldType: string;
+  fieldType?: string | null;
 };
 
 export type Renderable = (RenderableClass | RenderableInterface | RenderableEnum | RenderableCustomObject) & {
