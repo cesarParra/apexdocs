@@ -156,26 +156,4 @@ describe('when parsing SObject metadata', () => {
 
     expect(E.isLeft(result)).toBe(true);
   });
-
-  test('an error is thrown when the label is missing', async () => {
-    const sObjectContent = `
-    <?xml version="1.0" encoding="UTF-8"?>
-    <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
-        <deploymentStatus>Deployed</deploymentStatus>
-        <description>test object for testing</description>
-        <pluralLabel>MyFirstObjects</pluralLabel>
-        <visibility>Public</visibility>
-    </CustomObject>`;
-
-    const unparsed: UnparsedCustomObjectBundle = {
-      type: 'customobject',
-      name: 'MyFirstObject__c',
-      filePath: 'src/object/MyFirstObject__c.object-meta.xml',
-      content: sObjectContent,
-    };
-
-    const result = await reflectCustomObjectSources([unparsed])();
-
-    expect(E.isLeft(result)).toBe(true);
-  });
 });

@@ -280,7 +280,7 @@ function fieldMetadataToRenderable(
     heading: field.label ?? field.name,
     description: field.description ? [field.description] : [],
     apiName: getApiName(field.name, config),
-    fieldType: field.type ?? '',
+    fieldType: field.type,
   };
 }
 

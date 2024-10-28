@@ -19,9 +19,11 @@ export const customObjectTemplate = `
 
 \`{{{apiName}}}\`
 
+{{#if fieldType}}
 **Type**
 
 *{{fieldType}}*
+{{/if}}
 
 {{#unless @last}}---{{/unless}}
 {{/each}}
