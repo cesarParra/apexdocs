@@ -17,9 +17,7 @@ import {
   DocPageReference,
   TransformReference,
   ParsedFile,
-  UnparsedCustomObjectBundle,
   UnparsedSourceBundle,
-  UnparsedCustomFieldBundle,
 } from '../shared/types';
 import { parsedFilesToRenderableBundle } from './adapters/renderable-bundle';
 import { reflectApexSource } from '../reflection/apex/reflect-apex-source';
@@ -37,6 +35,7 @@ import { HookError } from '../errors/errors';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { Type } from '@cparra/apex-reflection';
 import { reflectCustomFieldsAndObjects } from '../reflection/sobject/reflectCustomFieldsAndObjects';
+import { filterApexSourceFiles, filterCustomObjectsAndFields } from '#utils/source-bundle-utils';
 
 export type MarkdownGeneratorConfig = Omit<
   UserDefinedMarkdownConfig,
@@ -54,19 +53,6 @@ export function generateDocs(unparsedBundles: UnparsedSourceBundle[], config: Ma
     config.referenceGuideTemplate,
   );
   const sort = apply(sortTypesAndMembers, config.sortAlphabetically);
-
-  function filterApexSourceFiles(sourceFiles: UnparsedSourceBundle[]): UnparsedApexBundle[] {
-    return sourceFiles.filter((sourceFile): sourceFile is UnparsedApexBundle => sourceFile.type === 'apex');
-  }
-
-  function filterCustomObjectsAndFields(
-    sourceFiles: UnparsedSourceBundle[],
-  ): (UnparsedCustomObjectBundle | UnparsedCustomFieldBundle)[] {
-    return sourceFiles.filter(
-      (sourceFile): sourceFile is UnparsedCustomObjectBundle =>
-        sourceFile.type === 'customobject' || sourceFile.type === 'customfield',
-    );
-  }
 
   function filterOutCustomFields(parsedFiles: ParsedFile[]): ParsedFile<Type | CustomObjectMetadata>[] {
     return parsedFiles.filter(

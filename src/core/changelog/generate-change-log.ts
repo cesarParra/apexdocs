@@ -2,8 +2,6 @@ import {
   ParsedFile,
   Skip,
   UnparsedApexBundle,
-  UnparsedCustomFieldBundle,
-  UnparsedCustomObjectBundle,
   UnparsedSourceBundle,
   UserDefinedChangelogConfig,
 } from '../shared/types';
@@ -21,6 +19,7 @@ import { skip } from '../shared/utils';
 import { reflectCustomFieldsAndObjects } from '../reflection/sobject/reflectCustomFieldsAndObjects';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { Type } from '@cparra/apex-reflection';
+import { filterApexSourceFiles, filterCustomObjectsAndFields } from '#utils/source-bundle-utils';
 
 export type ChangeLogPageData = {
   content: string;
@@ -55,25 +54,10 @@ export function generateChangeLog(
 }
 
 function reflect(bundles: UnparsedSourceBundle[], config: Omit<UserDefinedChangelogConfig, 'targetGenerator'>) {
-  // TODO: Move to utility and reuse
-  function filterApexSourceFiles(sourceFiles: UnparsedSourceBundle[]): UnparsedApexBundle[] {
-    return sourceFiles.filter((sourceFile): sourceFile is UnparsedApexBundle => sourceFile.type === 'apex');
-  }
-
   const filterOutOfScopeApex = apply(filterScope, config.scope);
 
   function reflectApexFiles(sourceFiles: UnparsedApexBundle[]) {
     return pipe(reflectApexSource(sourceFiles), TE.map(filterOutOfScopeApex));
-  }
-
-  // TODO: Move to utility and reuse
-  function filterCustomObjectsAndFields(
-    sourceFiles: UnparsedSourceBundle[],
-  ): (UnparsedCustomObjectBundle | UnparsedCustomFieldBundle)[] {
-    return sourceFiles.filter(
-      (sourceFile): sourceFile is UnparsedCustomObjectBundle =>
-        sourceFile.type === 'customobject' || sourceFile.type === 'customfield',
-    );
   }
 
   return pipe(
