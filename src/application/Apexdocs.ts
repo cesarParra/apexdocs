@@ -11,6 +11,7 @@ import { DefaultFileSystem } from './file-system';
 import { Logger } from '#utils/logger';
 import {
   UnparsedApexBundle,
+  UnparsedSourceBundle,
   UserDefinedChangelogConfig,
   UserDefinedConfig,
   UserDefinedMarkdownConfig,
@@ -70,10 +71,10 @@ async function processOpenApi(config: UserDefinedOpenApiConfig, logger: Logger) 
 }
 
 async function processChangeLog(config: UserDefinedChangelogConfig) {
-  function loadFiles(): [UnparsedApexBundle[], UnparsedApexBundle[]] {
+  function loadFiles(): [UnparsedSourceBundle[], UnparsedSourceBundle[]] {
     return [
-      readFiles(['ApexClass'])(config.previousVersionDir, config.exclude) as UnparsedApexBundle[],
-      readFiles(['ApexClass'])(config.currentVersionDir, config.exclude) as UnparsedApexBundle[],
+      readFiles(['ApexClass', 'CustomObject', 'CustomField'])(config.previousVersionDir, config.exclude),
+      readFiles(['ApexClass', 'CustomObject', 'CustomField'])(config.currentVersionDir, config.exclude),
     ];
   }
 

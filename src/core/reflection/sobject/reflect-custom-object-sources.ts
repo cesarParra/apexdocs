@@ -9,30 +9,30 @@ import * as A from 'fp-ts/Array';
 import * as E from 'fp-ts/Either';
 import { CustomFieldMetadata } from './reflect-custom-field-source';
 
-export type ObjectMetadata = {
+export type CustomObjectMetadata = {
   type_name: 'customobject';
   deploymentStatus: string;
   visibility: string;
   label?: string | null;
   name: string;
   description: string | null;
-  fields: ParsedFile<CustomFieldMetadata>[];
+  fields: CustomFieldMetadata[];
 };
 
 export function reflectCustomObjectSources(
-  objectSources: UnparsedCustomObjectBundle[],
-): TE.TaskEither<ReflectionErrors, ParsedFile<ObjectMetadata>[]> {
+  objectBundles: UnparsedCustomObjectBundle[],
+): TE.TaskEither<ReflectionErrors, ParsedFile<CustomObjectMetadata>[]> {
   const semiGroupReflectionError: Semigroup<ReflectionErrors> = {
     concat: (x, y) => new ReflectionErrors([...x.errors, ...y.errors]),
   };
   const Ap = TE.getApplicativeTaskValidation(T.ApplyPar, semiGroupReflectionError);
 
-  return pipe(objectSources, A.traverse(Ap)(reflectCustomObjectSource));
+  return pipe(objectBundles, A.traverse(Ap)(reflectCustomObjectSource));
 }
 
 function reflectCustomObjectSource(
   objectSource: UnparsedCustomObjectBundle,
-): TE.TaskEither<ReflectionErrors, ParsedFile<ObjectMetadata>> {
+): TE.TaskEither<ReflectionErrors, ParsedFile<CustomObjectMetadata>> {
   return pipe(
     E.tryCatch(() => new XMLParser().parse(objectSource.content), E.toError),
     E.flatMap(validate),
@@ -59,33 +59,33 @@ function validate(parseResult: unknown): E.Either<Error, { CustomObject: unknown
   return pipe(parseResult, isObject, E.chain(hasTheCustomObjectKey));
 }
 
-function toObjectMetadata(parserResult: { CustomObject: unknown }): ObjectMetadata {
+function toObjectMetadata(parserResult: { CustomObject: unknown }): CustomObjectMetadata {
   const customObject = typeof parserResult.CustomObject === 'object' ? parserResult.CustomObject : {};
 
   const defaultValues = {
     deploymentStatus: 'Deployed',
     visibility: 'Public',
     description: null,
-    fields: [] as ParsedFile<CustomFieldMetadata>[],
+    fields: [] as CustomFieldMetadata[],
   };
-  return { ...defaultValues, ...customObject } as ObjectMetadata;
+  return { ...defaultValues, ...customObject } as CustomObjectMetadata;
 }
 
-function addName(objectMetadata: ObjectMetadata, name: string): ObjectMetadata {
+function addName(objectMetadata: CustomObjectMetadata, name: string): CustomObjectMetadata {
   return {
     ...objectMetadata,
     name,
   };
 }
 
-function addTypeName(objectMetadata: ObjectMetadata): ObjectMetadata {
+function addTypeName(objectMetadata: CustomObjectMetadata): CustomObjectMetadata {
   return {
     ...objectMetadata,
     type_name: 'customobject',
   };
 }
 
-function toParsedFile(filePath: string, typeMirror: ObjectMetadata): ParsedFile<ObjectMetadata> {
+function toParsedFile(filePath: string, typeMirror: CustomObjectMetadata): ParsedFile<CustomObjectMetadata> {
   return {
     source: {
       filePath: filePath,

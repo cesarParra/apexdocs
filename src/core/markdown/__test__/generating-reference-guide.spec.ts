@@ -1,14 +1,10 @@
 import { extendExpect } from './expect-extensions';
 import { pipe } from 'fp-ts/function';
 import * as E from 'fp-ts/Either';
-import {
-  unparsedApexBundleFromRawString,
-  generateDocs,
-  customObjectGenerator,
-  unparsedObjectBundleFromRawString,
-} from './test-helpers';
+import { unparsedApexBundleFromRawString, generateDocs, unparsedObjectBundleFromRawString } from './test-helpers';
 import { ReferenceGuidePageData } from '../../shared/types';
 import { assertEither } from '../../test-helpers/assert-either';
+import { customObjectGenerator } from '../../test-helpers/test-data-builders';
 
 describe('When generating the Reference Guide', () => {
   beforeAll(() => {

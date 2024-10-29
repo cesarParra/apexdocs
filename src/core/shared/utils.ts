@@ -1,6 +1,6 @@
 import { Skip } from './types';
 import { Type } from '@cparra/apex-reflection';
-import { ObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
+import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { MarkdownGeneratorConfig } from '../markdown/generate-docs';
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 
@@ -17,15 +17,15 @@ export function isSkip(value: unknown): value is Skip {
   return Object.prototype.hasOwnProperty.call(value, '_tag') && (value as Skip)._tag === 'Skip';
 }
 
-export function isObjectType(type: Type | ObjectMetadata | CustomFieldMetadata): type is ObjectMetadata {
-  return (type as ObjectMetadata).type_name === 'customobject';
+export function isObjectType(type: Type | CustomObjectMetadata | CustomFieldMetadata): type is CustomObjectMetadata {
+  return (type as CustomObjectMetadata).type_name === 'customobject';
 }
 
-export function isApexType(type: Type | ObjectMetadata | CustomFieldMetadata): type is Type {
+export function isApexType(type: Type | CustomObjectMetadata | CustomFieldMetadata): type is Type {
   return !isObjectType(type);
 }
 
-export function getTypeGroup(type: Type | ObjectMetadata, config: MarkdownGeneratorConfig): string {
+export function getTypeGroup(type: Type | CustomObjectMetadata, config: MarkdownGeneratorConfig): string {
   function getGroup(type: Type, config: MarkdownGeneratorConfig): string {
     const groupAnnotation = type.docComment?.annotations.find(
       (annotation) => annotation.name.toLowerCase() === 'group',
