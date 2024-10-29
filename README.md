@@ -17,7 +17,7 @@ create a documentation site that fits your needs, hosted in any static web hosti
 ApexDocs generates Markdown files, which can be integrated into any Static Site Generation (SSG) engine,
 (e.g. Jekyll, Vitepress, Hugo, Docosaurus, etc.) to create a documentation site that fits your needs.
 
-This gives you the flexibility to create beautiful leveraging your preferred SSG engine, which
+This gives you the flexibility to create beautiful sites by leveraging your preferred SSG engine, which
 usually provides a wide range of themes, dark mode support, and other features out of the box.
 
 <div align="center">
