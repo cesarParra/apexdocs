@@ -168,13 +168,16 @@ describe('when generating a changelog', () => {
 
       const changeLog = processChangelog(oldVersion, newVersion);
 
+      // TODO: The changelog should display the old label and the new label
+      // TODO: Same deal with fields
+
       expect(changeLog.customObjectModifications).toEqual([
         {
           typeName: oldObject.name,
           modifications: [
             {
               __typename: 'CustomObjectLabelChanged',
-              name: 'NewLabel',
+              name: newObject.name,
             },
           ],
         },

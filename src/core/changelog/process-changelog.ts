@@ -111,10 +111,10 @@ function getCustomObjectModifications(oldVersion: VersionManifest, newVersion: V
 
 function getModifiedCustomObjectLabels(typesInBoth: TypeInBoth<CustomObjectMetadata>[]): NewOrModifiedMember[] {
   return typesInBoth
-    .filter(({ oldType, newType }) => oldType.label.toLowerCase() !== newType.label.toLowerCase())
+    .filter(({ oldType, newType }) => oldType.label?.toLowerCase() !== newType.label?.toLowerCase())
     .map(({ newType }) => ({
       typeName: newType.name,
-      modifications: [{ __typename: 'CustomObjectLabelChanged', name: newType.label }],
+      modifications: [{ __typename: 'CustomObjectLabelChanged', name: newType.name }],
     }));
 }
 

@@ -59,7 +59,7 @@ function validate(parseResult: unknown): E.Either<Error, { CustomObject: unknown
   return pipe(parseResult, isObject, E.chain(hasTheCustomObjectKey));
 }
 
-function toObjectMetadata(parserResult: { CustomObject: object }): ObjectMetadata {
+function toObjectMetadata(parserResult: { CustomObject: unknown }): CustomObjectMetadata {
   const customObject = typeof parserResult.CustomObject === 'object' ? parserResult.CustomObject : {};
 
   const defaultValues = {
@@ -68,7 +68,7 @@ function toObjectMetadata(parserResult: { CustomObject: object }): ObjectMetadat
     description: null,
     fields: [] as CustomFieldMetadata[],
   };
-  return { ...defaultValues, ...customObject } as ObjectMetadata;
+  return { ...defaultValues, ...customObject } as CustomObjectMetadata;
 }
 
 function addName(objectMetadata: CustomObjectMetadata, name: string): CustomObjectMetadata {
