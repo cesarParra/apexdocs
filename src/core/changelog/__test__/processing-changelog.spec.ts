@@ -160,30 +160,6 @@ describe('when generating a changelog', () => {
       expect(changeLog.removedCustomObjects).toEqual([oldObject.name]);
     });
 
-    it('lists changed custom object labels', () => {
-      const oldObject = new CustomObjectMetadataBuilder().withLabel('OldLabel').build();
-      const newObject = new CustomObjectMetadataBuilder().withLabel('NewLabel').build();
-      const oldVersion = { types: [oldObject] };
-      const newVersion = { types: [newObject] };
-
-      const changeLog = processChangelog(oldVersion, newVersion);
-
-      // TODO: The changelog should display the old label and the new label
-      // TODO: Same deal with fields
-
-      expect(changeLog.customObjectModifications).toEqual([
-        {
-          typeName: oldObject.name,
-          modifications: [
-            {
-              __typename: 'CustomObjectLabelChanged',
-              name: newObject.name,
-            },
-          ],
-        },
-      ]);
-    });
-
     it('lists all new fields of a custom object', () => {
       const oldObject = new CustomObjectMetadataBuilder().build();
       const newField = new CustomFieldMetadataBuilder().build();

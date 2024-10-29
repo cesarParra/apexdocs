@@ -1,4 +1,9 @@
-import { UnparsedApexBundle, UnparsedCustomObjectBundle } from '../../shared/types';
+import {
+  UnparsedApexBundle,
+  UnparsedCustomFieldBundle,
+  UnparsedCustomObjectBundle,
+  UnparsedSourceBundle,
+} from '../../shared/types';
 import { ChangeLogPageData, generateChangeLog } from '../generate-change-log';
 import { assertEither } from '../../test-helpers/assert-either';
 import { isSkip } from '../../shared/utils';
@@ -27,31 +32,31 @@ function customObjectGenerator(
     </CustomObject>`;
 }
 
-// export const customField = `
-// <?xml version="1.0" encoding="UTF-8"?>
-// <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-//     <fullName>PhotoUrl__c</fullName>
-//     <externalId>false</externalId>
-//     <label>PhotoUrl</label>
-//     <required>false</required>
-//     <trackFeedHistory>false</trackFeedHistory>
-//     <type>Url</type>
-//     <description>A URL that points to a photo</description>
-// </CustomField>`;
-//
-// function unparsedFieldBundleFromRawString(meta: {
-//   rawContent: string;
-//   filePath: string;
-//   parentName: string;
-// }): UnparsedCustomFieldBundle {
-//   return {
-//     type: 'customfield',
-//     name: 'TestField__c',
-//     filePath: meta.filePath,
-//     content: meta.rawContent,
-//     parentName: meta.parentName,
-//   };
-// }
+export const customField = `
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PhotoUrl__c</fullName>
+    <externalId>false</externalId>
+    <label>PhotoUrl</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Url</type>
+    <description>A URL that points to a photo</description>
+</CustomField>`;
+
+function unparsedFieldBundleFromRawString(meta: {
+  rawContent: string;
+  filePath: string;
+  parentName: string;
+}): UnparsedCustomFieldBundle {
+  return {
+    type: 'customfield',
+    name: 'TestField__c',
+    filePath: meta.filePath,
+    content: meta.rawContent,
+    parentName: meta.parentName,
+  };
+}
 
 describe('when generating a changelog', () => {
   it('should not skip when skipIfNoChanges, even if there are no changes', async () => {
@@ -366,32 +371,72 @@ describe('when generating a changelog', () => {
     });
   });
 
-  // describe('that includes modifications to custom fields', () => {
-  //   it('should include a section for new or modified custom fields', async () => {
-  //     const oldObjectSource = customObjectGenerator();
-  //     const newObjectSource = customObjectGenerator();
-  //
-  //     const oldBundle: UnparsedSourceBundle[] = [
-  //       { type: 'customobject', name: 'MyTestObject', content: oldObjectSource, filePath: 'MyTestObject.object' },
-  //     ];
-  //     const newBundle: UnparsedSourceBundle[] = [
-  //       { type: 'customobject', name: 'MyTestObject', content: newObjectSource, filePath: 'MyTestObject.object' },
-  //       unparsedFieldBundleFromRawString({
-  //         rawContent: customField,
-  //         filePath: 'MyTestObject__c.field-meta.xml',
-  //         parentName: 'MyTestObject',
-  //       }),
-  //     ];
-  //
-  //     const result = await generateChangeLog(oldBundle, newBundle, config)();
-  //
-  //     assertEither(result, (data) =>
-  //       expect((data as ChangeLogPageData).content).toContain('## New or Modified Fields in Existing Objects'),
-  //     );
-  //   });
-  //
-  //   // TODO: should list new custom fields
-  //   // TODO: Should list removed custom fields
-  //   // TODO: Should mention custom field label modification
-  // });
+  describe('that includes modifications to custom fields', () => {
+    it('should include a section for new or removed custom fields', async () => {
+      const oldObjectSource = customObjectGenerator();
+      const newObjectSource = customObjectGenerator();
+
+      const oldBundle: UnparsedSourceBundle[] = [
+        { type: 'customobject', name: 'MyTestObject', content: oldObjectSource, filePath: 'MyTestObject.object' },
+      ];
+      const newBundle: UnparsedSourceBundle[] = [
+        { type: 'customobject', name: 'MyTestObject', content: newObjectSource, filePath: 'MyTestObject.object' },
+        unparsedFieldBundleFromRawString({
+          rawContent: customField,
+          filePath: 'MyTestObject__c.field-meta.xml',
+          parentName: 'MyTestObject',
+        }),
+      ];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) =>
+        expect((data as ChangeLogPageData).content).toContain('## New or Removed Fields in Existing Objects'),
+      );
+    });
+
+    it('should include new custom field names', async () => {
+      const oldObjectSource = customObjectGenerator();
+      const newObjectSource = customObjectGenerator();
+
+      const oldBundle: UnparsedSourceBundle[] = [
+        { type: 'customobject', name: 'MyTestObject', content: oldObjectSource, filePath: 'MyTestObject.object' },
+      ];
+      const newBundle: UnparsedSourceBundle[] = [
+        { type: 'customobject', name: 'MyTestObject', content: newObjectSource, filePath: 'MyTestObject.object' },
+        unparsedFieldBundleFromRawString({
+          rawContent: customField,
+          filePath: 'MyTestObject__c.field-meta.xml',
+          parentName: 'MyTestObject',
+        }),
+      ];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('New Field: TestField__c'));
+    });
+
+    it('should include removed custom field names', async () => {
+      const oldObjectSource = customObjectGenerator();
+      const newObjectSource = customObjectGenerator();
+
+      const oldBundle: UnparsedSourceBundle[] = [
+        { type: 'customobject', name: 'MyTestObject', content: oldObjectSource, filePath: 'MyTestObject.object' },
+        unparsedFieldBundleFromRawString({
+          rawContent: customField,
+          filePath: 'MyTestObject__c.field-meta.xml',
+          parentName: 'MyTestObject',
+        }),
+      ];
+      const newBundle: UnparsedSourceBundle[] = [
+        { type: 'customobject', name: 'MyTestObject', content: newObjectSource, filePath: 'MyTestObject.object' },
+      ];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) =>
+        expect((data as ChangeLogPageData).content).toContain('Removed Field: TestField__c'),
+      );
+    });
+  });
 });

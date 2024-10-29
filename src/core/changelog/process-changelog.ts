@@ -17,8 +17,7 @@ type ModificationTypes =
   | 'NewProperty'
   | 'RemovedProperty'
   | 'NewField'
-  | 'RemovedField'
-  | 'CustomObjectLabelChanged';
+  | 'RemovedField';
 
 export type MemberModificationType = {
   __typename: ModificationTypes;
@@ -101,21 +100,9 @@ function getNewOrModifiedApexMembers(oldVersion: VersionManifest, newVersion: Ve
 function getCustomObjectModifications(oldVersion: VersionManifest, newVersion: VersionManifest): NewOrModifiedMember[] {
   return pipe(
     getCustomObjectsInBothVersions(oldVersion, newVersion),
-    (customObjectsInBoth) => [
-      ...getModifiedCustomObjectLabels(customObjectsInBoth),
-      ...getNewOrRemovedCustomFields(customObjectsInBoth),
-    ],
+    (customObjectsInBoth) => getNewOrRemovedCustomFields(customObjectsInBoth),
     (customObjectModifications) => customObjectModifications.filter((member) => member.modifications.length > 0),
   );
-}
-
-function getModifiedCustomObjectLabels(typesInBoth: TypeInBoth<CustomObjectMetadata>[]): NewOrModifiedMember[] {
-  return typesInBoth
-    .filter(({ oldType, newType }) => oldType.label?.toLowerCase() !== newType.label?.toLowerCase())
-    .map(({ newType }) => ({
-      typeName: newType.name,
-      modifications: [{ __typename: 'CustomObjectLabelChanged', name: newType.name }],
-    }));
 }
 
 function getNewOrRemovedCustomFields(typesInBoth: TypeInBoth<CustomObjectMetadata>[]): NewOrModifiedMember[] {

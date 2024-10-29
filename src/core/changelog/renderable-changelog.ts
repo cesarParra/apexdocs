@@ -41,10 +41,7 @@ export type RenderableChangelog = {
   newOrModifiedMembers: NewOrModifiedMembersSection | null;
   newCustomObjects: NewTypeSection<'customobject'> | null;
   removedCustomObjects: RemovedTypeSection | null;
-  // todo: changed custom objects
-  // TODO: new fields
-  // TODO: removed fields
-  // TODO: changed fields
+  newOrRemovedCustomFields: NewOrModifiedMembersSection | null;
 };
 
 export function convertToRenderableChangelog(
@@ -122,6 +119,14 @@ export function convertToRenderableChangelog(
             types: changelog.removedCustomObjects,
           }
         : null,
+    newOrRemovedCustomFields:
+      changelog.customObjectModifications.length > 0
+        ? {
+            heading: 'New or Removed Fields in Existing Objects',
+            description: 'These custom fields have been added or removed.',
+            modifications: changelog.customObjectModifications.map(toRenderableModification),
+          }
+        : null,
   };
 }
 
@@ -166,7 +171,5 @@ function toRenderableModificationDescription(memberModificationType: MemberModif
       return `New Type: ${memberModificationType.name}`;
     case 'RemovedType':
       return `Removed Type: ${memberModificationType.name}`;
-    case 'CustomObjectLabelChanged':
-      return `Label Changed to ${memberModificationType.name}`;
   }
 }

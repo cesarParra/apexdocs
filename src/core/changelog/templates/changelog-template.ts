@@ -82,4 +82,18 @@ export const changelogTemplate = `
 {{/each}}
 {{/each}}
 {{/if}}
+
+{{#if newOrRemovedCustomFields}}
+## {{newOrRemovedCustomFields.heading}}
+
+{{newOrRemovedCustomFields.description}}
+
+{{#each newOrRemovedCustomFields.modifications}}
+### {{this.typeName}}
+
+{{#each this.modifications}}
+- {{this}}
+{{/each}}
+{{/each}}
+{{/if}}
 `.trim();
