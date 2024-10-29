@@ -1,9 +1,4 @@
-import {
-  UnparsedApexBundle,
-  UnparsedCustomFieldBundle,
-  UnparsedCustomObjectBundle,
-  UnparsedSourceBundle,
-} from '../../shared/types';
+import { UnparsedApexBundle, UnparsedCustomObjectBundle, UnparsedSourceBundle } from '../../shared/types';
 import { generateDocs as gen, MarkdownGeneratorConfig } from '../generate-docs';
 import { referenceGuideTemplate } from '../templates/reference-guide';
 
@@ -29,20 +24,6 @@ export function unparsedObjectBundleFromRawString(meta: {
   };
 }
 
-export function unparsedFieldBundleFromRawString(meta: {
-  rawContent: string;
-  filePath: string;
-  parentName: string;
-}): UnparsedCustomFieldBundle {
-  return {
-    type: 'customfield',
-    name: 'TestField__c',
-    filePath: meta.filePath,
-    content: meta.rawContent,
-    parentName: meta.parentName,
-  };
-}
-
 export function generateDocs(apexBundles: UnparsedSourceBundle[], config?: Partial<MarkdownGeneratorConfig>) {
   return gen(apexBundles, {
     targetDir: 'target',
@@ -58,15 +39,3 @@ export function generateDocs(apexBundles: UnparsedSourceBundle[], config?: Parti
     ...config,
   });
 }
-
-export const customField = `
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>PhotoUrl__c</fullName>
-    <externalId>false</externalId>
-    <label>PhotoUrl</label>
-    <required>false</required>
-    <trackFeedHistory>false</trackFeedHistory>
-    <type>Url</type>
-    <description>A URL that points to a photo</description>
-</CustomField>`;

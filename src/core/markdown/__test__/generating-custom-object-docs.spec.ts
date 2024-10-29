@@ -1,12 +1,7 @@
 import { extendExpect } from './expect-extensions';
-import {
-  customField,
-  generateDocs,
-  unparsedFieldBundleFromRawString,
-  unparsedObjectBundleFromRawString,
-} from './test-helpers';
+import { generateDocs, unparsedObjectBundleFromRawString } from './test-helpers';
 import { assertEither } from '../../test-helpers/assert-either';
-import { customObjectGenerator } from '../../test-helpers/test-data-builders';
+import { customObjectGenerator, unparsedFieldBundleFromRawString } from '../../test-helpers/test-data-builders';
 
 describe('Generates Custom Object documentation', () => {
   beforeAll(() => {
@@ -54,7 +49,6 @@ describe('Generates Custom Object documentation', () => {
       });
 
       const customFieldBundle = unparsedFieldBundleFromRawString({
-        rawContent: customField,
         filePath: 'src/object/TestField__c.field-meta.xml',
         parentName: 'TestObject__c',
       });
@@ -82,7 +76,6 @@ describe('Generates Custom Object documentation', () => {
       });
 
       const customFieldBundle = unparsedFieldBundleFromRawString({
-        rawContent: customField,
         filePath: 'src/object/TestField__c.field-meta.xml',
         parentName: 'TestObject__c',
       });
@@ -99,7 +92,6 @@ describe('Generates Custom Object documentation', () => {
       });
 
       const customFieldBundle = unparsedFieldBundleFromRawString({
-        rawContent: customField,
         filePath: 'src/object/TestField__c.field-meta.xml',
         parentName: 'TestObject__c',
       });
@@ -116,7 +108,6 @@ describe('Generates Custom Object documentation', () => {
       });
 
       const customFieldBundle = unparsedFieldBundleFromRawString({
-        rawContent: customField,
         filePath: 'src/object/TestField__c.field-meta.xml',
         parentName: 'TestObject__c',
       });

@@ -1,13 +1,8 @@
-import {
-  UnparsedApexBundle,
-  UnparsedCustomFieldBundle,
-  UnparsedCustomObjectBundle,
-  UnparsedSourceBundle,
-} from '../../shared/types';
+import { UnparsedApexBundle, UnparsedCustomObjectBundle, UnparsedSourceBundle } from '../../shared/types';
 import { ChangeLogPageData, generateChangeLog } from '../generate-change-log';
 import { assertEither } from '../../test-helpers/assert-either';
 import { isSkip } from '../../shared/utils';
-import { customObjectGenerator } from '../../test-helpers/test-data-builders';
+import { customObjectGenerator, unparsedFieldBundleFromRawString } from '../../test-helpers/test-data-builders';
 
 const config = {
   fileName: 'changelog',
@@ -18,32 +13,6 @@ const config = {
   exclude: [],
   skipIfNoChanges: false,
 };
-
-export const customField = `
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>PhotoUrl__c</fullName>
-    <externalId>false</externalId>
-    <label>PhotoUrl</label>
-    <required>false</required>
-    <trackFeedHistory>false</trackFeedHistory>
-    <type>Url</type>
-    <description>A URL that points to a photo</description>
-</CustomField>`;
-
-function unparsedFieldBundleFromRawString(meta: {
-  rawContent: string;
-  filePath: string;
-  parentName: string;
-}): UnparsedCustomFieldBundle {
-  return {
-    type: 'customfield',
-    name: 'TestField__c',
-    filePath: meta.filePath,
-    content: meta.rawContent,
-    parentName: meta.parentName,
-  };
-}
 
 describe('when generating a changelog', () => {
   it('should not skip when skipIfNoChanges, even if there are no changes', async () => {
@@ -369,7 +338,6 @@ describe('when generating a changelog', () => {
       const newBundle: UnparsedSourceBundle[] = [
         { type: 'customobject', name: 'MyTestObject', content: newObjectSource, filePath: 'MyTestObject.object' },
         unparsedFieldBundleFromRawString({
-          rawContent: customField,
           filePath: 'MyTestObject__c.field-meta.xml',
           parentName: 'MyTestObject',
         }),
@@ -392,7 +360,6 @@ describe('when generating a changelog', () => {
       const newBundle: UnparsedSourceBundle[] = [
         { type: 'customobject', name: 'MyTestObject', content: newObjectSource, filePath: 'MyTestObject.object' },
         unparsedFieldBundleFromRawString({
-          rawContent: customField,
           filePath: 'MyTestObject__c.field-meta.xml',
           parentName: 'MyTestObject',
         }),
@@ -410,7 +377,6 @@ describe('when generating a changelog', () => {
       const oldBundle: UnparsedSourceBundle[] = [
         { type: 'customobject', name: 'MyTestObject', content: oldObjectSource, filePath: 'MyTestObject.object' },
         unparsedFieldBundleFromRawString({
-          rawContent: customField,
           filePath: 'MyTestObject__c.field-meta.xml',
           parentName: 'MyTestObject',
         }),
