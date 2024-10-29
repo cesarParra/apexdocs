@@ -40,8 +40,11 @@ export type RenderableChangelog = {
   removedTypes: RemovedTypeSection | null;
   newOrModifiedMembers: NewOrModifiedMembersSection | null;
   newCustomObjects: NewTypeSection<'customobject'> | null;
-  // todo: removed custom objects
+  removedCustomObjects: RemovedTypeSection | null;
   // todo: changed custom objects
+  // TODO: new fields
+  // TODO: removed fields
+  // TODO: changed fields
 };
 
 export function convertToRenderableChangelog(
@@ -109,6 +112,14 @@ export function convertToRenderableChangelog(
               name: type.name,
               description: type.description ? [type.description] : undefined,
             })),
+          }
+        : null,
+    removedCustomObjects:
+      changelog.removedCustomObjects.length > 0
+        ? {
+            heading: 'Removed Custom Objects',
+            description: 'These custom objects have been removed.',
+            types: changelog.removedCustomObjects,
           }
         : null,
   };

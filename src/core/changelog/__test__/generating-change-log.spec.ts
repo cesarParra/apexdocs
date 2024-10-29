@@ -13,7 +13,7 @@ const config = {
   skipIfNoChanges: false,
 };
 
-export function customObjectGenerator(
+function customObjectGenerator(
   config: { deploymentStatus: string; visibility: string } = { deploymentStatus: 'Deployed', visibility: 'Public' },
 ) {
   return `
@@ -26,6 +26,32 @@ export function customObjectGenerator(
         <visibility>${config.visibility}</visibility>
     </CustomObject>`;
 }
+
+// export const customField = `
+// <?xml version="1.0" encoding="UTF-8"?>
+// <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+//     <fullName>PhotoUrl__c</fullName>
+//     <externalId>false</externalId>
+//     <label>PhotoUrl</label>
+//     <required>false</required>
+//     <trackFeedHistory>false</trackFeedHistory>
+//     <type>Url</type>
+//     <description>A URL that points to a photo</description>
+// </CustomField>`;
+//
+// function unparsedFieldBundleFromRawString(meta: {
+//   rawContent: string;
+//   filePath: string;
+//   parentName: string;
+// }): UnparsedCustomFieldBundle {
+//   return {
+//     type: 'customfield',
+//     name: 'TestField__c',
+//     filePath: meta.filePath,
+//     content: meta.rawContent,
+//     parentName: meta.parentName,
+//   };
+// }
 
 describe('when generating a changelog', () => {
   it('should not skip when skipIfNoChanges, even if there are no changes', async () => {
@@ -255,6 +281,36 @@ describe('when generating a changelog', () => {
     });
   });
 
+  describe('that includes removed custom objects', () => {
+    it('should include a section for removed custom objects', async () => {
+      const oldObjectSource = customObjectGenerator();
+
+      const oldBundle: UnparsedCustomObjectBundle[] = [
+        { type: 'customobject', name: 'MyTestObject', content: oldObjectSource, filePath: 'MyTestObject.object' },
+      ];
+      const newBundle: UnparsedCustomObjectBundle[] = [];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) =>
+        expect((data as ChangeLogPageData).content).toContain('## Removed Custom Objects'),
+      );
+    });
+
+    it('should include the removed custom object name', async () => {
+      const oldObjectSource = customObjectGenerator();
+
+      const oldBundle: UnparsedCustomObjectBundle[] = [
+        { type: 'customobject', name: 'MyTestObject', content: oldObjectSource, filePath: 'MyTestObject.object' },
+      ];
+      const newBundle: UnparsedCustomObjectBundle[] = [];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('- MyTestObject'));
+    });
+  });
+
   describe('that includes modifications to existing members', () => {
     it('should include a section for new or modified members', async () => {
       const oldClassSource = 'class Test {}';
@@ -309,4 +365,33 @@ describe('when generating a changelog', () => {
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('myMethod'));
     });
   });
+
+  // describe('that includes modifications to custom fields', () => {
+  //   it('should include a section for new or modified custom fields', async () => {
+  //     const oldObjectSource = customObjectGenerator();
+  //     const newObjectSource = customObjectGenerator();
+  //
+  //     const oldBundle: UnparsedSourceBundle[] = [
+  //       { type: 'customobject', name: 'MyTestObject', content: oldObjectSource, filePath: 'MyTestObject.object' },
+  //     ];
+  //     const newBundle: UnparsedSourceBundle[] = [
+  //       { type: 'customobject', name: 'MyTestObject', content: newObjectSource, filePath: 'MyTestObject.object' },
+  //       unparsedFieldBundleFromRawString({
+  //         rawContent: customField,
+  //         filePath: 'MyTestObject__c.field-meta.xml',
+  //         parentName: 'MyTestObject',
+  //       }),
+  //     ];
+  //
+  //     const result = await generateChangeLog(oldBundle, newBundle, config)();
+  //
+  //     assertEither(result, (data) =>
+  //       expect((data as ChangeLogPageData).content).toContain('## New or Modified Fields in Existing Objects'),
+  //     );
+  //   });
+  //
+  //   // TODO: should list new custom fields
+  //   // TODO: Should list removed custom fields
+  //   // TODO: Should mention custom field label modification
+  // });
 });

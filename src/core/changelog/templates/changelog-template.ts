@@ -50,11 +50,21 @@ export const changelogTemplate = `
 {{/if}}
 
 {{#if removedTypes}}
-## Removed Types
+## {{removedTypes.heading}}
 
 {{removedTypes.description}}
 
 {{#each removedTypes.types}}
+- {{this}}
+{{/each}}
+{{/if}}
+
+{{#if removedCustomObjects}}
+## {{removedCustomObjects.heading}}
+
+{{removedCustomObjects.description}}
+
+{{#each removedCustomObjects.types}}
 - {{this}}
 {{/each}}
 {{/if}}
