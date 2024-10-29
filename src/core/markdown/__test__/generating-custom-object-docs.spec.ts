@@ -1,12 +1,12 @@
 import { extendExpect } from './expect-extensions';
 import {
   customField,
-  customObjectGenerator,
   generateDocs,
   unparsedFieldBundleFromRawString,
   unparsedObjectBundleFromRawString,
 } from './test-helpers';
 import { assertEither } from '../../test-helpers/assert-either';
+import { customObjectGenerator } from '../../test-helpers/test-data-builders';
 
 describe('Generates Custom Object documentation', () => {
   beforeAll(() => {

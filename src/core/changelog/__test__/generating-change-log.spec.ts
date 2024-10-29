@@ -7,6 +7,7 @@ import {
 import { ChangeLogPageData, generateChangeLog } from '../generate-change-log';
 import { assertEither } from '../../test-helpers/assert-either';
 import { isSkip } from '../../shared/utils';
+import { customObjectGenerator } from '../../test-helpers/test-data-builders';
 
 const config = {
   fileName: 'changelog',
@@ -17,20 +18,6 @@ const config = {
   exclude: [],
   skipIfNoChanges: false,
 };
-
-function customObjectGenerator(
-  config: { deploymentStatus: string; visibility: string } = { deploymentStatus: 'Deployed', visibility: 'Public' },
-) {
-  return `
-    <?xml version="1.0" encoding="UTF-8"?>
-    <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
-        <deploymentStatus>${config.deploymentStatus}</deploymentStatus>
-        <description>test object for testing</description>
-        <label>MyTestObject</label>
-        <pluralLabel>MyFirstObjects</pluralLabel>
-        <visibility>${config.visibility}</visibility>
-    </CustomObject>`;
-}
 
 export const customField = `
 <?xml version="1.0" encoding="UTF-8"?>

@@ -50,3 +50,20 @@ These members have been added or modified.
 
 - New Method: newMethod
 - Removed Method: deprecatedMethod
+
+## New or Removed Fields in Existing Objects
+
+These custom fields have been added or removed.
+
+### Event__c
+
+- New Field: Description__c
+- New Field: Tag_Line__c
+
+### Price_Component__c
+
+- New Field: Description__c
+
+### Product__c
+
+- New Field: Description__c

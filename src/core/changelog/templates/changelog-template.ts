@@ -94,6 +94,7 @@ export const changelogTemplate = `
 {{#each this.modifications}}
 - {{this}}
 {{/each}}
+
 {{/each}}
 {{/if}}
 `.trim();
