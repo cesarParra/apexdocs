@@ -12,8 +12,8 @@ export type CustomFieldMetadata = {
   type_name: 'customfield';
   description: string | null;
   name: string;
-  label: string;
-  type: string;
+  label?: string | null;
+  type?: string | null;
   parentName: string;
 };
 
@@ -43,7 +43,7 @@ function reflectCustomFieldSource(
   );
 }
 
-function validate(parsedResult: unknown): E.Either<Error, { CustomField: object }> {
+function validate(parsedResult: unknown): E.Either<Error, { CustomField: unknown }> {
   const err = E.left(new Error('Invalid custom field metadata'));
 
   function isObject(value: unknown) {
@@ -54,34 +54,16 @@ function validate(parsedResult: unknown): E.Either<Error, { CustomField: object 
     return 'CustomField' in value ? E.right(value) : err;
   }
 
-  function theCustomFieldKeyIsAnObject(value: Record<'CustomField', unknown>) {
-    return typeof value.CustomField === 'object' ? E.right(value as Record<'CustomField', object>) : err;
-  }
-
-  function theCustomFieldObjectContainsTheLabelKey(value: Record<'CustomField', object>) {
-    return 'label' in value.CustomField ? E.right(value) : err;
-  }
-
-  function theCustomFieldObjectContainsTheTypeKey(value: Record<'CustomField', object>) {
-    return 'type' in value.CustomField ? E.right(value) : err;
-  }
-
-  return pipe(
-    parsedResult,
-    isObject,
-    E.chain(hasTheCustomFieldKey),
-    E.chain(theCustomFieldKeyIsAnObject),
-    E.chain(theCustomFieldObjectContainsTheLabelKey),
-    E.chain(theCustomFieldObjectContainsTheTypeKey),
-  );
+  return pipe(parsedResult, isObject, E.chain(hasTheCustomFieldKey));
 }
 
-function toCustomFieldMetadata(parserResult: { CustomField: object }): CustomFieldMetadata {
+function toCustomFieldMetadata(parserResult: { CustomField: unknown }): CustomFieldMetadata {
+  const customField = typeof parserResult.CustomField === 'object' ? parserResult.CustomField : {};
   const defaultValues = {
     description: null,
   };
 
-  return { ...defaultValues, ...parserResult.CustomField, type_name: 'customfield' } as CustomFieldMetadata;
+  return { ...defaultValues, ...customField, type_name: 'customfield' } as CustomFieldMetadata;
 }
 
 function addName(metadata: CustomFieldMetadata, name: string): CustomFieldMetadata {

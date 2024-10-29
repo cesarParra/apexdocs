@@ -1,7 +1,8 @@
 import { Options } from 'yargs';
 import { markdownDefaults } from '../../defaults';
+import { CliConfigurableMarkdownConfig } from '../../core/shared/types';
 
-export const markdownOptions: { [key: string]: Options } = {
+export const markdownOptions: Record<keyof CliConfigurableMarkdownConfig, Options> = {
   sourceDir: {
     type: 'string',
     alias: 's',
@@ -28,7 +29,7 @@ export const markdownOptions: { [key: string]: Options } = {
     default: markdownDefaults.defaultGroupName,
     describe: 'Defines the @group name to be used when a file does not specify it.',
   },
-  customObjectGroupName: {
+  customObjectsGroupName: {
     type: 'string',
     default: markdownDefaults.customObjectsGroupName,
     describe: 'The name under which custom objects will be grouped in the Reference Guide',

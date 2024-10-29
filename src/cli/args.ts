@@ -142,7 +142,7 @@ function extractArgsForCommandsProvidedInConfig(
       }
     });
 
-  return E.sequenceArray(configs);
+  return E.sequenceArray(configs) as E.Either<Error, readonly UserDefinedConfig[]>;
 }
 
 type NoConfig = {
