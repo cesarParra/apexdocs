@@ -23,6 +23,9 @@ export const customObjectTemplate = `
 **Type**
 
 *{{fieldType}}*
+{{#each pickListValues}}
+* {{this}}
+{{/each}}
 {{/if}}
 
 {{#unless @last}}---{{/unless}}

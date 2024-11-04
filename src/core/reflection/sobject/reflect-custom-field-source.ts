@@ -66,7 +66,7 @@ function toCustomFieldMetadata(parserResult: { CustomField: unknown }): CustomFi
   };
 
   const pickListValues =
-    isCustomField(customField) && customField.type === 'Picklist' ? toPickListValues(customField) : [];
+    hasType(customField) && customField.type?.toLowerCase() === 'picklist' ? toPickListValues(customField) : [];
   return { ...defaultValues, ...customField, type_name: 'customfield', pickListValues } as CustomFieldMetadata;
 }
 
@@ -85,7 +85,7 @@ function toPickListValues(customField: object): string[] {
   return [];
 }
 
-function isCustomField(customField: object): customField is CustomFieldMetadata {
+function hasType(customField: object): customField is CustomFieldMetadata {
   return (customField as CustomFieldMetadata).type != undefined;
 }
 

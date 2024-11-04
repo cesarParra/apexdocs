@@ -281,6 +281,7 @@ function fieldMetadataToRenderable(
     description: field.description ? [field.description] : [],
     apiName: getApiName(field.name, config),
     fieldType: field.type,
+    pickListValues: field.pickListValues
   };
 }
 
