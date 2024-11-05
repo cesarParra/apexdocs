@@ -39,3 +39,36 @@ export function generateDocs(apexBundles: UnparsedSourceBundle[], config?: Parti
     ...config,
   });
 }
+
+export const customFieldPickListValues = `
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status__c</fullName>
+          <externalId>false</externalId>
+          <label>Status</label>
+          <required>true</required>
+          <trackFeedHistory>false</trackFeedHistory>
+          <description>Status</description>
+          <type>Picklist</type>
+          <valueSet>
+              <restricted>true</restricted>
+              <valueSetDefinition>
+                  <sorted>false</sorted>
+                  <value>
+                      <fullName>Staging</fullName>
+                      <default>false</default>
+                      <label>Staging</label>
+                  </value>
+                  <value>
+                      <fullName>Active</fullName>
+                      <default>false</default>
+                      <label>Active</label>
+                  </value>
+                  <value>
+                      <fullName>Inactive</fullName>
+                      <default>false</default>
+                      <label>Inactive</label>
+                  </value>
+              </valueSetDefinition>
+          </valueSet>
+</CustomField>`;

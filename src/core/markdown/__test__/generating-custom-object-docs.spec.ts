@@ -1,5 +1,5 @@
 import { extendExpect } from './expect-extensions';
-import { generateDocs, unparsedObjectBundleFromRawString } from './test-helpers';
+import { customFieldPickListValues, generateDocs, unparsedObjectBundleFromRawString } from './test-helpers';
 import { assertEither } from '../../test-helpers/assert-either';
 import { customObjectGenerator, unparsedFieldBundleFromRawString } from '../../test-helpers/test-data-builders';
 
