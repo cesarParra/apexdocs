@@ -63,3 +63,7 @@ Represents a line item on a sales order.
 **Type**
 
 *Picklist*
+
+#### Possible values are
+* Charge
+* Discount

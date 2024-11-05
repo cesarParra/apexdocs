@@ -23,6 +23,13 @@ export const customObjectTemplate = `
 **Type**
 
 *{{fieldType}}*
+
+{{#if pickListValues}}
+{{ heading pickListValues.headingLevel pickListValues.heading }}
+{{#each pickListValues.value}}
+* {{{this}}}
+{{/each}}
+{{/if}}
 {{/if}}
 
 {{#unless @last}}---{{/unless}}
