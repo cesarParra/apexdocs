@@ -189,7 +189,6 @@ export type RenderableCustomField = {
   heading: string;
   apiName: string;
   description: RenderableContent[];
-  isPicklist: boolean;
   pickListValues?: RenderableSection<string[]>
   type: 'field';
   fieldType?: string | null;

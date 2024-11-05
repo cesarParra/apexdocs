@@ -15,7 +15,7 @@ export type CustomFieldMetadata = {
   label?: string | null;
   type?: string | null;
   parentName: string;
-  pickListValues: string[];
+  pickListValues?: string[];
 };
 
 export function reflectCustomFieldSources(
@@ -66,7 +66,7 @@ function toCustomFieldMetadata(parserResult: { CustomField: unknown }): CustomFi
   };
 
   const pickListValues =
-    hasType(customField) && customField.type?.toLowerCase() === 'picklist' ? toPickListValues(customField) : [];
+    hasType(customField) && customField.type?.toLowerCase() === 'picklist' ? toPickListValues(customField) : undefined;
   return { ...defaultValues, ...customField, type_name: 'customfield', pickListValues } as CustomFieldMetadata;
 }
 
@@ -86,7 +86,7 @@ function toPickListValues(customField: object): string[] {
 }
 
 function hasType(customField: object): customField is CustomFieldMetadata {
-  return (customField as CustomFieldMetadata).type != undefined;
+  return !!(customField as CustomFieldMetadata).type;
 }
 
 function addName(metadata: CustomFieldMetadata, name: string): CustomFieldMetadata {
