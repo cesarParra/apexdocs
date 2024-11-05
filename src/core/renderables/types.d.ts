@@ -189,6 +189,7 @@ export type RenderableCustomField = {
   heading: string;
   apiName: string;
   description: RenderableContent[];
+  pickListValues?: RenderableSection<string[]>
   type: 'field';
   fieldType?: string | null;
 };

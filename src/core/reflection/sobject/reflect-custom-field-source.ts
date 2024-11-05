@@ -15,6 +15,7 @@ export type CustomFieldMetadata = {
   label?: string | null;
   type?: string | null;
   parentName: string;
+  pickListValues?: string[];
 };
 
 export function reflectCustomFieldSources(
@@ -58,12 +59,34 @@ function validate(parsedResult: unknown): E.Either<Error, { CustomField: unknown
 }
 
 function toCustomFieldMetadata(parserResult: { CustomField: unknown }): CustomFieldMetadata {
-  const customField = typeof parserResult.CustomField === 'object' ? parserResult.CustomField : {};
+  const customField =
+    parserResult?.CustomField != null && typeof parserResult.CustomField === 'object' ? parserResult.CustomField : {};
   const defaultValues = {
     description: null,
   };
 
-  return { ...defaultValues, ...customField, type_name: 'customfield' } as CustomFieldMetadata;
+  const pickListValues =
+    hasType(customField) && customField.type?.toLowerCase() === 'picklist' ? toPickListValues(customField) : undefined;
+  return { ...defaultValues, ...customField, type_name: 'customfield', pickListValues } as CustomFieldMetadata;
+}
+
+function toPickListValues(customField: object): string[] {
+  if ('valueSet' in customField) {
+    const valueSet = customField.valueSet as object;
+    if ('valueSetDefinition' in valueSet) {
+      const valueSetDefinition = valueSet.valueSetDefinition as object;
+      if ('value' in valueSetDefinition) {
+        const pickListValues = valueSetDefinition.value as object[];
+        return pickListValues.filter((each) => 'fullName' in each).map((each) => each.fullName as string);
+      }
+    }
+  }
+
+  return [];
+}
+
+function hasType(customField: object): customField is CustomFieldMetadata {
+  return !!(customField as CustomFieldMetadata).type;
 }
 
 function addName(metadata: CustomFieldMetadata, name: string): CustomFieldMetadata {

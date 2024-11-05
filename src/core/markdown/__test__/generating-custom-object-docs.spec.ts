@@ -58,6 +58,25 @@ describe('Generates Custom Object documentation', () => {
       assertEither(result, (data) => expect(data).firstDocContains('## Fields'));
     });
 
+    it('displays the pick list values name', async () => {
+      const customObjectBundle = unparsedObjectBundleFromRawString({
+        rawContent: customObjectGenerator(),
+        filePath: 'src/object/TestObject__c.object-meta.xml',
+      });
+
+      const customFieldBundle = unparsedFieldBundleFromRawString({
+        rawContent: customFieldPickListValues,
+        filePath: 'src/object/TestField__c.field-meta.xml',
+        parentName: 'TestObject__c',
+      });
+
+      const result = await generateDocs([customObjectBundle, customFieldBundle])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('* Staging'));
+      assertEither(result, (data) => expect(data).firstDocContains('* Active'));
+      assertEither(result, (data) => expect(data).firstDocContains('* Inactive'));
+    });
+
     it('does not display the Fields heading if no fields are present', async () => {
       const input = unparsedObjectBundleFromRawString({
         rawContent: customObjectGenerator(),
