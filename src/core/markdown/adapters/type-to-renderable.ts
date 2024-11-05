@@ -281,7 +281,13 @@ function fieldMetadataToRenderable(
     description: field.description ? [field.description] : [],
     apiName: getApiName(field.name, config),
     fieldType: field.type,
-    pickListValues: field.pickListValues
+    isPicklist: field.pickListValues.length > 0,
+    pickListValues: {
+      headingLevel: headingLevel + 1,
+      heading: 'Possible values are',
+      value: field.pickListValues
+      
+    }
   };
 }
 
