@@ -37,12 +37,34 @@ export const changelogTemplate = `
 {{/each}}
 {{/if}}
 
+{{#if newCustomObjects}}
+## {{newCustomObjects.heading}}
+
+{{newCustomObjects.description}}
+
+{{#each newCustomObjects.types}}
+### {{this.name}}
+
+{{{renderContent this.description}}}
+{{/each}}
+{{/if}}
+
 {{#if removedTypes}}
-## Removed Types
+## {{removedTypes.heading}}
 
 {{removedTypes.description}}
 
 {{#each removedTypes.types}}
+- {{this}}
+{{/each}}
+{{/if}}
+
+{{#if removedCustomObjects}}
+## {{removedCustomObjects.heading}}
+
+{{removedCustomObjects.description}}
+
+{{#each removedCustomObjects.types}}
 - {{this}}
 {{/each}}
 {{/if}}
@@ -58,6 +80,21 @@ export const changelogTemplate = `
 {{#each this.modifications}}
 - {{this}}
 {{/each}}
+{{/each}}
+{{/if}}
+
+{{#if newOrRemovedCustomFields}}
+## {{newOrRemovedCustomFields.heading}}
+
+{{newOrRemovedCustomFields.description}}
+
+{{#each newOrRemovedCustomFields.modifications}}
+### {{this.typeName}}
+
+{{#each this.modifications}}
+- {{this}}
+{{/each}}
+
 {{/each}}
 {{/if}}
 `.trim();

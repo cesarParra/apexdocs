@@ -1,4 +1,10 @@
-import { ParsedFile, Skip, UnparsedApexBundle, UserDefinedChangelogConfig } from '../shared/types';
+import {
+  ParsedFile,
+  Skip,
+  UnparsedApexBundle,
+  UnparsedSourceBundle,
+  UserDefinedChangelogConfig,
+} from '../shared/types';
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
 import { reflectApexSource } from '../reflection/apex/reflect-apex-source';
@@ -9,7 +15,11 @@ import { changelogTemplate } from './templates/changelog-template';
 import { ReflectionErrors } from '../errors/errors';
 import { apply } from '#utils/fp';
 import { filterScope } from '../reflection/apex/filter-scope';
-import { isApexType, skip } from '../shared/utils';
+import { skip } from '../shared/utils';
+import { reflectCustomFieldsAndObjects } from '../reflection/sobject/reflectCustomFieldsAndObjects';
+import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
+import { Type } from '@cparra/apex-reflection';
+import { filterApexSourceFiles, filterCustomObjectsAndFields } from '#utils/source-bundle-utils';
 
 export type ChangeLogPageData = {
   content: string;
@@ -17,16 +27,10 @@ export type ChangeLogPageData = {
 };
 
 export function generateChangeLog(
-  oldBundles: UnparsedApexBundle[],
-  newBundles: UnparsedApexBundle[],
+  oldBundles: UnparsedSourceBundle[],
+  newBundles: UnparsedSourceBundle[],
   config: Omit<UserDefinedChangelogConfig, 'targetGenerator'>,
 ): TE.TaskEither<ReflectionErrors, ChangeLogPageData | Skip> {
-  const filterOutOfScope = apply(filterScope, config.scope);
-
-  function reflect(sourceFiles: UnparsedApexBundle[]) {
-    return pipe(reflectApexSource(sourceFiles), TE.map(filterOutOfScope));
-  }
-
   const convertToPageData = apply(toPageData, config.fileName);
 
   function handleConversion({ changelog, newManifest }: { changelog: Changelog; newManifest: VersionManifest }) {
@@ -37,9 +41,9 @@ export function generateChangeLog(
   }
 
   return pipe(
-    reflect(oldBundles),
+    reflect(oldBundles, config),
     TE.bindTo('oldVersion'),
-    TE.bind('newVersion', () => reflect(newBundles)),
+    TE.bind('newVersion', () => reflect(newBundles, config)),
     TE.map(toManifests),
     TE.map(({ oldManifest, newManifest }) => ({
       changelog: processChangelog(oldManifest, newManifest),
@@ -49,13 +53,34 @@ export function generateChangeLog(
   );
 }
 
-function toManifests({ oldVersion, newVersion }: { oldVersion: ParsedFile[]; newVersion: ParsedFile[] }) {
-  function parsedFilesToManifest(parsedFiles: ParsedFile[]): VersionManifest {
+function reflect(bundles: UnparsedSourceBundle[], config: Omit<UserDefinedChangelogConfig, 'targetGenerator'>) {
+  const filterOutOfScopeApex = apply(filterScope, config.scope);
+
+  function reflectApexFiles(sourceFiles: UnparsedApexBundle[]) {
+    return pipe(reflectApexSource(sourceFiles), TE.map(filterOutOfScopeApex));
+  }
+
+  return pipe(
+    reflectApexFiles(filterApexSourceFiles(bundles)),
+    TE.chain((parsedApexFiles) => {
+      return pipe(
+        reflectCustomFieldsAndObjects(filterCustomObjectsAndFields(bundles)),
+        TE.map((parsedObjectFiles) => [...parsedApexFiles, ...parsedObjectFiles]),
+      );
+    }),
+  );
+}
+
+function toManifests({
+  oldVersion,
+  newVersion,
+}: {
+  oldVersion: ParsedFile<Type | CustomObjectMetadata>[];
+  newVersion: ParsedFile<Type | CustomObjectMetadata>[];
+}) {
+  function parsedFilesToManifest(parsedFiles: ParsedFile<Type | CustomObjectMetadata>[]): VersionManifest {
     return {
-      types: parsedFiles
-        .map((parsedFile) => parsedFile.type)
-        // Changelog does not currently support object types
-        .filter((type) => isApexType(type)),
+      types: parsedFiles.map((parsedFile) => parsedFile.type),
     };
   }
 

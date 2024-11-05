@@ -22,6 +22,20 @@ These enums are new.
 
 ### PossibleValues
 
+## New Custom Objects
+
+These custom objects are new.
+
+### Sales_Order_Line__c
+
+Represents a line item on a sales order.
+### Sales_Order__c
+
+Custom object for tracking sales orders.
+### Speaker__c
+
+Represents a speaker at an event.
+
 ## Removed Types
 
 These types have been removed.
@@ -36,3 +50,20 @@ These members have been added or modified.
 
 - New Method: newMethod
 - Removed Method: deprecatedMethod
+
+## New or Removed Fields in Existing Objects
+
+These custom fields have been added or removed.
+
+### Event__c
+
+- New Field: Description__c
+- New Field: Tag_Line__c
+
+### Price_Component__c
+
+- New Field: Description__c
+
+### Product__c
+
+- New Field: Description__c

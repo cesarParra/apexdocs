@@ -1,13 +1,7 @@
 import { extendExpect } from './expect-extensions';
-import {
-  customField,
-  customFieldPickListValues,
-  customObjectGenerator,
-  generateDocs,
-  unparsedFieldBundleFromRawString,
-  unparsedObjectBundleFromRawString,
-} from './test-helpers';
+import { customFieldPickListValues, generateDocs, unparsedObjectBundleFromRawString } from './test-helpers';
 import { assertEither } from '../../test-helpers/assert-either';
+import { customObjectGenerator, unparsedFieldBundleFromRawString } from '../../test-helpers/test-data-builders';
 
 describe('Generates Custom Object documentation', () => {
   beforeAll(() => {
@@ -47,7 +41,7 @@ describe('Generates Custom Object documentation', () => {
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('`TestObject__c`'));
     });
-    
+
     it('displays the Fields heading if fields are present', async () => {
       const customObjectBundle = unparsedObjectBundleFromRawString({
         rawContent: customObjectGenerator(),
@@ -55,7 +49,6 @@ describe('Generates Custom Object documentation', () => {
       });
 
       const customFieldBundle = unparsedFieldBundleFromRawString({
-        rawContent: customField,
         filePath: 'src/object/TestField__c.field-meta.xml',
         parentName: 'TestObject__c',
       });
@@ -102,7 +95,6 @@ describe('Generates Custom Object documentation', () => {
       });
 
       const customFieldBundle = unparsedFieldBundleFromRawString({
-        rawContent: customField,
         filePath: 'src/object/TestField__c.field-meta.xml',
         parentName: 'TestObject__c',
       });
@@ -119,7 +111,6 @@ describe('Generates Custom Object documentation', () => {
       });
 
       const customFieldBundle = unparsedFieldBundleFromRawString({
-        rawContent: customField,
         filePath: 'src/object/TestField__c.field-meta.xml',
         parentName: 'TestObject__c',
       });
@@ -136,7 +127,6 @@ describe('Generates Custom Object documentation', () => {
       });
 
       const customFieldBundle = unparsedFieldBundleFromRawString({
-        rawContent: customField,
         filePath: 'src/object/TestField__c.field-meta.xml',
         parentName: 'TestObject__c',
       });
