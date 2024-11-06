@@ -46,7 +46,7 @@ export function reflectCustomFieldsAndObjects(
           ...object,
           type: {
             ...object.type,
-            fields: objectFields.map((field) => field.type),
+            fields: [...object.type.fields, ...objectFields.map((field) => field.type)],
           },
         };
       });

@@ -38,6 +38,7 @@ function reflectCustomObjectSource(
     E.flatMap(validate),
     E.map(toObjectMetadata),
     E.map((metadata) => addName(metadata, objectSource.name)),
+    E.map(parseInlineFields),
     E.map(addTypeName),
     E.map((metadata) => toParsedFile(objectSource.filePath, metadata)),
     E.mapLeft((error) => new ReflectionErrors([new ReflectionError(objectSource.filePath, error.message)])),
@@ -75,6 +76,34 @@ function addName(objectMetadata: CustomObjectMetadata, name: string): CustomObje
   return {
     ...objectMetadata,
     name,
+  };
+}
+
+function parseInlineFields(metadata: CustomObjectMetadata): CustomObjectMetadata {
+  return {
+    ...metadata,
+    fields: metadata.fields.map((field) => convertInlineFieldsToCustomFieldMetadata(field, metadata.name)),
+  };
+}
+
+function convertInlineFieldsToCustomFieldMetadata(
+  inlineField: Record<string, unknown>,
+  parentName: string,
+): CustomFieldMetadata {
+  // Based on Salesforce's documentation, the only required field is "fullName"
+  const name = inlineField.fullName as string;
+  const description = inlineField.description ? (inlineField.description as string) : null;
+  const label = inlineField.label ? (inlineField.label as string) : name;
+  const type = inlineField.type ? (inlineField.type as string) : null;
+
+  return {
+    type_name: 'customfield',
+    description,
+    label,
+    name,
+    parentName,
+    type,
+    // TODO: Parse picklist values
   };
 }
 

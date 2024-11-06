@@ -29,6 +29,10 @@ Represents an event that people can register for.
 
 Product that is sold or available for sale.
 
+### [Product_Inline_Fields__c](custom-objects/Product_Inline_Fields__c)
+
+Products
+
 ### [Product_Price_Component__c](custom-objects/Product_Price_Component__c)
 
 ### [Sales_Order__c](custom-objects/Sales_Order__c)
