@@ -138,6 +138,30 @@
         <required>false</required>
         <type>DateTime</type>
     </fields>
+    <fields>
+        <fullName>Type__c</fullName>
+        <externalId>false</externalId>
+        <label>Type</label>
+        <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Merchandise</fullName>
+                    <default>false</default>
+                    <label>List Price</label>
+                </value>
+                <value>
+                    <fullName>Bundle</fullName>
+                    <default>false</default>
+                    <label>Discount</label>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
     <label>Products</label>
     <pluralLabel>Products</pluralLabel>
     <searchLayouts>

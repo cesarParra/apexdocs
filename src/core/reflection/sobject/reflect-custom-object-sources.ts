@@ -8,6 +8,7 @@ import { pipe } from 'fp-ts/function';
 import * as A from 'fp-ts/Array';
 import * as E from 'fp-ts/Either';
 import { CustomFieldMetadata } from './reflect-custom-field-source';
+import { getPickListValues } from './parse-picklist-values';
 
 export type CustomObjectMetadata = {
   type_name: 'customobject';
@@ -103,7 +104,7 @@ function convertInlineFieldsToCustomFieldMetadata(
     name,
     parentName,
     type,
-    // TODO: Parse picklist values
+    pickListValues: getPickListValues(inlineField),
   };
 }
 

@@ -95,3 +95,18 @@ ReleaseDate
 **Type**
 
 *DateTime*
+
+---
+### Type
+
+**API Name**
+
+`apexdocs__Type__c`
+
+**Type**
+
+*Picklist*
+
+#### Possible values are
+* Merchandise
+* Bundle
