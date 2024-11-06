@@ -2,7 +2,8 @@ import { UnparsedApexBundle, UnparsedCustomObjectBundle, UnparsedSourceBundle } 
 import { ChangeLogPageData, generateChangeLog } from '../generate-change-log';
 import { assertEither } from '../../test-helpers/assert-either';
 import { isSkip } from '../../shared/utils';
-import { customObjectGenerator, unparsedFieldBundleFromRawString } from '../../test-helpers/test-data-builders';
+import { unparsedFieldBundleFromRawString } from '../../test-helpers/test-data-builders';
+import { CustomObjectXmlBuilder } from '../../test-helpers/test-data-builders/custom-object-xml-builder';
 
 const config = {
   fileName: 'changelog',
@@ -186,7 +187,7 @@ describe('when generating a changelog', () => {
 
   describe('that include new custom objects', () => {
     it('should include a section for new custom objects', async () => {
-      const newObjectSource = customObjectGenerator();
+      const newObjectSource = new CustomObjectXmlBuilder().build();
 
       const oldBundle: UnparsedCustomObjectBundle[] = [];
       const newBundle: UnparsedCustomObjectBundle[] = [
@@ -244,7 +245,7 @@ describe('when generating a changelog', () => {
 
   describe('that includes removed custom objects', () => {
     it('should include a section for removed custom objects', async () => {
-      const oldObjectSource = customObjectGenerator();
+      const oldObjectSource = new CustomObjectXmlBuilder().build();
 
       const oldBundle: UnparsedCustomObjectBundle[] = [
         { type: 'customobject', name: 'MyTestObject', content: oldObjectSource, filePath: 'MyTestObject.object' },
@@ -259,7 +260,7 @@ describe('when generating a changelog', () => {
     });
 
     it('should include the removed custom object name', async () => {
-      const oldObjectSource = customObjectGenerator();
+      const oldObjectSource = new CustomObjectXmlBuilder().build();
 
       const oldBundle: UnparsedCustomObjectBundle[] = [
         { type: 'customobject', name: 'MyTestObject', content: oldObjectSource, filePath: 'MyTestObject.object' },
@@ -329,8 +330,8 @@ describe('when generating a changelog', () => {
 
   describe('that includes modifications to custom fields', () => {
     it('should include a section for new or removed custom fields', async () => {
-      const oldObjectSource = customObjectGenerator();
-      const newObjectSource = customObjectGenerator();
+      const oldObjectSource = new CustomObjectXmlBuilder().build();
+      const newObjectSource = new CustomObjectXmlBuilder().build();
 
       const oldBundle: UnparsedSourceBundle[] = [
         { type: 'customobject', name: 'MyTestObject', content: oldObjectSource, filePath: 'MyTestObject.object' },
@@ -351,8 +352,8 @@ describe('when generating a changelog', () => {
     });
 
     it('should include new custom field names', async () => {
-      const oldObjectSource = customObjectGenerator();
-      const newObjectSource = customObjectGenerator();
+      const oldObjectSource = new CustomObjectXmlBuilder().build();
+      const newObjectSource = new CustomObjectXmlBuilder().build();
 
       const oldBundle: UnparsedSourceBundle[] = [
         { type: 'customobject', name: 'MyTestObject', content: oldObjectSource, filePath: 'MyTestObject.object' },
@@ -371,8 +372,8 @@ describe('when generating a changelog', () => {
     });
 
     it('should include removed custom field names', async () => {
-      const oldObjectSource = customObjectGenerator();
-      const newObjectSource = customObjectGenerator();
+      const oldObjectSource = new CustomObjectXmlBuilder().build();
+      const newObjectSource = new CustomObjectXmlBuilder().build();
 
       const oldBundle: UnparsedSourceBundle[] = [
         { type: 'customobject', name: 'MyTestObject', content: oldObjectSource, filePath: 'MyTestObject.object' },

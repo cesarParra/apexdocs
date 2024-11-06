@@ -81,6 +81,12 @@ function addName(objectMetadata: CustomObjectMetadata, name: string): CustomObje
 }
 
 function parseInlineFields(metadata: CustomObjectMetadata): CustomObjectMetadata {
+  // if "fields" is present, it might be a single object (if it only has one field)
+  // or an array
+  if (!Array.isArray(metadata.fields)) {
+    metadata.fields = [metadata.fields];
+  }
+
   return {
     ...metadata,
     fields: metadata.fields.map((field) => convertInlineFieldsToCustomFieldMetadata(field, metadata.name)),
