@@ -71,6 +71,10 @@
         "link": "custom-objects/Product__c.md"
       },
       {
+        "text": "Product_Inline_Fields__c",
+        "link": "custom-objects/Product_Inline_Fields__c.md"
+      },
+      {
         "text": "Product_Price_Component__c",
         "link": "custom-objects/Product_Price_Component__c.md"
       },

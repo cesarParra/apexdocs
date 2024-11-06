@@ -1,7 +1,8 @@
 import { extendExpect } from './expect-extensions';
 import { customFieldPickListValues, generateDocs, unparsedObjectBundleFromRawString } from './test-helpers';
 import { assertEither } from '../../test-helpers/assert-either';
-import { customObjectGenerator, unparsedFieldBundleFromRawString } from '../../test-helpers/test-data-builders';
+import { unparsedFieldBundleFromRawString } from '../../test-helpers/test-data-builders';
+import { CustomObjectXmlBuilder } from '../../test-helpers/test-data-builders/custom-object-xml-builder';
 
 describe('Generates Custom Object documentation', () => {
   beforeAll(() => {
@@ -11,7 +12,7 @@ describe('Generates Custom Object documentation', () => {
   describe('documentation content', () => {
     it('displays the object label as a heading', async () => {
       const input = unparsedObjectBundleFromRawString({
-        rawContent: customObjectGenerator(),
+        rawContent: new CustomObjectXmlBuilder().build(),
         filePath: 'src/object/TestObject__c.object-meta.xml',
       });
 
@@ -22,7 +23,7 @@ describe('Generates Custom Object documentation', () => {
 
     it('displays the object description', async () => {
       const input = unparsedObjectBundleFromRawString({
-        rawContent: customObjectGenerator(),
+        rawContent: new CustomObjectXmlBuilder().build(),
         filePath: 'src/object/TestObject__c.object-meta.xml',
       });
 
@@ -33,7 +34,7 @@ describe('Generates Custom Object documentation', () => {
 
     it('displays the object api name', async () => {
       const input = unparsedObjectBundleFromRawString({
-        rawContent: customObjectGenerator(),
+        rawContent: new CustomObjectXmlBuilder().build(),
         filePath: 'src/object/TestObject__c.object-meta.xml',
       });
 
@@ -44,7 +45,7 @@ describe('Generates Custom Object documentation', () => {
 
     it('displays the Fields heading if fields are present', async () => {
       const customObjectBundle = unparsedObjectBundleFromRawString({
-        rawContent: customObjectGenerator(),
+        rawContent: new CustomObjectXmlBuilder().build(),
         filePath: 'src/object/TestObject__c.object-meta.xml',
       });
 
@@ -60,7 +61,7 @@ describe('Generates Custom Object documentation', () => {
 
     it('displays the pick list values name', async () => {
       const customObjectBundle = unparsedObjectBundleFromRawString({
-        rawContent: customObjectGenerator(),
+        rawContent: new CustomObjectXmlBuilder().build(),
         filePath: 'src/object/TestObject__c.object-meta.xml',
       });
 
@@ -79,7 +80,7 @@ describe('Generates Custom Object documentation', () => {
 
     it('does not display the Fields heading if no fields are present', async () => {
       const input = unparsedObjectBundleFromRawString({
-        rawContent: customObjectGenerator(),
+        rawContent: new CustomObjectXmlBuilder().build(),
         filePath: 'src/object/TestObject__c.object-meta.xml',
       });
 
@@ -90,7 +91,7 @@ describe('Generates Custom Object documentation', () => {
 
     it('displays the field label as a heading', async () => {
       const customObjectBundle = unparsedObjectBundleFromRawString({
-        rawContent: customObjectGenerator(),
+        rawContent: new CustomObjectXmlBuilder().build(),
         filePath: 'src/object/TestObject__c.object-meta.xml',
       });
 
@@ -106,7 +107,7 @@ describe('Generates Custom Object documentation', () => {
 
     it('displays the field description', async () => {
       const customObjectBundle = unparsedObjectBundleFromRawString({
-        rawContent: customObjectGenerator(),
+        rawContent: new CustomObjectXmlBuilder().build(),
         filePath: 'src/object/TestObject__c.object-meta.xml',
       });
 
@@ -122,7 +123,7 @@ describe('Generates Custom Object documentation', () => {
 
     it('displays the field api name', async () => {
       const customObjectBundle = unparsedObjectBundleFromRawString({
-        rawContent: customObjectGenerator(),
+        rawContent: new CustomObjectXmlBuilder().build(),
         filePath: 'src/object/TestObject__c.object-meta.xml',
       });
 

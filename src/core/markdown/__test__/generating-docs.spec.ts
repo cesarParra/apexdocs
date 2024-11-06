@@ -2,7 +2,7 @@ import { DocPageData, PostHookDocumentationBundle } from '../../shared/types';
 import { extendExpect } from './expect-extensions';
 import { unparsedApexBundleFromRawString, generateDocs, unparsedObjectBundleFromRawString } from './test-helpers';
 import { assertEither } from '../../test-helpers/assert-either';
-import { customObjectGenerator } from '../../test-helpers/test-data-builders';
+import { CustomObjectXmlBuilder } from '../../test-helpers/test-data-builders/custom-object-xml-builder';
 
 function aSingleDoc(result: PostHookDocumentationBundle): DocPageData {
   expect(result.docs).toHaveLength(1);
@@ -51,14 +51,14 @@ describe('When generating documentation', () => {
       ][] = [
         [
           {
-            rawContent: customObjectGenerator(),
+            rawContent: new CustomObjectXmlBuilder().build(),
             filePath: 'src/object/MyFirstObject__c.object-meta.xml',
           },
           'custom-objects',
         ],
         [
           {
-            rawContent: customObjectGenerator(),
+            rawContent: new CustomObjectXmlBuilder().build(),
             filePath: 'src/object/MySecondObject__c.object-meta.xml',
           },
           'custom-objects',
@@ -127,7 +127,7 @@ describe('When generating documentation', () => {
       ][] = [
         [
           {
-            rawContent: customObjectGenerator(),
+            rawContent: new CustomObjectXmlBuilder().build(),
             filePath: 'src/object/MyFirstObject__c.object-meta.xml',
           },
           'customobject',
@@ -154,14 +154,14 @@ describe('When generating documentation', () => {
     });
 
     it('does not return non-deployed custom objects', async () => {
-      const input = customObjectGenerator({ deploymentStatus: 'InDevelopment', visibility: 'Public' });
+      const input = new CustomObjectXmlBuilder().withDeploymentStatus('InDevelopment').build();
 
       const result = await generateDocs([unparsedObjectBundleFromRawString({ rawContent: input, filePath: 'test' })])();
       expect(result).documentationBundleHasLength(0);
     });
 
     it('does not return non-public custom objects', async () => {
-      const input = customObjectGenerator({ deploymentStatus: 'Deployed', visibility: 'Protected' });
+      const input = new CustomObjectXmlBuilder().withVisibility('Protected').build();
 
       const result = await generateDocs([unparsedObjectBundleFromRawString({ rawContent: input, filePath: 'test' })])();
       expect(result).documentationBundleHasLength(0);
@@ -196,7 +196,7 @@ describe('When generating documentation', () => {
     });
 
     it('includes a heading with the Custom Object label', async () => {
-      const input = customObjectGenerator();
+      const input = new CustomObjectXmlBuilder().build();
 
       const result = await generateDocs([unparsedObjectBundleFromRawString({ rawContent: input, filePath: 'test' })])();
       expect(result).documentationBundleHasLength(1);
