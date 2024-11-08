@@ -59,6 +59,10 @@
     "text": "Object Reference",
     "items": [
       {
+        "text": "Contact",
+        "link": "custom-objects/Contact.md"
+      },
+      {
         "text": "Event__c",
         "link": "custom-objects/Event__c.md"
       },

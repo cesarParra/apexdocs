@@ -68,3 +68,4 @@ Custom object for tracking sales orders.
 ### Speaker__c
 
 Represents a speaker at an event.
+### Contact

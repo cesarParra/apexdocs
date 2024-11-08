@@ -19,6 +19,8 @@ hero:
 
 ## Custom Objects
 
+### [Contact](custom-objects/Contact)
+
 ### [Event__c](custom-objects/Event__c)
 
 Represents an event that people can register for.
