@@ -2,6 +2,7 @@ import { UnparsedCustomFieldBundle } from '../../../shared/types';
 import { reflectCustomFieldSources } from '../reflect-custom-field-source';
 import { assertEither } from '../../../test-helpers/assert-either';
 import * as E from 'fp-ts/Either';
+import { isInSource } from '../../../shared/utils';
 
 const customFieldContent = `
 <?xml version="1.0" encoding="UTF-8"?>
@@ -27,7 +28,13 @@ describe('when parsing custom field metadata', () => {
 
     const result = await reflectCustomFieldSources([unparsed])();
 
-    assertEither(result, (data) => expect(data[0].source.filePath).toBe('src/field/PhotoUrl__c.field-meta.xml'));
+    assertEither(result, (data) => {
+      if (isInSource(data[0].source)) {
+        expect(data[0].source.filePath).toBe('src/field/PhotoUrl__c.field-meta.xml');
+      } else {
+        fail('Expected the source to be in the source');
+      }
+    });
   });
 
   test('the resulting type contains the correct name', async () => {
@@ -100,7 +107,7 @@ describe('when parsing custom field metadata', () => {
     assertEither(result, (data) => expect(data[0].type.description).toBe('A Photo URL field'));
   });
 
-  test('can parse picklist values', async() => {
+  test('can parse picklist values', async () => {
     const unparsed: UnparsedCustomFieldBundle = {
       type: 'customfield',
       name: 'Status__c',

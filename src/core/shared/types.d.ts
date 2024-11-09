@@ -85,21 +85,34 @@ export type UnparsedApexBundle = {
   metadataContent: string | null;
 };
 
+type MetadataTypes = 'interface' | 'class' | 'enum' | 'customobject' | 'customfield';
+
 export type SourceFileMetadata = {
   filePath: string;
   name: string;
-  type: 'interface' | 'class' | 'enum' | 'customobject' | 'customfield';
+  type: MetadataTypes;
+};
+
+// External metadata is metadata that does not live directly in the source code, and thus we don't
+// have a file path for it.
+// This is metadata derived from other information.
+// For example, for an "extension"
+// field that extends a Salesforce object or object in a different package, we want to capture the parent
+// object, even if the file for that object was not parsed.
+export type ExternalMetadata = {
+  name: string;
+  type: MetadataTypes;
 };
 
 export type ParsedFile<
   T extends Type | CustomObjectMetadata | CustomFieldMetadata = Type | CustomObjectMetadata | CustomFieldMetadata,
 > = {
-  source: SourceFileMetadata;
+  source: SourceFileMetadata | ExternalMetadata;
   type: T;
 };
 
 export type DocPageReference = {
-  source: SourceFileMetadata;
+  source: SourceFileMetadata | ExternalMetadata;
   // The name under which the type should be displayed in the documentation.
   // By default, this will match the source.name, but it can be configured by the user.
   displayName: string;
@@ -121,7 +134,7 @@ export type ReferenceGuidePageData = {
 };
 
 export type DocPageData = {
-  source: SourceFileMetadata;
+  source: SourceFileMetadata | ExternalMetadata;
   group: string | null;
   outputDocPath: string;
   frontmatter: Frontmatter;
