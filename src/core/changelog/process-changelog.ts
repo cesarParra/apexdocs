@@ -2,9 +2,10 @@ import { ClassMirror, EnumMirror, InterfaceMirror, MethodMirror, Type } from '@c
 import { pipe } from 'fp-ts/function';
 import { areMethodsEqual } from './method-changes-checker';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
+import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 
 export type VersionManifest = {
-  types: (Type | CustomObjectMetadata)[];
+  types: (Type | CustomObjectMetadata | CustomFieldMetadata)[];
 };
 
 type ModificationTypes =
@@ -53,7 +54,10 @@ export function processChangelog(oldVersion: VersionManifest, newVersion: Versio
     newOrModifiedApexMembers: getNewOrModifiedApexMembers(oldVersion, newVersion),
     newCustomObjects: getNewCustomObjects(oldVersion, newVersion),
     removedCustomObjects: getRemovedCustomObjects(oldVersion, newVersion),
-    customObjectModifications: getCustomObjectModifications(oldVersion, newVersion),
+    customObjectModifications: [
+      ...getCustomObjectModifications(oldVersion, newVersion),
+      ...getNewOrModifiedExtensionFields(oldVersion, newVersion),
+    ],
   };
 }
 
@@ -103,6 +107,58 @@ function getCustomObjectModifications(oldVersion: VersionManifest, newVersion: V
     (customObjectsInBoth) => getNewOrRemovedCustomFields(customObjectsInBoth),
     (customObjectModifications) => customObjectModifications.filter((member) => member.modifications.length > 0),
   );
+}
+
+// TODO: UTs
+function getNewOrModifiedExtensionFields(
+  oldVersion: VersionManifest,
+  newVersion: VersionManifest,
+): NewOrModifiedMember[] {
+  const extensionFieldsInOldVersion = oldVersion.types.filter(
+    (type): type is CustomFieldMetadata => type.type_name === 'customfield',
+  );
+  const extensionFieldsInNewVersion = newVersion.types.filter(
+    (type): type is CustomFieldMetadata => type.type_name === 'customfield',
+  );
+
+  // An extension field is equal if it has the same name and the same parent name
+  function areFieldEquals(oldField: CustomFieldMetadata, newField: CustomFieldMetadata): boolean {
+    return (
+      oldField.name.toLowerCase() === newField.name.toLowerCase() &&
+      oldField.parentName.toLowerCase() === newField.parentName.toLowerCase()
+    );
+  }
+
+  const fieldsOnlyInNewVersion = extensionFieldsInNewVersion.filter(
+    (newField) => !extensionFieldsInOldVersion.some((oldField) => areFieldEquals(oldField, newField)),
+  );
+  const fieldsOnlyInOldVersion = extensionFieldsInOldVersion.filter(
+    (oldField) => !extensionFieldsInNewVersion.some((newField) => areFieldEquals(oldField, newField)),
+  );
+
+  const newMemberModifications = fieldsOnlyInNewVersion.reduce((previous, currentField) => {
+    const parentName = currentField.parentName;
+    const additionsToParent = previous.find((parent) => parent.typeName === parentName)?.modifications ?? [];
+    return [
+      ...previous.filter((parent) => parent.typeName !== parentName),
+      {
+        typeName: parentName,
+        modifications: [...additionsToParent, { __typename: 'NewField', name: currentField.name }],
+      },
+    ] as NewOrModifiedMember[];
+  }, [] as NewOrModifiedMember[]);
+
+  return fieldsOnlyInOldVersion.reduce((previous, currentField) => {
+    const parentName = currentField.parentName;
+    const removalsFromParent = previous.find((parent) => parent.typeName === parentName)?.modifications ?? [];
+    return [
+      ...previous.filter((parent) => parent.typeName !== parentName),
+      {
+        typeName: parentName,
+        modifications: [...removalsFromParent, { __typename: 'RemovedField', name: currentField.name }],
+      },
+    ] as NewOrModifiedMember[];
+  }, newMemberModifications);
 }
 
 function getNewOrRemovedCustomFields(typesInBoth: TypeInBoth<CustomObjectMetadata>[]): NewOrModifiedMember[] {

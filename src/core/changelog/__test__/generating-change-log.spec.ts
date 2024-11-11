@@ -347,7 +347,9 @@ describe('when generating a changelog', () => {
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
       assertEither(result, (data) =>
-        expect((data as ChangeLogPageData).content).toContain('## New or Removed Fields in Existing Objects'),
+        expect((data as ChangeLogPageData).content).toContain(
+          '## New or Removed Fields to Custom Objects or Standard Objects',
+        ),
       );
     });
 

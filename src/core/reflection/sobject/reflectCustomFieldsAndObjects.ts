@@ -86,7 +86,6 @@ function mapExtensionFields(
     const fields = extensionFieldsByParent[key];
     return {
       source: {
-        filePath: '',
         name: key,
         type: 'customobject',
       },

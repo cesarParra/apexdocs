@@ -68,4 +68,11 @@ Custom object for tracking sales orders.
 ### Speaker__c
 
 Represents a speaker at an event.
+
+## New or Removed Fields to Custom Objects or Standard Objects
+
+These custom fields have been added or removed.
+
 ### Contact
+
+- New Field: PhotoUrl__c
