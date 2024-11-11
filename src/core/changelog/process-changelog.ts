@@ -109,7 +109,6 @@ function getCustomObjectModifications(oldVersion: VersionManifest, newVersion: V
   );
 }
 
-// TODO: UTs
 function getNewOrModifiedExtensionFields(
   oldVersion: VersionManifest,
   newVersion: VersionManifest,

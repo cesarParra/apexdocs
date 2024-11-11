@@ -72,7 +72,6 @@ function reflect(bundles: UnparsedSourceBundle[], config: Omit<UserDefinedChange
   );
 }
 
-// TODO: UTs
 function toManifests({ oldVersion, newVersion }: { oldVersion: ParsedFile[]; newVersion: ParsedFile[] }) {
   function parsedFilesToManifest(parsedFiles: ParsedFile[]): VersionManifest {
     return {
