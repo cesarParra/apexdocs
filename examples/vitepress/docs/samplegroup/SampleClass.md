@@ -10,6 +10,8 @@ aliquip ex sunt officia ullamco anim deserunt magna aliquip nisi eiusmod in sit 
 
 **Group** SampleGroup
 
+**See** [Event__c](../custom-objects/Event__c)
+
 ## Namespace
 apexdocs
 
