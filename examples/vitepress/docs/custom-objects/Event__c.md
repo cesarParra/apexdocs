@@ -22,6 +22,7 @@ Represents an event that people can register for.
 
 ---
 ### End Date
+**Required**
 
 **API Name**
 
@@ -33,6 +34,7 @@ Represents an event that people can register for.
 
 ---
 ### Location
+**Required**
 
 **API Name**
 
@@ -44,6 +46,7 @@ Represents an event that people can register for.
 
 ---
 ### Start Date
+**Required**
 
 **API Name**
 
