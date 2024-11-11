@@ -192,6 +192,7 @@ export type RenderableCustomField = {
   pickListValues?: RenderableSection<string[]>;
   type: 'field';
   fieldType?: string | null;
+  required: boolean;
 };
 
 export type Renderable = (RenderableClass | RenderableInterface | RenderableEnum | RenderableCustomObject) & {

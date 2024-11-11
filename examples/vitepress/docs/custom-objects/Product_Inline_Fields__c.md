@@ -35,6 +35,7 @@ The date the product got discontinued
 
 ---
 ### Name
+**Required**
 
 Product name
 
@@ -98,6 +99,7 @@ ReleaseDate
 
 ---
 ### Type
+**Required**
 
 **API Name**
 

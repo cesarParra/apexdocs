@@ -102,6 +102,7 @@ function convertInlineFieldsToCustomFieldMetadata(
   const description = inlineField.description ? (inlineField.description as string) : null;
   const label = inlineField.label ? (inlineField.label as string) : name;
   const type = inlineField.type ? (inlineField.type as string) : null;
+  const required = inlineField.required ? (inlineField.required as boolean) : false;
 
   return {
     type_name: 'customfield',
@@ -110,6 +111,7 @@ function convertInlineFieldsToCustomFieldMetadata(
     name,
     parentName,
     type,
+    required,
     pickListValues: getPickListValues(inlineField),
   };
 }

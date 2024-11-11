@@ -17,6 +17,7 @@ export type CustomFieldMetadata = {
   type?: string | null;
   parentName: string;
   pickListValues?: string[];
+  required: boolean;
 };
 
 export function reflectCustomFieldSources(
@@ -64,6 +65,7 @@ function toCustomFieldMetadata(parserResult: { CustomField: unknown }): CustomFi
     parserResult?.CustomField != null && typeof parserResult.CustomField === 'object' ? parserResult.CustomField : {};
   const defaultValues = {
     description: null,
+    required: false,
   };
 
   return {

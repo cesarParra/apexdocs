@@ -59,6 +59,7 @@ Use this when the Price Component represents a Flat Price. To represent a Percen
 
 ---
 ### Type
+**Required**
 
 **API Name**
 

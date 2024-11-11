@@ -78,7 +78,7 @@
         <isSortingDisabled>false</isSortingDisabled>
         <label>Name</label>
         <length>128</length>
-        <required>false</required>
+        <required>true</required>
         <type>Text</type>
         <unique>false</unique>
     </fields>

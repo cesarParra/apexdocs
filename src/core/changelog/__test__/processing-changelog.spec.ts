@@ -34,6 +34,7 @@ class CustomFieldMetadataBuilder {
       name: this.name,
       description: this.description,
       parentName: 'MyObject',
+      required: false,
     };
   }
 }
