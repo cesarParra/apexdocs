@@ -6,4 +6,5 @@
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
     <type>Url</type>
+    <description>URL of the contact's photo</description>
 </CustomField>

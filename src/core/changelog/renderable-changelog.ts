@@ -151,25 +151,32 @@ function toRenderableModification(newOrModifiedMember: NewOrModifiedMember): New
 }
 
 function toRenderableModificationDescription(memberModificationType: MemberModificationType): string {
+  function withDescription(memberModificationType: MemberModificationType): string {
+    if (memberModificationType.description) {
+      return `${memberModificationType.name}. ${memberModificationType.description}`;
+    }
+    return memberModificationType.name;
+  }
+
   switch (memberModificationType.__typename) {
     case 'NewEnumValue':
-      return `New Enum Value: ${memberModificationType.name}`;
+      return `New Enum Value: ${withDescription(memberModificationType)}`;
     case 'RemovedEnumValue':
       return `Removed Enum Value: ${memberModificationType.name}`;
     case 'NewMethod':
-      return `New Method: ${memberModificationType.name}`;
+      return `New Method: ${withDescription(memberModificationType)}`;
     case 'RemovedMethod':
       return `Removed Method: ${memberModificationType.name}`;
     case 'NewProperty':
-      return `New Property: ${memberModificationType.name}`;
+      return `New Property: ${withDescription(memberModificationType)}`;
     case 'RemovedProperty':
       return `Removed Property: ${memberModificationType.name}`;
     case 'NewField':
-      return `New Field: ${memberModificationType.name}`;
+      return `New Field: ${withDescription(memberModificationType)}`;
     case 'RemovedField':
       return `Removed Field: ${memberModificationType.name}`;
     case 'NewType':
-      return `New Type: ${memberModificationType.name}`;
+      return `New Type: ${withDescription(memberModificationType)}`;
     case 'RemovedType':
       return `Removed Type: ${memberModificationType.name}`;
   }

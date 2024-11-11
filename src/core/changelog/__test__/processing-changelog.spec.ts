@@ -14,9 +14,15 @@ function apexTypeFromRawString(raw: string): Type {
 
 class CustomFieldMetadataBuilder {
   name: string = 'MyField';
+  description: string | null = null;
 
   withName(name: string): CustomFieldMetadataBuilder {
     this.name = name;
+    return this;
+  }
+
+  withDescription(testDescription: string) {
+    this.description = testDescription;
     return this;
   }
 
@@ -26,7 +32,7 @@ class CustomFieldMetadataBuilder {
       type_name: 'customfield',
       label: 'MyField',
       name: this.name,
-      description: null,
+      description: this.description,
       parentName: 'MyObject',
     };
   }
@@ -178,6 +184,7 @@ describe('when generating a changelog', () => {
             {
               __typename: 'NewField',
               name: newField.name,
+              description: null,
             },
           ],
         },
@@ -605,6 +612,33 @@ describe('when generating a changelog', () => {
             {
               __typename: 'NewField',
               name: newField.name,
+              description: null,
+            },
+          ],
+        },
+      ]);
+    });
+
+    it('includes the description of new fields', () => {
+      const oldField = new CustomFieldMetadataBuilder().build();
+      const newField = new CustomFieldMetadataBuilder()
+        .withName('NewField')
+        .withDescription('Test description')
+        .build();
+
+      const oldManifest = { types: [oldField] };
+      const newManifest = { types: [oldField, newField] };
+
+      const changeLog = processChangelog(oldManifest, newManifest);
+
+      expect(changeLog.customObjectModifications).toEqual([
+        {
+          typeName: newField.parentName,
+          modifications: [
+            {
+              __typename: 'NewField',
+              name: newField.name,
+              description: 'Test description',
             },
           ],
         },
