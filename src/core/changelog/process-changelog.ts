@@ -23,6 +23,7 @@ type ModificationTypes =
 export type MemberModificationType = {
   __typename: ModificationTypes;
   name: string;
+  description?: string | null | undefined;
 };
 
 export type NewOrModifiedMember = {
@@ -142,7 +143,10 @@ function getNewOrModifiedExtensionFields(
       ...previous.filter((parent) => parent.typeName !== parentName),
       {
         typeName: parentName,
-        modifications: [...additionsToParent, { __typename: 'NewField', name: currentField.name }],
+        modifications: [
+          ...additionsToParent,
+          { __typename: 'NewField', name: currentField.name, description: currentField.description },
+        ],
       },
     ] as NewOrModifiedMember[];
   }, [] as NewOrModifiedMember[]);
@@ -284,6 +288,7 @@ function getCustomObjectsInBothVersions(
 
 type NameAware = {
   name: string;
+  description?: string | null;
 };
 
 type AreEqualFn<T> = (oldValue: T, newValue: T) => boolean;
@@ -301,8 +306,7 @@ function getNewValues<Searchable extends NameAware, T extends Record<K, Searchab
 ): MemberModificationType[] {
   return newPlaceToSearch[keyToSearch]
     .filter((newValue) => !oldPlaceToSearch[keyToSearch].some((oldValue) => areEqualFn(oldValue, newValue)))
-    .map((value) => value.name)
-    .map((name) => ({ __typename: typeName, name }));
+    .map(({ name, description }) => ({ __typename: typeName, name, description }));
 }
 
 function getRemovedValues<Named extends NameAware, T extends Record<K, Named[]>, K extends keyof T>(

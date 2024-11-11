@@ -75,4 +75,4 @@ These custom fields have been added or removed.
 
 ### Contact
 
-- New Field: PhotoUrl__c
+- New Field: PhotoUrl__c. URL of the contact&#x27;s photo

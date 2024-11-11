@@ -10,6 +10,8 @@ title: Contact
 ## Fields
 ### PhotoUrl
 
+URL of the contact&#x27;s photo
+
 **API Name**
 
 `apexdocs__PhotoUrl__c`
