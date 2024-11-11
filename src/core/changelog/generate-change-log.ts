@@ -15,11 +15,12 @@ import { changelogTemplate } from './templates/changelog-template';
 import { ReflectionErrors } from '../errors/errors';
 import { apply } from '#utils/fp';
 import { filterScope } from '../reflection/apex/filter-scope';
-import { skip } from '../shared/utils';
+import { isInSource, skip } from '../shared/utils';
 import { reflectCustomFieldsAndObjects } from '../reflection/sobject/reflectCustomFieldsAndObjects';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { Type } from '@cparra/apex-reflection';
 import { filterApexSourceFiles, filterCustomObjectsAndFields } from '#utils/source-bundle-utils';
+import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 
 export type ChangeLogPageData = {
   content: string;
@@ -71,16 +72,20 @@ function reflect(bundles: UnparsedSourceBundle[], config: Omit<UserDefinedChange
   );
 }
 
-function toManifests({
-  oldVersion,
-  newVersion,
-}: {
-  oldVersion: ParsedFile<Type | CustomObjectMetadata>[];
-  newVersion: ParsedFile<Type | CustomObjectMetadata>[];
-}) {
-  function parsedFilesToManifest(parsedFiles: ParsedFile<Type | CustomObjectMetadata>[]): VersionManifest {
+function toManifests({ oldVersion, newVersion }: { oldVersion: ParsedFile[]; newVersion: ParsedFile[] }) {
+  function parsedFilesToManifest(parsedFiles: ParsedFile[]): VersionManifest {
     return {
-      types: parsedFiles.map((parsedFile) => parsedFile.type),
+      types: parsedFiles.reduce(
+        (previousValue: (Type | CustomObjectMetadata | CustomFieldMetadata)[], parsedFile: ParsedFile) => {
+          if (!isInSource(parsedFile.source) && parsedFile.type.type_name === 'customobject') {
+            // When we are dealing with a custom object that was not in the source (for extension fields), we return all
+            // of its fields.
+            return [...previousValue, ...parsedFile.type.fields];
+          }
+          return [...previousValue, parsedFile.type];
+        },
+        [] as (Type | CustomObjectMetadata | CustomFieldMetadata)[],
+      ),
     };
   }
 

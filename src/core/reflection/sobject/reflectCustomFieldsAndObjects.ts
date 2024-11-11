@@ -38,18 +38,66 @@ export function reflectCustomFieldsAndObjects(
     TE.map(filterNonPublic),
     TE.bindTo('objects'),
     TE.bind('fields', () => generateForFields(customFields)),
-    // Locate the fields for each object by using the parentName property
     TE.map(({ objects, fields }) => {
-      return objects.map((object) => {
-        const objectFields = fields.filter((field) => field.type.parentName === object.type.name);
-        return {
-          ...object,
-          type: {
-            ...object.type,
-            fields: [...object.type.fields, ...objectFields.map((field) => field.type)],
-          },
-        };
-      });
+      return [...mapFieldsToObjects(objects, fields), ...mapExtensionFields(objects, fields)];
     }),
   );
+}
+
+function mapFieldsToObjects(
+  objects: ParsedFile<CustomObjectMetadata>[],
+  fields: ParsedFile<CustomFieldMetadata>[],
+): ParsedFile<CustomObjectMetadata>[] {
+  // Locate the fields for each object by using the parentName property
+  return objects.map((object) => {
+    const objectFields = fields.filter((field) => field.type.parentName === object.type.name);
+    return {
+      ...object,
+      type: {
+        ...object.type,
+        fields: [...object.type.fields, ...objectFields.map((field) => field.type)],
+      },
+    };
+  });
+}
+
+// "Extension" fields are fields that are in the source code without the corresponding object-meta.xml file.
+// These are fields that either extend a standard Salesforce object, or an object in a different package.
+function mapExtensionFields(
+  objects: ParsedFile<CustomObjectMetadata>[],
+  fields: ParsedFile<CustomFieldMetadata>[],
+): ParsedFile<CustomObjectMetadata>[] {
+  const extensionFields = fields.filter(
+    (field) => !objects.some((object) => object.type.name === field.type.parentName),
+  );
+  // There might be many objects for the same parent name, so we need to group the fields by parent name
+  const extensionFieldsByParent = extensionFields.reduce(
+    (acc, field) => {
+      if (!acc[field.type.parentName]) {
+        acc[field.type.parentName] = [];
+      }
+      acc[field.type.parentName].push(field.type);
+      return acc;
+    },
+    {} as Record<string, CustomFieldMetadata[]>,
+  );
+
+  return Object.keys(extensionFieldsByParent).map((key) => {
+    const fields = extensionFieldsByParent[key];
+    return {
+      source: {
+        name: key,
+        type: 'customobject',
+      },
+      type: {
+        type_name: 'customobject',
+        deploymentStatus: 'Deployed',
+        visibility: 'Public',
+        label: key,
+        name: key,
+        description: null,
+        fields: fields,
+      },
+    };
+  });
 }

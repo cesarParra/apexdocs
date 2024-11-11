@@ -6,6 +6,7 @@ import {
   CustomObjectXmlBuilder,
   InlineFieldBuilder,
 } from '../../../test-helpers/test-data-builders/custom-object-xml-builder';
+import { isInSource } from '../../../shared/utils';
 
 describe('when parsing SObject metadata', () => {
   test('the resulting type contains the file path', async () => {
@@ -18,7 +19,13 @@ describe('when parsing SObject metadata', () => {
 
     const result = await reflectCustomObjectSources([unparsed])();
 
-    assertEither(result, (data) => expect(data[0].source.filePath).toBe('src/object/MyFirstObject__c.object-meta.xml'));
+    assertEither(result, (data) => {
+      if (isInSource(data[0].source)) {
+        expect(data[0].source.filePath).toBe('src/object/MyFirstObject__c.object-meta.xml');
+      } else {
+        fail('Expected the source to be in the source');
+      }
+    });
   });
 
   test('the resulting type contains the correct label', async () => {

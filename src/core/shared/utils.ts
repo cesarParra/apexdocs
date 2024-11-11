@@ -1,4 +1,4 @@
-import { Skip } from './types';
+import { ExternalMetadata, Skip, SourceFileMetadata } from './types';
 import { Type } from '@cparra/apex-reflection';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { MarkdownGeneratorConfig } from '../markdown/generate-docs';
@@ -23,6 +23,10 @@ export function isObjectType(type: Type | CustomObjectMetadata | CustomFieldMeta
 
 export function isApexType(type: Type | CustomObjectMetadata | CustomFieldMetadata): type is Type {
   return !isObjectType(type);
+}
+
+export function isInSource(source: SourceFileMetadata | ExternalMetadata): source is SourceFileMetadata {
+  return 'filePath' in source;
 }
 
 export function getTypeGroup(type: Type | CustomObjectMetadata, config: MarkdownGeneratorConfig): string {

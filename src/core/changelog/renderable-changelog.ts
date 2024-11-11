@@ -3,6 +3,7 @@ import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-ref
 import { RenderableContent } from '../renderables/types';
 import { adaptDescribable } from '../renderables/documentables';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
+import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 
 type NewTypeRenderable = {
   name: string;
@@ -46,7 +47,7 @@ export type RenderableChangelog = {
 
 export function convertToRenderableChangelog(
   changelog: Changelog,
-  newManifest: (Type | CustomObjectMetadata)[],
+  newManifest: (Type | CustomObjectMetadata | CustomFieldMetadata)[],
 ): RenderableChangelog {
   const allNewTypes = [...changelog.newApexTypes, ...changelog.newCustomObjects].map(
     (newType) => newManifest.find((type) => type.name.toLowerCase() === newType.toLowerCase())!,
@@ -122,7 +123,7 @@ export function convertToRenderableChangelog(
     newOrRemovedCustomFields:
       changelog.customObjectModifications.length > 0
         ? {
-            heading: 'New or Removed Fields in Existing Objects',
+            heading: 'New or Removed Fields to Custom Objects or Standard Objects',
             description: 'These custom fields have been added or removed.',
             modifications: changelog.customObjectModifications.map(toRenderableModification),
           }

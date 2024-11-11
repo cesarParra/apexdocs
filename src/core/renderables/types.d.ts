@@ -189,11 +189,11 @@ export type RenderableCustomField = {
   heading: string;
   apiName: string;
   description: RenderableContent[];
-  pickListValues?: RenderableSection<string[]>
+  pickListValues?: RenderableSection<string[]>;
   type: 'field';
   fieldType?: string | null;
 };
 
 export type Renderable = (RenderableClass | RenderableInterface | RenderableEnum | RenderableCustomObject) & {
-  filePath: string;
+  filePath: string | undefined;
 };
