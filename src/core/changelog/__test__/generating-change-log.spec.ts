@@ -4,6 +4,7 @@ import { assertEither } from '../../test-helpers/assert-either';
 import { isSkip } from '../../shared/utils';
 import { unparsedFieldBundleFromRawString } from '../../test-helpers/test-data-builders';
 import { CustomObjectXmlBuilder } from '../../test-helpers/test-data-builders/custom-object-xml-builder';
+import { CustomFieldXmlBuilder } from '../../test-helpers/test-data-builders/custom-field-xml-builder';
 
 const config = {
   fileName: 'changelog',
@@ -393,6 +394,76 @@ describe('when generating a changelog', () => {
       assertEither(result, (data) =>
         expect((data as ChangeLogPageData).content).toContain('Removed Field: TestField__c'),
       );
+    });
+  });
+
+  describe('that includes extension fields', () => {
+    it('does not include the fields when they are in both versions', async () => {
+      const fieldSource = new CustomFieldXmlBuilder().build();
+
+      const oldBundle: UnparsedSourceBundle[] = [
+        {
+          type: 'customfield',
+          name: 'PhotoUrl__c',
+          content: fieldSource,
+          filePath: 'PhotoUrl__c.field-meta.xml',
+          parentName: 'MyTestObject',
+        },
+      ];
+      const newBundle: UnparsedSourceBundle[] = [
+        {
+          type: 'customfield',
+          name: 'PhotoUrl__c',
+          content: fieldSource,
+          filePath: 'PhotoUrl__c.field-meta.xml',
+          parentName: 'MyTestObject',
+        },
+      ];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).not.toContain('MyTestObject'));
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).not.toContain('PhotoUrl__c'));
+    });
+
+    it('includes added fields when they are not in the old version', async () => {
+      const fieldSource = new CustomFieldXmlBuilder().build();
+
+      const oldBundle: UnparsedSourceBundle[] = [];
+      const newBundle: UnparsedSourceBundle[] = [
+        {
+          type: 'customfield',
+          name: 'PhotoUrl__c',
+          content: fieldSource,
+          filePath: 'PhotoUrl__c.field-meta.xml',
+          parentName: 'MyTestObject',
+        },
+      ];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('MyTestObject'));
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('PhotoUrl__c'));
+    });
+
+    it('includes removed fields when they are not in the new version', async () => {
+      const fieldSource = new CustomFieldXmlBuilder().build();
+
+      const oldBundle: UnparsedSourceBundle[] = [
+        {
+          type: 'customfield',
+          name: 'PhotoUrl__c',
+          content: fieldSource,
+          filePath: 'PhotoUrl__c.field-meta.xml',
+          parentName: 'MyTestObject',
+        },
+      ];
+      const newBundle: UnparsedSourceBundle[] = [];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('MyTestObject'));
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('PhotoUrl__c'));
     });
   });
 });
