@@ -1,5 +1,4 @@
 import { Type } from '@cparra/apex-reflection';
-import { ChangeLogPageData } from '../changelog/generate-change-log';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 
@@ -34,7 +33,7 @@ export type UserDefinedMarkdownConfig = {
   excludeTags: string[];
   exclude: string[];
 } & CliConfigurableMarkdownConfig &
-  Partial<ConfigurableHooks>;
+  Partial<MarkdownConfigurableHooks>;
 
 export type UserDefinedOpenApiConfig = {
   targetGenerator: 'openapi';
@@ -56,7 +55,7 @@ export type UserDefinedChangelogConfig = {
   scope: string[];
   exclude: string[];
   skipIfNoChanges: boolean;
-};
+} & Partial<ChangelogConfigurableHooks>;
 
 export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig | UserDefinedChangelogConfig;
 
@@ -144,6 +143,12 @@ export type DocPageData = {
 
 export type OpenApiPageData = Omit<DocPageData, 'source' | 'type'>;
 
+export type ChangeLogPageData = {
+  frontmatter: Frontmatter;
+  content: string;
+  outputDocPath: string;
+};
+
 export type PageData = DocPageData | OpenApiPageData | ReferenceGuidePageData | ChangeLogPageData;
 
 export type DocumentationBundle = {
@@ -166,9 +171,9 @@ export type PostHookDocumentationBundle = {
 // CONFIGURABLE HOOKS
 
 /**
- * The configurable hooks that can be used to modify the output of the generator.
+ * The configurable hooks that can be used to modify the output of the Markdown generator.
  */
-export type ConfigurableHooks = {
+export type MarkdownConfigurableHooks = {
   transformReferenceGuide: TransformReferenceGuide;
   transformDocs: TransformDocs;
   transformDocPage: TransformDocPage;
@@ -206,3 +211,11 @@ export type TransformDocs = (docs: DocPageData[]) => DocPageData[] | Promise<Doc
 export type TransformDocPage = (
   doc: DocPageData,
 ) => Partial<ConfigurableDocPageData> | Promise<Partial<ConfigurableDocPageData>>;
+
+export type ChangelogConfigurableHooks = {
+  transformChangeLogPage: TransformChangelogPage;
+};
+
+export type TransformChangelogPage = (
+  page: ChangeLogPageData,
+) => Partial<ChangeLogPageData> | Promise<Partial<ChangeLogPageData>>;

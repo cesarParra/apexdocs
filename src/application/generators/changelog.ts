@@ -1,8 +1,14 @@
 import { pipe } from 'fp-ts/function';
-import { PageData, Skip, UnparsedSourceBundle, UserDefinedChangelogConfig } from '../../core/shared/types';
+import {
+  ChangeLogPageData,
+  PageData,
+  Skip,
+  UnparsedSourceBundle,
+  UserDefinedChangelogConfig,
+} from '../../core/shared/types';
 import * as TE from 'fp-ts/TaskEither';
 import { writeFiles } from '../file-writer';
-import { ChangeLogPageData, generateChangeLog } from '../../core/changelog/generate-change-log';
+import { generateChangeLog } from '../../core/changelog/generate-change-log';
 import { FileWritingError } from '../errors';
 import { isSkip } from '../../core/shared/utils';
 

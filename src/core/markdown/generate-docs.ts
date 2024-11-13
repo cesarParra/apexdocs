@@ -1,12 +1,10 @@
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
-import yaml from 'js-yaml';
 
 import { apply } from '#utils/fp';
 import {
   DocPageData,
   DocumentationBundle,
-  Frontmatter,
   PostHookDocumentationBundle,
   ReferenceGuidePageData,
   UnparsedApexBundle,
@@ -28,7 +26,7 @@ import { filterScope } from '../reflection/apex/filter-scope';
 import { Template } from '../template';
 import { hookableTemplate } from './templates/hookable';
 import { sortTypesAndMembers } from '../reflection/sort-types-and-members';
-import { isSkip } from '../shared/utils';
+import { isSkip, passThroughHook, toFrontmatterString } from '../shared/utils';
 import { parsedFilesToReferenceGuide } from './adapters/reference-guide';
 import { removeExcludedTags } from '../reflection/apex/remove-excluded-tags';
 import { HookError } from '../errors/errors';
@@ -129,9 +127,6 @@ function transformDocumentationBundleHook(config: MarkdownGeneratorConfig) {
 }
 
 // Configurable hooks
-function passThroughHook<T>(value: T): T {
-  return value;
-}
 
 const execTransformReferenceHook = async (
   references: DocPageReference[],
@@ -218,17 +213,4 @@ function postHookCompile(bundle: PostHookDocumentationBundle) {
       }),
     })),
   };
-}
-
-function toFrontmatterString(frontmatter: Frontmatter): string {
-  if (typeof frontmatter === 'string') {
-    return frontmatter;
-  }
-
-  if (!frontmatter) {
-    return '';
-  }
-
-  const yamlString = yaml.dump(frontmatter);
-  return `---\n${yamlString}---\n`;
 }
