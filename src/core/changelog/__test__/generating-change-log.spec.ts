@@ -1,5 +1,10 @@
-import { UnparsedApexBundle, UnparsedCustomObjectBundle, UnparsedSourceBundle } from '../../shared/types';
-import { ChangeLogPageData, generateChangeLog } from '../generate-change-log';
+import {
+  ChangeLogPageData,
+  UnparsedApexBundle,
+  UnparsedCustomObjectBundle,
+  UnparsedSourceBundle,
+} from '../../shared/types';
+import { generateChangeLog } from '../generate-change-log';
 import { assertEither } from '../../test-helpers/assert-either';
 import { isSkip } from '../../shared/utils';
 import { unparsedFieldBundleFromRawString } from '../../test-helpers/test-data-builders';
@@ -464,6 +469,18 @@ describe('when generating a changelog', () => {
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('MyTestObject'));
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('PhotoUrl__c'));
+    });
+  });
+
+  describe('and a custom hook is provided to customize the frontmatter', () => {
+    it('includes the custom frontmatter', async () => {
+      const hook = () => ({
+        frontmatter: '---\ntitle: Custom Title\n---',
+      });
+
+      const result = await generateChangeLog([], [], { ...config, transformChangeLogPage: hook })();
+
+      assertEither(result, (data) => expect((data as ChangeLogPageData).frontmatter).toContain('title: Custom Title'));
     });
   });
 });

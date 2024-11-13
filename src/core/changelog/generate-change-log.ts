@@ -1,6 +1,8 @@
 import {
+  ChangeLogPageData,
   ParsedFile,
   Skip,
+  TransformChangelogPage,
   UnparsedApexBundle,
   UnparsedSourceBundle,
   UserDefinedChangelogConfig,
@@ -12,26 +14,24 @@ import { Changelog, hasChanges, processChangelog, VersionManifest } from './proc
 import { convertToRenderableChangelog, RenderableChangelog } from './renderable-changelog';
 import { CompilationRequest, Template } from '../template';
 import { changelogTemplate } from './templates/changelog-template';
-import { ReflectionErrors } from '../errors/errors';
+import { HookError, ReflectionErrors } from '../errors/errors';
 import { apply } from '#utils/fp';
 import { filterScope } from '../reflection/apex/filter-scope';
-import { isInSource, skip } from '../shared/utils';
+import { isInSource, isSkip, passThroughHook, skip, toFrontmatterString } from '../shared/utils';
 import { reflectCustomFieldsAndObjects } from '../reflection/sobject/reflectCustomFieldsAndObjects';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { Type } from '@cparra/apex-reflection';
 import { filterApexSourceFiles, filterCustomObjectsAndFields } from '#utils/source-bundle-utils';
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
+import { hookableTemplate } from '../markdown/templates/hookable';
 
-export type ChangeLogPageData = {
-  content: string;
-  outputDocPath: string;
-};
+type Config = Omit<UserDefinedChangelogConfig, 'targetGenerator'>;
 
 export function generateChangeLog(
   oldBundles: UnparsedSourceBundle[],
   newBundles: UnparsedSourceBundle[],
-  config: Omit<UserDefinedChangelogConfig, 'targetGenerator'>,
-): TE.TaskEither<ReflectionErrors, ChangeLogPageData | Skip> {
+  config: Config,
+): TE.TaskEither<ReflectionErrors | HookError, ChangeLogPageData | Skip> {
   const convertToPageData = apply(toPageData, config.fileName);
 
   function handleConversion({ changelog, newManifest }: { changelog: Changelog; newManifest: VersionManifest }) {
@@ -51,6 +51,8 @@ export function generateChangeLog(
       newManifest,
     })),
     TE.map(handleConversion),
+    TE.flatMap(transformChangelogPageHook(config)),
+    TE.map(postHookCompile),
   );
 }
 
@@ -106,7 +108,45 @@ function compile(renderable: RenderableChangelog): string {
 
 function toPageData(fileName: string, content: string): ChangeLogPageData {
   return {
+    frontmatter: null,
     content,
     outputDocPath: `${fileName}.md`,
+  };
+}
+
+function transformChangelogPageHook(config: Config) {
+  return (page: ChangeLogPageData | Skip) =>
+    TE.tryCatch(
+      () => transformChangelogPage(page, config.transformChangeLogPage),
+      (error) => new HookError(error),
+    );
+}
+
+async function transformChangelogPage(
+  page: ChangeLogPageData | Skip,
+  hook: TransformChangelogPage = passThroughHook,
+): Promise<ChangeLogPageData | Skip> {
+  if (isSkip(page)) {
+    return page;
+  }
+  return {
+    ...page,
+    ...(await hook(page)),
+  };
+}
+
+function postHookCompile(page: ChangeLogPageData | Skip): ChangeLogPageData | Skip {
+  if (isSkip(page)) {
+    return page;
+  }
+  return {
+    ...page,
+    content: Template.getInstance().compile({
+      source: {
+        frontmatter: toFrontmatterString(page.frontmatter),
+        content: page.content,
+      },
+      template: hookableTemplate,
+    }),
   };
 }

@@ -1,8 +1,9 @@
-import { ExternalMetadata, Skip, SourceFileMetadata } from './types';
+import { ExternalMetadata, Frontmatter, Skip, SourceFileMetadata } from './types';
 import { Type } from '@cparra/apex-reflection';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { MarkdownGeneratorConfig } from '../markdown/generate-docs';
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
+import yaml from 'js-yaml';
 
 /**
  * Represents a file to be skipped.
@@ -43,4 +44,21 @@ export function getTypeGroup(type: Type | CustomObjectMetadata, config: Markdown
     default:
       return getGroup(type, config);
   }
+}
+
+export function passThroughHook<T>(value: T): T {
+  return value;
+}
+
+export function toFrontmatterString(frontmatter: Frontmatter): string {
+  if (typeof frontmatter === 'string') {
+    return frontmatter;
+  }
+
+  if (!frontmatter) {
+    return '';
+  }
+
+  const yamlString = yaml.dump(frontmatter);
+  return `---\n${yamlString}---\n`;
 }
