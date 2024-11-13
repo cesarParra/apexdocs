@@ -1,3 +1,7 @@
+---
+title: Changelog
+---
+
 # Changelog
 
 ## New Classes

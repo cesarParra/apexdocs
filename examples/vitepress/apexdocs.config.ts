@@ -30,6 +30,13 @@ export default {
     previousVersionDir: 'previous',
     currentVersionDir: 'force-app',
     scope: ['global', 'public', 'protected', 'private', 'namespaceaccessible'],
+    transformChangeLogPage: () => {
+      return {
+        frontmatter: {
+          title: 'Changelog',
+        },
+      };
+    },
   }),
   markdown: defineMarkdownConfig({
     sourceDir: 'force-app',
