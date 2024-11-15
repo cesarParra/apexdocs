@@ -11,6 +11,7 @@ import { Semigroup } from 'fp-ts/Semigroup';
 import { ParsedFile, UnparsedApexBundle } from '../../shared/types';
 import { ReflectionError, ReflectionErrors } from '../../errors/errors';
 import { parseApexMetadata } from './parse-apex-metadata';
+import { isInSource } from '../../shared/utils';
 
 async function reflectAsync(rawSource: string): Promise<Type> {
   return new Promise((resolve, reject) => {
@@ -69,7 +70,9 @@ function addMetadata(
       parsedFile.type,
       (type) => addFileMetadataToTypeAnnotation(type as Type, rawMetadataContent),
       E.map((type) => ({ ...parsedFile, type })),
-      E.mapLeft((error) => errorToReflectionErrors(error, parsedFile.source.filePath)),
+      E.mapLeft((error) =>
+        errorToReflectionErrors(error, isInSource(parsedFile.source) ? parsedFile.source.filePath : ''),
+      ),
     ),
   );
 }

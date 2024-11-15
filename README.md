@@ -335,9 +335,11 @@ of different hooks that will be called at different stages of the documentation 
 
 All hooks can be async functions, allowing you to make asynchronous operations, like calling an external API.
 
-📒 Note: The extension hook functions are only available when generating Markdown files (not OpenApi).
+There are hooks for both Markdown and Changelog operations (but not for OpenApi).
 
-#### **transformReferenceGuide**
+#### Markdown Hooks
+
+##### **transformReferenceGuide**
 
 Allows changing the Allows changing the frontmatter and content of the reference guide, or even if creating a reference
 guide page should be skipped.
@@ -374,7 +376,7 @@ export default defineMarkdownConfig({
 });
 ```
 
-#### **transformDocs**
+##### **transformDocs**
 
 The main purpose of this hook is to allow you to skip the generation of specific pages,
 by returning a filtered array of `DocPageData` objects.
@@ -397,7 +399,7 @@ export default {
 };
 ```
 
-#### **transformDocPage**
+##### **transformDocPage**
 
 Allows changing the frontmatter and content of the doc page.
 
@@ -421,7 +423,7 @@ export default {
 };
 ```
 
-#### **transformReference**
+##### **transformReference**
 
 Allows changing where the files are written to and how files are linked to each other.
 
@@ -444,6 +446,32 @@ export default {
     return {
       // Link to the class in Github instead to its doc page.
       referencePath: `https://github.com/MyOrg/MyRepo/blob/main/src/classes/${reference.name}.cls`
+    };
+  }
+};
+```
+
+#### Changelog Hooks
+
+##### **transformChangeLogPage**
+
+Allows changing the frontmatter and content of the changelog page.
+
+**Type**
+
+```typescript
+type TransformChangeLogPage = (
+  changelog: ChangeLogPageData,
+) => Partial<ChangeLogPageData> | Promise<Partial<ChangeLogPageData>>
+```
+
+Example
+
+```typescript
+export default {
+  transformChangeLogPage: (changelog) => {
+    return {
+      frontmatter: { example: 'example' }
     };
   }
 };

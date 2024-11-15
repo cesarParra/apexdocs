@@ -1,5 +1,4 @@
 import { Type } from '@cparra/apex-reflection';
-import { ChangeLogPageData } from '../changelog/generate-change-log';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 
@@ -34,7 +33,7 @@ export type UserDefinedMarkdownConfig = {
   excludeTags: string[];
   exclude: string[];
 } & CliConfigurableMarkdownConfig &
-  Partial<ConfigurableHooks>;
+  Partial<MarkdownConfigurableHooks>;
 
 export type UserDefinedOpenApiConfig = {
   targetGenerator: 'openapi';
@@ -56,7 +55,7 @@ export type UserDefinedChangelogConfig = {
   scope: string[];
   exclude: string[];
   skipIfNoChanges: boolean;
-};
+} & Partial<ChangelogConfigurableHooks>;
 
 export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig | UserDefinedChangelogConfig;
 
@@ -85,21 +84,34 @@ export type UnparsedApexBundle = {
   metadataContent: string | null;
 };
 
+type MetadataTypes = 'interface' | 'class' | 'enum' | 'customobject' | 'customfield';
+
 export type SourceFileMetadata = {
   filePath: string;
   name: string;
-  type: 'interface' | 'class' | 'enum' | 'customobject' | 'customfield';
+  type: MetadataTypes;
+};
+
+// External metadata is metadata that does not live directly in the source code, and thus we don't
+// have a file path for it.
+// This is metadata derived from other information.
+// For example, for an "extension"
+// field that extends a Salesforce object or object in a different package, we want to capture the parent
+// object, even if the file for that object was not parsed.
+export type ExternalMetadata = {
+  name: string;
+  type: MetadataTypes;
 };
 
 export type ParsedFile<
   T extends Type | CustomObjectMetadata | CustomFieldMetadata = Type | CustomObjectMetadata | CustomFieldMetadata,
 > = {
-  source: SourceFileMetadata;
+  source: SourceFileMetadata | ExternalMetadata;
   type: T;
 };
 
 export type DocPageReference = {
-  source: SourceFileMetadata;
+  source: SourceFileMetadata | ExternalMetadata;
   // The name under which the type should be displayed in the documentation.
   // By default, this will match the source.name, but it can be configured by the user.
   displayName: string;
@@ -121,7 +133,7 @@ export type ReferenceGuidePageData = {
 };
 
 export type DocPageData = {
-  source: SourceFileMetadata;
+  source: SourceFileMetadata | ExternalMetadata;
   group: string | null;
   outputDocPath: string;
   frontmatter: Frontmatter;
@@ -130,6 +142,12 @@ export type DocPageData = {
 };
 
 export type OpenApiPageData = Omit<DocPageData, 'source' | 'type'>;
+
+export type ChangeLogPageData = {
+  frontmatter: Frontmatter;
+  content: string;
+  outputDocPath: string;
+};
 
 export type PageData = DocPageData | OpenApiPageData | ReferenceGuidePageData | ChangeLogPageData;
 
@@ -153,9 +171,9 @@ export type PostHookDocumentationBundle = {
 // CONFIGURABLE HOOKS
 
 /**
- * The configurable hooks that can be used to modify the output of the generator.
+ * The configurable hooks that can be used to modify the output of the Markdown generator.
  */
-export type ConfigurableHooks = {
+export type MarkdownConfigurableHooks = {
   transformReferenceGuide: TransformReferenceGuide;
   transformDocs: TransformDocs;
   transformDocPage: TransformDocPage;
@@ -193,3 +211,11 @@ export type TransformDocs = (docs: DocPageData[]) => DocPageData[] | Promise<Doc
 export type TransformDocPage = (
   doc: DocPageData,
 ) => Partial<ConfigurableDocPageData> | Promise<Partial<ConfigurableDocPageData>>;
+
+export type ChangelogConfigurableHooks = {
+  transformChangeLogPage: TransformChangelogPage;
+};
+
+export type TransformChangelogPage = (
+  page: ChangeLogPageData,
+) => Partial<ChangeLogPageData> | Promise<Partial<ChangeLogPageData>>;

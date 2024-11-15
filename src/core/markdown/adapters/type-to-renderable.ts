@@ -17,9 +17,9 @@ import { adaptDescribable, adaptDocumentable } from '../../renderables/documenta
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
 import { MarkdownGeneratorConfig } from '../generate-docs';
-import { SourceFileMetadata } from '../../shared/types';
+import { ExternalMetadata, SourceFileMetadata } from '../../shared/types';
 import { CustomObjectMetadata } from '../../reflection/sobject/reflect-custom-object-sources';
-import { getTypeGroup } from '../../shared/utils';
+import { getTypeGroup, isInSource } from '../../shared/utils';
 import { CustomFieldMetadata } from '../../reflection/sobject/reflect-custom-field-source';
 
 type GetReturnRenderable<T extends Type | CustomObjectMetadata> = T extends InterfaceMirror
@@ -31,10 +31,10 @@ type GetReturnRenderable<T extends Type | CustomObjectMetadata> = T extends Inte
       : RenderableCustomObject;
 
 export function typeToRenderable<T extends Type | CustomObjectMetadata>(
-  parsedFile: { source: SourceFileMetadata; type: T },
+  parsedFile: { source: SourceFileMetadata | ExternalMetadata; type: T },
   linkGenerator: GetRenderableContentByTypeName,
   config: MarkdownGeneratorConfig,
-): GetReturnRenderable<T> & { filePath: string; namespace?: string } {
+): GetReturnRenderable<T> & { filePath: string | undefined; namespace?: string } {
   function getRenderable(): RenderableInterface | RenderableClass | RenderableEnum | RenderableCustomObject {
     const { type } = parsedFile;
     switch (type.type_name) {
@@ -51,7 +51,7 @@ export function typeToRenderable<T extends Type | CustomObjectMetadata>(
 
   return {
     ...(getRenderable() as GetReturnRenderable<T>),
-    filePath: parsedFile.source.filePath,
+    filePath: isInSource(parsedFile.source) ? parsedFile.source.filePath : undefined,
     namespace: config.namespace,
   };
 }
@@ -281,11 +281,14 @@ function fieldMetadataToRenderable(
     description: field.description ? [field.description] : [],
     apiName: getApiName(field.name, config),
     fieldType: field.type,
-    pickListValues: field.pickListValues ? {
-      headingLevel: headingLevel + 1,
-      heading: 'Possible values are',
-      value: field.pickListValues,
-    } : undefined,
+    required: field.required,
+    pickListValues: field.pickListValues
+      ? {
+          headingLevel: headingLevel + 1,
+          heading: 'Possible values are',
+          value: field.pickListValues,
+        }
+      : undefined,
   };
 }
 

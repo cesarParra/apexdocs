@@ -19,6 +19,8 @@ hero:
 
 ## Custom Objects
 
+### [Contact](custom-objects/Contact)
+
 ### [Event__c](custom-objects/Event__c)
 
 Represents an event that people can register for.
@@ -28,6 +30,10 @@ Represents an event that people can register for.
 ### [Product__c](custom-objects/Product__c)
 
 Product that is sold or available for sale.
+
+### [Product_Inline_Fields__c](custom-objects/Product_Inline_Fields__c)
+
+Products
 
 ### [Product_Price_Component__c](custom-objects/Product_Price_Component__c)
 

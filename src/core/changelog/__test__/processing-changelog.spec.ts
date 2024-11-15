@@ -13,14 +13,28 @@ function apexTypeFromRawString(raw: string): Type {
 }
 
 class CustomFieldMetadataBuilder {
+  name: string = 'MyField';
+  description: string | null = null;
+
+  withName(name: string): CustomFieldMetadataBuilder {
+    this.name = name;
+    return this;
+  }
+
+  withDescription(testDescription: string) {
+    this.description = testDescription;
+    return this;
+  }
+
   build(): CustomFieldMetadata {
     return {
       type: 'Text',
       type_name: 'customfield',
       label: 'MyField',
-      name: 'MyField',
-      description: null,
+      name: this.name,
+      description: this.description,
       parentName: 'MyObject',
+      required: false,
     };
   }
 }
@@ -28,11 +42,6 @@ class CustomFieldMetadataBuilder {
 class CustomObjectMetadataBuilder {
   label: string = 'MyObject';
   fields: CustomFieldMetadata[] = [];
-
-  withLabel(label: string): CustomObjectMetadataBuilder {
-    this.label = label;
-    return this;
-  }
 
   withField(field: CustomFieldMetadata): CustomObjectMetadataBuilder {
     this.fields.push(field);
@@ -176,6 +185,7 @@ describe('when generating a changelog', () => {
             {
               __typename: 'NewField',
               name: newField.name,
+              description: null,
             },
           ],
         },
@@ -564,6 +574,94 @@ describe('when generating a changelog', () => {
             {
               __typename: 'RemovedType',
               name: 'OldEnum',
+            },
+          ],
+        },
+      ]);
+    });
+  });
+
+  describe('with custom field code', () => {
+    it('does not list fields that are the same in both versions', () => {
+      // A field that is the same in both versions is defined as one
+      // with both the same name and the same parent
+
+      const oldField = new CustomFieldMetadataBuilder().build();
+      const newField = new CustomFieldMetadataBuilder().build();
+
+      const oldManifest = { types: [oldField] };
+      const newManifest = { types: [newField] };
+
+      const changeLog = processChangelog(oldManifest, newManifest);
+
+      expect(changeLog.customObjectModifications).toEqual([]);
+    });
+
+    it('lists new fields of a custom object', () => {
+      const oldField = new CustomFieldMetadataBuilder().build();
+      const newField = new CustomFieldMetadataBuilder().withName('NewField').build();
+
+      const oldManifest = { types: [oldField] };
+      const newManifest = { types: [oldField, newField] };
+
+      const changeLog = processChangelog(oldManifest, newManifest);
+
+      expect(changeLog.customObjectModifications).toEqual([
+        {
+          typeName: newField.parentName,
+          modifications: [
+            {
+              __typename: 'NewField',
+              name: newField.name,
+              description: null,
+            },
+          ],
+        },
+      ]);
+    });
+
+    it('includes the description of new fields', () => {
+      const oldField = new CustomFieldMetadataBuilder().build();
+      const newField = new CustomFieldMetadataBuilder()
+        .withName('NewField')
+        .withDescription('Test description')
+        .build();
+
+      const oldManifest = { types: [oldField] };
+      const newManifest = { types: [oldField, newField] };
+
+      const changeLog = processChangelog(oldManifest, newManifest);
+
+      expect(changeLog.customObjectModifications).toEqual([
+        {
+          typeName: newField.parentName,
+          modifications: [
+            {
+              __typename: 'NewField',
+              name: newField.name,
+              description: 'Test description',
+            },
+          ],
+        },
+      ]);
+    });
+
+    it('lists removed fields of a custom object', () => {
+      const oldField = new CustomFieldMetadataBuilder().withName('OldField').build();
+      const unchangedField = new CustomFieldMetadataBuilder().build();
+
+      const oldManifest = { types: [unchangedField, oldField] };
+      const newManifest = { types: [unchangedField] };
+
+      const changeLog = processChangelog(oldManifest, newManifest);
+
+      expect(changeLog.customObjectModifications).toEqual([
+        {
+          typeName: oldField.parentName,
+          modifications: [
+            {
+              __typename: 'RemovedField',
+              name: oldField.name,
             },
           ],
         },

@@ -1,3 +1,7 @@
+---
+title: Changelog
+---
+
 # Changelog
 
 ## New Classes
@@ -51,6 +55,9 @@ These custom objects are new.
 Represents an event that people can register for.
 ### Price_Component__c
 
+### Product_Inline_Fields__c
+
+Products
 ### Product_Price_Component__c
 
 ### Product__c
@@ -65,3 +72,11 @@ Custom object for tracking sales orders.
 ### Speaker__c
 
 Represents a speaker at an event.
+
+## New or Removed Fields to Custom Objects or Standard Objects
+
+These custom fields have been added or removed.
+
+### Contact
+
+- New Field: PhotoUrl__c. URL of the contact&#x27;s photo

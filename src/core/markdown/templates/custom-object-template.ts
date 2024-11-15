@@ -10,6 +10,9 @@ export const customObjectTemplate = `
 {{ heading fields.headingLevel fields.heading }}
 {{#each fields.value}}
 {{ heading headingLevel heading }}
+{{#if required}}
+**Required**
+{{/if}}
 
 {{#if description}}
 {{{renderContent description}}}

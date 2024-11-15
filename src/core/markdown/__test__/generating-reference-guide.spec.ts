@@ -4,7 +4,7 @@ import * as E from 'fp-ts/Either';
 import { unparsedApexBundleFromRawString, generateDocs, unparsedObjectBundleFromRawString } from './test-helpers';
 import { ReferenceGuidePageData } from '../../shared/types';
 import { assertEither } from '../../test-helpers/assert-either';
-import { customObjectGenerator } from '../../test-helpers/test-data-builders';
+import { CustomObjectXmlBuilder } from '../../test-helpers/test-data-builders/custom-object-xml-builder';
 
 describe('When generating the Reference Guide', () => {
   beforeAll(() => {
@@ -40,7 +40,7 @@ describe('When generating the Reference Guide', () => {
       `;
 
     const input3 = {
-      rawContent: customObjectGenerator(),
+      rawContent: new CustomObjectXmlBuilder().build(),
       filePath: 'src/object/TestObject__c.object-meta.xml',
     };
 
@@ -99,7 +99,7 @@ describe('When generating the Reference Guide', () => {
 
   it('group SObjects under the Custom Objects group by default', async () => {
     const input = {
-      rawContent: customObjectGenerator(),
+      rawContent: new CustomObjectXmlBuilder().build(),
       filePath: 'src/object/TestObject__c.object-meta.xml',
     };
 
@@ -112,7 +112,7 @@ describe('When generating the Reference Guide', () => {
 
   it('groups SObjects under the provided group', async () => {
     const input = {
-      rawContent: customObjectGenerator(),
+      rawContent: new CustomObjectXmlBuilder().build(),
       filePath: 'src/object/TestObject__c.object-meta.xml',
     };
 
@@ -180,7 +180,7 @@ describe('When generating the Reference Guide', () => {
       `;
 
     const input3 = {
-      rawContent: customObjectGenerator(),
+      rawContent: new CustomObjectXmlBuilder().build(),
       filePath: 'src/object/TestObject__c.object-meta.xml',
     };
 
@@ -222,7 +222,7 @@ describe('When generating the Reference Guide', () => {
       `;
 
     const input3 = {
-      rawContent: customObjectGenerator(),
+      rawContent: new CustomObjectXmlBuilder().build(),
       filePath: 'src/object/ATestObject__c.object-meta.xml',
     };
 

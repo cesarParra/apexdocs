@@ -7,6 +7,7 @@ import { pipe } from 'fp-ts/function';
 import * as A from 'fp-ts/Array';
 import { XMLParser } from 'fast-xml-parser';
 import * as E from 'fp-ts/Either';
+import { getPickListValues } from './parse-picklist-values';
 
 export type CustomFieldMetadata = {
   type_name: 'customfield';
@@ -16,6 +17,7 @@ export type CustomFieldMetadata = {
   type?: string | null;
   parentName: string;
   pickListValues?: string[];
+  required: boolean;
 };
 
 export function reflectCustomFieldSources(
@@ -63,30 +65,15 @@ function toCustomFieldMetadata(parserResult: { CustomField: unknown }): CustomFi
     parserResult?.CustomField != null && typeof parserResult.CustomField === 'object' ? parserResult.CustomField : {};
   const defaultValues = {
     description: null,
+    required: false,
   };
 
-  const pickListValues =
-    hasType(customField) && customField.type?.toLowerCase() === 'picklist' ? toPickListValues(customField) : undefined;
-  return { ...defaultValues, ...customField, type_name: 'customfield', pickListValues } as CustomFieldMetadata;
-}
-
-function toPickListValues(customField: object): string[] {
-  if ('valueSet' in customField) {
-    const valueSet = customField.valueSet as object;
-    if ('valueSetDefinition' in valueSet) {
-      const valueSetDefinition = valueSet.valueSetDefinition as object;
-      if ('value' in valueSetDefinition) {
-        const pickListValues = valueSetDefinition.value as object[];
-        return pickListValues.filter((each) => 'fullName' in each).map((each) => each.fullName as string);
-      }
-    }
-  }
-
-  return [];
-}
-
-function hasType(customField: object): customField is CustomFieldMetadata {
-  return !!(customField as CustomFieldMetadata).type;
+  return {
+    ...defaultValues,
+    ...customField,
+    type_name: 'customfield',
+    pickListValues: getPickListValues(customField),
+  } as CustomFieldMetadata;
 }
 
 function addName(metadata: CustomFieldMetadata, name: string): CustomFieldMetadata {

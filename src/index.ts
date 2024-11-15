@@ -1,10 +1,11 @@
 import type {
-  ConfigurableHooks,
+  MarkdownConfigurableHooks,
   Skip,
   UserDefinedMarkdownConfig,
   ReferenceGuidePageData,
   DocPageData,
   DocPageReference,
+  ChangeLogPageData,
   ConfigurableDocPageData,
   TransformReferenceGuide,
   TransformDocs,
@@ -13,6 +14,8 @@ import type {
   ConfigurableDocPageReference,
   UserDefinedOpenApiConfig,
   UserDefinedChangelogConfig,
+  ChangelogConfigurableHooks,
+  TransformChangelogPage,
 } from './core/shared/types';
 import { skip } from './core/shared/utils';
 import { changeLogDefaults, markdownDefaults, openApiDefaults } from './defaults';
@@ -72,12 +75,15 @@ export {
   TransformDocs,
   TransformDocPage,
   TransformReference,
-  ConfigurableHooks,
+  MarkdownConfigurableHooks,
   ReferenceGuidePageData,
   DocPageData,
+  ChangeLogPageData,
   DocPageReference,
   Skip,
   ConfigurableDocPageData,
   ConfigurableDocPageReference,
   process,
+  ChangelogConfigurableHooks,
+  TransformChangelogPage,
 };

@@ -1,8 +1,15 @@
-import { UnparsedApexBundle, UnparsedCustomObjectBundle, UnparsedSourceBundle } from '../../shared/types';
-import { ChangeLogPageData, generateChangeLog } from '../generate-change-log';
+import {
+  ChangeLogPageData,
+  UnparsedApexBundle,
+  UnparsedCustomObjectBundle,
+  UnparsedSourceBundle,
+} from '../../shared/types';
+import { generateChangeLog } from '../generate-change-log';
 import { assertEither } from '../../test-helpers/assert-either';
 import { isSkip } from '../../shared/utils';
-import { customObjectGenerator, unparsedFieldBundleFromRawString } from '../../test-helpers/test-data-builders';
+import { unparsedFieldBundleFromRawString } from '../../test-helpers/test-data-builders';
+import { CustomObjectXmlBuilder } from '../../test-helpers/test-data-builders/custom-object-xml-builder';
+import { CustomFieldXmlBuilder } from '../../test-helpers/test-data-builders/custom-field-xml-builder';
 
 const config = {
   fileName: 'changelog',
@@ -186,7 +193,7 @@ describe('when generating a changelog', () => {
 
   describe('that include new custom objects', () => {
     it('should include a section for new custom objects', async () => {
-      const newObjectSource = customObjectGenerator();
+      const newObjectSource = new CustomObjectXmlBuilder().build();
 
       const oldBundle: UnparsedCustomObjectBundle[] = [];
       const newBundle: UnparsedCustomObjectBundle[] = [
@@ -244,7 +251,7 @@ describe('when generating a changelog', () => {
 
   describe('that includes removed custom objects', () => {
     it('should include a section for removed custom objects', async () => {
-      const oldObjectSource = customObjectGenerator();
+      const oldObjectSource = new CustomObjectXmlBuilder().build();
 
       const oldBundle: UnparsedCustomObjectBundle[] = [
         { type: 'customobject', name: 'MyTestObject', content: oldObjectSource, filePath: 'MyTestObject.object' },
@@ -259,7 +266,7 @@ describe('when generating a changelog', () => {
     });
 
     it('should include the removed custom object name', async () => {
-      const oldObjectSource = customObjectGenerator();
+      const oldObjectSource = new CustomObjectXmlBuilder().build();
 
       const oldBundle: UnparsedCustomObjectBundle[] = [
         { type: 'customobject', name: 'MyTestObject', content: oldObjectSource, filePath: 'MyTestObject.object' },
@@ -329,8 +336,8 @@ describe('when generating a changelog', () => {
 
   describe('that includes modifications to custom fields', () => {
     it('should include a section for new or removed custom fields', async () => {
-      const oldObjectSource = customObjectGenerator();
-      const newObjectSource = customObjectGenerator();
+      const oldObjectSource = new CustomObjectXmlBuilder().build();
+      const newObjectSource = new CustomObjectXmlBuilder().build();
 
       const oldBundle: UnparsedSourceBundle[] = [
         { type: 'customobject', name: 'MyTestObject', content: oldObjectSource, filePath: 'MyTestObject.object' },
@@ -346,13 +353,15 @@ describe('when generating a changelog', () => {
       const result = await generateChangeLog(oldBundle, newBundle, config)();
 
       assertEither(result, (data) =>
-        expect((data as ChangeLogPageData).content).toContain('## New or Removed Fields in Existing Objects'),
+        expect((data as ChangeLogPageData).content).toContain(
+          '## New or Removed Fields to Custom Objects or Standard Objects',
+        ),
       );
     });
 
     it('should include new custom field names', async () => {
-      const oldObjectSource = customObjectGenerator();
-      const newObjectSource = customObjectGenerator();
+      const oldObjectSource = new CustomObjectXmlBuilder().build();
+      const newObjectSource = new CustomObjectXmlBuilder().build();
 
       const oldBundle: UnparsedSourceBundle[] = [
         { type: 'customobject', name: 'MyTestObject', content: oldObjectSource, filePath: 'MyTestObject.object' },
@@ -371,8 +380,8 @@ describe('when generating a changelog', () => {
     });
 
     it('should include removed custom field names', async () => {
-      const oldObjectSource = customObjectGenerator();
-      const newObjectSource = customObjectGenerator();
+      const oldObjectSource = new CustomObjectXmlBuilder().build();
+      const newObjectSource = new CustomObjectXmlBuilder().build();
 
       const oldBundle: UnparsedSourceBundle[] = [
         { type: 'customobject', name: 'MyTestObject', content: oldObjectSource, filePath: 'MyTestObject.object' },
@@ -390,6 +399,88 @@ describe('when generating a changelog', () => {
       assertEither(result, (data) =>
         expect((data as ChangeLogPageData).content).toContain('Removed Field: TestField__c'),
       );
+    });
+  });
+
+  describe('that includes extension fields', () => {
+    it('does not include the fields when they are in both versions', async () => {
+      const fieldSource = new CustomFieldXmlBuilder().build();
+
+      const oldBundle: UnparsedSourceBundle[] = [
+        {
+          type: 'customfield',
+          name: 'PhotoUrl__c',
+          content: fieldSource,
+          filePath: 'PhotoUrl__c.field-meta.xml',
+          parentName: 'MyTestObject',
+        },
+      ];
+      const newBundle: UnparsedSourceBundle[] = [
+        {
+          type: 'customfield',
+          name: 'PhotoUrl__c',
+          content: fieldSource,
+          filePath: 'PhotoUrl__c.field-meta.xml',
+          parentName: 'MyTestObject',
+        },
+      ];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).not.toContain('MyTestObject'));
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).not.toContain('PhotoUrl__c'));
+    });
+
+    it('includes added fields when they are not in the old version', async () => {
+      const fieldSource = new CustomFieldXmlBuilder().build();
+
+      const oldBundle: UnparsedSourceBundle[] = [];
+      const newBundle: UnparsedSourceBundle[] = [
+        {
+          type: 'customfield',
+          name: 'PhotoUrl__c',
+          content: fieldSource,
+          filePath: 'PhotoUrl__c.field-meta.xml',
+          parentName: 'MyTestObject',
+        },
+      ];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('MyTestObject'));
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('PhotoUrl__c'));
+    });
+
+    it('includes removed fields when they are not in the new version', async () => {
+      const fieldSource = new CustomFieldXmlBuilder().build();
+
+      const oldBundle: UnparsedSourceBundle[] = [
+        {
+          type: 'customfield',
+          name: 'PhotoUrl__c',
+          content: fieldSource,
+          filePath: 'PhotoUrl__c.field-meta.xml',
+          parentName: 'MyTestObject',
+        },
+      ];
+      const newBundle: UnparsedSourceBundle[] = [];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('MyTestObject'));
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('PhotoUrl__c'));
+    });
+  });
+
+  describe('and a custom hook is provided to customize the frontmatter', () => {
+    it('includes the custom frontmatter', async () => {
+      const hook = () => ({
+        frontmatter: '---\ntitle: Custom Title\n---',
+      });
+
+      const result = await generateChangeLog([], [], { ...config, transformChangeLogPage: hook })();
+
+      assertEither(result, (data) => expect((data as ChangeLogPageData).frontmatter).toContain('title: Custom Title'));
     });
   });
 });
