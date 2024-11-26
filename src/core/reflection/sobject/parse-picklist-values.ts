@@ -22,11 +22,21 @@ function toPickListValues(customField: MaybeTyped): string[] | undefined {
     if ('valueSetDefinition' in valueSet) {
       const valueSetDefinition = valueSet.valueSetDefinition as object;
       if ('value' in valueSetDefinition) {
-        const pickListValues = valueSetDefinition.value as Record<'fullName', string>[];
-        return pickListValues.filter((each) => 'fullName' in each).map((current) => current.fullName);
+        const pickListValues = valueSetDefinition.value as Record<'fullName', string>[] | Record<'fullName', string>;
+        if (isArrayOfValues(pickListValues)) {
+          return pickListValues.filter((each) => 'fullName' in each).map((current) => current.fullName);
+        } else {
+          return [pickListValues.fullName];
+        }
       }
     }
   }
 
   return undefined;
+}
+
+function isArrayOfValues(
+  value: Record<string, unknown> | Record<string, unknown>[],
+): value is Record<string, unknown>[] {
+  return Array.isArray(value);
 }

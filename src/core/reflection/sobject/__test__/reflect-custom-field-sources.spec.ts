@@ -107,7 +107,7 @@ describe('when parsing custom field metadata', () => {
     assertEither(result, (data) => expect(data[0].type.description).toBe('A Photo URL field'));
   });
 
-  test('can parse picklist values', async () => {
+  test('can parse picklist values when there are multiple picklist values available', async () => {
     const unparsed: UnparsedCustomFieldBundle = {
       type: 'customfield',
       name: 'Status__c',
@@ -151,6 +151,73 @@ describe('when parsing custom field metadata', () => {
 
     assertEither(result, (data) => expect(data[0].type.description).toBe('Status'));
     assertEither(result, (data) => expect(data[0].type.pickListValues).toEqual(['Staging', 'Active', 'Inactive']));
+  });
+
+  test('can parse picklist values when there is a single value available', async () => {
+    const unparsed: UnparsedCustomFieldBundle = {
+      type: 'customfield',
+      name: 'Status__c',
+      parentName: 'MyFirstObject__c',
+      filePath: 'src/field/Status__c.field-meta.xml',
+      content: `
+      <?xml version="1.0" encoding="UTF-8"?>
+      <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+          <fullName>Status__c</fullName>
+          <externalId>false</externalId>
+          <label>Status</label>
+          <required>true</required>
+          <trackFeedHistory>false</trackFeedHistory>
+          <description>Status</description>
+          <type>Picklist</type>
+          <valueSet>
+              <restricted>true</restricted>
+              <valueSetDefinition>
+                  <sorted>false</sorted>
+                  <value>
+                      <fullName>Staging</fullName>
+                      <default>false</default>
+                      <label>Staging</label>
+                  </value>
+              </valueSetDefinition>
+          </valueSet>
+      </CustomField>`,
+    };
+
+    const result = await reflectCustomFieldSources([unparsed])();
+
+    assertEither(result, (data) => expect(data[0].type.description).toBe('Status'));
+    assertEither(result, (data) => expect(data[0].type.pickListValues).toEqual(['Staging']));
+  });
+
+  test('can parse picklist values when there are no values', async () => {
+    const unparsed: UnparsedCustomFieldBundle = {
+      type: 'customfield',
+      name: 'Status__c',
+      parentName: 'MyFirstObject__c',
+      filePath: 'src/field/Status__c.field-meta.xml',
+      content: `
+      <?xml version="1.0" encoding="UTF-8"?>
+      <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+          <fullName>Status__c</fullName>
+          <externalId>false</externalId>
+          <label>Status</label>
+          <required>true</required>
+          <trackFeedHistory>false</trackFeedHistory>
+          <description>Status</description>
+          <type>Picklist</type>
+          <valueSet>
+              <restricted>true</restricted>
+              <valueSetDefinition>
+                  <sorted>false</sorted>
+              </valueSetDefinition>
+          </valueSet>
+      </CustomField>`,
+    };
+
+    const result = await reflectCustomFieldSources([unparsed])();
+
+    assertEither(result, (data) => expect(data[0].type.description).toBe('Status'));
+    assertEither(result, (data) => expect(data[0].type.pickListValues).toEqual(undefined));
   });
 
   test('An error is returned when the XML is in an invalid format', async () => {
