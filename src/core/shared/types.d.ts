@@ -143,7 +143,32 @@ export type DocPageData = {
 
 export type OpenApiPageData = Omit<DocPageData, 'source' | 'type'>;
 
+export type FileChange = {
+  name: string;
+  fileType: 'apex' | 'customobject';
+  changeType: 'added' | 'removed' | 'changed';
+  changes?: {
+    addedMethods?: string[];
+    removedMethods?: string[];
+    addedFields?: string[];
+    removedFields?: string[];
+    addedProperties?: string[];
+    removedProperties?: string[];
+    addedCustomFields?: string[];
+    removedCustomFields?: string[];
+    addedSubtypes?: string[];
+    removedSubtypes?: string[];
+    addedEnumValues?: string[];
+    removedEnumValues?: string[];
+  };
+};
+
+export type SourceChangelog = {
+  fileChanges: FileChange[];
+};
+
 export type ChangeLogPageData = {
+  source: SourceChangelog;
   frontmatter: Frontmatter;
   content: string;
   outputDocPath: string;

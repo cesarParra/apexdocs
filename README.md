@@ -463,6 +463,39 @@ Allows changing the frontmatter and content of the changelog page.
 type TransformChangeLogPage = (
   changelog: ChangeLogPageData,
 ) => Partial<ChangeLogPageData> | Promise<Partial<ChangeLogPageData>>
+
+// Supporting types
+
+type ChangeLogPageData = {
+  source: SourceChangelog;
+  frontmatter: string | Record<string, any>;
+  content: string;
+  outputDocPath: string;
+};
+
+type SourceChangelog = {
+  fileChanges: FileChange[];
+};
+
+type FileChange = {
+  name: string;
+  fileType: 'apex' | 'customobject';
+  changeType: 'added' | 'removed' | 'changed';
+  changes?: {
+    addedMethods?: string[];
+    removedMethods?: string[];
+    addedFields?: string[];
+    removedFields?: string[];
+    addedProperties?: string[];
+    removedProperties?: string[];
+    addedCustomFields?: string[];
+    removedCustomFields?: string[];
+    addedSubtypes?: string[];
+    removedSubtypes?: string[];
+    addedEnumValues?: string[];
+    removedEnumValues?: string[];
+  };
+};
 ```
 
 Example

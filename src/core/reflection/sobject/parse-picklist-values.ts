@@ -22,8 +22,8 @@ function toPickListValues(customField: MaybeTyped): string[] | undefined {
     if ('valueSetDefinition' in valueSet) {
       const valueSetDefinition = valueSet.valueSetDefinition as object;
       if ('value' in valueSetDefinition) {
-        const pickListValues = valueSetDefinition.value as object[];
-        return pickListValues.filter((each) => 'fullName' in each).map((each) => each.fullName as string);
+        const pickListValues = valueSetDefinition.value as Record<'fullName', string>[];
+        return pickListValues.filter((each) => 'fullName' in each).map((current) => current.fullName);
       }
     }
   }

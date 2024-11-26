@@ -8,3 +8,12 @@ npm-debug.log
 /dist/
 /lib/
 .sfdx/
+
+# Added by Illuminated Cloud
+.localdev/
+/IlluminatedCloud/
+/out/
+target/
+/.illuminatedCloud/
+**/tsconfig*.json
+**/*.tsbuildinfo

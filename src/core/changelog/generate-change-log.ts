@@ -24,6 +24,7 @@ import { Type } from '@cparra/apex-reflection';
 import { filterApexSourceFiles, filterCustomObjectsAndFields } from '#utils/source-bundle-utils';
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 import { hookableTemplate } from '../markdown/templates/hookable';
+import changelogToSourceChangelog from './helpers/changelog-to-source-changelog';
 
 type Config = Omit<UserDefinedChangelogConfig, 'targetGenerator'>;
 
@@ -38,7 +39,9 @@ export function generateChangeLog(
     if (config.skipIfNoChanges && !hasChanges(changelog)) {
       return skip();
     }
-    return pipe(convertToRenderableChangelog(changelog, newManifest.types), compile, convertToPageData);
+    return pipe(convertToRenderableChangelog(changelog, newManifest.types), compile, (content) =>
+      convertToPageData(content, changelog),
+    );
   }
 
   return pipe(
@@ -106,8 +109,9 @@ function compile(renderable: RenderableChangelog): string {
   return Template.getInstance().compile(compilationRequest);
 }
 
-function toPageData(fileName: string, content: string): ChangeLogPageData {
+function toPageData(fileName: string, content: string, changelog: Changelog): ChangeLogPageData {
   return {
+    source: changelogToSourceChangelog(changelog),
     frontmatter: null,
     content,
     outputDocPath: `${fileName}.md`,
