@@ -4,6 +4,7 @@ import { process } from '../../../dist/index.js';
 const config = {
   sourceDir: 'force-app',
   targetGenerator: 'markdown',
+  exclude: ['**/BaseClass.cls'],
   scope: ['global', 'public', 'private'],
 };
 

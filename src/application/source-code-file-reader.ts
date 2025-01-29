@@ -160,7 +160,7 @@ export function processFiles(fileSystem: FileSystem) {
             const pathLocation = component.type.name === 'ApexClass' ? component.content : component.xml;
             return {
               ...component,
-              filePath: pathLocation!,
+              filePath: pathLocation,
             };
           });
         },
@@ -172,6 +172,9 @@ export function processFiles(fileSystem: FileSystem) {
   };
 }
 
-function isExcluded(filePath: string, exclude: string[]): boolean {
+function isExcluded(filePath: string | undefined, exclude: string[]): boolean {
+  if (!filePath) {
+    return true;
+  }
   return exclude.some((pattern) => minimatch(filePath, pattern));
 }
