@@ -1,0 +1,5 @@
+# MultiInheritanceClass Class
+
+**Inheritance**
+
+SampleClass
