@@ -309,6 +309,15 @@ export default defineMarkdownConfig({
 });
 ```
 
+You can also leverage the `exclude` property to indirectly modify things like custom metadata records you do
+not want included in the custom metadata type object documentation.
+
+```typescript
+//...
+exclude: ['**/*.md-meta.xml']
+//...
+```
+
 ### Excluding Tags from Appearing in the Documentation
 
 Note: Only works for Markdown documentation.
