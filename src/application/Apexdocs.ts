@@ -52,10 +52,9 @@ async function processMarkdown(config: UserDefinedMarkdownConfig) {
   return pipe(
     E.tryCatch(
       () =>
-        readFiles(['ApexClass', 'CustomObject', 'CustomField'], { includeMetadata: config.includeMetadata })(
-          config.sourceDir,
-          config.exclude,
-        ),
+        readFiles(['ApexClass', 'CustomObject', 'CustomField', 'CustomMetadata'], {
+          includeMetadata: config.includeMetadata,
+        })(config.sourceDir, config.exclude),
       (e) => new FileReadingError('An error occurred while reading files.', e),
     ),
     TE.fromEither,

@@ -1,10 +1,15 @@
 import { FileSystem } from './file-system';
-import { UnparsedApexBundle, UnparsedCustomFieldBundle, UnparsedCustomObjectBundle } from '../core/shared/types';
+import {
+  UnparsedApexBundle,
+  UnparsedCustomFieldBundle,
+  UnparsedCustomMetadataBundle,
+  UnparsedCustomObjectBundle,
+} from '../core/shared/types';
 import { minimatch } from 'minimatch';
 import { flow, pipe } from 'fp-ts/function';
 import { apply } from '#utils/fp';
 
-type ComponentTypes = 'ApexClass' | 'CustomObject' | 'CustomField';
+type ComponentTypes = 'ApexClass' | 'CustomObject' | 'CustomField' | 'CustomMetadata';
 
 /**
  * Simplified representation of a source component, with only
@@ -38,6 +43,13 @@ type CustomObjectSourceComponent = {
 
 type CustomFieldSourceComponent = {
   type: 'CustomField';
+  name: string;
+  contentPath: string;
+  parentName: string;
+};
+
+type CustomMetadataSourceComponent = {
+  type: 'CustomMetadata';
   name: string;
   contentPath: string;
   parentName: string;
@@ -125,6 +137,39 @@ function toUnparsedCustomFieldBundle(
   }));
 }
 
+function getCustomMetadataSourceComponents(
+  sourceComponents: SourceComponentAdapter[],
+): CustomMetadataSourceComponent[] {
+  function getParentAndNamePair(component: SourceComponentAdapter): [string, string] {
+    // Custom metadata take the format [Namespace].[ParentName].[MetadataName], where namespace is optional.
+    // Here we split the strig and return the last 2 elements, representing the parent and the metadata name.
+    const [parentName, name] = component.name.split('.').slice(-2);
+    return [parentName, name];
+  }
+
+  return sourceComponents
+    .filter((component) => component.type.name === 'CustomMetadata')
+    .map((component) => ({
+      name: getParentAndNamePair(component)[1],
+      type: 'CustomMetadata' as const,
+      contentPath: component.xml!,
+      parentName: getParentAndNamePair(component)[0],
+    }));
+}
+
+function toUnparsedCustomMetadataBundle(
+  fileSystem: FileSystem,
+  customMetadataSourceComponents: CustomMetadataSourceComponent[],
+): UnparsedCustomMetadataBundle[] {
+  return customMetadataSourceComponents.map((component) => ({
+    type: 'custommetadata',
+    name: component.name,
+    filePath: component.contentPath,
+    content: fileSystem.readFile(component.contentPath),
+    parentName: component.parentName,
+  }));
+}
+
 /**
  * Reads from source code files and returns their raw body.
  */
@@ -137,7 +182,12 @@ export function processFiles(fileSystem: FileSystem) {
       ComponentTypes,
       (
         components: SourceComponentAdapter[],
-      ) => (UnparsedApexBundle | UnparsedCustomObjectBundle | UnparsedCustomFieldBundle)[]
+      ) => (
+        | UnparsedApexBundle
+        | UnparsedCustomObjectBundle
+        | UnparsedCustomFieldBundle
+        | UnparsedCustomMetadataBundle
+      )[]
     > = {
       ApexClass: flow(apply(getApexSourceComponents, options.includeMetadata), (apexSourceComponents) =>
         toUnparsedApexBundle(fileSystem, apexSourceComponents),
@@ -147,6 +197,9 @@ export function processFiles(fileSystem: FileSystem) {
       ),
       CustomField: flow(getCustomFieldSourceComponents, (customFieldSourceComponents) =>
         toUnparsedCustomFieldBundle(fileSystem, customFieldSourceComponents),
+      ),
+      CustomMetadata: flow(getCustomMetadataSourceComponents, (customMetadataSourceComponents) =>
+        toUnparsedCustomMetadataBundle(fileSystem, customMetadataSourceComponents),
       ),
     };
 

@@ -250,6 +250,8 @@ function objectMetadataToRenderable(
   objectMetadata: CustomObjectMetadata,
   config: MarkdownGeneratorConfig,
 ): RenderableCustomObject {
+  console.log(JSON.stringify(objectMetadata, null, 2));
+
   return {
     type: 'customobject',
     headingLevel: 1,

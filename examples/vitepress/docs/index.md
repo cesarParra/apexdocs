@@ -25,7 +25,17 @@ hero:
 
 Represents an event that people can register for.
 
+### [Event__c](custom-objects/Event__c)
+
+Represents an event that people can register for.
+
 ### [Price_Component__c](custom-objects/Price_Component__c)
+
+### [Price_Component__c](custom-objects/Price_Component__c)
+
+### [Product__c](custom-objects/Product__c)
+
+Product that is sold or available for sale.
 
 ### [Product__c](custom-objects/Product__c)
 
@@ -35,7 +45,17 @@ Product that is sold or available for sale.
 
 Products
 
+### [Product_Inline_Fields__c](custom-objects/Product_Inline_Fields__c)
+
+Products
+
 ### [Product_Price_Component__c](custom-objects/Product_Price_Component__c)
+
+### [Product_Price_Component__c](custom-objects/Product_Price_Component__c)
+
+### [Sales_Order__c](custom-objects/Sales_Order__c)
+
+Custom object for tracking sales orders.
 
 ### [Sales_Order__c](custom-objects/Sales_Order__c)
 
@@ -45,9 +65,21 @@ Custom object for tracking sales orders.
 
 Represents a line item on a sales order.
 
+### [Sales_Order_Line__c](custom-objects/Sales_Order_Line__c)
+
+Represents a line item on a sales order.
+
 ### [Speaker__c](custom-objects/Speaker__c)
 
 Represents a speaker at an event.
+
+### [Speaker__c](custom-objects/Speaker__c)
+
+Represents a speaker at an event.
+
+### [VisibleCMT__mdt](custom-objects/VisibleCMT__mdt)
+
+### [VisibleCMT__mdt](custom-objects/VisibleCMT__mdt)
 
 ## Miscellaneous
 

@@ -1,6 +1,6 @@
 import { Type } from '@cparra/apex-reflection';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
-import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
+import { CustomFieldMetadata, CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-field-source';
 
 export type Generators = 'markdown' | 'openapi' | 'changelog';
 
@@ -29,7 +29,7 @@ export type CliConfigurableMarkdownConfig = {
 };
 
 export type UserDefinedMarkdownConfig = {
-  targetGenerator: 'markdown' /** Glob patterns to exclude files from the documentation. */;
+  targetGenerator: 'markdown';
   excludeTags: string[];
   exclude: string[];
 } & CliConfigurableMarkdownConfig &
@@ -59,7 +59,11 @@ export type UserDefinedChangelogConfig = {
 
 export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig | UserDefinedChangelogConfig;
 
-export type UnparsedSourceBundle = UnparsedApexBundle | UnparsedCustomObjectBundle | UnparsedCustomFieldBundle;
+export type UnparsedSourceBundle =
+  | UnparsedApexBundle
+  | UnparsedCustomObjectBundle
+  | UnparsedCustomFieldBundle
+  | UnparsedCustomMetadataBundle;
 
 export type UnparsedCustomObjectBundle = {
   type: 'customobject';
@@ -76,6 +80,14 @@ export type UnparsedCustomFieldBundle = {
   parentName: string;
 };
 
+export type UnparsedCustomMetadataBundle = {
+  type: 'custommetadata';
+  name: string;
+  filePath: string;
+  content: string;
+  parentName: string;
+};
+
 export type UnparsedApexBundle = {
   type: 'apex';
   name: string;
@@ -84,7 +96,7 @@ export type UnparsedApexBundle = {
   metadataContent: string | null;
 };
 
-type MetadataTypes = 'interface' | 'class' | 'enum' | 'customobject' | 'customfield';
+type MetadataTypes = 'interface' | 'class' | 'enum' | 'customobject' | 'customfield' | 'custommetadata';
 
 export type SourceFileMetadata = {
   filePath: string;
@@ -104,7 +116,11 @@ export type ExternalMetadata = {
 };
 
 export type ParsedFile<
-  T extends Type | CustomObjectMetadata | CustomFieldMetadata = Type | CustomObjectMetadata | CustomFieldMetadata,
+  T extends Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata =
+    | Type
+    | CustomObjectMetadata
+    | CustomFieldMetadata
+    | CustomMetadataMetadata,
 > = {
   source: SourceFileMetadata | ExternalMetadata;
   type: T;

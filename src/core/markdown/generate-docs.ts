@@ -32,8 +32,12 @@ import { removeExcludedTags } from '../reflection/apex/remove-excluded-tags';
 import { HookError } from '../errors/errors';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { Type } from '@cparra/apex-reflection';
-import { reflectCustomFieldsAndObjects } from '../reflection/sobject/reflectCustomFieldsAndObjects';
-import { filterApexSourceFiles, filterCustomObjectsAndFields } from '#utils/source-bundle-utils';
+import { reflectCustomFieldsAndObjectsAndMetadataRecords } from '../reflection/sobject/reflectCustomFieldsAndObjectsAndMetadataRecords';
+import {
+  filterApexSourceFiles,
+  filterCustomObjectsAndFields,
+  filterCustomObjectsFieldsAndMetadataRecords,
+} from '#utils/source-bundle-utils';
 
 export type MarkdownGeneratorConfig = Omit<
   UserDefinedMarkdownConfig,
@@ -62,10 +66,11 @@ export function generateDocs(unparsedBundles: UnparsedSourceBundle[], config: Ma
     generateForApex(filterApexSourceFiles(unparsedBundles), config),
     TE.chain((parsedApexFiles) => {
       return pipe(
-        reflectCustomFieldsAndObjects(filterCustomObjectsAndFields(unparsedBundles)),
+        reflectCustomFieldsAndObjectsAndMetadataRecords(filterCustomObjectsFieldsAndMetadataRecords(unparsedBundles)),
         TE.map((parsedObjectFiles) => [...parsedApexFiles, ...parsedObjectFiles]),
       );
     }),
+    // TODO: Sort out custom metadata whenever is necessary
     TE.map((parsedFiles) => sort(filterOutCustomFields(parsedFiles))),
     TE.bindTo('parsedFiles'),
     TE.bind('references', ({ parsedFiles }) =>

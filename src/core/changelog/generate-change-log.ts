@@ -18,7 +18,7 @@ import { HookError, ReflectionErrors } from '../errors/errors';
 import { apply } from '#utils/fp';
 import { filterScope } from '../reflection/apex/filter-scope';
 import { isInSource, isSkip, passThroughHook, skip, toFrontmatterString } from '../shared/utils';
-import { reflectCustomFieldsAndObjects } from '../reflection/sobject/reflectCustomFieldsAndObjects';
+import { reflectCustomFieldsAndObjectsAndMetadataRecords } from '../reflection/sobject/reflectCustomFieldsAndObjectsAndMetadataRecords';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { Type } from '@cparra/apex-reflection';
 import { filterApexSourceFiles, filterCustomObjectsAndFields } from '#utils/source-bundle-utils';
@@ -70,7 +70,7 @@ function reflect(bundles: UnparsedSourceBundle[], config: Omit<UserDefinedChange
     reflectApexFiles(filterApexSourceFiles(bundles)),
     TE.chain((parsedApexFiles) => {
       return pipe(
-        reflectCustomFieldsAndObjects(filterCustomObjectsAndFields(bundles)),
+        reflectCustomFieldsAndObjectsAndMetadataRecords(filterCustomObjectsAndFields(bundles)),
         TE.map((parsedObjectFiles) => [...parsedApexFiles, ...parsedObjectFiles]),
       );
     }),
