@@ -56,43 +56,26 @@ export function reflectCustomFieldsAndObjectsAndMetadataRecords(
     TE.bind('fields', () => generateForFields(customFields)),
     TE.bind('metadata', () => generateForMetadata(customMetadata)),
     TE.map(({ objects, fields, metadata }) => {
-      return [
-        ...mapFieldsToObjects(objects, fields),
-        ...mapCustomMetadataToObjects(objects, metadata),
-        ...mapExtensionFields(objects, fields),
-      ];
+      return [...mapFieldsAndMetadata(objects, fields, metadata), ...mapExtensionFields(objects, fields)];
     }),
   );
 }
 
-function mapFieldsToObjects(
+function mapFieldsAndMetadata(
   objects: ParsedFile<CustomObjectMetadata>[],
   fields: ParsedFile<CustomFieldMetadata>[],
+  metadata: ParsedFile<CustomMetadataMetadata>[],
 ): ParsedFile<CustomObjectMetadata>[] {
   // Locate the fields for each object by using the parentName property
   return objects.map((object) => {
     const objectFields = fields.filter((field) => field.type.parentName === object.type.name);
+    const objectMetadata = metadata.filter((meta) => `${meta.type.parentName}__mdt` === object.type.name);
+
     return {
       ...object,
       type: {
         ...object.type,
         fields: [...object.type.fields, ...objectFields.map((field) => field.type)],
-      },
-    };
-  });
-}
-
-function mapCustomMetadataToObjects(
-  objects: ParsedFile<CustomObjectMetadata>[],
-  metadata: ParsedFile<CustomMetadataMetadata>[],
-): ParsedFile<CustomObjectMetadata>[] {
-  // Locate the metadata for each object by using the parentName property
-  return objects.map((object) => {
-    const objectMetadata = metadata.filter((meta) => `${meta.type.parentName}__mdt` === object.type.name);
-    return {
-      ...object,
-      type: {
-        ...object.type,
         metadataRecords: [...object.type.metadataRecords, ...objectMetadata.map((meta) => meta.type)],
       },
     };

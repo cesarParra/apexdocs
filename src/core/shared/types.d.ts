@@ -1,6 +1,7 @@
 import { Type } from '@cparra/apex-reflection';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
-import { CustomFieldMetadata, CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-field-source';
+import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
+import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
 
 export type Generators = 'markdown' | 'openapi' | 'changelog';
 
@@ -82,6 +83,7 @@ export type UnparsedCustomFieldBundle = {
 
 export type UnparsedCustomMetadataBundle = {
   type: 'custommetadata';
+  apiName: string;
   name: string;
   filePath: string;
   content: string;

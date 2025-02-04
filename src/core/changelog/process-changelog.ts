@@ -3,9 +3,10 @@ import { pipe } from 'fp-ts/function';
 import { areMethodsEqual } from './method-changes-checker';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
+import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
 
 export type VersionManifest = {
-  types: (Type | CustomObjectMetadata | CustomFieldMetadata)[];
+  types: (Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata)[];
 };
 
 type ModificationTypes =

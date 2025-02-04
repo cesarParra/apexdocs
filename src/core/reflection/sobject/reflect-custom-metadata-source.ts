@@ -9,6 +9,7 @@ import { XMLParser } from 'fast-xml-parser';
 export type CustomMetadataMetadata = {
   type_name: 'custommetadata';
   protected: boolean;
+  apiName: string;
   name: string;
   label?: string | null;
   description: string | null;
@@ -29,7 +30,7 @@ function reflectCustomMetadataSource(
     E.tryCatch(() => new XMLParser().parse(customMetadataSource.content), E.toError),
     E.flatMap(validate),
     E.map(toCustomMetadataMetadata),
-    E.map((metadata) => addName(metadata, customMetadataSource.name)),
+    E.map((metadata) => addNames(metadata, customMetadataSource.name, customMetadataSource.apiName)),
     E.map((metadata) => addParentName(metadata, customMetadataSource.parentName)),
     E.map((metadata) => toParsedFile(customMetadataSource.filePath, metadata)),
     E.mapLeft((error) => new ReflectionErrors([new ReflectionError(customMetadataSource.filePath, error.message)])),
@@ -68,8 +69,8 @@ function toCustomMetadataMetadata(parserResult: { CustomMetadata: unknown }): Cu
   } as CustomMetadataMetadata;
 }
 
-function addName(metadata: CustomMetadataMetadata, name: string): CustomMetadataMetadata {
-  return { ...metadata, name };
+function addNames(metadata: CustomMetadataMetadata, name: string, apiName: string): CustomMetadataMetadata {
+  return { ...metadata, name, apiName };
 }
 
 function addParentName(metadata: CustomMetadataMetadata, parentName: string): CustomMetadataMetadata {

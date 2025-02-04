@@ -25,6 +25,7 @@ import { filterApexSourceFiles, filterCustomObjectsAndFields } from '#utils/sour
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 import { hookableTemplate } from '../markdown/templates/hookable';
 import changelogToSourceChangelog from './helpers/changelog-to-source-changelog';
+import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
 
 type Config = Omit<UserDefinedChangelogConfig, 'targetGenerator'>;
 
@@ -81,7 +82,10 @@ function toManifests({ oldVersion, newVersion }: { oldVersion: ParsedFile[]; new
   function parsedFilesToManifest(parsedFiles: ParsedFile[]): VersionManifest {
     return {
       types: parsedFiles.reduce(
-        (previousValue: (Type | CustomObjectMetadata | CustomFieldMetadata)[], parsedFile: ParsedFile) => {
+        (
+          previousValue: (Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata)[],
+          parsedFile: ParsedFile,
+        ) => {
           if (!isInSource(parsedFile.source) && parsedFile.type.type_name === 'customobject') {
             // When we are dealing with a custom object that was not in the source (for extension fields), we return all
             // of its fields.
@@ -89,7 +93,7 @@ function toManifests({ oldVersion, newVersion }: { oldVersion: ParsedFile[]; new
           }
           return [...previousValue, parsedFile.type];
         },
-        [] as (Type | CustomObjectMetadata | CustomFieldMetadata)[],
+        [] as (Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata)[],
       ),
     };
   }

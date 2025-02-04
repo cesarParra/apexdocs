@@ -39,4 +39,21 @@ export const customObjectTemplate = `
 {{/each}}
 {{/if}}
 
+{{#if hasRecords}}
+{{ heading metadataRecords.headingLevel metadataRecords.heading }}
+{{#each metadataRecords.value}}
+{{ heading headingLevel heading }}
+
+{{#if description}}
+{{{renderContent description}}}
+{{/if}}
+
+**API Name**
+
+\`{{{apiName}}}\`
+
+{{#unless @last}}---{{/unless}}
+{{/each}}
+{{/if}}
+
 `.trim();

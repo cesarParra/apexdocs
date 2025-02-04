@@ -18,3 +18,10 @@ title: VisibleCMT__mdt
 **Type**
 
 *Text*
+
+## Records
+### Some Record 1
+
+**API Name**
+
+`VisibleCMT.Some_Record_1`

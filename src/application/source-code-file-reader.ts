@@ -50,6 +50,7 @@ type CustomFieldSourceComponent = {
 
 type CustomMetadataSourceComponent = {
   type: 'CustomMetadata';
+  apiName: string;
   name: string;
   contentPath: string;
   parentName: string;
@@ -150,6 +151,7 @@ function getCustomMetadataSourceComponents(
   return sourceComponents
     .filter((component) => component.type.name === 'CustomMetadata')
     .map((component) => ({
+      apiName: component.name,
       name: getParentAndNamePair(component)[1],
       type: 'CustomMetadata' as const,
       contentPath: component.xml!,
@@ -162,6 +164,7 @@ function toUnparsedCustomMetadataBundle(
   customMetadataSourceComponents: CustomMetadataSourceComponent[],
 ): UnparsedCustomMetadataBundle[] {
   return customMetadataSourceComponents.map((component) => ({
+    apiName: component.apiName,
     type: 'custommetadata',
     name: component.name,
     filePath: component.contentPath,

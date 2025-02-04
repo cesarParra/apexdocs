@@ -12,6 +12,7 @@ import {
   GetRenderableContentByTypeName,
   RenderableCustomObject,
   RenderableCustomField,
+  RenderableCustomMetadata,
 } from '../../renderables/types';
 import { adaptDescribable, adaptDocumentable } from '../../renderables/documentables';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
@@ -21,6 +22,7 @@ import { ExternalMetadata, SourceFileMetadata } from '../../shared/types';
 import { CustomObjectMetadata } from '../../reflection/sobject/reflect-custom-object-sources';
 import { getTypeGroup, isInSource } from '../../shared/utils';
 import { CustomFieldMetadata } from '../../reflection/sobject/reflect-custom-field-source';
+import { CustomMetadataMetadata } from '../../reflection/sobject/reflect-custom-metadata-source';
 
 type GetReturnRenderable<T extends Type | CustomObjectMetadata> = T extends InterfaceMirror
   ? RenderableInterface
@@ -250,8 +252,6 @@ function objectMetadataToRenderable(
   objectMetadata: CustomObjectMetadata,
   config: MarkdownGeneratorConfig,
 ): RenderableCustomObject {
-  console.log(JSON.stringify(objectMetadata, null, 2));
-
   return {
     type: 'customobject',
     headingLevel: 1,
@@ -267,6 +267,12 @@ function objectMetadataToRenderable(
       headingLevel: 2,
       heading: 'Fields',
       value: objectMetadata.fields.map((field) => fieldMetadataToRenderable(field, config, 3)),
+    },
+    hasRecords: objectMetadata.metadataRecords.length > 0,
+    metadataRecords: {
+      headingLevel: 2,
+      heading: 'Records',
+      value: objectMetadata.metadataRecords.map((metadata) => customMetadataToRenderable(metadata, 3)),
     },
   };
 }
@@ -291,6 +297,18 @@ function fieldMetadataToRenderable(
           value: field.pickListValues,
         }
       : undefined,
+  };
+}
+
+function customMetadataToRenderable(metadata: CustomMetadataMetadata, headingLevel: number): RenderableCustomMetadata {
+  return {
+    type: 'metadata',
+    headingLevel: headingLevel,
+    heading: metadata.label ?? metadata.name,
+    description: metadata.description ? [metadata.description] : [],
+    apiName: metadata.apiName,
+    label: metadata.label ?? metadata.name,
+    protected: metadata.protected,
   };
 }
 
