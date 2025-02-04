@@ -1,4 +1,4 @@
-import { UnparsedCustomFieldBundle } from '../shared/types';
+import { UnparsedCustomFieldBundle, UnparsedCustomMetadataBundle } from '../shared/types';
 
 export const customField = `
 <?xml version="1.0" encoding="UTF-8"?>
@@ -22,6 +22,34 @@ export function unparsedFieldBundleFromRawString(meta: {
     name: 'TestField__c',
     filePath: meta.filePath,
     content: meta.rawContent ?? customField,
+    parentName: meta.parentName,
+  };
+}
+
+export const customMetadata = `
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Test Metadata</label>
+    <protected>true</protected>
+    <values>
+        <field>Field1__c</field>
+        <value xsi:type="xsd:string">Sample Value</value>
+    </values>
+</CustomMetadata>
+`;
+
+export function unparsedCustomMetadataFromRawString(meta: {
+  rawContent?: string;
+  filePath: string;
+  apiName: string;
+  parentName: string;
+}): UnparsedCustomMetadataBundle {
+  return {
+    type: 'custommetadata',
+    name: meta.apiName,
+    filePath: meta.filePath,
+    content: meta.rawContent ?? customMetadata,
+    apiName: meta.apiName,
     parentName: meta.parentName,
   };
 }

@@ -80,3 +80,11 @@ These custom fields have been added or removed.
 ### Contact
 
 - New Field: PhotoUrl__c. URL of the contact&#x27;s photo
+
+## New or Removed Custom Metadata Type Records
+
+These custom metadata type records have been added or removed.
+
+### VisibleCMT__mdt
+
+- New Custom Metadata Record: Some_Record_1

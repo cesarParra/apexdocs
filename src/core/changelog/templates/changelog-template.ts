@@ -97,4 +97,19 @@ export const changelogTemplate = `
 
 {{/each}}
 {{/if}}
+
+{{#if newOrRemovedCustomMetadataTypeRecords}}
+## {{newOrRemovedCustomMetadataTypeRecords.heading}}
+
+{{newOrRemovedCustomMetadataTypeRecords.description}}
+
+{{#each newOrRemovedCustomMetadataTypeRecords.modifications}}
+### {{this.typeName}}
+
+{{#each this.modifications}}
+- {{this}}
+{{/each}}
+
+{{/each}}
+{{/if}}
 `.trim();

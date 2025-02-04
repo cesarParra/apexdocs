@@ -1,13 +1,19 @@
-import { ParsedFile, UnparsedCustomFieldBundle, UnparsedCustomObjectBundle } from '../../shared/types';
+import {
+  ParsedFile,
+  UnparsedCustomFieldBundle,
+  UnparsedCustomMetadataBundle,
+  UnparsedCustomObjectBundle,
+} from '../../shared/types';
 import { CustomObjectMetadata, reflectCustomObjectSources } from './reflect-custom-object-sources';
 import * as TE from 'fp-ts/TaskEither';
 import { ReflectionErrors } from '../../errors/errors';
 import { CustomFieldMetadata, reflectCustomFieldSources } from './reflect-custom-field-source';
 import { pipe } from 'fp-ts/function';
 import { TaskEither } from 'fp-ts/TaskEither';
+import { CustomMetadataMetadata, reflectCustomMetadataSources } from './reflect-custom-metadata-source';
 
-export function reflectCustomFieldsAndObjects(
-  objectBundles: (UnparsedCustomObjectBundle | UnparsedCustomFieldBundle)[],
+export function reflectCustomFieldsAndObjectsAndMetadataRecords(
+  objectBundles: (UnparsedCustomObjectBundle | UnparsedCustomFieldBundle | UnparsedCustomMetadataBundle)[],
 ): TaskEither<ReflectionErrors, ParsedFile<CustomObjectMetadata>[]> {
   function filterNonPublished(parsedFiles: ParsedFile<CustomObjectMetadata>[]): ParsedFile<CustomObjectMetadata>[] {
     return parsedFiles.filter((parsedFile) => parsedFile.type.deploymentStatus === 'Deployed');
@@ -25,10 +31,20 @@ export function reflectCustomFieldsAndObjects(
     (object): object is UnparsedCustomFieldBundle => object.type === 'customfield',
   );
 
+  const customMetadata = objectBundles.filter(
+    (object): object is UnparsedCustomMetadataBundle => object.type === 'custommetadata',
+  );
+
   function generateForFields(
     fields: UnparsedCustomFieldBundle[],
   ): TE.TaskEither<ReflectionErrors, ParsedFile<CustomFieldMetadata>[]> {
     return pipe(fields, reflectCustomFieldSources);
+  }
+
+  function generateForMetadata(
+    metadata: UnparsedCustomMetadataBundle[],
+  ): TE.TaskEither<ReflectionErrors, ParsedFile<CustomMetadataMetadata>[]> {
+    return pipe(metadata, reflectCustomMetadataSources);
   }
 
   return pipe(
@@ -38,24 +54,29 @@ export function reflectCustomFieldsAndObjects(
     TE.map(filterNonPublic),
     TE.bindTo('objects'),
     TE.bind('fields', () => generateForFields(customFields)),
-    TE.map(({ objects, fields }) => {
-      return [...mapFieldsToObjects(objects, fields), ...mapExtensionFields(objects, fields)];
+    TE.bind('metadata', () => generateForMetadata(customMetadata)),
+    TE.map(({ objects, fields, metadata }) => {
+      return [...mapFieldsAndMetadata(objects, fields, metadata), ...mapExtensionFields(objects, fields)];
     }),
   );
 }
 
-function mapFieldsToObjects(
+function mapFieldsAndMetadata(
   objects: ParsedFile<CustomObjectMetadata>[],
   fields: ParsedFile<CustomFieldMetadata>[],
+  metadata: ParsedFile<CustomMetadataMetadata>[],
 ): ParsedFile<CustomObjectMetadata>[] {
   // Locate the fields for each object by using the parentName property
   return objects.map((object) => {
     const objectFields = fields.filter((field) => field.type.parentName === object.type.name);
+    const objectMetadata = metadata.filter((meta) => `${meta.type.parentName}__mdt` === object.type.name);
+
     return {
       ...object,
       type: {
         ...object.type,
         fields: [...object.type.fields, ...objectFields.map((field) => field.type)],
+        metadataRecords: [...object.type.metadataRecords, ...objectMetadata.map((meta) => meta.type)],
       },
     };
   });
@@ -97,6 +118,7 @@ function mapExtensionFields(
         name: key,
         description: null,
         fields: fields,
+        metadataRecords: [],
       },
     };
   });

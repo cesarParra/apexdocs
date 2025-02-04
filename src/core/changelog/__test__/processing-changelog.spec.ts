@@ -1,7 +1,8 @@
 import { processChangelog } from '../process-changelog';
 import { reflect, Type } from '@cparra/apex-reflection';
-import { CustomObjectMetadata } from '../../reflection/sobject/reflect-custom-object-sources';
-import { CustomFieldMetadata } from '../../reflection/sobject/reflect-custom-field-source';
+import CustomFieldMetadataBuilder from './helpers/custom-field-metadata-builder';
+import CustomObjectMetadataBuilder from './helpers/custom-object-metadata-builder';
+import CustomMetadataMetadataBuilder from './helpers/custom-metadata-metadata-builder';
 
 function apexTypeFromRawString(raw: string): Type {
   const result = reflect(raw);
@@ -10,55 +11,6 @@ function apexTypeFromRawString(raw: string): Type {
   }
 
   return result.typeMirror!;
-}
-
-class CustomFieldMetadataBuilder {
-  name: string = 'MyField';
-  description: string | null = null;
-
-  withName(name: string): CustomFieldMetadataBuilder {
-    this.name = name;
-    return this;
-  }
-
-  withDescription(testDescription: string) {
-    this.description = testDescription;
-    return this;
-  }
-
-  build(): CustomFieldMetadata {
-    return {
-      type: 'Text',
-      type_name: 'customfield',
-      label: 'MyField',
-      name: this.name,
-      description: this.description,
-      parentName: 'MyObject',
-      required: false,
-    };
-  }
-}
-
-class CustomObjectMetadataBuilder {
-  label: string = 'MyObject';
-  fields: CustomFieldMetadata[] = [];
-
-  withField(field: CustomFieldMetadata): CustomObjectMetadataBuilder {
-    this.fields.push(field);
-    return this;
-  }
-
-  build(): CustomObjectMetadata {
-    return {
-      type_name: 'customobject',
-      deploymentStatus: 'Deployed',
-      visibility: 'Public',
-      label: this.label,
-      name: 'MyObject',
-      description: null,
-      fields: this.fields,
-    };
-  }
 }
 
 describe('when generating a changelog', () => {
@@ -662,6 +614,73 @@ describe('when generating a changelog', () => {
             {
               __typename: 'RemovedField',
               name: oldField.name,
+            },
+          ],
+        },
+      ]);
+    });
+  });
+
+  describe('with custom metadata records', () => {
+    it('does not list custom metadata records that are the same in both versions', () => {
+      // The record uniqueness is determined by its api name.
+
+      const oldCustomMetadata = new CustomMetadataMetadataBuilder().build();
+      const newCustomMetadata = new CustomMetadataMetadataBuilder().build();
+
+      const oldManifest = { types: [oldCustomMetadata] };
+      const newManifest = { types: [newCustomMetadata] };
+
+      const changeLog = processChangelog(oldManifest, newManifest);
+
+      expect(changeLog.customObjectModifications).toEqual([]);
+    });
+
+    it('lists new records of a custom object', () => {
+      const oldObject = new CustomObjectMetadataBuilder()
+        .withMetadataRecord(new CustomMetadataMetadataBuilder().build())
+        .build();
+      const newObject = new CustomObjectMetadataBuilder()
+        .withMetadataRecord(new CustomMetadataMetadataBuilder().build())
+        .withMetadataRecord(new CustomMetadataMetadataBuilder().withName('NewField__c').build())
+        .build();
+
+      const oldManifest = { types: [oldObject] };
+      const newManifest = { types: [newObject] };
+
+      const changeLog = processChangelog(oldManifest, newManifest);
+
+      expect(changeLog.customObjectModifications).toEqual([
+        {
+          typeName: newObject.name,
+          modifications: [
+            {
+              __typename: 'NewCustomMetadataRecord',
+              name: 'NewField__c',
+            },
+          ],
+        },
+      ]);
+    });
+
+    it('lists removed records of a custom object', () => {
+      const oldObject = new CustomObjectMetadataBuilder()
+        .withMetadataRecord(new CustomMetadataMetadataBuilder().withName('OldField__c').build())
+        .build();
+      const newObject = new CustomObjectMetadataBuilder().build();
+
+      const oldManifest = { types: [oldObject] };
+      const newManifest = { types: [newObject] };
+
+      const changeLog = processChangelog(oldManifest, newManifest);
+
+      expect(changeLog.customObjectModifications).toEqual([
+        {
+          typeName: oldObject.name,
+          modifications: [
+            {
+              __typename: 'RemovedCustomMetadataRecord',
+              name: 'OldField__c',
             },
           ],
         },

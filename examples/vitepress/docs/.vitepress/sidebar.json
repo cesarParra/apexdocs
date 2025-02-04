@@ -93,6 +93,10 @@
       {
         "text": "Speaker__c",
         "link": "custom-objects/Speaker__c.md"
+      },
+      {
+        "text": "VisibleCMT__mdt",
+        "link": "custom-objects/VisibleCMT__mdt.md"
       }
     ]
   }

@@ -181,7 +181,9 @@ export type RenderableCustomObject = Omit<RenderableType, 'meta'> & {
   apiName: string;
   type: 'customobject';
   hasFields: boolean;
+  hasRecords: boolean;
   fields: RenderableSection<RenderableCustomField[]>;
+  metadataRecords: RenderableSection<RenderableCustomMetadata[]>;
 };
 
 export type RenderableCustomField = {
@@ -193,6 +195,15 @@ export type RenderableCustomField = {
   type: 'field';
   fieldType?: string | null;
   required: boolean;
+};
+
+export type RenderableCustomMetadata = {
+  headingLevel: number;
+  heading: string;
+  apiName: string;
+  type: 'metadata';
+  label: string;
+  protected: boolean;
 };
 
 export type Renderable = (RenderableClass | RenderableInterface | RenderableEnum | RenderableCustomObject) & {

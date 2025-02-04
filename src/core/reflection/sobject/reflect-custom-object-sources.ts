@@ -9,6 +9,7 @@ import * as A from 'fp-ts/Array';
 import * as E from 'fp-ts/Either';
 import { CustomFieldMetadata } from './reflect-custom-field-source';
 import { getPickListValues } from './parse-picklist-values';
+import { CustomMetadataMetadata } from './reflect-custom-metadata-source';
 
 export type CustomObjectMetadata = {
   type_name: 'customobject';
@@ -18,6 +19,7 @@ export type CustomObjectMetadata = {
   name: string;
   description: string | null;
   fields: CustomFieldMetadata[];
+  metadataRecords: CustomMetadataMetadata[];
 };
 
 export function reflectCustomObjectSources(
@@ -64,11 +66,12 @@ function validate(parseResult: unknown): E.Either<Error, { CustomObject: unknown
 function toObjectMetadata(parserResult: { CustomObject: unknown }): CustomObjectMetadata {
   const customObject = typeof parserResult.CustomObject === 'object' ? parserResult.CustomObject : {};
 
-  const defaultValues = {
+  const defaultValues: Partial<CustomObjectMetadata> = {
     deploymentStatus: 'Deployed',
     visibility: 'Public',
     description: null,
     fields: [] as CustomFieldMetadata[],
+    metadataRecords: [] as CustomMetadataMetadata[],
   };
   return { ...defaultValues, ...customObject } as CustomObjectMetadata;
 }

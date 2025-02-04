@@ -18,13 +18,14 @@ import { HookError, ReflectionErrors } from '../errors/errors';
 import { apply } from '#utils/fp';
 import { filterScope } from '../reflection/apex/filter-scope';
 import { isInSource, isSkip, passThroughHook, skip, toFrontmatterString } from '../shared/utils';
-import { reflectCustomFieldsAndObjects } from '../reflection/sobject/reflectCustomFieldsAndObjects';
+import { reflectCustomFieldsAndObjectsAndMetadataRecords } from '../reflection/sobject/reflectCustomFieldsAndObjectsAndMetadataRecords';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { Type } from '@cparra/apex-reflection';
-import { filterApexSourceFiles, filterCustomObjectsAndFields } from '#utils/source-bundle-utils';
+import { filterApexSourceFiles, filterCustomObjectsFieldsAndMetadataRecords } from '#utils/source-bundle-utils';
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 import { hookableTemplate } from '../markdown/templates/hookable';
 import changelogToSourceChangelog from './helpers/changelog-to-source-changelog';
+import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
 
 type Config = Omit<UserDefinedChangelogConfig, 'targetGenerator'>;
 
@@ -70,7 +71,7 @@ function reflect(bundles: UnparsedSourceBundle[], config: Omit<UserDefinedChange
     reflectApexFiles(filterApexSourceFiles(bundles)),
     TE.chain((parsedApexFiles) => {
       return pipe(
-        reflectCustomFieldsAndObjects(filterCustomObjectsAndFields(bundles)),
+        reflectCustomFieldsAndObjectsAndMetadataRecords(filterCustomObjectsFieldsAndMetadataRecords(bundles)),
         TE.map((parsedObjectFiles) => [...parsedApexFiles, ...parsedObjectFiles]),
       );
     }),
@@ -81,7 +82,10 @@ function toManifests({ oldVersion, newVersion }: { oldVersion: ParsedFile[]; new
   function parsedFilesToManifest(parsedFiles: ParsedFile[]): VersionManifest {
     return {
       types: parsedFiles.reduce(
-        (previousValue: (Type | CustomObjectMetadata | CustomFieldMetadata)[], parsedFile: ParsedFile) => {
+        (
+          previousValue: (Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata)[],
+          parsedFile: ParsedFile,
+        ) => {
           if (!isInSource(parsedFile.source) && parsedFile.type.type_name === 'customobject') {
             // When we are dealing with a custom object that was not in the source (for extension fields), we return all
             // of its fields.
@@ -89,7 +93,7 @@ function toManifests({ oldVersion, newVersion }: { oldVersion: ParsedFile[]; new
           }
           return [...previousValue, parsedFile.type];
         },
-        [] as (Type | CustomObjectMetadata | CustomFieldMetadata)[],
+        [] as (Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata)[],
       ),
     };
   }

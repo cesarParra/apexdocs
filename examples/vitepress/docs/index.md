@@ -49,6 +49,8 @@ Represents a line item on a sales order.
 
 Represents a speaker at an event.
 
+### [VisibleCMT__mdt](custom-objects/VisibleCMT__mdt)
+
 ## Miscellaneous
 
 ### [BaseClass](miscellaneous/BaseClass)

@@ -4,6 +4,7 @@ import { RenderableContent } from '../renderables/types';
 import { adaptDescribable } from '../renderables/documentables';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
+import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
 
 type NewTypeRenderable = {
   name: string;
@@ -43,11 +44,12 @@ export type RenderableChangelog = {
   newCustomObjects: NewTypeSection<'customobject'> | null;
   removedCustomObjects: RemovedTypeSection | null;
   newOrRemovedCustomFields: NewOrModifiedMembersSection | null;
+  newOrRemovedCustomMetadataTypeRecords: NewOrModifiedMembersSection | null;
 };
 
 export function convertToRenderableChangelog(
   changelog: Changelog,
-  newManifest: (Type | CustomObjectMetadata | CustomFieldMetadata)[],
+  newManifest: (Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata)[],
 ): RenderableChangelog {
   const allNewTypes = [...changelog.newApexTypes, ...changelog.newCustomObjects].map(
     (newType) => newManifest.find((type) => type.name.toLowerCase() === newType.toLowerCase())!,
@@ -58,6 +60,16 @@ export function convertToRenderableChangelog(
   const newEnums = allNewTypes.filter((type): type is EnumMirror => type.type_name === 'enum');
   const newCustomObjects = allNewTypes.filter(
     (type): type is CustomObjectMetadata => type.type_name === 'customobject',
+  );
+  const newOrModifiedCustomFields = changelog.customObjectModifications.filter(
+    (modification): modification is NewOrModifiedMember =>
+      modification.modifications.some((mod) => mod.__typename === 'NewField' || mod.__typename === 'RemovedField'),
+  );
+  const newOrModifiedCustomMetadataTypeRecords = changelog.customObjectModifications.filter(
+    (modification): modification is NewOrModifiedMember =>
+      modification.modifications.some(
+        (mod) => mod.__typename === 'NewCustomMetadataRecord' || mod.__typename === 'RemovedCustomMetadataRecord',
+      ),
   );
 
   return {
@@ -121,11 +133,19 @@ export function convertToRenderableChangelog(
           }
         : null,
     newOrRemovedCustomFields:
-      changelog.customObjectModifications.length > 0
+      newOrModifiedCustomFields.length > 0
         ? {
             heading: 'New or Removed Fields to Custom Objects or Standard Objects',
             description: 'These custom fields have been added or removed.',
-            modifications: changelog.customObjectModifications.map(toRenderableModification),
+            modifications: newOrModifiedCustomFields.map(toRenderableModification),
+          }
+        : null,
+    newOrRemovedCustomMetadataTypeRecords:
+      newOrModifiedCustomMetadataTypeRecords.length > 0
+        ? {
+            heading: 'New or Removed Custom Metadata Type Records',
+            description: 'These custom metadata type records have been added or removed.',
+            modifications: newOrModifiedCustomMetadataTypeRecords.map(toRenderableModification),
           }
         : null,
   };
@@ -179,5 +199,9 @@ function toRenderableModificationDescription(memberModificationType: MemberModif
       return `New Type: ${withDescription(memberModificationType)}`;
     case 'RemovedType':
       return `Removed Type: ${memberModificationType.name}`;
+    case 'NewCustomMetadataRecord':
+      return `New Custom Metadata Record: ${withDescription(memberModificationType)}`;
+    case 'RemovedCustomMetadataRecord':
+      return `Removed Custom Metadata Record: ${memberModificationType.name}`;
   }
 }

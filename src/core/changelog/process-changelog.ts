@@ -3,9 +3,10 @@ import { pipe } from 'fp-ts/function';
 import { areMethodsEqual } from './method-changes-checker';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
+import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
 
 export type VersionManifest = {
-  types: (Type | CustomObjectMetadata | CustomFieldMetadata)[];
+  types: (Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata)[];
 };
 
 type ModificationTypes =
@@ -18,7 +19,9 @@ type ModificationTypes =
   | 'NewProperty'
   | 'RemovedProperty'
   | 'NewField'
-  | 'RemovedField';
+  | 'RemovedField'
+  | 'NewCustomMetadataRecord'
+  | 'RemovedCustomMetadataRecord';
 
 export type MemberModificationType = {
   __typename: ModificationTypes;
@@ -105,7 +108,10 @@ function getNewOrModifiedApexMembers(oldVersion: VersionManifest, newVersion: Ve
 function getCustomObjectModifications(oldVersion: VersionManifest, newVersion: VersionManifest): NewOrModifiedMember[] {
   return pipe(
     getCustomObjectsInBothVersions(oldVersion, newVersion),
-    (customObjectsInBoth) => getNewOrRemovedCustomFields(customObjectsInBoth),
+    (customObjectsInBoth) => [
+      ...getNewOrRemovedCustomFields(customObjectsInBoth),
+      ...getNewOrRemovedCustomMetadataRecords(customObjectsInBoth),
+    ],
     (customObjectModifications) => customObjectModifications.filter((member) => member.modifications.length > 0),
   );
 }
@@ -174,6 +180,21 @@ function getNewOrRemovedCustomFields(typesInBoth: TypeInBoth<CustomObjectMetadat
       modifications: [
         ...getNewValues(oldCustomObject, newCustomObject, 'fields', 'NewField'),
         ...getRemovedValues(oldCustomObject, newCustomObject, 'fields', 'RemovedField'),
+      ],
+    };
+  });
+}
+
+function getNewOrRemovedCustomMetadataRecords(typesInBoth: TypeInBoth<CustomObjectMetadata>[]): NewOrModifiedMember[] {
+  return typesInBoth.map(({ oldType, newType }) => {
+    const oldCustomObject = oldType;
+    const newCustomObject = newType;
+
+    return {
+      typeName: newType.name,
+      modifications: [
+        ...getNewValues(oldCustomObject, newCustomObject, 'metadataRecords', 'NewCustomMetadataRecord'),
+        ...getRemovedValues(oldCustomObject, newCustomObject, 'metadataRecords', 'RemovedCustomMetadataRecord'),
       ],
     };
   });

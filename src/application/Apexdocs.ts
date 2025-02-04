@@ -6,7 +6,7 @@ import markdown from './generators/markdown';
 import openApi from './generators/openapi';
 import changelog from './generators/changelog';
 
-import { processFiles } from './source-code-file-reader';
+import { allComponentTypes, processFiles } from './source-code-file-reader';
 import { DefaultFileSystem } from './file-system';
 import { Logger } from '#utils/logger';
 import {
@@ -52,10 +52,9 @@ async function processMarkdown(config: UserDefinedMarkdownConfig) {
   return pipe(
     E.tryCatch(
       () =>
-        readFiles(['ApexClass', 'CustomObject', 'CustomField'], { includeMetadata: config.includeMetadata })(
-          config.sourceDir,
-          config.exclude,
-        ),
+        readFiles(allComponentTypes, {
+          includeMetadata: config.includeMetadata,
+        })(config.sourceDir, config.exclude),
       (e) => new FileReadingError('An error occurred while reading files.', e),
     ),
     TE.fromEither,
@@ -73,8 +72,8 @@ async function processOpenApi(config: UserDefinedOpenApiConfig, logger: Logger) 
 async function processChangeLog(config: UserDefinedChangelogConfig) {
   function loadFiles(): [UnparsedSourceBundle[], UnparsedSourceBundle[]] {
     return [
-      readFiles(['ApexClass', 'CustomObject', 'CustomField'])(config.previousVersionDir, config.exclude),
-      readFiles(['ApexClass', 'CustomObject', 'CustomField'])(config.currentVersionDir, config.exclude),
+      readFiles(allComponentTypes)(config.previousVersionDir, config.exclude),
+      readFiles(allComponentTypes)(config.currentVersionDir, config.exclude),
     ];
   }
 

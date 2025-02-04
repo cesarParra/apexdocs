@@ -32,8 +32,8 @@ import { removeExcludedTags } from '../reflection/apex/remove-excluded-tags';
 import { HookError } from '../errors/errors';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { Type } from '@cparra/apex-reflection';
-import { reflectCustomFieldsAndObjects } from '../reflection/sobject/reflectCustomFieldsAndObjects';
-import { filterApexSourceFiles, filterCustomObjectsAndFields } from '#utils/source-bundle-utils';
+import { reflectCustomFieldsAndObjectsAndMetadataRecords } from '../reflection/sobject/reflectCustomFieldsAndObjectsAndMetadataRecords';
+import { filterApexSourceFiles, filterCustomObjectsFieldsAndMetadataRecords } from '#utils/source-bundle-utils';
 
 export type MarkdownGeneratorConfig = Omit<
   UserDefinedMarkdownConfig,
@@ -52,9 +52,10 @@ export function generateDocs(unparsedBundles: UnparsedSourceBundle[], config: Ma
   );
   const sort = apply(sortTypesAndMembers, config.sortAlphabetically);
 
-  function filterOutCustomFields(parsedFiles: ParsedFile[]): ParsedFile<Type | CustomObjectMetadata>[] {
+  function filterOutCustomFieldsAndMetadata(parsedFiles: ParsedFile[]): ParsedFile<Type | CustomObjectMetadata>[] {
     return parsedFiles.filter(
-      (parsedFile): parsedFile is ParsedFile<Type | CustomObjectMetadata> => parsedFile.source.type !== 'customfield',
+      (parsedFile): parsedFile is ParsedFile<Type | CustomObjectMetadata> =>
+        parsedFile.source.type !== 'customfield' && parsedFile.source.type !== 'custommetadata',
     );
   }
 
@@ -62,11 +63,11 @@ export function generateDocs(unparsedBundles: UnparsedSourceBundle[], config: Ma
     generateForApex(filterApexSourceFiles(unparsedBundles), config),
     TE.chain((parsedApexFiles) => {
       return pipe(
-        reflectCustomFieldsAndObjects(filterCustomObjectsAndFields(unparsedBundles)),
+        reflectCustomFieldsAndObjectsAndMetadataRecords(filterCustomObjectsFieldsAndMetadataRecords(unparsedBundles)),
         TE.map((parsedObjectFiles) => [...parsedApexFiles, ...parsedObjectFiles]),
       );
     }),
-    TE.map((parsedFiles) => sort(filterOutCustomFields(parsedFiles))),
+    TE.map((parsedFiles) => sort(filterOutCustomFieldsAndMetadata(parsedFiles))),
     TE.bindTo('parsedFiles'),
     TE.bind('references', ({ parsedFiles }) =>
       TE.right(
@@ -75,7 +76,9 @@ export function generateDocs(unparsedBundles: UnparsedSourceBundle[], config: Ma
       ),
     ),
     TE.flatMap(({ parsedFiles, references }) => transformReferenceHook(config)({ references, parsedFiles })),
-    TE.map(({ parsedFiles, references }) => convertToRenderableBundle(filterOutCustomFields(parsedFiles), references)),
+    TE.map(({ parsedFiles, references }) =>
+      convertToRenderableBundle(filterOutCustomFieldsAndMetadata(parsedFiles), references),
+    ),
     TE.map(convertToDocumentationBundleForTemplate),
     TE.flatMap(transformDocumentationBundleHook(config)),
     TE.map(postHookCompile),
