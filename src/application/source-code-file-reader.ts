@@ -9,7 +9,8 @@ import { minimatch } from 'minimatch';
 import { flow, pipe } from 'fp-ts/function';
 import { apply } from '#utils/fp';
 
-type ComponentTypes = 'ApexClass' | 'CustomObject' | 'CustomField' | 'CustomMetadata';
+export type ComponentTypes = 'ApexClass' | 'CustomObject' | 'CustomField' | 'CustomMetadata';
+export const allComponentTypes: ComponentTypes[] = ['ApexClass', 'CustomObject', 'CustomField', 'CustomMetadata'];
 
 /**
  * Simplified representation of a source component, with only
