@@ -19,7 +19,9 @@ type ModificationTypes =
   | 'NewProperty'
   | 'RemovedProperty'
   | 'NewField'
-  | 'RemovedField';
+  | 'RemovedField'
+  | 'NewCustomMetadataRecord'
+  | 'RemovedCustomMetadataRecord';
 
 export type MemberModificationType = {
   __typename: ModificationTypes;
@@ -106,7 +108,10 @@ function getNewOrModifiedApexMembers(oldVersion: VersionManifest, newVersion: Ve
 function getCustomObjectModifications(oldVersion: VersionManifest, newVersion: VersionManifest): NewOrModifiedMember[] {
   return pipe(
     getCustomObjectsInBothVersions(oldVersion, newVersion),
-    (customObjectsInBoth) => getNewOrRemovedCustomFields(customObjectsInBoth),
+    (customObjectsInBoth) => [
+      ...getNewOrRemovedCustomFields(customObjectsInBoth),
+      ...getNewOrRemovedCustomMetadataRecords(customObjectsInBoth),
+    ],
     (customObjectModifications) => customObjectModifications.filter((member) => member.modifications.length > 0),
   );
 }
@@ -175,6 +180,21 @@ function getNewOrRemovedCustomFields(typesInBoth: TypeInBoth<CustomObjectMetadat
       modifications: [
         ...getNewValues(oldCustomObject, newCustomObject, 'fields', 'NewField'),
         ...getRemovedValues(oldCustomObject, newCustomObject, 'fields', 'RemovedField'),
+      ],
+    };
+  });
+}
+
+function getNewOrRemovedCustomMetadataRecords(typesInBoth: TypeInBoth<CustomObjectMetadata>[]): NewOrModifiedMember[] {
+  return typesInBoth.map(({ oldType, newType }) => {
+    const oldCustomObject = oldType;
+    const newCustomObject = newType;
+
+    return {
+      typeName: newType.name,
+      modifications: [
+        ...getNewValues(oldCustomObject, newCustomObject, 'metadataRecords', 'NewCustomMetadataRecord'),
+        ...getRemovedValues(oldCustomObject, newCustomObject, 'metadataRecords', 'RemovedCustomMetadataRecord'),
       ],
     };
   });

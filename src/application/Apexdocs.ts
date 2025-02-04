@@ -72,8 +72,14 @@ async function processOpenApi(config: UserDefinedOpenApiConfig, logger: Logger) 
 async function processChangeLog(config: UserDefinedChangelogConfig) {
   function loadFiles(): [UnparsedSourceBundle[], UnparsedSourceBundle[]] {
     return [
-      readFiles(['ApexClass', 'CustomObject', 'CustomField'])(config.previousVersionDir, config.exclude),
-      readFiles(['ApexClass', 'CustomObject', 'CustomField'])(config.currentVersionDir, config.exclude),
+      readFiles(['ApexClass', 'CustomObject', 'CustomField', 'CustomMetadata'])(
+        config.previousVersionDir,
+        config.exclude,
+      ),
+      readFiles(['ApexClass', 'CustomObject', 'CustomField', 'CustomMetadata'])(
+        config.currentVersionDir,
+        config.exclude,
+      ),
     ];
   }
 

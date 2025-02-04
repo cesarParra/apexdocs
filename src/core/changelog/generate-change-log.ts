@@ -21,7 +21,7 @@ import { isInSource, isSkip, passThroughHook, skip, toFrontmatterString } from '
 import { reflectCustomFieldsAndObjectsAndMetadataRecords } from '../reflection/sobject/reflectCustomFieldsAndObjectsAndMetadataRecords';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { Type } from '@cparra/apex-reflection';
-import { filterApexSourceFiles, filterCustomObjectsAndFields } from '#utils/source-bundle-utils';
+import { filterApexSourceFiles, filterCustomObjectsFieldsAndMetadataRecords } from '#utils/source-bundle-utils';
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 import { hookableTemplate } from '../markdown/templates/hookable';
 import changelogToSourceChangelog from './helpers/changelog-to-source-changelog';
@@ -71,7 +71,7 @@ function reflect(bundles: UnparsedSourceBundle[], config: Omit<UserDefinedChange
     reflectApexFiles(filterApexSourceFiles(bundles)),
     TE.chain((parsedApexFiles) => {
       return pipe(
-        reflectCustomFieldsAndObjectsAndMetadataRecords(filterCustomObjectsAndFields(bundles)),
+        reflectCustomFieldsAndObjectsAndMetadataRecords(filterCustomObjectsFieldsAndMetadataRecords(bundles)),
         TE.map((parsedObjectFiles) => [...parsedApexFiles, ...parsedObjectFiles]),
       );
     }),
