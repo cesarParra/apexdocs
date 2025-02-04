@@ -1,7 +1,10 @@
 import { extendExpect } from './expect-extensions';
 import { customFieldPickListValues, generateDocs, unparsedObjectBundleFromRawString } from './test-helpers';
 import { assertEither } from '../../test-helpers/assert-either';
-import { unparsedFieldBundleFromRawString } from '../../test-helpers/test-data-builders';
+import {
+  unparsedCustomMetadataFromRawString,
+  unparsedFieldBundleFromRawString,
+} from '../../test-helpers/test-data-builders';
 import { CustomObjectXmlBuilder } from '../../test-helpers/test-data-builders/custom-object-xml-builder';
 
 describe('Generates Custom Object documentation', () => {
@@ -135,6 +138,74 @@ describe('Generates Custom Object documentation', () => {
       const result = await generateDocs([customObjectBundle, customFieldBundle])();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('`TestField__c`'));
+    });
+
+    describe('when documenting Custom Metadata Types', () => {
+      it('displays the Records heading if fields are present', async () => {
+        const customObjectBundle = unparsedObjectBundleFromRawString({
+          name: 'TestObject__mdt',
+          rawContent: new CustomObjectXmlBuilder().build(),
+          filePath: 'src/object/TestObject__mdt.object-meta.xml',
+        });
+
+        const customMetadataBundle = unparsedCustomMetadataFromRawString({
+          filePath: 'src/customMetadata/TestField__c.field-meta.xml',
+          parentName: 'TestObject',
+          apiName: 'TestObject.TestField__c',
+        });
+
+        const result = await generateDocs([customObjectBundle, customMetadataBundle])();
+        expect(result).documentationBundleHasLength(1);
+        assertEither(result, (data) => expect(data).firstDocContains('## Records'));
+      });
+
+      it('does not display the Records heading if no records are present', async () => {
+        const input = unparsedObjectBundleFromRawString({
+          name: 'TestObject__mdt',
+          rawContent: new CustomObjectXmlBuilder().build(),
+          filePath: 'src/object/TestObject__c.object-meta.xml',
+        });
+
+        const result = await generateDocs([input])();
+        expect(result).documentationBundleHasLength(1);
+        assertEither(result, (data) => expect(data).not.firstDocContains('## Records'));
+      });
+
+      it('displays the record label as a heading', async () => {
+        const customObjectBundle = unparsedObjectBundleFromRawString({
+          name: 'TestObject__mdt',
+          rawContent: new CustomObjectXmlBuilder().build(),
+          filePath: 'src/object/TestObject__mdt.object-meta.xml',
+        });
+
+        const customMetadataBundle = unparsedCustomMetadataFromRawString({
+          filePath: 'src/customMetadata/TestField__c.field-meta.xml',
+          parentName: 'TestObject',
+          apiName: 'TestObject.TestField__c',
+        });
+
+        const result = await generateDocs([customObjectBundle, customMetadataBundle])();
+        expect(result).documentationBundleHasLength(1);
+        assertEither(result, (data) => expect(data).firstDocContains('## Test Metadata'));
+      });
+
+      it('displays the record api name', async () => {
+        const customObjectBundle = unparsedObjectBundleFromRawString({
+          name: 'TestObject__mdt',
+          rawContent: new CustomObjectXmlBuilder().build(),
+          filePath: 'src/object/TestObject__mdt.object-meta.xml',
+        });
+
+        const customMetadataBundle = unparsedCustomMetadataFromRawString({
+          filePath: 'src/customMetadata/TestField__c.field-meta.xml',
+          parentName: 'TestObject',
+          apiName: 'TestObject.TestField__c',
+        });
+
+        const result = await generateDocs([customObjectBundle, customMetadataBundle])();
+        expect(result).documentationBundleHasLength(1);
+        assertEither(result, (data) => expect(data).firstDocContains('TestObject.TestField__c'));
+      });
     });
   });
 });

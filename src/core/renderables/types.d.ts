@@ -201,11 +201,9 @@ export type RenderableCustomMetadata = {
   headingLevel: number;
   heading: string;
   apiName: string;
-  description: RenderableContent[];
   type: 'metadata';
   label: string;
   protected: boolean;
-  // TODO: Add values?
 };
 
 export type Renderable = (RenderableClass | RenderableInterface | RenderableEnum | RenderableCustomObject) & {

@@ -57,6 +57,7 @@ class CustomObjectMetadataBuilder {
       name: 'MyObject',
       description: null,
       fields: this.fields,
+      metadataRecords: [],
     };
   }
 }

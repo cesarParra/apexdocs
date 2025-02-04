@@ -15,17 +15,18 @@ export function unparsedApexBundleFromRawString(raw: string, rawMetadata?: strin
 export function unparsedObjectBundleFromRawString(meta: {
   rawContent: string;
   filePath: string;
+  name?: string;
 }): UnparsedCustomObjectBundle {
   return {
     type: 'customobject',
-    name: 'TestObject__c',
+    name: meta.name ?? 'TestObject__c',
     filePath: meta.filePath,
     content: meta.rawContent,
   };
 }
 
-export function generateDocs(apexBundles: UnparsedSourceBundle[], config?: Partial<MarkdownGeneratorConfig>) {
-  return gen(apexBundles, {
+export function generateDocs(bundles: UnparsedSourceBundle[], config?: Partial<MarkdownGeneratorConfig>) {
+  return gen(bundles, {
     targetDir: 'target',
     scope: ['global', 'public'],
     defaultGroupName: 'Miscellaneous',

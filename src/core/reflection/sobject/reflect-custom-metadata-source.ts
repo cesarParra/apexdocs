@@ -12,9 +12,7 @@ export type CustomMetadataMetadata = {
   apiName: string;
   name: string;
   label?: string | null;
-  description: string | null;
   parentName: string;
-  // TODO: Reflect values
 };
 
 export function reflectCustomMetadataSources(
@@ -57,9 +55,8 @@ function toCustomMetadataMetadata(parserResult: { CustomMetadata: unknown }): Cu
     parserResult?.CustomMetadata != null && typeof parserResult.CustomMetadata === 'object'
       ? parserResult.CustomMetadata
       : {};
-  const defaultValues = {
+  const defaultValues: Partial<CustomMetadataMetadata> = {
     label: null,
-    description: null,
   };
 
   return {

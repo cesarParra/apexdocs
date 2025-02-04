@@ -305,7 +305,6 @@ function customMetadataToRenderable(metadata: CustomMetadataMetadata, headingLev
     type: 'metadata',
     headingLevel: headingLevel,
     heading: metadata.label ?? metadata.name,
-    description: metadata.description ? [metadata.description] : [],
     apiName: metadata.apiName,
     label: metadata.label ?? metadata.name,
     protected: metadata.protected,
