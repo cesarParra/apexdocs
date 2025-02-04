@@ -44,6 +44,10 @@ export const customObjectTemplate = `
 {{#each metadataRecords.value}}
 {{ heading headingLevel heading }}
 
+{{#if protected}}
+\`Protected\`
+{{/if}}
+
 {{#if description}}
 {{{renderContent description}}}
 {{/if}}

@@ -22,6 +22,8 @@ title: VisibleCMT__mdt
 ## Records
 ### Some Record 1
 
+`Protected`
+
 **API Name**
 
 `VisibleCMT.Some_Record_1`
