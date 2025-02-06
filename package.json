@@ -78,7 +78,7 @@
     "pkgroll": "^2.4.2",
     "prettier": "^3.3.2",
     "ts-jest": "^29.2.0",
-    "typescript": "^5.5.3",
+    "typescript": "^5.7.3",
     "typescript-eslint": "^7.16.0",
     "wireit": "^0.14.10"
   },
