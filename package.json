@@ -19,13 +19,45 @@
     "apexdocs": "./dist/cli/generate.js"
   },
   "scripts": {
-    "test": "npm run build && jest",
+    "test": "wireit",
     "test:cov": "npm run build && jest --coverage",
-    "build": "rimraf ./dist && npm run lint && tsc --noEmit && pkgroll",
-    "lint": "eslint \"./src/**/*.{js,ts}\" --quiet --fix",
+    "build": "wireit",
+    "lint": "wireit",
     "prepare": "npm run build",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags"
+  },
+  "wireit": {
+    "lint": {
+      "command": "eslint \"./src/**/*.{js,ts}\" --quiet --fix",
+      "files": [
+        "src/**/*.ts"
+      ],
+      "output": []
+    },
+    "build": {
+      "command": "tsc --noEmit --pretty && pkgroll",
+      "dependencies": [
+        "lint"
+      ],
+      "files": [
+        "src/**/*.ts",
+        "tsconfig.json"
+      ],
+      "output": [
+        "dist"
+      ]
+    },
+    "test": {
+      "command": "jest",
+      "dependencies": [
+        "build"
+      ],
+      "files": [
+        "src/**/*.ts"
+      ],
+      "output": []
+    }
   },
   "author": "Cesar Parra",
   "license": "MIT",
@@ -45,10 +77,10 @@
     "lint-staged": "^15.2.7",
     "pkgroll": "^2.4.2",
     "prettier": "^3.3.2",
-    "rimraf": "^6.0.1",
     "ts-jest": "^29.2.0",
     "typescript": "^5.5.3",
-    "typescript-eslint": "^7.16.0"
+    "typescript-eslint": "^7.16.0",
+    "wireit": "^0.14.10"
   },
   "husky": {
     "hooks": {
