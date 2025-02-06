@@ -19,7 +19,7 @@
     "apexdocs": "./dist/cli/generate.js"
   },
   "scripts": {
-    "test": "npm run build && jest",
+    "test": "wireit",
     "test:cov": "npm run build && jest --coverage",
     "build": "wireit",
     "lint": "wireit",
@@ -31,8 +31,7 @@
     "lint": {
       "command": "eslint \"./src/**/*.{js,ts}\" --quiet --fix",
       "files": [
-        "src/**/*.ts",
-        "src/**/*.js"
+        "src/**/*.ts"
       ],
       "output": []
     },
@@ -48,6 +47,16 @@
       "output": [
         "dist"
       ]
+    },
+    "test": {
+      "command": "jest",
+      "dependencies": [
+        "build"
+      ],
+      "files": [
+        "src/**/*.ts"
+      ],
+      "output": []
     }
   },
   "author": "Cesar Parra",

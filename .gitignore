@@ -8,6 +8,7 @@ npm-debug.log
 /dist/
 /lib/
 .sfdx/
+.wireit/
 
 # Added by Illuminated Cloud
 .localdev/
