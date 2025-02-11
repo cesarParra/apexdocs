@@ -6,6 +6,7 @@ import {
   unparsedFieldBundleFromRawString,
 } from '../../test-helpers/test-data-builders';
 import { CustomObjectXmlBuilder } from '../../test-helpers/test-data-builders/custom-object-xml-builder';
+import { PlatformEventXmlBuilder } from '../../test-helpers/test-data-builders/platform-event-xml-builder';
 
 describe('Generates Custom Object documentation', () => {
   beforeAll(() => {
@@ -205,6 +206,30 @@ describe('Generates Custom Object documentation', () => {
         const result = await generateDocs([customObjectBundle, customMetadataBundle])();
         expect(result).documentationBundleHasLength(1);
         assertEither(result, (data) => expect(data).firstDocContains('TestObject.TestField__c'));
+      });
+    });
+
+    describe('when documenting Platform Events', () => {
+      test('displays the publish behavior (publish immediately)', async () => {
+        const customObjectBundle = unparsedObjectBundleFromRawString({
+          rawContent: new PlatformEventXmlBuilder().build(),
+          filePath: 'src/object/TestObject__e.object-meta.xml',
+        });
+
+        const result = await generateDocs([customObjectBundle])();
+        expect(result).documentationBundleHasLength(1);
+        assertEither(result, (data) => expect(data).firstDocContains('Publish Immediately'));
+      });
+
+      test('displays the publish behavior (publish after commit)', async () => {
+        const customObjectBundle = unparsedObjectBundleFromRawString({
+          rawContent: new PlatformEventXmlBuilder().withPublishBehavior('PublishAfterCommit').build(),
+          filePath: 'src/object/TestObject__e.object-meta.xml',
+        });
+
+        const result = await generateDocs([customObjectBundle])();
+        expect(result).documentationBundleHasLength(1);
+        assertEither(result, (data) => expect(data).firstDocContains('Publish After Commit'));
       });
     });
   });

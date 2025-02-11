@@ -7,6 +7,7 @@ Represents a line item on a sales order.
 
 ## Fields
 ### Amount
+**Required**
 
 **API Name**
 
@@ -18,6 +19,7 @@ Represents a line item on a sales order.
 
 ---
 ### Product
+**Required**
 
 **API Name**
 
@@ -51,6 +53,7 @@ Represents a line item on a sales order.
 
 ---
 ### Type
+**Required**
 
 **API Name**
 
@@ -59,3 +62,7 @@ Represents a line item on a sales order.
 **Type**
 
 *Picklist*
+
+#### Possible values are
+* Charge
+* Discount

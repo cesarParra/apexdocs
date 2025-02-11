@@ -45,6 +45,12 @@ Custom object for tracking sales orders.
 
 Represents a line item on a sales order.
 
+### [Sample_Custom_Setting__c](custom-objects/Sample_Custom_Setting__c)
+
+### [Sample_Platform_Event__e](custom-objects/Sample_Platform_Event__e)
+
+Eu excepteur irure occaecat adipisicing anim non consequat deserunt ipsum id amet eu. Labore aliqua incididunt anim id in aliquip sit excepteur ad dolor irure incididunt. Ipsum eiusmod cillum ex ullamco minim eu nisi dolore ad velit consequat ullamco elit tempor. Occaecat aliquip ex mollit nostrud qui excepteur non commodo dolore ullamco ex voluptate ut. Culpa nostrud reprehenderit ipsum do. Sit deserunt sint occaecat duis eiusmod. Sunt laborum fugiat nulla.
+
 ### [Speaker__c](custom-objects/Speaker__c)
 
 Represents a speaker at an event.

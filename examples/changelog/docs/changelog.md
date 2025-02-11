@@ -51,7 +51,7 @@ These members have been added or modified.
 - New Method: newMethod
 - Removed Method: deprecatedMethod
 
-## New or Removed Fields in Existing Objects
+## New or Removed Fields to Custom Objects or Standard Objects
 
 These custom fields have been added or removed.
 
@@ -67,3 +67,7 @@ These custom fields have been added or removed.
 ### Product__c
 
 - New Field: Description__c
+
+### Contact
+
+- New Field: PhotoUrl__c

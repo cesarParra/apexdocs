@@ -14,6 +14,7 @@ import { CustomFieldXmlBuilder } from '../../test-helpers/test-data-builders/cus
 const config = {
   fileName: 'changelog',
   scope: ['global', 'public', 'private'],
+  customObjectVisibility: ['public'],
   targetDir: '',
   currentVersionDir: '',
   previousVersionDir: '',

@@ -19,7 +19,7 @@ import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
 import { MarkdownGeneratorConfig } from '../generate-docs';
 import { ExternalMetadata, SourceFileMetadata } from '../../shared/types';
-import { CustomObjectMetadata } from '../../reflection/sobject/reflect-custom-object-sources';
+import { CustomObjectMetadata, PublishBehavior } from '../../reflection/sobject/reflect-custom-object-sources';
 import { getTypeGroup, isInSource } from '../../shared/utils';
 import { CustomFieldMetadata } from '../../reflection/sobject/reflect-custom-field-source';
 import { CustomMetadataMetadata } from '../../reflection/sobject/reflect-custom-metadata-source';
@@ -252,6 +252,17 @@ function objectMetadataToRenderable(
   objectMetadata: CustomObjectMetadata,
   config: MarkdownGeneratorConfig,
 ): RenderableCustomObject {
+  function toRenderablePublishBehavior(publishBehavior: PublishBehavior | undefined): string | null {
+    switch (publishBehavior) {
+      case 'PublishImmediately':
+        return 'Publish Immediately';
+      case 'PublishAfterCommit':
+        return 'Publish After Commit';
+      default:
+        return null;
+    }
+  }
+
   return {
     type: 'customobject',
     headingLevel: 1,
@@ -274,6 +285,7 @@ function objectMetadataToRenderable(
       heading: 'Records',
       value: objectMetadata.metadataRecords.map((metadata) => customMetadataToRenderable(metadata, 3)),
     },
+    publishBehavior: toRenderablePublishBehavior(objectMetadata.publishBehavior),
   };
 }
 

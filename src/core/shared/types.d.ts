@@ -20,6 +20,7 @@ export type CliConfigurableMarkdownConfig = {
   sourceDir: string;
   targetDir: string;
   scope: string[];
+  customObjectVisibility: string[];
   namespace?: string;
   defaultGroupName: string;
   customObjectsGroupName: string;
@@ -54,6 +55,7 @@ export type UserDefinedChangelogConfig = {
   targetDir: string;
   fileName: string;
   scope: string[];
+  customObjectVisibility: string[];
   exclude: string[];
   skipIfNoChanges: boolean;
 } & Partial<ChangelogConfigurableHooks>;

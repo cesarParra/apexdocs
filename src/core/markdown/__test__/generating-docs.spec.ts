@@ -160,11 +160,25 @@ describe('When generating documentation', () => {
       expect(result).documentationBundleHasLength(0);
     });
 
-    it('does not return non-public custom objects', async () => {
-      const input = new CustomObjectXmlBuilder().withVisibility('Protected').build();
+    describe('and the custom object visibility', () => {
+      it('is not set, it does not return non-public custom objects', async () => {
+        const input = new CustomObjectXmlBuilder().withVisibility('Protected').build();
 
-      const result = await generateDocs([unparsedObjectBundleFromRawString({ rawContent: input, filePath: 'test' })])();
-      expect(result).documentationBundleHasLength(0);
+        const result = await generateDocs([
+          unparsedObjectBundleFromRawString({ rawContent: input, filePath: 'test' }),
+        ])();
+        expect(result).documentationBundleHasLength(0);
+      });
+
+      it('is configured, it respects the configured visibility', async () => {
+        const input = new CustomObjectXmlBuilder().withVisibility('Protected').build();
+
+        const result = await generateDocs(
+          [unparsedObjectBundleFromRawString({ rawContent: input, filePath: 'test' })],
+          { customObjectVisibility: ['protected'] },
+        )();
+        expect(result).documentationBundleHasLength(1);
+      });
     });
 
     it('do not return files that have an @ignore in the docs', async () => {

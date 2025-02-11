@@ -6,6 +6,12 @@ export const customObjectTemplate = `
 ## API Name
 \`{{apiName}}\`
 
+{{#if publishBehavior}}
+## Publish Behavior
+
+**{{publishBehavior}}**
+{{/if}}
+
 {{#if hasFields}}
 {{ heading fields.headingLevel fields.heading }}
 {{#each fields.value}}

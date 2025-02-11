@@ -71,7 +71,10 @@ function reflect(bundles: UnparsedSourceBundle[], config: Omit<UserDefinedChange
     reflectApexFiles(filterApexSourceFiles(bundles)),
     TE.chain((parsedApexFiles) => {
       return pipe(
-        reflectCustomFieldsAndObjectsAndMetadataRecords(filterCustomObjectsFieldsAndMetadataRecords(bundles)),
+        reflectCustomFieldsAndObjectsAndMetadataRecords(
+          filterCustomObjectsFieldsAndMetadataRecords(bundles),
+          config.customObjectVisibility,
+        ),
         TE.map((parsedObjectFiles) => [...parsedApexFiles, ...parsedObjectFiles]),
       );
     }),
