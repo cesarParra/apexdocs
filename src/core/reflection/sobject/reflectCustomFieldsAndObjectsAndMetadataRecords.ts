@@ -14,13 +14,16 @@ import { CustomMetadataMetadata, reflectCustomMetadataSources } from './reflect-
 
 export function reflectCustomFieldsAndObjectsAndMetadataRecords(
   objectBundles: (UnparsedCustomObjectBundle | UnparsedCustomFieldBundle | UnparsedCustomMetadataBundle)[],
+  visibilitiesToDocument: string[],
 ): TaskEither<ReflectionErrors, ParsedFile<CustomObjectMetadata>[]> {
   function filterNonPublished(parsedFiles: ParsedFile<CustomObjectMetadata>[]): ParsedFile<CustomObjectMetadata>[] {
     return parsedFiles.filter((parsedFile) => parsedFile.type.deploymentStatus === 'Deployed');
   }
 
   function filterNonPublic(parsedFiles: ParsedFile<CustomObjectMetadata>[]): ParsedFile<CustomObjectMetadata>[] {
-    return parsedFiles.filter((parsedFile) => parsedFile.type.visibility === 'Public');
+    return parsedFiles.filter((parsedFile) =>
+      visibilitiesToDocument.includes(parsedFile.type.visibility.toLowerCase()),
+    );
   }
 
   const customObjects = objectBundles.filter(

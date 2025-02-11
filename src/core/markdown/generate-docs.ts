@@ -63,7 +63,10 @@ export function generateDocs(unparsedBundles: UnparsedSourceBundle[], config: Ma
     generateForApex(filterApexSourceFiles(unparsedBundles), config),
     TE.chain((parsedApexFiles) => {
       return pipe(
-        reflectCustomFieldsAndObjectsAndMetadataRecords(filterCustomObjectsFieldsAndMetadataRecords(unparsedBundles)),
+        reflectCustomFieldsAndObjectsAndMetadataRecords(
+          filterCustomObjectsFieldsAndMetadataRecords(unparsedBundles),
+          config.customObjectVisibility,
+        ),
         TE.map((parsedObjectFiles) => [...parsedApexFiles, ...parsedObjectFiles]),
       );
     }),

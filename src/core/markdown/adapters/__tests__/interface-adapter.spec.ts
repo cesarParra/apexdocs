@@ -11,6 +11,7 @@ function linkGenerator(type: string): string {
 const defaultMarkdownGeneratorConfig: MarkdownGeneratorConfig = {
   targetDir: '',
   scope: ['global', 'public'],
+  customObjectVisibility: ['public'],
   namespace: '',
   defaultGroupName: 'Miscellaneous',
   customObjectsGroupName: 'Custom Objects',

@@ -3,6 +3,7 @@ const commonDefaults = {
 };
 
 export const markdownDefaults = {
+  customObjectVisibility: ['public'],
   ...commonDefaults,
   scope: ['global'],
   defaultGroupName: 'Miscellaneous',

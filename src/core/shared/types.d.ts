@@ -20,6 +20,7 @@ export type CliConfigurableMarkdownConfig = {
   sourceDir: string;
   targetDir: string;
   scope: string[];
+  customObjectVisibility: string[];
   namespace?: string;
   defaultGroupName: string;
   customObjectsGroupName: string;
