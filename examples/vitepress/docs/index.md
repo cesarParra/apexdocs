@@ -45,6 +45,8 @@ Custom object for tracking sales orders.
 
 Represents a line item on a sales order.
 
+### [Sample_Custom_Setting__c](custom-objects/Sample_Custom_Setting__c)
+
 ### [Speaker__c](custom-objects/Speaker__c)
 
 Represents a speaker at an event.

@@ -69,6 +69,8 @@ Represents a line item on a sales order.
 ### Sales_Order__c
 
 Custom object for tracking sales orders.
+### Sample_Custom_Setting__c
+
 ### Speaker__c
 
 Represents a speaker at an event.
