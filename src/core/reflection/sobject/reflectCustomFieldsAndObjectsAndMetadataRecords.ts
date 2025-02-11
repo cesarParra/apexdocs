@@ -20,10 +20,20 @@ export function reflectCustomFieldsAndObjectsAndMetadataRecords(
     return parsedFiles.filter((parsedFile) => parsedFile.type.deploymentStatus === 'Deployed');
   }
 
-  function filterNonPublic(parsedFiles: ParsedFile<CustomObjectMetadata>[]): ParsedFile<CustomObjectMetadata>[] {
-    return parsedFiles.filter((parsedFile) =>
-      visibilitiesToDocument.includes(parsedFile.type.visibility.toLowerCase()),
-    );
+  /**
+   * Returns a tuple of parsed objects to document and the names of the objects that should be actively ignored.
+   * @param parsedFiles
+   */
+  function filter(parsedFiles: ParsedFile<CustomObjectMetadata>[]): [ParsedFile<CustomObjectMetadata>[], string[]] {
+    function shouldBeDocumented(parsedFile: ParsedFile<CustomObjectMetadata>): boolean {
+      return visibilitiesToDocument.includes(parsedFile.type.visibility.toLowerCase());
+    }
+
+    const objectsToDocument = parsedFiles.filter(shouldBeDocumented);
+    const objectsToIgnore = parsedFiles
+      .filter((parsedFile) => !shouldBeDocumented(parsedFile))
+      .map((parsedFile) => parsedFile.type.name);
+    return [objectsToDocument, objectsToIgnore];
   }
 
   const customObjects = objectBundles.filter(
@@ -54,12 +64,12 @@ export function reflectCustomFieldsAndObjectsAndMetadataRecords(
     customObjects,
     reflectCustomObjectSources,
     TE.map(filterNonPublished),
-    TE.map(filterNonPublic),
-    TE.bindTo('objects'),
+    TE.map(filter),
+    TE.bindTo('filterResult'),
     TE.bind('fields', () => generateForFields(customFields)),
     TE.bind('metadata', () => generateForMetadata(customMetadata)),
-    TE.map(({ objects, fields, metadata }) => {
-      return [...mapFieldsAndMetadata(objects, fields, metadata), ...mapExtensionFields(objects, fields)];
+    TE.map(({ filterResult, fields, metadata }) => {
+      return [...mapFieldsAndMetadata(filterResult[0], fields, metadata), ...mapExtensionFields(filterResult, fields)];
     }),
   );
 }
@@ -88,11 +98,16 @@ function mapFieldsAndMetadata(
 // "Extension" fields are fields that are in the source code without the corresponding object-meta.xml file.
 // These are fields that either extend a standard Salesforce object, or an object in a different package.
 function mapExtensionFields(
-  objects: ParsedFile<CustomObjectMetadata>[],
+  filterResult: [ParsedFile<CustomObjectMetadata>[], string[]],
   fields: ParsedFile<CustomFieldMetadata>[],
 ): ParsedFile<CustomObjectMetadata>[] {
+  const objects = filterResult[0];
+  const ignoredObjectNames = filterResult[1];
+
   const extensionFields = fields.filter(
-    (field) => !objects.some((object) => object.type.name === field.type.parentName),
+    (field) =>
+      !objects.some((object) => object.type.name.toLowerCase() === field.type.parentName.toLowerCase()) &&
+      !ignoredObjectNames.map((name) => name.toLowerCase()).includes(field.type.parentName.toLowerCase()),
   );
   // There might be many objects for the same parent name, so we need to group the fields by parent name
   const extensionFieldsByParent = extensionFields.reduce(
