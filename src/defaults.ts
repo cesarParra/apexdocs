@@ -2,9 +2,15 @@ const commonDefaults = {
   targetDir: './docs/',
 };
 
-export const markdownDefaults = {
+const markdownAndChangelogDefaults = {
   ...commonDefaults,
   scope: ['global'],
+  customObjectVisibility: ['public'],
+  exclude: [],
+};
+
+export const markdownDefaults = {
+  ...markdownAndChangelogDefaults,
   defaultGroupName: 'Miscellaneous',
   customObjectsGroupName: 'Custom Objects',
   includeMetadata: false,
@@ -12,7 +18,6 @@ export const markdownDefaults = {
   linkingStrategy: 'relative' as const,
   referenceGuideTitle: 'Reference Guide',
   excludeTags: [],
-  exclude: [],
 };
 
 export const openApiDefaults = {
@@ -24,9 +29,7 @@ export const openApiDefaults = {
 };
 
 export const changeLogDefaults = {
-  ...commonDefaults,
+  ...markdownAndChangelogDefaults,
   fileName: 'changelog',
-  scope: ['global'],
-  exclude: [],
   skipIfNoChanges: true,
 };

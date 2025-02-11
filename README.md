@@ -115,7 +115,8 @@ apexdocs changelog --previousVersionDir force-app-previous --currentVersionDir f
 |----------------------------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|----------|
 | `--sourceDir`              | `-s`  | The directory where the source files are located.                                                                                                                                                        | N/A              | Yes      |
 | `--targetDir`              | `-t`  | The directory where the generated files will be placed.                                                                                                                                                  | `docs`           | No       |
-| `--scope`                  | `-p`  | A list of scopes to document. Values should be separated by a space, e.g --scope global public namespaceaccessible.                                                                                      | `global`         | No       |
+| `--scope`                  | `-p`  | A list of scopes to document. Values should be separated by a space, e.g --scope global public namespaceaccessible.                                                                                      | `[global]`       | No       |
+| `--customObjectVisibility` | `-v`  | Controls which custom objects are documented. Values should be separated by a space.                                                                                                                     | `[public]`       | No       |
 | `--defaultGroupName`       | N/A   | The default group name to use when a group is not specified.                                                                                                                                             | `Miscellaneous`  | No       |
 | `--namespace`              | N/A   | The package namespace, if any. If provided, it will be added to the generated files.                                                                                                                     | N/A              | No       |
 | `--sortAlphabetically`     | N/A   | Sorts files appearing in the Reference Guide alphabetically, as well as the members of a class, interface or enum alphabetically. If false, the members will be displayed in the same order as the code. | `false`          | No       |
@@ -184,14 +185,15 @@ apexdocs openapi -s force-app -t docs -n MyNamespace --title "My Custom OpenApi 
 
 #### Flags
 
-| Flag                   | Alias | Description                                                        | Default     | Required |
-|------------------------|-------|--------------------------------------------------------------------|-------------|----------|
-| `--previousVersionDir` | `-p`  | The directory location of the previous version of the source code. | N/A         | Yes      |
-| `--currentVersionDir`  | `-t`  | The directory location of the current version of the source code.  | N/A         | Yes      |
-| `--targetDir`          | `-t`  | The directory location where the changelog file will be generated. | `./docs/`   | No       |
-| `--fileName`           | N/A   | The name of the changelog file to be generated.                    | `changelog` | No       |
-| `--scope`              | N/A   | The list of scope to respect when generating the changelog.        | ['global']  | No       |
-| `--skipIfNoChanges`    | N/A   | Whether to skip generating the changelog if there are no changes.  | `true`      | No       |
+| Flag                       | Alias | Description                                                                          | Default     | Required |
+|----------------------------|-------|--------------------------------------------------------------------------------------|-------------|----------|
+| `--previousVersionDir`     | `-p`  | The directory location of the previous version of the source code.                   | N/A         | Yes      |
+| `--currentVersionDir`      | `-t`  | The directory location of the current version of the source code.                    | N/A         | Yes      |
+| `--targetDir`              | `-t`  | The directory location where the changelog file will be generated.                   | `./docs/`   | No       |
+| `--fileName`               | N/A   | The name of the changelog file to be generated.                                      | `changelog` | No       |
+| `--scope`                  | N/A   | The list of scope to respect when generating the changelog.                          | ['global']  | No       |
+| `--customObjectVisibility` | `-v`  | Controls which custom objects are documented. Values should be separated by a space. | ['public']  | No       |
+| `--skipIfNoChanges`        | N/A   | Whether to skip generating the changelog if there are no changes.                    | `true`      | No       |
 
 #### Sample Usage
 

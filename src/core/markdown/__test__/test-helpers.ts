@@ -29,6 +29,7 @@ export function generateDocs(bundles: UnparsedSourceBundle[], config?: Partial<M
   return gen(bundles, {
     targetDir: 'target',
     scope: ['global', 'public'],
+    customObjectVisibility: ['public'],
     defaultGroupName: 'Miscellaneous',
     customObjectsGroupName: 'Custom Objects',
     sortAlphabetically: false,

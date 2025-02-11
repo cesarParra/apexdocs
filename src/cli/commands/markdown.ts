@@ -24,6 +24,14 @@ export const markdownOptions: Record<keyof CliConfigurableMarkdownConfig, Option
       'A list of scopes to document. Values should be separated by a space, e.g --scope global public namespaceaccessible. ' +
       'Annotations are supported and should be passed lowercased and without the @ symbol, e.g. namespaceaccessible auraenabled.',
   },
+  customObjectVisibility: {
+    type: 'string',
+    array: true,
+    alias: 'v',
+    default: markdownDefaults.customObjectVisibility,
+    choices: ['public', 'protected', 'packageprotected'],
+    describe: 'Controls which custom objects are documented. Values should be separated by a space.',
+  },
   defaultGroupName: {
     type: 'string',
     default: markdownDefaults.defaultGroupName,
