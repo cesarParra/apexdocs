@@ -11,6 +11,8 @@ import { CustomFieldMetadata } from './reflect-custom-field-source';
 import { getPickListValues } from './parse-picklist-values';
 import { CustomMetadataMetadata } from './reflect-custom-metadata-source';
 
+export type PublishBehavior = 'PublishImmediately' | 'PublishAfterCommit';
+
 export type CustomObjectMetadata = {
   type_name: 'customobject';
   deploymentStatus: string;
@@ -20,6 +22,7 @@ export type CustomObjectMetadata = {
   description: string | null;
   fields: CustomFieldMetadata[];
   metadataRecords: CustomMetadataMetadata[];
+  publishBehavior?: PublishBehavior;
 };
 
 export function reflectCustomObjectSources(

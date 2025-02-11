@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Eu excepteur irure occaecat adipisicing anim non consequat deserunt ipsum id amet eu. Labore aliqua incididunt anim id in aliquip sit excepteur ad dolor irure incididunt. Ipsum eiusmod cillum ex ullamco minim eu nisi dolore ad velit consequat ullamco elit tempor. Occaecat aliquip ex mollit nostrud qui excepteur non commodo dolore ullamco ex voluptate ut. Culpa nostrud reprehenderit ipsum do. Sit deserunt sint occaecat duis eiusmod. Sunt laborum fugiat nulla.</description>
+    <eventType>HighVolume</eventType>
+    <label>Sample Platform Event</label>
+    <pluralLabel>Sample Platform Events</pluralLabel>
+    <publishBehavior>PublishImmediately</publishBehavior>
+</CustomObject>

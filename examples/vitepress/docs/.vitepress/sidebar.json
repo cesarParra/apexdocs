@@ -95,6 +95,10 @@
         "link": "custom-objects/Sample_Custom_Setting__c.md"
       },
       {
+        "text": "Sample_Platform_Event__e",
+        "link": "custom-objects/Sample_Platform_Event__e.md"
+      },
+      {
         "text": "Speaker__c",
         "link": "custom-objects/Speaker__c.md"
       },
