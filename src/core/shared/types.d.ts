@@ -55,6 +55,7 @@ export type UserDefinedChangelogConfig = {
   targetDir: string;
   fileName: string;
   scope: string[];
+  customObjectVisibility: string[];
   exclude: string[];
   skipIfNoChanges: boolean;
 } & Partial<ChangelogConfigurableHooks>;

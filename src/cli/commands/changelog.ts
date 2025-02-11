@@ -35,6 +35,14 @@ export const changeLogOptions: { [key: string]: Options } = {
       'Values should be separated by a space, e.g --scope global public namespaceaccessible. ' +
       'Annotations are supported and should be passed lowercased and without the @ symbol, e.g. namespaceaccessible auraenabled.',
   },
+  customObjectVisibility: {
+    type: 'string',
+    array: true,
+    alias: 'v',
+    default: changeLogDefaults.customObjectVisibility,
+    choices: ['public', 'protected', 'packageprotected'],
+    describe: 'Controls which custom objects are documented. Values should be separated by a space.',
+  },
   skipIfNoChanges: {
     type: 'boolean',
     default: changeLogDefaults.skipIfNoChanges,

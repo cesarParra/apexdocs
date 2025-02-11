@@ -18,6 +18,7 @@ Product that is sold or available for sale.
 
 ---
 ### Event
+**Required**
 
 **API Name**
 
