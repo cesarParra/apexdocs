@@ -184,6 +184,7 @@ export type RenderableCustomObject = Omit<RenderableType, 'meta'> & {
   hasRecords: boolean;
   fields: RenderableSection<RenderableCustomField[]>;
   metadataRecords: RenderableSection<RenderableCustomMetadata[]>;
+  publishBehavior: string | null;
 };
 
 export type RenderableCustomField = {
