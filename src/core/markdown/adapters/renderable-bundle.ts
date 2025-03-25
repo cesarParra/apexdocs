@@ -14,16 +14,17 @@ import { generateLink } from './generate-link';
 import { getTypeGroup } from '../../shared/utils';
 import { Type } from '@cparra/apex-reflection';
 import { CustomObjectMetadata } from '../../reflection/sobject/reflect-custom-object-sources';
+import { TriggerMetadata } from 'src/core/reflection/trigger/reflect-trigger-source';
 
 export function parsedFilesToRenderableBundle(
   config: MarkdownGeneratorConfig,
-  parsedFiles: ParsedFile<Type | CustomObjectMetadata>[],
+  parsedFiles: ParsedFile<Type | CustomObjectMetadata | TriggerMetadata>[],
   references: Record<string, DocPageReference>,
 ): RenderableBundle {
   const referenceFinder = apply(generateLink(config.linkingStrategy), references);
 
   function toReferenceGuide(
-    parsedFiles: ParsedFile<Type | CustomObjectMetadata>[],
+    parsedFiles: ParsedFile<Type | CustomObjectMetadata | TriggerMetadata>[],
   ): Record<string, ReferenceGuideReference[]> {
     return parsedFiles.reduce<Record<string, ReferenceGuideReference[]>>(
       addToReferenceGuide(apply(referenceFinder, '__base__'), config, references),
@@ -31,7 +32,7 @@ export function parsedFilesToRenderableBundle(
     );
   }
 
-  function toRenderables(parsedFiles: ParsedFile<Type | CustomObjectMetadata>[]): Renderable[] {
+  function toRenderables(parsedFiles: ParsedFile<Type | CustomObjectMetadata | TriggerMetadata>[]): Renderable[] {
     return parsedFiles.reduce<Renderable[]>((acc, parsedFile) => {
       const renderable = typeToRenderable(parsedFile, apply(referenceFinder, parsedFile.source.name), config);
       acc.push(renderable);
@@ -50,7 +51,10 @@ function addToReferenceGuide(
   config: MarkdownGeneratorConfig,
   references: Record<string, DocPageReference>,
 ) {
-  return (acc: Record<string, ReferenceGuideReference[]>, parsedFile: ParsedFile<Type | CustomObjectMetadata>) => {
+  return (
+    acc: Record<string, ReferenceGuideReference[]>,
+    parsedFile: ParsedFile<Type | CustomObjectMetadata | TriggerMetadata>,
+  ) => {
     const group: string = getTypeGroup(parsedFile.type, config);
     if (!acc[group]) {
       acc[group] = [];
@@ -66,7 +70,7 @@ function addToReferenceGuide(
 }
 
 function getRenderableDescription(
-  type: Type | CustomObjectMetadata,
+  type: Type | CustomObjectMetadata | TriggerMetadata,
   findLinkFromHome: (referenceName: string) => string | Link,
 ): RenderableContent[] | null {
   switch (type.type_name) {

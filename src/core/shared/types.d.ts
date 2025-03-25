@@ -1,4 +1,4 @@
-import { Type } from '@cparra/apex-reflection';
+import { Type, TriggerMirror } from '@cparra/apex-reflection';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
@@ -66,7 +66,8 @@ export type UnparsedSourceBundle =
   | UnparsedApexBundle
   | UnparsedCustomObjectBundle
   | UnparsedCustomFieldBundle
-  | UnparsedCustomMetadataBundle;
+  | UnparsedCustomMetadataBundle
+  | UnparsedTriggerBundle;
 
 export type UnparsedCustomObjectBundle = {
   type: 'customobject';
@@ -100,7 +101,14 @@ export type UnparsedApexBundle = {
   metadataContent: string | null;
 };
 
-type MetadataTypes = 'interface' | 'class' | 'enum' | 'customobject' | 'customfield' | 'custommetadata';
+export type UnparsedTriggerBundle = {
+  type: 'trigger';
+  name: string;
+  filePath: string;
+  content: string;
+};
+
+type MetadataTypes = 'interface' | 'class' | 'enum' | 'customobject' | 'customfield' | 'custommetadata' | 'trigger';
 
 export type SourceFileMetadata = {
   filePath: string;
@@ -120,11 +128,12 @@ export type ExternalMetadata = {
 };
 
 export type ParsedFile<
-  T extends Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata =
+  T extends Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata | TriggerMirror =
     | Type
     | CustomObjectMetadata
     | CustomFieldMetadata
-    | CustomMetadataMetadata,
+    | CustomMetadataMetadata
+    | TriggerMirror,
 > = {
   source: SourceFileMetadata | ExternalMetadata;
   type: T;
@@ -158,7 +167,7 @@ export type DocPageData = {
   outputDocPath: string;
   frontmatter: Frontmatter;
   content: string;
-  type: 'class' | 'interface' | 'enum' | 'customobject';
+  type: 'class' | 'interface' | 'enum' | 'customobject' | 'trigger';
 };
 
 export type OpenApiPageData = Omit<DocPageData, 'source' | 'type'>;

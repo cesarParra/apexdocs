@@ -177,6 +177,12 @@ export type RenderableEnum = RenderableType & {
   values: RenderableSection<EnumValue[]>;
 };
 
+export type RenderableTrigger = Omit<RenderableType, 'meta'> & {
+  type: 'trigger';
+  objectName: string;
+  events: string[];
+};
+
 export type RenderableCustomObject = Omit<RenderableType, 'meta'> & {
   apiName: string;
   type: 'customobject';
@@ -207,6 +213,12 @@ export type RenderableCustomMetadata = {
   protected: boolean;
 };
 
-export type Renderable = (RenderableClass | RenderableInterface | RenderableEnum | RenderableCustomObject) & {
+export type Renderable = (
+  | RenderableClass
+  | RenderableInterface
+  | RenderableEnum
+  | RenderableCustomObject
+  | RenderableTrigger
+) & {
   filePath: string | undefined;
 };
