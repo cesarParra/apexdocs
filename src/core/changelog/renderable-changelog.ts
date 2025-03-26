@@ -1,11 +1,8 @@
-import { Changelog, MemberModificationType, NewOrModifiedMember } from './process-changelog';
+import { Changelog, MemberModificationType, NewOrModifiedMember, ParsedType } from './process-changelog';
 import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
 import { RenderableContent } from '../renderables/types';
 import { adaptDescribable } from '../renderables/documentables';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
-import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
-import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
-import { TriggerMetadata } from '../reflection/trigger/reflect-trigger-source';
 
 type NewTypeRenderable = {
   name: string;
@@ -59,10 +56,7 @@ export type RenderableChangelog = {
   removedTriggers: NewOrRemovedTriggerSection | null;
 };
 
-export function convertToRenderableChangelog(
-  changelog: Changelog,
-  newManifest: (Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata | TriggerMetadata)[],
-): RenderableChangelog {
+export function convertToRenderableChangelog(changelog: Changelog, newManifest: ParsedType[]): RenderableChangelog {
   const allNewTypes = [...changelog.newApexTypes, ...changelog.newCustomObjects].map(
     (newType) => newManifest.find((type) => type.name.toLowerCase() === newType.toLowerCase())!,
   );

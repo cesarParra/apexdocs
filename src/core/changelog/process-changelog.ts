@@ -6,8 +6,10 @@ import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-
 import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
 import { TriggerMetadata } from '../reflection/trigger/reflect-trigger-source';
 
+export type ParsedType = Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata | TriggerMetadata;
+
 export type VersionManifest = {
-  types: (Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata | TriggerMetadata)[];
+  types: ParsedType[];
 };
 
 type ModificationTypes =
