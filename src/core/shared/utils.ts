@@ -1,9 +1,10 @@
 import { ExternalMetadata, Frontmatter, Skip, SourceFileMetadata } from './types';
-import { Type, TriggerMirror } from '@cparra/apex-reflection';
+import { Type } from '@cparra/apex-reflection';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { MarkdownGeneratorConfig } from '../markdown/generate-docs';
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 import yaml from 'js-yaml';
+import { TriggerMetadata } from '../reflection/trigger/reflect-trigger-source';
 
 /**
  * Represents a file to be skipped.
@@ -19,13 +20,19 @@ export function isSkip(value: unknown): value is Skip {
 }
 
 export function isObjectType(
-  type: Type | CustomObjectMetadata | CustomFieldMetadata | TriggerMirror,
+  type: Type | CustomObjectMetadata | CustomFieldMetadata | TriggerMetadata,
 ): type is CustomObjectMetadata {
   return (type as CustomObjectMetadata).type_name === 'customobject';
 }
 
-export function isApexType(type: Type | CustomObjectMetadata | CustomFieldMetadata | TriggerMirror): type is Type {
-  return !isObjectType(type);
+export function isApexType(type: Type | CustomObjectMetadata | CustomFieldMetadata | TriggerMetadata): type is Type {
+  return !isObjectType(type) && !isTriggerType(type);
+}
+
+function isTriggerType(
+  type: Type | CustomObjectMetadata | CustomFieldMetadata | TriggerMetadata,
+): type is TriggerMetadata {
+  return type.type_name === 'trigger';
 }
 
 export function isInSource(source: SourceFileMetadata | ExternalMetadata): source is SourceFileMetadata {
@@ -33,7 +40,7 @@ export function isInSource(source: SourceFileMetadata | ExternalMetadata): sourc
 }
 
 export function getTypeGroup(
-  type: Type | CustomObjectMetadata | TriggerMirror,
+  type: Type | CustomObjectMetadata | TriggerMetadata,
   config: MarkdownGeneratorConfig,
 ): string {
   function getGroup(type: Type, config: MarkdownGeneratorConfig): string {
@@ -43,14 +50,12 @@ export function getTypeGroup(
     return groupAnnotation?.body ?? config.defaultGroupName;
   }
 
-  // TODO: I don't love this, let's see if we can refactor this
-  if (!('type_name' in type)) {
-    return 'Triggers'; // TODO: Do not hardcode
-  }
-
   switch (type.type_name) {
     case 'customobject':
       return config.customObjectsGroupName;
+    case 'trigger':
+      // TODO: Avoid hardcoding this.
+      return 'Triggers';
     default:
       return getGroup(type, config);
   }

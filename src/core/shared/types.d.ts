@@ -2,6 +2,7 @@ import { Type, TriggerMirror } from '@cparra/apex-reflection';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
+import { TriggerMetadata } from '../reflection/trigger/reflect-trigger-source';
 
 export type Generators = 'markdown' | 'openapi' | 'changelog';
 
@@ -133,7 +134,7 @@ export type ParsedFile<
     | CustomObjectMetadata
     | CustomFieldMetadata
     | CustomMetadataMetadata
-    | TriggerMirror,
+    | TriggerMetadata,
 > = {
   source: SourceFileMetadata | ExternalMetadata;
   type: T;

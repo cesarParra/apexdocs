@@ -26,6 +26,7 @@ import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-
 import { hookableTemplate } from '../markdown/templates/hookable';
 import changelogToSourceChangelog from './helpers/changelog-to-source-changelog';
 import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
+import { TriggerMetadata } from '../reflection/trigger/reflect-trigger-source';
 
 type Config = Omit<UserDefinedChangelogConfig, 'targetGenerator'>;
 
@@ -86,7 +87,13 @@ function toManifests({ oldVersion, newVersion }: { oldVersion: ParsedFile[]; new
     return {
       types: parsedFiles.reduce(
         (
-          previousValue: (Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata)[],
+          previousValue: (
+            | Type
+            | CustomObjectMetadata
+            | CustomFieldMetadata
+            | CustomMetadataMetadata
+            | TriggerMetadata
+          )[],
           parsedFile: ParsedFile,
         ) => {
           if (!isInSource(parsedFile.source) && parsedFile.type.type_name === 'customobject') {
@@ -96,7 +103,7 @@ function toManifests({ oldVersion, newVersion }: { oldVersion: ParsedFile[]; new
           }
           return [...previousValue, parsedFile.type];
         },
-        [] as (Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata)[],
+        [] as (Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata | TriggerMetadata)[],
       ),
     };
   }

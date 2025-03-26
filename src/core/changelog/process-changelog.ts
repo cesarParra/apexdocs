@@ -4,9 +4,10 @@ import { areMethodsEqual } from './method-changes-checker';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
+import { TriggerMetadata } from '../reflection/trigger/reflect-trigger-source';
 
 export type VersionManifest = {
-  types: (Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata)[];
+  types: (Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata | TriggerMetadata)[];
 };
 
 type ModificationTypes =

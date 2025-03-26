@@ -9,5 +9,4 @@ export const triggerMarkdownTemplate = `
 {{#each events}}
 * {{this}}
 {{/each}}
-{{/if}}
 `.trim();

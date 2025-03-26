@@ -1,25 +1,7 @@
-# Apex Reference Guide
+# Reference Guide
 
-## Miscellaneous
+## Triggers
 
-### [ASampleClass](miscellaneous/ASampleClass.md)
+### [PaymentDeviceTrigger](triggers/PaymentDeviceTrigger.md)
 
-This is a class description.
-
-### [CodeControl](miscellaneous/CodeControl.md)
-
-### [SomeDto](miscellaneous/SomeDto.md)
-
-Some description
-
-## Sample Classes
-
-### [SampleClass](sample-classes/SampleClass.md)
-
-This is a class description.
-
-## Sample Interfaces
-
-### [SampleInterface](sample-interfaces/SampleInterface.md)
-
-This is an interface description.
+This trigger is used to handle the logic for the Payment Device object.

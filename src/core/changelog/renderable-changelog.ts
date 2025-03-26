@@ -5,6 +5,7 @@ import { adaptDescribable } from '../renderables/documentables';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
+import { TriggerMetadata } from '../reflection/trigger/reflect-trigger-source';
 
 type NewTypeRenderable = {
   name: string;
@@ -49,7 +50,7 @@ export type RenderableChangelog = {
 
 export function convertToRenderableChangelog(
   changelog: Changelog,
-  newManifest: (Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata)[],
+  newManifest: (Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata | TriggerMetadata)[],
 ): RenderableChangelog {
   const allNewTypes = [...changelog.newApexTypes, ...changelog.newCustomObjects].map(
     (newType) => newManifest.find((type) => type.name.toLowerCase() === newType.toLowerCase())!,

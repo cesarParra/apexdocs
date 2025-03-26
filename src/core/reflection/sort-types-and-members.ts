@@ -11,14 +11,22 @@ export function sortTypesAndMembers(
   parsedFiles: ParsedFile<Type | CustomObjectMetadata | TriggerMetadata>[],
 ): ParsedFile<Type | CustomObjectMetadata | TriggerMetadata>[] {
   return parsedFiles
-    .map((parsedFile) => ({
-      ...parsedFile,
-      type: isApexType(parsedFile.type)
-        ? sortTypeMember(parsedFile.type, shouldSort)
-        : isObjectType(parsedFile.type)
-          ? sortCustomObjectFields(parsedFile.type, shouldSort)
-          : parsedFile.type,
-    }))
+    .map((parsedFile) => {
+      if (isApexType(parsedFile.type)) {
+        return {
+          ...parsedFile,
+          type: sortTypeMember(parsedFile.type, shouldSort),
+        };
+      }
+      if (isObjectType(parsedFile.type)) {
+        return {
+          ...parsedFile,
+          type: sortCustomObjectFields(parsedFile.type, shouldSort),
+        };
+      }
+      // For TriggerMetadata or any other types, return the original parsedFile unchanged
+      return parsedFile;
+    })
     .sort((a, b) => sortByNames(shouldSort, a.type, b.type));
 }
 
