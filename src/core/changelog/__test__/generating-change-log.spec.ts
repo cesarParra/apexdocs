@@ -3,6 +3,7 @@ import {
   UnparsedApexBundle,
   UnparsedCustomObjectBundle,
   UnparsedSourceBundle,
+  UnparsedTriggerBundle,
 } from '../../shared/types';
 import { generateChangeLog } from '../generate-change-log';
 import { assertEither } from '../../test-helpers/assert-either';
@@ -482,6 +483,120 @@ describe('when generating a changelog', () => {
       const result = await generateChangeLog([], [], { ...config, transformChangeLogPage: hook })();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).frontmatter).toContain('title: Custom Title'));
+    });
+  });
+
+  describe('that includes new triggers', () => {
+    it('should include a section for new triggers', async () => {
+      const triggerSource = `trigger TestTrigger on Account (before insert) {}`;
+
+      const oldBundle: UnparsedSourceBundle[] = [];
+      const newBundle: UnparsedTriggerBundle[] = [
+        {
+          type: 'trigger',
+          name: 'TestTrigger',
+          content: triggerSource,
+          filePath: 'TestTrigger.trigger',
+        },
+      ];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('## New Triggers'));
+    });
+
+    it('should include the new trigger name and object', async () => {
+      const triggerSource = `trigger TestTrigger on Account (before insert) {}`;
+
+      const oldBundle: UnparsedSourceBundle[] = [];
+      const newBundle: UnparsedSourceBundle[] = [
+        {
+          type: 'trigger',
+          name: 'TestTrigger',
+          content: triggerSource,
+          filePath: 'TestTrigger.trigger',
+        },
+      ];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => {
+        const content = (data as ChangeLogPageData).content;
+        expect(content).toContain('TestTrigger on Account');
+      });
+    });
+  });
+
+  describe('that includes removed triggers', () => {
+    it('should include a section for removed triggers', async () => {
+      const triggerSource = `trigger TestTrigger on Account (before insert) {}`;
+
+      const oldBundle: UnparsedSourceBundle[] = [
+        {
+          type: 'trigger',
+          name: 'TestTrigger',
+          content: triggerSource,
+          filePath: 'TestTrigger.trigger',
+        },
+      ];
+      const newBundle: UnparsedSourceBundle[] = [];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('## Removed Triggers'));
+    });
+
+    it('should include the removed trigger name and object', async () => {
+      const triggerSource = `trigger TestTrigger on Account (before insert) {}`;
+
+      const oldBundle: UnparsedSourceBundle[] = [
+        {
+          type: 'trigger',
+          name: 'TestTrigger',
+          content: triggerSource,
+          filePath: 'TestTrigger.trigger',
+        },
+      ];
+      const newBundle: UnparsedSourceBundle[] = [];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => {
+        const content = (data as ChangeLogPageData).content;
+        expect(content).toContain('TestTrigger on Account');
+      });
+    });
+  });
+
+  describe('that includes triggers in both versions', () => {
+    it('should not include unchanged triggers in the changelog', async () => {
+      const triggerSource = `trigger TestTrigger on Account (before insert) {}`;
+
+      const oldBundle: UnparsedSourceBundle[] = [
+        {
+          type: 'trigger',
+          name: 'TestTrigger',
+          content: triggerSource,
+          filePath: 'TestTrigger.trigger',
+        },
+      ];
+      const newBundle: UnparsedSourceBundle[] = [
+        {
+          type: 'trigger',
+          name: 'TestTrigger',
+          content: triggerSource,
+          filePath: 'TestTrigger.trigger',
+        },
+      ];
+
+      const result = await generateChangeLog(oldBundle, newBundle, config)();
+
+      assertEither(result, (data) => {
+        const content = (data as ChangeLogPageData).content;
+        expect(content).not.toContain('New Triggers');
+        expect(content).not.toContain('Removed Triggers');
+        expect(content).not.toContain('TestTrigger');
+      });
     });
   });
 });
