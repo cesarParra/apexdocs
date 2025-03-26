@@ -54,8 +54,7 @@ export function getTypeGroup(
     case 'customobject':
       return config.customObjectsGroupName;
     case 'trigger':
-      // TODO: Avoid hardcoding this.
-      return 'Triggers';
+      return config.triggersGroupName;
     default:
       return getGroup(type, config);
   }

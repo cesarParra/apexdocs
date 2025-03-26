@@ -25,6 +25,7 @@ export type CliConfigurableMarkdownConfig = {
   namespace?: string;
   defaultGroupName: string;
   customObjectsGroupName: string;
+  triggersGroupName: string;
   sortAlphabetically: boolean;
   includeMetadata: boolean;
   linkingStrategy: LinkingStrategy;

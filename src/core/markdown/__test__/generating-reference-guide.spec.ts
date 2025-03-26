@@ -1,7 +1,12 @@
 import { extendExpect } from './expect-extensions';
 import { pipe } from 'fp-ts/function';
 import * as E from 'fp-ts/Either';
-import { unparsedApexBundleFromRawString, generateDocs, unparsedObjectBundleFromRawString } from './test-helpers';
+import {
+  unparsedApexBundleFromRawString,
+  generateDocs,
+  unparsedObjectBundleFromRawString,
+  unparsedTriggerBundleFromRawString,
+} from './test-helpers';
 import { ReferenceGuidePageData } from '../../shared/types';
 import { assertEither } from '../../test-helpers/assert-either';
 import { CustomObjectXmlBuilder } from '../../test-helpers/test-data-builders/custom-object-xml-builder';
@@ -122,6 +127,22 @@ describe('When generating the Reference Guide', () => {
     expect(result).documentationBundleHasLength(1);
     assertEither(result, (data) =>
       expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('## MyCustomObjects'),
+    );
+  });
+
+  it('groups Triggers under the provided group', async () => {
+    const input = `
+      trigger TestTrigger on Account (before insert) {}
+      `;
+
+    const result = await generateDocs(
+      [unparsedTriggerBundleFromRawString({ rawContent: input, filePath: 'src/triggers/TestTrigger.trigger' })],
+      { triggersGroupName: 'MyTriggers' },
+    )();
+
+    expect(result).documentationBundleHasLength(1);
+    assertEither(result, (data) =>
+      expect((data.referenceGuide as ReferenceGuidePageData).content).toContain('## MyTriggers'),
     );
   });
 
