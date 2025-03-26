@@ -94,3 +94,9 @@ This description has several lines
 
 aliquip ex sunt officia ullamco anim deserunt magna aliquip nisi eiusmod in sit officia veniam ex 
 **deserunt** ea officia exercitation laboris enim in duis quis enim eiusmod eu amet cupidatat.
+
+## Triggers
+
+### [PaymentDeviceTrigger](triggers/PaymentDeviceTrigger)
+
+This trigger is used to handle the logic for the Payment Device object.

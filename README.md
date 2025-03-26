@@ -123,6 +123,7 @@ apexdocs changelog --previousVersionDir force-app-previous --currentVersionDir f
 | `--includeMetadata `       | N/A   | Whether to include the file's meta.xml information: Whether it is active and and the API version                                                                                                         | `false`          | No       |
 | `--linkingStrategy`        | N/A   | The strategy to use when linking to other classes. Possible values are `relative`, `no-link`, and `none`                                                                                                 | `relative`       | No       |
 | `--customObjectsGroupName` | N/A   | The name under which custom objects will be grouped in the Reference Guide                                                                                                                               | `Custom Objects` | No       |
+| `--triggersGroupName`      | N/A   | The name under which triggers will be grouped in the Reference Guide                                                                                                                                     | `Triggers`       | No       |
 
 ##### Linking Strategy
 

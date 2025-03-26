@@ -10,6 +10,7 @@ import {
   FieldMirrorWithInheritance,
   PropertyMirrorWithInheritance,
   GetRenderableContentByTypeName,
+  RenderableTrigger,
   RenderableCustomObject,
   RenderableCustomField,
   RenderableCustomMetadata,
@@ -18,26 +19,34 @@ import { adaptDescribable, adaptDocumentable } from '../../renderables/documenta
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
 import { MarkdownGeneratorConfig } from '../generate-docs';
-import { ExternalMetadata, SourceFileMetadata } from '../../shared/types';
+import { ExternalMetadata, SourceFileMetadata, TopLevelType } from '../../shared/types';
 import { CustomObjectMetadata, PublishBehavior } from '../../reflection/sobject/reflect-custom-object-sources';
 import { getTypeGroup, isInSource } from '../../shared/utils';
 import { CustomFieldMetadata } from '../../reflection/sobject/reflect-custom-field-source';
 import { CustomMetadataMetadata } from '../../reflection/sobject/reflect-custom-metadata-source';
+import { TriggerMetadata } from 'src/core/reflection/trigger/reflect-trigger-source';
 
-type GetReturnRenderable<T extends Type | CustomObjectMetadata> = T extends InterfaceMirror
+type GetReturnRenderable<T extends TopLevelType> = T extends InterfaceMirror
   ? RenderableInterface
   : T extends ClassMirror
     ? RenderableClass
     : T extends EnumMirror
       ? RenderableEnum
-      : RenderableCustomObject;
+      : T extends TriggerMetadata
+        ? RenderableTrigger
+        : RenderableCustomObject;
 
-export function typeToRenderable<T extends Type | CustomObjectMetadata>(
+export function typeToRenderable<T extends TopLevelType>(
   parsedFile: { source: SourceFileMetadata | ExternalMetadata; type: T },
   linkGenerator: GetRenderableContentByTypeName,
   config: MarkdownGeneratorConfig,
 ): GetReturnRenderable<T> & { filePath: string | undefined; namespace?: string } {
-  function getRenderable(): RenderableInterface | RenderableClass | RenderableEnum | RenderableCustomObject {
+  function getRenderable():
+    | RenderableInterface
+    | RenderableClass
+    | RenderableEnum
+    | RenderableTrigger
+    | RenderableCustomObject {
     const { type } = parsedFile;
     switch (type.type_name) {
       case 'enum':
@@ -46,6 +55,8 @@ export function typeToRenderable<T extends Type | CustomObjectMetadata>(
         return interfaceTypeToInterfaceSource(type as InterfaceMirror, linkGenerator);
       case 'class':
         return classTypeToClassSource(type as ClassMirrorWithInheritanceChain, linkGenerator);
+      case 'trigger':
+        return triggerMetadataToRenderable(type as TriggerMetadata, linkGenerator);
       case 'customobject':
         return objectMetadataToRenderable(type as CustomObjectMetadata, config);
     }
@@ -245,6 +256,50 @@ function singleGroup<T extends Groupable, K>(
     heading: groupName,
     groupDescription: members[0].groupDescription, // All fields in the group have the same description
     value: toFlat(members, adapter, linkGenerator, headingLevel + 1),
+  };
+}
+
+function triggerMetadataToRenderable(
+  triggerMetadata: TriggerMetadata,
+  linkGenerator: GetRenderableContentByTypeName,
+  baseHeadingLevel: number = 1,
+): RenderableTrigger {
+  function formatEvent(event: string): string {
+    switch (event) {
+      case 'beforeinsert':
+        return 'Before Insert';
+      case 'beforeupdate':
+        return 'Before Update';
+      case 'beforedelete':
+        return 'Before Delete';
+      case 'afterinsert':
+        return 'After Insert';
+      case 'afterupdate':
+        return 'After Update';
+      case 'afterdelete':
+        return 'After Delete';
+      case 'afterundelete':
+        return 'After Undelete';
+      default:
+        return event;
+    }
+  }
+
+  return {
+    doc: adaptDocumentable(
+      {
+        docComment: triggerMetadata.docComment,
+        annotations: [],
+      },
+      linkGenerator,
+      baseHeadingLevel + 1,
+    ),
+    name: triggerMetadata.name,
+    type: 'trigger',
+    headingLevel: 1,
+    heading: triggerMetadata.name + ' Trigger',
+    objectName: triggerMetadata.object_name,
+    events: triggerMetadata.events.map(formatEvent),
   };
 }
 

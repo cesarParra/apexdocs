@@ -1,10 +1,8 @@
-import { Changelog, MemberModificationType, NewOrModifiedMember } from './process-changelog';
+import { Changelog, MemberModificationType, NewOrModifiedMember, ParsedType } from './process-changelog';
 import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
 import { RenderableContent } from '../renderables/types';
 import { adaptDescribable } from '../renderables/documentables';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
-import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
-import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
 
 type NewTypeRenderable = {
   name: string;
@@ -16,6 +14,15 @@ type NewTypeSection<T extends 'class' | 'interface' | 'enum' | 'customobject'> =
   heading: string;
   description: string;
   types: NewTypeRenderable[];
+};
+
+type NewOrRemovedTriggerSection = {
+  heading: string;
+  description: string;
+  triggerData: {
+    triggerName: string;
+    objectName: string;
+  }[];
 };
 
 type RemovedTypeSection = {
@@ -45,12 +52,11 @@ export type RenderableChangelog = {
   removedCustomObjects: RemovedTypeSection | null;
   newOrRemovedCustomFields: NewOrModifiedMembersSection | null;
   newOrRemovedCustomMetadataTypeRecords: NewOrModifiedMembersSection | null;
+  newTriggers: NewOrRemovedTriggerSection | null;
+  removedTriggers: NewOrRemovedTriggerSection | null;
 };
 
-export function convertToRenderableChangelog(
-  changelog: Changelog,
-  newManifest: (Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata)[],
-): RenderableChangelog {
+export function convertToRenderableChangelog(changelog: Changelog, newManifest: ParsedType[]): RenderableChangelog {
   const allNewTypes = [...changelog.newApexTypes, ...changelog.newCustomObjects].map(
     (newType) => newManifest.find((type) => type.name.toLowerCase() === newType.toLowerCase())!,
   );
@@ -148,6 +154,28 @@ export function convertToRenderableChangelog(
             modifications: newOrModifiedCustomMetadataTypeRecords.map(toRenderableModification),
           }
         : null,
+    newTriggers:
+      changelog.newTriggers.length > 0
+        ? {
+            heading: 'New Triggers',
+            description: 'These triggers are new.',
+            triggerData: changelog.newTriggers.map((trigger) => ({
+              triggerName: trigger.triggerName,
+              objectName: trigger.objectName,
+            })),
+          }
+        : null,
+    removedTriggers:
+      changelog.removedTriggers.length > 0
+        ? {
+            heading: 'Removed Triggers',
+            description: 'These triggers have been removed.',
+            triggerData: changelog.removedTriggers.map((trigger) => ({
+              triggerName: trigger.triggerName,
+              objectName: trigger.objectName,
+            })),
+          }
+        : null,
   };
 }
 
@@ -203,5 +231,9 @@ function toRenderableModificationDescription(memberModificationType: MemberModif
       return `New Custom Metadata Record: ${withDescription(memberModificationType)}`;
     case 'RemovedCustomMetadataRecord':
       return `Removed Custom Metadata Record: ${memberModificationType.name}`;
+    case 'NewTrigger':
+      return `New Trigger: ${withDescription(memberModificationType)}`;
+    case 'RemovedTrigger':
+      return `Removed Trigger: ${memberModificationType.name}`;
   }
 }

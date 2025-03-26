@@ -1,7 +1,7 @@
 import { defineMarkdownConfig } from '../../src';
 
 export default defineMarkdownConfig({
-  sourceDir: 'classes',
+  sourceDir: 'src',
   targetDir: 'docs',
   scope: ['public', 'global'],
   linkingStrategy: 'none',

@@ -1,4 +1,9 @@
-import { UnparsedApexBundle, UnparsedCustomObjectBundle, UnparsedSourceBundle } from '../../shared/types';
+import {
+  UnparsedApexBundle,
+  UnparsedCustomObjectBundle,
+  UnparsedSourceBundle,
+  UnparsedTriggerBundle,
+} from '../../shared/types';
 import { generateDocs as gen, MarkdownGeneratorConfig } from '../generate-docs';
 import { referenceGuideTemplate } from '../templates/reference-guide';
 
@@ -9,6 +14,19 @@ export function unparsedApexBundleFromRawString(raw: string, rawMetadata?: strin
     filePath: 'test.cls',
     content: raw,
     metadataContent: rawMetadata ?? null,
+  };
+}
+
+export function unparsedTriggerBundleFromRawString(meta: {
+  rawContent: string;
+  filePath: string;
+  name?: string;
+}): UnparsedTriggerBundle {
+  return {
+    type: 'trigger',
+    name: meta.name ?? 'TestTrigger',
+    filePath: meta.filePath,
+    content: meta.rawContent,
   };
 }
 
@@ -32,6 +50,7 @@ export function generateDocs(bundles: UnparsedSourceBundle[], config?: Partial<M
     customObjectVisibility: ['public'],
     defaultGroupName: 'Miscellaneous',
     customObjectsGroupName: 'Custom Objects',
+    triggersGroupName: 'Triggers',
     sortAlphabetically: false,
     referenceGuideTemplate: referenceGuideTemplate,
     linkingStrategy: 'relative',

@@ -687,4 +687,232 @@ describe('when generating a changelog', () => {
       ]);
     });
   });
+
+  describe('with trigger code', () => {
+    it('has no new triggers when both the old and new versions are empty', () => {
+      const oldVersion = { types: [] };
+      const newVersion = { types: [] };
+
+      const changeLog = processChangelog(oldVersion, newVersion);
+
+      expect(changeLog.newTriggers).toEqual([]);
+    });
+
+    it('has no removed triggers when both the old and new versions are empty', () => {
+      const oldVersion = { types: [] };
+      const newVersion = { types: [] };
+
+      const changeLog = processChangelog(oldVersion, newVersion);
+
+      expect(changeLog.removedTriggers).toEqual([]);
+    });
+
+    it('has no new triggers when both versions have the same trigger', () => {
+      const triggerMetadata = {
+        type_name: 'trigger' as const,
+        name: 'TestTrigger',
+        object_name: 'Account',
+        events: ['beforeinsert'],
+      };
+
+      const oldVersion = { types: [triggerMetadata] };
+      const newVersion = { types: [triggerMetadata] };
+
+      const changeLog = processChangelog(oldVersion, newVersion);
+
+      expect(changeLog.newTriggers).toEqual([]);
+    });
+
+    it('has no removed triggers when both versions have the same trigger', () => {
+      const triggerMetadata = {
+        type_name: 'trigger' as const,
+        name: 'TestTrigger',
+        object_name: 'Account',
+        events: ['beforeinsert'],
+      };
+
+      const oldVersion = { types: [triggerMetadata] };
+      const newVersion = { types: [triggerMetadata] };
+
+      const changeLog = processChangelog(oldVersion, newVersion);
+
+      expect(changeLog.removedTriggers).toEqual([]);
+    });
+
+    it('lists new triggers', () => {
+      const oldVersion = { types: [] };
+      const newTrigger = {
+        type_name: 'trigger' as const,
+        name: 'TestTrigger',
+        object_name: 'Account',
+        events: ['beforeinsert'],
+      };
+      const newVersion = { types: [newTrigger] };
+
+      const changeLog = processChangelog(oldVersion, newVersion);
+
+      expect(changeLog.newTriggers).toEqual([
+        {
+          triggerName: 'TestTrigger',
+          objectName: 'Account',
+        },
+      ]);
+    });
+
+    it('lists removed triggers', () => {
+      const oldTrigger = {
+        type_name: 'trigger' as const,
+        name: 'TestTrigger',
+        object_name: 'Account',
+        events: ['beforeinsert'],
+      };
+      const oldVersion = { types: [oldTrigger] };
+      const newVersion = { types: [] };
+
+      const changeLog = processChangelog(oldVersion, newVersion);
+
+      expect(changeLog.removedTriggers).toEqual([
+        {
+          triggerName: 'TestTrigger',
+          objectName: 'Account',
+        },
+      ]);
+    });
+
+    it('lists multiple new triggers', () => {
+      const oldVersion = { types: [] };
+      const newTriggers = [
+        {
+          type_name: 'trigger' as const,
+          name: 'AccountTrigger',
+          object_name: 'Account',
+          events: ['beforeinsert'],
+        },
+        {
+          type_name: 'trigger' as const,
+          name: 'ContactTrigger',
+          object_name: 'Contact',
+          events: ['beforeinsert'],
+        },
+      ];
+      const newVersion = { types: newTriggers };
+
+      const changeLog = processChangelog(oldVersion, newVersion);
+
+      expect(changeLog.newTriggers).toEqual([
+        {
+          triggerName: 'AccountTrigger',
+          objectName: 'Account',
+        },
+        {
+          triggerName: 'ContactTrigger',
+          objectName: 'Contact',
+        },
+      ]);
+    });
+
+    it('lists multiple removed triggers', () => {
+      const oldTriggers = [
+        {
+          type_name: 'trigger' as const,
+          name: 'AccountTrigger',
+          object_name: 'Account',
+          events: ['beforeinsert'],
+        },
+        {
+          type_name: 'trigger' as const,
+          name: 'ContactTrigger',
+          object_name: 'Contact',
+          events: ['beforeinsert'],
+        },
+      ];
+      const oldVersion = { types: oldTriggers };
+      const newVersion = { types: [] };
+
+      const changeLog = processChangelog(oldVersion, newVersion);
+
+      expect(changeLog.removedTriggers).toEqual([
+        {
+          triggerName: 'AccountTrigger',
+          objectName: 'Account',
+        },
+        {
+          triggerName: 'ContactTrigger',
+          objectName: 'Contact',
+        },
+      ]);
+    });
+
+    it('handles mixed trigger changes', () => {
+      const oldTriggers = [
+        {
+          type_name: 'trigger' as const,
+          name: 'AccountTrigger',
+          object_name: 'Account',
+          events: ['beforeinsert'],
+        },
+        {
+          type_name: 'trigger' as const,
+          name: 'OldContactTrigger',
+          object_name: 'Contact',
+          events: ['beforeinsert'],
+        },
+      ];
+      const newTriggers = [
+        {
+          type_name: 'trigger' as const,
+          name: 'AccountTrigger',
+          object_name: 'Account',
+          events: ['beforeinsert'],
+        },
+        {
+          type_name: 'trigger' as const,
+          name: 'NewOpportunityTrigger',
+          object_name: 'Opportunity',
+          events: ['beforeinsert'],
+        },
+      ];
+
+      const oldVersion = { types: oldTriggers };
+      const newVersion = { types: newTriggers };
+
+      const changeLog = processChangelog(oldVersion, newVersion);
+
+      expect(changeLog.newTriggers).toEqual([
+        {
+          triggerName: 'NewOpportunityTrigger',
+          objectName: 'Opportunity',
+        },
+      ]);
+      expect(changeLog.removedTriggers).toEqual([
+        {
+          triggerName: 'OldContactTrigger',
+          objectName: 'Contact',
+        },
+      ]);
+    });
+
+    it('is case insensitive when comparing trigger names', () => {
+      const oldTrigger = {
+        type_name: 'trigger' as const,
+        name: 'TestTrigger',
+        object_name: 'Account',
+        events: ['beforeinsert'],
+      };
+      const newTrigger = {
+        type_name: 'trigger' as const,
+        name: 'testtrigger',
+        object_name: 'Account',
+        events: ['beforeinsert'],
+      };
+
+      const oldVersion = { types: [oldTrigger] };
+      const newVersion = { types: [newTrigger] };
+
+      const changeLog = processChangelog(oldVersion, newVersion);
+
+      expect(changeLog.newTriggers).toEqual([]);
+      expect(changeLog.removedTriggers).toEqual([]);
+    });
+  });
 });

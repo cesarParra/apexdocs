@@ -42,6 +42,11 @@ export const markdownOptions: Record<keyof CliConfigurableMarkdownConfig, Option
     default: markdownDefaults.customObjectsGroupName,
     describe: 'The name under which custom objects will be grouped in the Reference Guide',
   },
+  triggersGroupName: {
+    type: 'string',
+    default: markdownDefaults.triggersGroupName,
+    describe: 'The name under which triggers will be grouped in the Reference Guide',
+  },
   namespace: {
     type: 'string',
     describe: 'The package namespace, if any. If provided, it will be added to the generated files.',

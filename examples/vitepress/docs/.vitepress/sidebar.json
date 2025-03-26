@@ -18,6 +18,10 @@
             "link": "miscellaneous/ParentInterface.md"
           },
           {
+            "text": "PaymentDeviceTrigger",
+            "link": "triggers/PaymentDeviceTrigger.md"
+          },
+          {
             "text": "ReferencedEnum",
             "link": "miscellaneous/ReferencedEnum.md"
           },

@@ -1,21 +1,31 @@
 import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
-import { ParsedFile } from '../shared/types';
-import { isApexType } from '../shared/utils';
+import { ParsedFile, TopLevelType } from '../shared/types';
+import { isApexType, isObjectType } from '../shared/utils';
 import { CustomObjectMetadata } from './sobject/reflect-custom-object-sources';
 
 type Named = { name: string };
 
 export function sortTypesAndMembers(
   shouldSort: boolean,
-  parsedFiles: ParsedFile<Type | CustomObjectMetadata>[],
-): ParsedFile<Type | CustomObjectMetadata>[] {
+  parsedFiles: ParsedFile<TopLevelType>[],
+): ParsedFile<TopLevelType>[] {
   return parsedFiles
-    .map((parsedFile) => ({
-      ...parsedFile,
-      type: isApexType(parsedFile.type)
-        ? sortTypeMember(parsedFile.type, shouldSort)
-        : sortCustomObjectFields(parsedFile.type, shouldSort),
-    }))
+    .map((parsedFile) => {
+      if (isApexType(parsedFile.type)) {
+        return {
+          ...parsedFile,
+          type: sortTypeMember(parsedFile.type, shouldSort),
+        };
+      }
+      if (isObjectType(parsedFile.type)) {
+        return {
+          ...parsedFile,
+          type: sortCustomObjectFields(parsedFile.type, shouldSort),
+        };
+      }
+      // For TriggerMetadata or any other types, return the original parsedFile unchanged
+      return parsedFile;
+    })
     .sort((a, b) => sortByNames(shouldSort, a.type, b.type));
 }
 

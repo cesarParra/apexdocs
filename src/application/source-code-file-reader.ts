@@ -4,13 +4,20 @@ import {
   UnparsedCustomFieldBundle,
   UnparsedCustomMetadataBundle,
   UnparsedCustomObjectBundle,
+  UnparsedTriggerBundle,
 } from '../core/shared/types';
 import { minimatch } from 'minimatch';
 import { flow, pipe } from 'fp-ts/function';
 import { apply } from '#utils/fp';
 
-export type ComponentTypes = 'ApexClass' | 'CustomObject' | 'CustomField' | 'CustomMetadata';
-export const allComponentTypes: ComponentTypes[] = ['ApexClass', 'CustomObject', 'CustomField', 'CustomMetadata'];
+export type ComponentTypes = 'ApexClass' | 'CustomObject' | 'CustomField' | 'CustomMetadata' | 'ApexTrigger';
+export const allComponentTypes: ComponentTypes[] = [
+  'ApexClass',
+  'CustomObject',
+  'CustomField',
+  'CustomMetadata',
+  'ApexTrigger',
+];
 
 /**
  * Simplified representation of a source component, with only
@@ -33,6 +40,12 @@ type ApexClassApexSourceComponent = {
   type: 'ApexClass';
   name: string;
   xmlPath?: string;
+  contentPath: string;
+};
+
+type TriggerSourceComponent = {
+  type: 'ApexTrigger';
+  name: string;
   contentPath: string;
 };
 
@@ -89,6 +102,28 @@ function toUnparsedApexBundle(
       metadataContent: apexComponentTuple[1],
     };
   });
+}
+
+function getTriggerSourceComponents(sourceComponents: SourceComponentAdapter[]): TriggerSourceComponent[] {
+  return sourceComponents
+    .filter((component) => component.type.name === 'ApexTrigger')
+    .map((component) => ({
+      type: 'ApexTrigger' as const,
+      name: component.name,
+      contentPath: component.content!,
+    }));
+}
+
+function toUnparsedTriggerBundle(
+  fileSystem: FileSystem,
+  triggerSourceComponents: TriggerSourceComponent[],
+): UnparsedTriggerBundle[] {
+  return triggerSourceComponents.map((component) => ({
+    type: 'trigger',
+    name: component.name,
+    filePath: component.contentPath,
+    content: fileSystem.readFile(component.contentPath),
+  }));
 }
 
 function getCustomObjectSourceComponents(sourceComponents: SourceComponentAdapter[]): CustomObjectSourceComponent[] {
@@ -191,6 +226,7 @@ export function processFiles(fileSystem: FileSystem) {
         | UnparsedCustomObjectBundle
         | UnparsedCustomFieldBundle
         | UnparsedCustomMetadataBundle
+        | UnparsedTriggerBundle
       )[]
     > = {
       ApexClass: flow(apply(getApexSourceComponents, options.includeMetadata), (apexSourceComponents) =>
@@ -204,6 +240,9 @@ export function processFiles(fileSystem: FileSystem) {
       ),
       CustomMetadata: flow(getCustomMetadataSourceComponents, (customMetadataSourceComponents) =>
         toUnparsedCustomMetadataBundle(fileSystem, customMetadataSourceComponents),
+      ),
+      ApexTrigger: flow(getTriggerSourceComponents, (triggerSourceComponents) =>
+        toUnparsedTriggerBundle(fileSystem, triggerSourceComponents),
       ),
     };
 
