@@ -49,6 +49,26 @@ export const changelogTemplate = `
 {{/each}}
 {{/if}}
 
+{{#if newTriggers}}
+## {{newTriggers.heading}}
+
+{{newTriggers.description}}
+
+{{#each newTriggers.triggerData}}
+- {{this.triggerName}} on {{this.objectName}}
+{{/each}}
+{{/if}}
+
+{{#if removedTriggers}}
+## {{removedTriggers.heading}}
+
+{{removedTriggers.description}}
+
+{{#each removedTriggers.triggerData}}
+- {{this.triggerName}} on {{this.objectName}}
+{{/each}}
+{{/if}}
+
 {{#if removedTypes}}
 ## {{removedTypes.heading}}
 

@@ -4,9 +4,12 @@ import { areMethodsEqual } from './method-changes-checker';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
+import { TriggerMetadata } from '../reflection/trigger/reflect-trigger-source';
+
+export type ParsedType = Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata | TriggerMetadata;
 
 export type VersionManifest = {
-  types: (Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata)[];
+  types: ParsedType[];
 };
 
 type ModificationTypes =
@@ -21,7 +24,9 @@ type ModificationTypes =
   | 'NewField'
   | 'RemovedField'
   | 'NewCustomMetadataRecord'
-  | 'RemovedCustomMetadataRecord';
+  | 'RemovedCustomMetadataRecord'
+  | 'NewTrigger'
+  | 'RemovedTrigger';
 
 export type MemberModificationType = {
   __typename: ModificationTypes;
@@ -34,6 +39,11 @@ export type NewOrModifiedMember = {
   modifications: MemberModificationType[];
 };
 
+export type TriggerChange = {
+  triggerName: string;
+  objectName: string;
+};
+
 export type Changelog = {
   newApexTypes: string[];
   removedApexTypes: string[];
@@ -41,6 +51,8 @@ export type Changelog = {
   newCustomObjects: string[];
   removedCustomObjects: string[];
   customObjectModifications: NewOrModifiedMember[];
+  newTriggers: TriggerChange[];
+  removedTriggers: TriggerChange[];
 };
 
 export function hasChanges(changelog: Changelog): boolean {
@@ -62,6 +74,8 @@ export function processChangelog(oldVersion: VersionManifest, newVersion: Versio
       ...getCustomObjectModifications(oldVersion, newVersion),
       ...getNewOrModifiedExtensionFields(oldVersion, newVersion),
     ],
+    newTriggers: getNewTriggers(oldVersion, newVersion),
+    removedTriggers: getRemovedTriggers(oldVersion, newVersion),
   };
 }
 
@@ -77,6 +91,24 @@ function getRemovedApexTypes(oldVersion: VersionManifest, newVersion: VersionMan
     .filter((newType): newType is Type => newType.type_name !== 'customobject')
     .filter((oldType) => !newVersion.types.some((newType) => newType.name.toLowerCase() === oldType.name.toLowerCase()))
     .map((type) => type.name);
+}
+
+function getNewTriggers(oldVersion: VersionManifest, newVersion: VersionManifest): TriggerChange[] {
+  return newVersion.types
+    .filter((newType): newType is TriggerMetadata => newType.type_name === 'trigger')
+    .filter(
+      (newTrigger) => !oldVersion.types.some((oldType) => oldType.name.toLowerCase() === newTrigger.name.toLowerCase()),
+    )
+    .map((trigger) => ({ triggerName: trigger.name, objectName: trigger.object_name }));
+}
+
+function getRemovedTriggers(oldVersion: VersionManifest, newVersion: VersionManifest): TriggerChange[] {
+  return oldVersion.types
+    .filter((newType): newType is TriggerMetadata => newType.type_name === 'trigger')
+    .filter(
+      (oldTrigger) => !newVersion.types.some((newType) => newType.name.toLowerCase() === oldTrigger.name.toLowerCase()),
+    )
+    .map((trigger) => ({ triggerName: trigger.name, objectName: trigger.object_name }));
 }
 
 function getNewCustomObjects(oldVersion: VersionManifest, newVersion: VersionManifest): string[] {

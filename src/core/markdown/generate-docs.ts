@@ -16,6 +16,7 @@ import {
   TransformReference,
   ParsedFile,
   UnparsedSourceBundle,
+  TopLevelType,
 } from '../shared/types';
 import { parsedFilesToRenderableBundle } from './adapters/renderable-bundle';
 import { reflectApexSource } from '../reflection/apex/reflect-apex-source';
@@ -30,10 +31,13 @@ import { isSkip, passThroughHook, toFrontmatterString } from '../shared/utils';
 import { parsedFilesToReferenceGuide } from './adapters/reference-guide';
 import { removeExcludedTags } from '../reflection/apex/remove-excluded-tags';
 import { HookError } from '../errors/errors';
-import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
-import { Type } from '@cparra/apex-reflection';
 import { reflectCustomFieldsAndObjectsAndMetadataRecords } from '../reflection/sobject/reflectCustomFieldsAndObjectsAndMetadataRecords';
-import { filterApexSourceFiles, filterCustomObjectsFieldsAndMetadataRecords } from '#utils/source-bundle-utils';
+import {
+  filterApexSourceFiles,
+  filterCustomObjectsFieldsAndMetadataRecords,
+  filterTriggerFiles,
+} from '#utils/source-bundle-utils';
+import { reflectTriggerSource } from '../reflection/trigger/reflect-trigger-source';
 
 export type MarkdownGeneratorConfig = Omit<
   UserDefinedMarkdownConfig,
@@ -52,9 +56,9 @@ export function generateDocs(unparsedBundles: UnparsedSourceBundle[], config: Ma
   );
   const sort = apply(sortTypesAndMembers, config.sortAlphabetically);
 
-  function filterOutCustomFieldsAndMetadata(parsedFiles: ParsedFile[]): ParsedFile<Type | CustomObjectMetadata>[] {
+  function filterOutCustomFieldsAndMetadata(parsedFiles: ParsedFile[]): ParsedFile<TopLevelType>[] {
     return parsedFiles.filter(
-      (parsedFile): parsedFile is ParsedFile<Type | CustomObjectMetadata> =>
+      (parsedFile): parsedFile is ParsedFile<TopLevelType> =>
         parsedFile.source.type !== 'customfield' && parsedFile.source.type !== 'custommetadata',
     );
   }
@@ -68,6 +72,12 @@ export function generateDocs(unparsedBundles: UnparsedSourceBundle[], config: Ma
           config.customObjectVisibility,
         ),
         TE.map((parsedObjectFiles) => [...parsedApexFiles, ...parsedObjectFiles]),
+      );
+    }),
+    TE.chain((parsedFiles) => {
+      return pipe(
+        reflectTriggerSource(filterTriggerFiles(unparsedBundles)),
+        TE.map((parsedTriggerFiles) => [...parsedFiles, ...parsedTriggerFiles]),
       );
     }),
     TE.map((parsedFiles) => sort(filterOutCustomFieldsAndMetadata(parsedFiles))),

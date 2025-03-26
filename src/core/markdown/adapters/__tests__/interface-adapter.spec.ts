@@ -15,6 +15,7 @@ const defaultMarkdownGeneratorConfig: MarkdownGeneratorConfig = {
   namespace: '',
   defaultGroupName: 'Miscellaneous',
   customObjectsGroupName: 'Custom Objects',
+  triggersGroupName: 'Triggers',
   referenceGuideTemplate: '',
   sortAlphabetically: false,
   linkingStrategy: 'relative',

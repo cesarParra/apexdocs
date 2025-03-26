@@ -7,6 +7,7 @@ import { interfaceMarkdownTemplate } from '../templates/interface-template';
 import { classMarkdownTemplate } from '../templates/class-template';
 import { markdownDefaults } from '../../../defaults';
 import { customObjectTemplate } from '../templates/custom-object-template';
+import { triggerMarkdownTemplate } from '../templates/trigger-template';
 
 export const convertToDocumentationBundle = (
   referenceGuideTitle: string,
@@ -81,6 +82,8 @@ function resolveApexTypeTemplate(renderable: Renderable): CompilationRequest {
         return classMarkdownTemplate;
       case 'customobject':
         return customObjectTemplate;
+      case 'trigger':
+        return triggerMarkdownTemplate;
     }
   }
 

@@ -13,6 +13,7 @@ export const markdownDefaults = {
   ...markdownAndChangelogDefaults,
   defaultGroupName: 'Miscellaneous',
   customObjectsGroupName: 'Custom Objects',
+  triggersGroupName: 'Triggers',
   includeMetadata: false,
   sortAlphabetically: false,
   linkingStrategy: 'relative' as const,

@@ -10,7 +10,7 @@ import {
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
 import { reflectApexSource } from '../reflection/apex/reflect-apex-source';
-import { Changelog, hasChanges, processChangelog, VersionManifest } from './process-changelog';
+import { Changelog, hasChanges, ParsedType, processChangelog, VersionManifest } from './process-changelog';
 import { convertToRenderableChangelog, RenderableChangelog } from './renderable-changelog';
 import { CompilationRequest, Template } from '../template';
 import { changelogTemplate } from './templates/changelog-template';
@@ -19,13 +19,11 @@ import { apply } from '#utils/fp';
 import { filterScope } from '../reflection/apex/filter-scope';
 import { isInSource, isSkip, passThroughHook, skip, toFrontmatterString } from '../shared/utils';
 import { reflectCustomFieldsAndObjectsAndMetadataRecords } from '../reflection/sobject/reflectCustomFieldsAndObjectsAndMetadataRecords';
-import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
-import { Type } from '@cparra/apex-reflection';
 import { filterApexSourceFiles, filterCustomObjectsFieldsAndMetadataRecords } from '#utils/source-bundle-utils';
-import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 import { hookableTemplate } from '../markdown/templates/hookable';
 import changelogToSourceChangelog from './helpers/changelog-to-source-changelog';
-import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
+import { reflectTriggerSource } from '../reflection/trigger/reflect-trigger-source';
+import { filterTriggerFiles } from '#utils/source-bundle-utils';
 
 type Config = Omit<UserDefinedChangelogConfig, 'targetGenerator'>;
 
@@ -78,26 +76,26 @@ function reflect(bundles: UnparsedSourceBundle[], config: Omit<UserDefinedChange
         TE.map((parsedObjectFiles) => [...parsedApexFiles, ...parsedObjectFiles]),
       );
     }),
+    TE.chain((parsedFiles) => {
+      return pipe(
+        reflectTriggerSource(filterTriggerFiles(bundles)),
+        TE.map((parsedTriggerFiles) => [...parsedFiles, ...parsedTriggerFiles]),
+      );
+    }),
   );
 }
 
 function toManifests({ oldVersion, newVersion }: { oldVersion: ParsedFile[]; newVersion: ParsedFile[] }) {
   function parsedFilesToManifest(parsedFiles: ParsedFile[]): VersionManifest {
     return {
-      types: parsedFiles.reduce(
-        (
-          previousValue: (Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata)[],
-          parsedFile: ParsedFile,
-        ) => {
-          if (!isInSource(parsedFile.source) && parsedFile.type.type_name === 'customobject') {
-            // When we are dealing with a custom object that was not in the source (for extension fields), we return all
-            // of its fields.
-            return [...previousValue, ...parsedFile.type.fields];
-          }
-          return [...previousValue, parsedFile.type];
-        },
-        [] as (Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata)[],
-      ),
+      types: parsedFiles.reduce((previousValue: ParsedType[], parsedFile: ParsedFile) => {
+        if (!isInSource(parsedFile.source) && parsedFile.type.type_name === 'customobject') {
+          // When we are dealing with a custom object that was not in the source (for extension fields), we return all
+          // of its fields.
+          return [...previousValue, ...parsedFile.type.fields];
+        }
+        return [...previousValue, parsedFile.type];
+      }, [] as ParsedType[]),
     };
   }
 

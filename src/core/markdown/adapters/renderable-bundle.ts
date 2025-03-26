@@ -1,4 +1,4 @@
-import { DocPageReference, ParsedFile } from '../../shared/types';
+import { DocPageReference, ParsedFile, TopLevelType } from '../../shared/types';
 import {
   Link,
   ReferenceGuideReference,
@@ -12,26 +12,22 @@ import { MarkdownGeneratorConfig } from '../generate-docs';
 import { apply } from '#utils/fp';
 import { generateLink } from './generate-link';
 import { getTypeGroup } from '../../shared/utils';
-import { Type } from '@cparra/apex-reflection';
-import { CustomObjectMetadata } from '../../reflection/sobject/reflect-custom-object-sources';
 
 export function parsedFilesToRenderableBundle(
   config: MarkdownGeneratorConfig,
-  parsedFiles: ParsedFile<Type | CustomObjectMetadata>[],
+  parsedFiles: ParsedFile<TopLevelType>[],
   references: Record<string, DocPageReference>,
 ): RenderableBundle {
   const referenceFinder = apply(generateLink(config.linkingStrategy), references);
 
-  function toReferenceGuide(
-    parsedFiles: ParsedFile<Type | CustomObjectMetadata>[],
-  ): Record<string, ReferenceGuideReference[]> {
+  function toReferenceGuide(parsedFiles: ParsedFile<TopLevelType>[]): Record<string, ReferenceGuideReference[]> {
     return parsedFiles.reduce<Record<string, ReferenceGuideReference[]>>(
       addToReferenceGuide(apply(referenceFinder, '__base__'), config, references),
       {},
     );
   }
 
-  function toRenderables(parsedFiles: ParsedFile<Type | CustomObjectMetadata>[]): Renderable[] {
+  function toRenderables(parsedFiles: ParsedFile<TopLevelType>[]): Renderable[] {
     return parsedFiles.reduce<Renderable[]>((acc, parsedFile) => {
       const renderable = typeToRenderable(parsedFile, apply(referenceFinder, parsedFile.source.name), config);
       acc.push(renderable);
@@ -50,7 +46,7 @@ function addToReferenceGuide(
   config: MarkdownGeneratorConfig,
   references: Record<string, DocPageReference>,
 ) {
-  return (acc: Record<string, ReferenceGuideReference[]>, parsedFile: ParsedFile<Type | CustomObjectMetadata>) => {
+  return (acc: Record<string, ReferenceGuideReference[]>, parsedFile: ParsedFile<TopLevelType>) => {
     const group: string = getTypeGroup(parsedFile.type, config);
     if (!acc[group]) {
       acc[group] = [];
@@ -66,7 +62,7 @@ function addToReferenceGuide(
 }
 
 function getRenderableDescription(
-  type: Type | CustomObjectMetadata,
+  type: TopLevelType,
   findLinkFromHome: (referenceName: string) => string | Link,
 ): RenderableContent[] | null {
   switch (type.type_name) {

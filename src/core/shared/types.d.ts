@@ -2,6 +2,7 @@ import { Type } from '@cparra/apex-reflection';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
+import { TriggerMetadata } from '../reflection/trigger/reflect-trigger-source';
 
 export type Generators = 'markdown' | 'openapi' | 'changelog';
 
@@ -24,6 +25,7 @@ export type CliConfigurableMarkdownConfig = {
   namespace?: string;
   defaultGroupName: string;
   customObjectsGroupName: string;
+  triggersGroupName: string;
   sortAlphabetically: boolean;
   includeMetadata: boolean;
   linkingStrategy: LinkingStrategy;
@@ -66,7 +68,8 @@ export type UnparsedSourceBundle =
   | UnparsedApexBundle
   | UnparsedCustomObjectBundle
   | UnparsedCustomFieldBundle
-  | UnparsedCustomMetadataBundle;
+  | UnparsedCustomMetadataBundle
+  | UnparsedTriggerBundle;
 
 export type UnparsedCustomObjectBundle = {
   type: 'customobject';
@@ -100,7 +103,14 @@ export type UnparsedApexBundle = {
   metadataContent: string | null;
 };
 
-type MetadataTypes = 'interface' | 'class' | 'enum' | 'customobject' | 'customfield' | 'custommetadata';
+export type UnparsedTriggerBundle = {
+  type: 'trigger';
+  name: string;
+  filePath: string;
+  content: string;
+};
+
+type MetadataTypes = 'interface' | 'class' | 'enum' | 'customobject' | 'customfield' | 'custommetadata' | 'trigger';
 
 export type SourceFileMetadata = {
   filePath: string;
@@ -119,12 +129,15 @@ export type ExternalMetadata = {
   type: MetadataTypes;
 };
 
+export type TopLevelType = Type | CustomObjectMetadata | TriggerMetadata;
+
 export type ParsedFile<
-  T extends Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata =
+  T extends Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata | TriggerMetadata =
     | Type
     | CustomObjectMetadata
     | CustomFieldMetadata
-    | CustomMetadataMetadata,
+    | CustomMetadataMetadata
+    | TriggerMetadata,
 > = {
   source: SourceFileMetadata | ExternalMetadata;
   type: T;
@@ -158,7 +171,7 @@ export type DocPageData = {
   outputDocPath: string;
   frontmatter: Frontmatter;
   content: string;
-  type: 'class' | 'interface' | 'enum' | 'customobject';
+  type: 'class' | 'interface' | 'enum' | 'customobject' | 'trigger';
 };
 
 export type OpenApiPageData = Omit<DocPageData, 'source' | 'type'>;
