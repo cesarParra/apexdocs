@@ -264,6 +264,27 @@ function triggerMetadataToRenderable(
   linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number = 1,
 ): RenderableTrigger {
+  function formatEvent(event: string): string {
+    switch (event) {
+      case 'beforeinsert':
+        return 'Before Insert';
+      case 'beforeupdate':
+        return 'Before Update';
+      case 'beforedelete':
+        return 'Before Delete';
+      case 'afterinsert':
+        return 'After Insert';
+      case 'afterupdate':
+        return 'After Update';
+      case 'afterdelete':
+        return 'After Delete';
+      case 'afterundelete':
+        return 'After Undelete';
+      default:
+        return event;
+    }
+  }
+
   return {
     doc: adaptDocumentable(
       {
@@ -278,7 +299,7 @@ function triggerMetadataToRenderable(
     headingLevel: 1,
     heading: triggerMetadata.name + ' Trigger',
     objectName: triggerMetadata.object_name,
-    events: triggerMetadata.events,
+    events: triggerMetadata.events.map(formatEvent),
   };
 }
 

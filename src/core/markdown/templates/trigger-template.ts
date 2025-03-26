@@ -5,7 +5,7 @@ export const triggerMarkdownTemplate = `
 
 {{> typeDocumentation }}
 
-**Events**
+**Run**
 {{#each events}}
 * {{this}}
 {{/each}}
