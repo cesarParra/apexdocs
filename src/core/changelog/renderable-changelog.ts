@@ -19,6 +19,15 @@ type NewTypeSection<T extends 'class' | 'interface' | 'enum' | 'customobject'> =
   types: NewTypeRenderable[];
 };
 
+type NewOrRemovedTriggerSection = {
+  heading: string;
+  description: string;
+  triggerData: {
+    triggerName: string;
+    objectName: string;
+  }[];
+};
+
 type RemovedTypeSection = {
   heading: string;
   description: string;
@@ -46,6 +55,8 @@ export type RenderableChangelog = {
   removedCustomObjects: RemovedTypeSection | null;
   newOrRemovedCustomFields: NewOrModifiedMembersSection | null;
   newOrRemovedCustomMetadataTypeRecords: NewOrModifiedMembersSection | null;
+  newTriggers: NewOrRemovedTriggerSection | null;
+  removedTriggers: NewOrRemovedTriggerSection | null;
 };
 
 export function convertToRenderableChangelog(
@@ -149,6 +160,28 @@ export function convertToRenderableChangelog(
             modifications: newOrModifiedCustomMetadataTypeRecords.map(toRenderableModification),
           }
         : null,
+    newTriggers:
+      changelog.newTriggers.length > 0
+        ? {
+            heading: 'New Triggers',
+            description: 'These triggers are new.',
+            triggerData: changelog.newTriggers.map((trigger) => ({
+              triggerName: trigger.triggerName,
+              objectName: trigger.objectName,
+            })),
+          }
+        : null,
+    removedTriggers:
+      changelog.removedTriggers.length > 0
+        ? {
+            heading: 'Removed Triggers',
+            description: 'These triggers have been removed.',
+            triggerData: changelog.removedTriggers.map((trigger) => ({
+              triggerName: trigger.triggerName,
+              objectName: trigger.objectName,
+            })),
+          }
+        : null,
   };
 }
 
@@ -204,5 +237,9 @@ function toRenderableModificationDescription(memberModificationType: MemberModif
       return `New Custom Metadata Record: ${withDescription(memberModificationType)}`;
     case 'RemovedCustomMetadataRecord':
       return `Removed Custom Metadata Record: ${memberModificationType.name}`;
+    case 'NewTrigger':
+      return `New Trigger: ${withDescription(memberModificationType)}`;
+    case 'RemovedTrigger':
+      return `Removed Trigger: ${memberModificationType.name}`;
   }
 }

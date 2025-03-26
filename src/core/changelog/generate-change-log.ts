@@ -27,6 +27,8 @@ import { hookableTemplate } from '../markdown/templates/hookable';
 import changelogToSourceChangelog from './helpers/changelog-to-source-changelog';
 import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
 import { TriggerMetadata } from '../reflection/trigger/reflect-trigger-source';
+import { reflectTriggerSource } from '../reflection/trigger/reflect-trigger-source';
+import { filterTriggerFiles } from '#utils/source-bundle-utils';
 
 type Config = Omit<UserDefinedChangelogConfig, 'targetGenerator'>;
 
@@ -77,6 +79,13 @@ function reflect(bundles: UnparsedSourceBundle[], config: Omit<UserDefinedChange
           config.customObjectVisibility,
         ),
         TE.map((parsedObjectFiles) => [...parsedApexFiles, ...parsedObjectFiles]),
+      );
+    }),
+    // Add trigger reflection
+    TE.chain((parsedFiles) => {
+      return pipe(
+        reflectTriggerSource(filterTriggerFiles(bundles)),
+        TE.map((parsedTriggerFiles) => [...parsedFiles, ...parsedTriggerFiles]),
       );
     }),
   );

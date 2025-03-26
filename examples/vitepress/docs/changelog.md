@@ -78,6 +78,12 @@ Eu excepteur irure occaecat adipisicing anim non consequat deserunt ipsum id ame
 
 Represents a speaker at an event.
 
+## New Triggers
+
+These triggers are new.
+
+- PaymentDeviceTrigger on Payment_Device__c
+
 ## New or Removed Fields to Custom Objects or Standard Objects
 
 These custom fields have been added or removed.
