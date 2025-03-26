@@ -19,14 +19,14 @@ import { adaptDescribable, adaptDocumentable } from '../../renderables/documenta
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
 import { adaptFieldOrProperty } from './fields-and-properties';
 import { MarkdownGeneratorConfig } from '../generate-docs';
-import { ExternalMetadata, SourceFileMetadata } from '../../shared/types';
+import { ExternalMetadata, SourceFileMetadata, TopLevelType } from '../../shared/types';
 import { CustomObjectMetadata, PublishBehavior } from '../../reflection/sobject/reflect-custom-object-sources';
 import { getTypeGroup, isInSource } from '../../shared/utils';
 import { CustomFieldMetadata } from '../../reflection/sobject/reflect-custom-field-source';
 import { CustomMetadataMetadata } from '../../reflection/sobject/reflect-custom-metadata-source';
 import { TriggerMetadata } from 'src/core/reflection/trigger/reflect-trigger-source';
 
-type GetReturnRenderable<T extends Type | CustomObjectMetadata | TriggerMetadata> = T extends InterfaceMirror
+type GetReturnRenderable<T extends TopLevelType> = T extends InterfaceMirror
   ? RenderableInterface
   : T extends ClassMirror
     ? RenderableClass
@@ -36,7 +36,7 @@ type GetReturnRenderable<T extends Type | CustomObjectMetadata | TriggerMetadata
         ? RenderableTrigger
         : RenderableCustomObject;
 
-export function typeToRenderable<T extends Type | CustomObjectMetadata | TriggerMetadata>(
+export function typeToRenderable<T extends TopLevelType>(
   parsedFile: { source: SourceFileMetadata | ExternalMetadata; type: T },
   linkGenerator: GetRenderableContentByTypeName,
   config: MarkdownGeneratorConfig,

@@ -1,4 +1,4 @@
-import { ExternalMetadata, Frontmatter, Skip, SourceFileMetadata } from './types';
+import { ExternalMetadata, Frontmatter, Skip, SourceFileMetadata, TopLevelType } from './types';
 import { Type } from '@cparra/apex-reflection';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { MarkdownGeneratorConfig } from '../markdown/generate-docs';
@@ -39,10 +39,7 @@ export function isInSource(source: SourceFileMetadata | ExternalMetadata): sourc
   return 'filePath' in source;
 }
 
-export function getTypeGroup(
-  type: Type | CustomObjectMetadata | TriggerMetadata,
-  config: MarkdownGeneratorConfig,
-): string {
+export function getTypeGroup(type: TopLevelType, config: MarkdownGeneratorConfig): string {
   function getGroup(type: Type, config: MarkdownGeneratorConfig): string {
     const groupAnnotation = type.docComment?.annotations.find(
       (annotation) => annotation.name.toLowerCase() === 'group',

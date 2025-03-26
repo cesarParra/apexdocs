@@ -1,4 +1,4 @@
-import { Type, TriggerMirror } from '@cparra/apex-reflection';
+import { Type } from '@cparra/apex-reflection';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
@@ -129,8 +129,10 @@ export type ExternalMetadata = {
   type: MetadataTypes;
 };
 
+export type TopLevelType = Type | CustomObjectMetadata | TriggerMetadata;
+
 export type ParsedFile<
-  T extends Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata | TriggerMirror =
+  T extends Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata | TriggerMetadata =
     | Type
     | CustomObjectMetadata
     | CustomFieldMetadata
