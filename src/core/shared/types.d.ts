@@ -17,7 +17,7 @@ type LinkingStrategy =
   // No logic will be applied, the reference path will be used as is.
   | 'none';
 
-type MacroSourceMetadata = {
+export type MacroSourceMetadata = {
   type: 'apex' | 'customobject' | 'customfield' | 'custommetadata' | 'trigger';
   name: string;
   filePath: string;

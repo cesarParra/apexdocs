@@ -351,10 +351,62 @@ There are hooks for both Markdown and Changelog operations (but not for OpenApi)
 
 #### Markdown Hooks
 
+##### **macros**
+
+Allows defining custom macros that can be used in the documentation.
+
+Macros are reusable pieces of text that can be injected into the documentation,
+allowing you to define common pieces of text that you can use across multiple files.
+
+A common use case is injecting copyright or license information, without
+having to copy-paste the same text across multiple classes, polluting your
+source code.
+
+A macro can be defined in your documentation using the `{{macro_name}}` syntax.
+In the configuration file, you can then define the macro behavior as a key-value pair, where the key is the name of the macro, and the value is a function that returns the text to inject in place of the macro.
+
+**Type**
+
+```typescript
+type MacroSourceMetadata = {
+  type: 'apex' | 'customobject' | 'customfield' | 'custommetadata' | 'trigger';
+  name: string;
+  filePath: string;
+};
+
+type MacroFunction = (metadata: MacroSourceMetadata) => string;
+```
+
+Notice that the `metadata` object contains information about the source of the file for which the macro is being injected. This allows you to optionally
+return different text based on the source of the file.
+
+Example: Injecting a copyright notice
+
+```typescript
+//...
+macros: {
+  copyright: () => {
+    return `Copyright (c) ${new Date().getFullYear()} My Name`;
+  }
+}
+//...
+```
+
+And then in your source code, you can use the macro like this:
+
+```apex
+/**
+ * {{copyright}}
+ * @description This is a class
+ */
+public class MyClass {
+  //...
+}
+```
+
 ##### **transformReferenceGuide**
 
-Allows changing the Allows changing the frontmatter and content of the reference guide, or even if creating a reference
-guide page should be skipped.
+Allows changing the frontmatter and content of the reference guide, or if creating a reference guide page altogether should be skipped.
 
 **Type**
 

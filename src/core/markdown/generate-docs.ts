@@ -110,7 +110,7 @@ function replaceMacros(
 
   return unparsedBundles.map((bundle) => {
     return {
-      ...bundle,``
+      ...bundle,
       content: Object.entries(macros).reduce((acc, [macroName, macroFunction]) => {
         return acc.replace(
           new RegExp(`{{${macroName}}}`, 'g'),
