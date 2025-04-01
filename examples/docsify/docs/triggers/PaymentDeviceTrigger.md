@@ -4,6 +4,6 @@
 
 This trigger is used to handle the logic for the Payment Device object.
 
-**Events**
+**Run**
 * Before Insert
 * Before Update

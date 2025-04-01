@@ -1,5 +1,6 @@
 /**
- * @description This is a class description.
+ * @description This is a class description <<SomeDto>>.
+ * {{copyright}}
  * @see SomeDto
  * @see SampleInterface
  * @mermaid

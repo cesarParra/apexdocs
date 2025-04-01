@@ -17,6 +17,10 @@ type LinkingStrategy =
   // No logic will be applied, the reference path will be used as is.
   | 'none';
 
+// TODO: Allow macros to either be a string or a function
+// TODO: Figure out if we can add arguments (only metadata, like the name of the metadata being parsed, and readonly)
+export type MacroFunction = () => string;
+
 export type CliConfigurableMarkdownConfig = {
   sourceDir: string;
   targetDir: string;
@@ -232,6 +236,7 @@ export type PostHookDocumentationBundle = {
  * The configurable hooks that can be used to modify the output of the Markdown generator.
  */
 export type MarkdownConfigurableHooks = {
+  macros: Record<string, MacroFunction>;
   transformReferenceGuide: TransformReferenceGuide;
   transformDocs: TransformDocs;
   transformDocPage: TransformDocPage;

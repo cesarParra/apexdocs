@@ -5,6 +5,9 @@ export default defineMarkdownConfig({
   targetDir: 'docs',
   scope: ['public', 'global'],
   linkingStrategy: 'none',
+  macros: {
+    copyright: () => `@copyright All rights reserved. Cesar Parra ${new Date().getFullYear()}`,
+  },
   transformReferenceGuide: () => {
     return {
       outputDocPath: 'README.md',
