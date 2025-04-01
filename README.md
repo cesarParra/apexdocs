@@ -386,7 +386,7 @@ Example: Injecting a copyright notice
 //...
 macros: {
   copyright: () => {
-    return `Copyright (c) ${new Date().getFullYear()} My Name`;
+    return `@copyright Copyright (c) ${new Date().getFullYear()} My Name`;
   }
 }
 //...
