@@ -17,9 +17,13 @@ type LinkingStrategy =
   // No logic will be applied, the reference path will be used as is.
   | 'none';
 
-// TODO: Allow macros to either be a string or a function
-// TODO: Figure out if we can add arguments (only metadata, like the name of the metadata being parsed, and readonly)
-export type MacroFunction = () => string;
+type MacroSourceMetadata = {
+  type: 'apex' | 'customobject' | 'customfield' | 'custommetadata' | 'trigger';
+  name: string;
+  filePath: string;
+};
+
+export type MacroFunction = (metadata: MacroSourceMetadata) => string;
 
 export type CliConfigurableMarkdownConfig = {
   sourceDir: string;
