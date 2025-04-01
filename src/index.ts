@@ -1,5 +1,7 @@
 import type {
   MarkdownConfigurableHooks,
+  MacroFunction,
+  MacroSourceMetadata,
   Skip,
   UserDefinedMarkdownConfig,
   ReferenceGuidePageData,
@@ -67,6 +69,8 @@ function defineChangelogConfig(config: ConfigurableChangelogConfig): Partial<Use
 export {
   defineMarkdownConfig,
   ConfigurableMarkdownConfig,
+  MacroFunction,
+  MacroSourceMetadata,
   defineOpenApiConfig,
   ConfigurableOpenApiConfig,
   defineChangelogConfig,

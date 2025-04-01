@@ -17,6 +17,7 @@ import {
   ParsedFile,
   UnparsedSourceBundle,
   TopLevelType,
+  MacroFunction,
 } from '../shared/types';
 import { parsedFilesToRenderableBundle } from './adapters/renderable-bundle';
 import { reflectApexSource } from '../reflection/apex/reflect-apex-source';
@@ -64,7 +65,8 @@ export function generateDocs(unparsedBundles: UnparsedSourceBundle[], config: Ma
   }
 
   return pipe(
-    generateForApex(filterApexSourceFiles(unparsedBundles), config),
+    TE.right(replaceMacros(unparsedBundles, config.macros)),
+    TE.flatMap((unparsedBundles) => generateForApex(filterApexSourceFiles(unparsedBundles), config)),
     TE.chain((parsedApexFiles) => {
       return pipe(
         reflectCustomFieldsAndObjectsAndMetadataRecords(
@@ -96,6 +98,31 @@ export function generateDocs(unparsedBundles: UnparsedSourceBundle[], config: Ma
     TE.flatMap(transformDocumentationBundleHook(config)),
     TE.map(postHookCompile),
   );
+}
+
+function replaceMacros(
+  unparsedBundles: UnparsedSourceBundle[],
+  macros: Record<string, MacroFunction> | undefined,
+): UnparsedSourceBundle[] {
+  if (!macros) {
+    return unparsedBundles;
+  }
+
+  return unparsedBundles.map((bundle) => {
+    return {
+      ...bundle,
+      content: Object.entries(macros).reduce((acc, [macroName, macroFunction]) => {
+        return acc.replace(
+          new RegExp(`{{${macroName}}}`, 'g'),
+          macroFunction({
+            type: bundle.type,
+            name: bundle.name,
+            filePath: bundle.filePath,
+          }),
+        );
+      }, bundle.content),
+    };
+  });
 }
 
 function generateForApex(apexBundles: UnparsedApexBundle[], config: MarkdownGeneratorConfig) {

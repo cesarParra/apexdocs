@@ -17,6 +17,14 @@ type LinkingStrategy =
   // No logic will be applied, the reference path will be used as is.
   | 'none';
 
+export type MacroSourceMetadata = {
+  type: 'apex' | 'customobject' | 'customfield' | 'custommetadata' | 'trigger';
+  name: string;
+  filePath: string;
+};
+
+export type MacroFunction = (metadata: MacroSourceMetadata) => string;
+
 export type CliConfigurableMarkdownConfig = {
   sourceDir: string;
   targetDir: string;
@@ -232,6 +240,7 @@ export type PostHookDocumentationBundle = {
  * The configurable hooks that can be used to modify the output of the Markdown generator.
  */
 export type MarkdownConfigurableHooks = {
+  macros: Record<string, MacroFunction>;
   transformReferenceGuide: TransformReferenceGuide;
   transformDocs: TransformDocs;
   transformDocPage: TransformDocPage;

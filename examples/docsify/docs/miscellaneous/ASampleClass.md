@@ -1,6 +1,10 @@
 # ASampleClass Class
 
-This is a class description.
+This is a class description SomeDto .
+
+**Copyright** 
+
+All rights reserved. Cesar Parra 2025
 
 **Mermaid** 
 
@@ -17,9 +21,9 @@ sequenceDiagram
     iframe->>iframe: render mermaid
 ```
 
-**See** [SomeDto](miscellaneous/SomeDto.md)
+**See** SomeDto
 
-**See** [SampleInterface](sample-interfaces/SampleInterface.md)
+**See** SampleInterface
 
 ## Methods
 ### `getActiveSurveySettings(surveyType2)`
