@@ -23,6 +23,8 @@ export default class CustomFieldMetadataBuilder {
       description: this.description,
       parentName: 'MyObject',
       required: false,
+      securityClassification: 'Internal',
+      complianceCategory: 'PII',
     };
   }
 }
