@@ -202,6 +202,8 @@ export type RenderableCustomField = {
   type: 'field';
   fieldType?: string | null;
   required: boolean;
+  complianceCategory: string | null;
+  securityClassification: string | null;
 };
 
 export type RenderableCustomMetadata = {

@@ -357,6 +357,8 @@ function fieldMetadataToRenderable(
     apiName: getApiName(field.name, config),
     fieldType: field.type,
     required: field.required,
+    complianceCategory: field.complianceCategory,
+    securityClassification: field.securityClassification,
     pickListValues: field.pickListValues
       ? {
           headingLevel: headingLevel + 1,
