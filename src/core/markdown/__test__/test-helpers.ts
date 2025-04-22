@@ -57,6 +57,7 @@ export function generateDocs(bundles: UnparsedSourceBundle[], config?: Partial<M
     excludeTags: [],
     referenceGuideTitle: 'Apex Reference Guide',
     includeFieldSecurityMetadata: true,
+    includeInlineHelpTextMetadata: true,
     exclude: [],
     ...config,
   });

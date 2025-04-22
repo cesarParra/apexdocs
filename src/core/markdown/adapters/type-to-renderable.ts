@@ -359,6 +359,7 @@ function fieldMetadataToRenderable(
     required: field.required,
     complianceGroup: renderComplianceGroup(field.complianceGroup, config),
     securityClassification: renderComplianceGroup(field.securityClassification, config),
+    inlineHelpText: renderInlineHelpText(field.inlineHelpText, config),
     pickListValues: field.pickListValues
       ? {
           headingLevel: headingLevel + 1,
@@ -401,3 +402,11 @@ function renderComplianceGroup(complianceGroup: string | null, config: MarkdownG
     return null;
   }
 }
+function renderInlineHelpText(inlineHelpText: string | null, config: MarkdownGeneratorConfig) {
+  if(config.includeInlineHelpTextMetadata) {
+    return inlineHelpText
+  } else {
+    return null;
+  }
+}
+
