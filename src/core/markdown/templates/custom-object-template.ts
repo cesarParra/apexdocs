@@ -24,6 +24,16 @@ export const customObjectTemplate = `
 {{{renderContent description}}}
 {{/if}}
 
+{{#if complianceCategory}}
+**Compliance Category**
+{{complianceCategory}}
+{{/if}}
+
+{{#if securityClassification}}
+**Security Classification**
+{{securityClassification}}
+{{/if}}
+
 **API Name**
 
 \`{{{apiName}}}\`

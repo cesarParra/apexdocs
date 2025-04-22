@@ -72,4 +72,9 @@ export const markdownOptions: Record<keyof CliConfigurableMarkdownConfig, Option
     describe: 'The title of the reference guide.',
     default: markdownDefaults.referenceGuideTitle,
   },
+  includeFieldSecurityMetadata: {
+    type: 'boolean',
+    describe: 'Whether to include the compliance category and security classification for fields in the generated files.',
+    default: markdownDefaults.includeFieldSecurityMetadata,
+  }
 };

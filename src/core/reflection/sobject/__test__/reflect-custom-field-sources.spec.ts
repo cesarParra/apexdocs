@@ -14,6 +14,8 @@ const customFieldContent = `
     <trackFeedHistory>false</trackFeedHistory>
     <type>Url</type>
     <description>A Photo URL field</description>
+    <securityClassification>Internal</securityClassification>
+    <complianceCategory>PII</complianceCategory>
 </CustomField>`;
 
 describe('when parsing custom field metadata', () => {
@@ -105,6 +107,34 @@ describe('when parsing custom field metadata', () => {
     const result = await reflectCustomFieldSources([unparsed])();
 
     assertEither(result, (data) => expect(data[0].type.description).toBe('A Photo URL field'));
+  });
+
+  test('the resulting type contains the correct security classification', async () => {
+    const unparsed: UnparsedCustomFieldBundle = {
+      type: 'customfield',
+      name: 'PhotoUrl__c',
+      parentName: 'MyFirstObject__c',
+      filePath: 'src/field/PhotoUrl__c.field-meta.xml',
+      content: customFieldContent,
+    };
+
+    const result = await reflectCustomFieldSources([unparsed])();
+
+    assertEither(result, (data) => expect(data[0].type.securityClassification).toBe('Internal'));
+  });
+
+  test('the resulting type contains the correct compliance category', async () => {
+    const unparsed: UnparsedCustomFieldBundle = {
+      type: 'customfield',
+      name: 'PhotoUrl__c',
+      parentName: 'MyFirstObject__c',
+      filePath: 'src/field/PhotoUrl__c.field-meta.xml',
+      content: customFieldContent,
+    };
+
+    const result = await reflectCustomFieldSources([unparsed])();
+
+    assertEither(result, (data) => expect(data[0].type.complianceCategory).toBe('PII'));
   });
 
   test('can parse picklist values when there are multiple picklist values available', async () => {

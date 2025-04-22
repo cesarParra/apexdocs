@@ -18,6 +18,8 @@ export type CustomFieldMetadata = {
   parentName: string;
   pickListValues?: string[];
   required: boolean;
+  securityClassification: string | null;
+  complianceCategory: string | null;
 };
 
 export function reflectCustomFieldSources(
@@ -66,6 +68,8 @@ function toCustomFieldMetadata(parserResult: { CustomField: unknown }): CustomFi
   const defaultValues = {
     description: null,
     required: false,
+    securityClassification: null,
+    complianceCategory: null,
   };
 
   return {

@@ -357,6 +357,8 @@ function fieldMetadataToRenderable(
     apiName: getApiName(field.name, config),
     fieldType: field.type,
     required: field.required,
+    complianceCategory: renderComplianceCategory(field.complianceCategory, config),
+    securityClassification: renderComplianceCategory(field.securityClassification, config),
     pickListValues: field.pickListValues
       ? {
           headingLevel: headingLevel + 1,
@@ -390,4 +392,12 @@ function getApiName(currentName: string, config: MarkdownGeneratorConfig) {
     return `${config.namespace}__${currentName}`;
   }
   return currentName;
+}
+
+function renderComplianceCategory(complianceCategory: string | null, config: MarkdownGeneratorConfig) {
+  if(config.includeFieldSecurityMetadata) {
+    return complianceCategory;
+  } else {
+    return null;
+  }
 }
