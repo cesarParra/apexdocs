@@ -19,6 +19,7 @@ export const markdownDefaults = {
   linkingStrategy: 'relative' as const,
   referenceGuideTitle: 'Reference Guide',
   excludeTags: [],
+  includeFieldSecurityMetadata: false,
 };
 
 export const openApiDefaults = {
