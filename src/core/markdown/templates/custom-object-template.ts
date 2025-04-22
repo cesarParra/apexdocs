@@ -24,9 +24,9 @@ export const customObjectTemplate = `
 {{{renderContent description}}}
 {{/if}}
 
-{{#if complianceCategory}}
-**Compliance Category**
-{{complianceCategory}}
+{{#if complianceGroup}}
+**Compliance Group**
+{{complianceGroup}}
 {{/if}}
 
 {{#if securityClassification}}

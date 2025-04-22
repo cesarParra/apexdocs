@@ -7,6 +7,6 @@
     <length>9</length>
     <trackTrending>false</trackTrending>
     <type>Text</type>
-    <complianceCategory>PII</complianceCategory>
+    <complianceGroup>PII</complianceGroup>
     <securityClassification>Internal</securityClassification>
 </CustomField>

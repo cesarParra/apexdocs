@@ -24,7 +24,7 @@ export default class CustomFieldMetadataBuilder {
       parentName: 'MyObject',
       required: false,
       securityClassification: 'Internal',
-      complianceCategory: 'PII',
+      complianceGroup: 'PII',
     };
   }
 }

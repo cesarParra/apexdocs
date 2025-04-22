@@ -202,7 +202,7 @@ export type RenderableCustomField = {
   type: 'field';
   fieldType?: string | null;
   required: boolean;
-  complianceCategory: string | null;
+  complianceGroup: string | null;
   securityClassification: string | null;
 };
 

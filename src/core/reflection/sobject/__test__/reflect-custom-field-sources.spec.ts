@@ -15,7 +15,7 @@ const customFieldContent = `
     <type>Url</type>
     <description>A Photo URL field</description>
     <securityClassification>Internal</securityClassification>
-    <complianceCategory>PII</complianceCategory>
+    <complianceGroup>PII</complianceGroup>
 </CustomField>`;
 
 describe('when parsing custom field metadata', () => {
@@ -123,7 +123,7 @@ describe('when parsing custom field metadata', () => {
     assertEither(result, (data) => expect(data[0].type.securityClassification).toBe('Internal'));
   });
 
-  test('the resulting type contains the correct compliance category', async () => {
+  test('the resulting type contains the correct compliance group', async () => {
     const unparsed: UnparsedCustomFieldBundle = {
       type: 'customfield',
       name: 'PhotoUrl__c',
@@ -134,7 +134,7 @@ describe('when parsing custom field metadata', () => {
 
     const result = await reflectCustomFieldSources([unparsed])();
 
-    assertEither(result, (data) => expect(data[0].type.complianceCategory).toBe('PII'));
+    assertEither(result, (data) => expect(data[0].type.complianceGroup).toBe('PII'));
   });
 
   test('can parse picklist values when there are multiple picklist values available', async () => {

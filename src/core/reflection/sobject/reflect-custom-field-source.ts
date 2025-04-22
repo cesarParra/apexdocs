@@ -19,7 +19,7 @@ export type CustomFieldMetadata = {
   pickListValues?: string[];
   required: boolean;
   securityClassification: string | null;
-  complianceCategory: string | null;
+  complianceGroup: string | null;
 };
 
 export function reflectCustomFieldSources(
@@ -69,7 +69,7 @@ function toCustomFieldMetadata(parserResult: { CustomField: unknown }): CustomFi
     description: null,
     required: false,
     securityClassification: null,
-    complianceCategory: null,
+    complianceGroup: null,
   };
 
   return {
