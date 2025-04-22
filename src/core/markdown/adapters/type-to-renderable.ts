@@ -357,8 +357,9 @@ function fieldMetadataToRenderable(
     apiName: getApiName(field.name, config),
     fieldType: field.type,
     required: field.required,
-    complianceCategory: renderComplianceCategory(field.complianceCategory, config),
-    securityClassification: renderComplianceCategory(field.securityClassification, config),
+    complianceGroup: renderComplianceGroup(field.complianceGroup, config),
+    securityClassification: renderComplianceGroup(field.securityClassification, config),
+    inlineHelpText: renderInlineHelpText(field.inlineHelpText, config),
     pickListValues: field.pickListValues
       ? {
           headingLevel: headingLevel + 1,
@@ -394,10 +395,18 @@ function getApiName(currentName: string, config: MarkdownGeneratorConfig) {
   return currentName;
 }
 
-function renderComplianceCategory(complianceCategory: string | null, config: MarkdownGeneratorConfig) {
+function renderComplianceGroup(complianceGroup: string | null, config: MarkdownGeneratorConfig) {
   if(config.includeFieldSecurityMetadata) {
-    return complianceCategory;
+    return complianceGroup;
   } else {
     return null;
   }
 }
+function renderInlineHelpText(inlineHelpText: string | null, config: MarkdownGeneratorConfig) {
+  if(config.includeInlineHelpTextMetadata) {
+    return inlineHelpText
+  } else {
+    return null;
+  }
+}
+

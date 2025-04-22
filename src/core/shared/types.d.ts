@@ -39,6 +39,7 @@ export type CliConfigurableMarkdownConfig = {
   linkingStrategy: LinkingStrategy;
   referenceGuideTitle: string;
   includeFieldSecurityMetadata: boolean;
+  includeInlineHelpTextMetadata: boolean;
 };
 
 export type UserDefinedMarkdownConfig = {

@@ -3,10 +3,11 @@
     <fullName>Social_Security_Number__c</fullName>
     <externalId>false</externalId>
     <label>Social Security Number</label>
+    <inlineHelpText>You indicated the approval for storage of your social security number.</inlineHelpText>
     <description>Used to store the U.S. social security number in 9 digit format.</description>
     <length>9</length>
     <trackTrending>false</trackTrending>
     <type>Text</type>
-    <complianceCategory>PII</complianceCategory>
+    <complianceGroup>PII</complianceGroup>
     <securityClassification>Internal</securityClassification>
 </CustomField>

@@ -76,5 +76,9 @@ export const markdownOptions: Record<keyof CliConfigurableMarkdownConfig, Option
     type: 'boolean',
     describe: 'Whether to include the compliance category and security classification for fields in the generated files.',
     default: markdownDefaults.includeFieldSecurityMetadata,
-  }
+  },
+  includeInlineHelpTextMetadata: {
+    type: 'boolean',
+    describe: 'Whether to include the inline help text for fields in the generated files.',
+  },
 };

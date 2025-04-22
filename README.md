@@ -124,6 +124,8 @@ apexdocs changelog --previousVersionDir force-app-previous --currentVersionDir f
 | `--linkingStrategy`        | N/A   | The strategy to use when linking to other classes. Possible values are `relative`, `no-link`, and `none`                                                                                                 | `relative`       | No       |
 | `--customObjectsGroupName` | N/A   | The name under which custom objects will be grouped in the Reference Guide                                                                                                                               | `Custom Objects` | No       |
 | `--triggersGroupName`      | N/A   | The name under which triggers will be grouped in the Reference Guide                                                                                                                                     | `Triggers`       | No       |
+| `--includeFieldSecurityMetadata`      | N/A   | Whether to include the compliance category and security classification for fields in the generated files.                                                                                                                                     | `false`       | No       |
+| `--includeInlineHelpTextMetadata`      | N/A   | Whether to include the inline help text for fields in the generated files.                                                                                                                                     | `false`       | No       |
 
 ##### Linking Strategy
 
