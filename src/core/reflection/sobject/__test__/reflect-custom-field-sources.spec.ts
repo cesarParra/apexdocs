@@ -16,6 +16,7 @@ const customFieldContent = `
     <description>A Photo URL field</description>
     <securityClassification>Internal</securityClassification>
     <complianceGroup>PII</complianceGroup>
+    <inlineHelpText>An image in either one of the following formats: JPEG, SVG, or PNG. For best results the image should be under 1MB in size.</inlineHelpText>
 </CustomField>`;
 
 describe('when parsing custom field metadata', () => {
@@ -135,6 +136,20 @@ describe('when parsing custom field metadata', () => {
     const result = await reflectCustomFieldSources([unparsed])();
 
     assertEither(result, (data) => expect(data[0].type.complianceGroup).toBe('PII'));
+  });
+
+  test('the resulting type contains the correct inline help text', async () => {
+    const unparsed: UnparsedCustomFieldBundle = {
+      type: 'customfield',
+      name: 'PhotoUrl__c',
+      parentName: 'MyFirstObject__c',
+      filePath: 'src/field/PhotoUrl__c.field-meta.xml',
+      content: customFieldContent,
+    };
+
+    const result = await reflectCustomFieldSources([unparsed])();
+
+    assertEither(result, (data) => expect(data[0].type.inlineHelpText).toBe('An image in either one of the following formats: JPEG, SVG, or PNG. For best results the image should be under 1MB in size.'));
   });
 
   test('can parse picklist values when there are multiple picklist values available', async () => {

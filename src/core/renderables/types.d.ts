@@ -204,6 +204,7 @@ export type RenderableCustomField = {
   required: boolean;
   complianceGroup: string | null;
   securityClassification: string | null;
+  inlineHelpText: string | null;
 };
 
 export type RenderableCustomMetadata = {

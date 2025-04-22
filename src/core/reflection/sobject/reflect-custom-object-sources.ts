@@ -111,6 +111,7 @@ function convertInlineFieldsToCustomFieldMetadata(
   const required = inlineField.required ? (inlineField.required as boolean) : false;
   const securityClassification = inlineField.securityClassification ? (inlineField.securityClassification as string) : null;
   const complianceGroup = inlineField.complianceGroup ? (inlineField.complianceGroup as string) : null;
+  const inlineHelpText = inlineField.inlineHelpText ? (inlineField.inlineHelpText as string) : null;
 
   return {
     type_name: 'customfield',
@@ -122,6 +123,7 @@ function convertInlineFieldsToCustomFieldMetadata(
     required,
     securityClassification,
     complianceGroup,
+    inlineHelpText,
     pickListValues: getPickListValues(inlineField),
   };
 }

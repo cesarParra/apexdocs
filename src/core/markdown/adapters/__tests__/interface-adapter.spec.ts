@@ -21,6 +21,7 @@ const defaultMarkdownGeneratorConfig: MarkdownGeneratorConfig = {
   linkingStrategy: 'relative',
   referenceGuideTitle: 'Apex Reference Guide',
   includeFieldSecurityMetadata: true,
+  includeInlineHelpTextMetadata: true,
   exclude: [],
   excludeTags: [],
 };

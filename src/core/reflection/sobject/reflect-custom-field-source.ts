@@ -20,6 +20,7 @@ export type CustomFieldMetadata = {
   required: boolean;
   securityClassification: string | null;
   complianceGroup: string | null;
+  inlineHelpText: string | null;
 };
 
 export function reflectCustomFieldSources(
@@ -70,6 +71,7 @@ function toCustomFieldMetadata(parserResult: { CustomField: unknown }): CustomFi
     required: false,
     securityClassification: null,
     complianceGroup: null,
+    inlineHelpText: null,
   };
 
   return {

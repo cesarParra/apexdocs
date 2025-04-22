@@ -25,6 +25,7 @@ export default class CustomFieldMetadataBuilder {
       required: false,
       securityClassification: 'Internal',
       complianceGroup: 'PII',
+      inlineHelpText: 'An image in either one of the following formats: JPEG, SVG, or PNG. For best results the image should be under 1MB in size.',
     };
   }
 }

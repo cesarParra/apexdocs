@@ -20,6 +20,7 @@ export const markdownDefaults = {
   referenceGuideTitle: 'Reference Guide',
   excludeTags: [],
   includeFieldSecurityMetadata: false,
+  includeInlineHelpTextMetadata: false,
 };
 
 export const openApiDefaults = {
