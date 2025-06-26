@@ -84,6 +84,12 @@ Run the following command to generate markdown files for your global Salesforce 
 
 ```bash
 apexdocs markdown -s force-app
+
+# Use sfdx-project.json as the source of directories
+apexdocs markdown --useSfdxProjectJson
+
+# Specify multiple source directories
+apexdocs markdown --sourceDirs force-app force-lwc force-utils
 ```
 
 #### OpenApi
@@ -101,6 +107,10 @@ Run the following command to generate a changelog for your Salesforce Apex class
 
 ```bash
 apexdocs changelog --previousVersionDir force-app-previous --currentVersionDir force-app
+
+# NEW: Use sfdx-project.json for both versions
+apexdocs changelog --useSfdxProjectJsonForPrevious --sfdxProjectPathForPrevious ./v1.0 \
+                   --useSfdxProjectJsonForCurrent --sfdxProjectPathForCurrent ./v2.0
 ```
 
 ## ▶️ Available Commands
@@ -111,21 +121,31 @@ apexdocs changelog --previousVersionDir force-app-previous --currentVersionDir f
 
 #### Flags
 
-| Flag                       | Alias | Description                                                                                                                                                                                              | Default          | Required |
-|----------------------------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|----------|
-| `--sourceDir`              | `-s`  | The directory where the source files are located.                                                                                                                                                        | N/A              | Yes      |
-| `--targetDir`              | `-t`  | The directory where the generated files will be placed.                                                                                                                                                  | `docs`           | No       |
-| `--scope`                  | `-p`  | A list of scopes to document. Values should be separated by a space, e.g --scope global public namespaceaccessible.                                                                                      | `[global]`       | No       |
-| `--customObjectVisibility` | `-v`  | Controls which custom objects are documented. Values should be separated by a space.                                                                                                                     | `[public]`       | No       |
-| `--defaultGroupName`       | N/A   | The default group name to use when a group is not specified.                                                                                                                                             | `Miscellaneous`  | No       |
-| `--namespace`              | N/A   | The package namespace, if any. If provided, it will be added to the generated files.                                                                                                                     | N/A              | No       |
-| `--sortAlphabetically`     | N/A   | Sorts files appearing in the Reference Guide alphabetically, as well as the members of a class, interface or enum alphabetically. If false, the members will be displayed in the same order as the code. | `false`          | No       |
-| `--includeMetadata `       | N/A   | Whether to include the file's meta.xml information: Whether it is active and and the API version                                                                                                         | `false`          | No       |
-| `--linkingStrategy`        | N/A   | The strategy to use when linking to other classes. Possible values are `relative`, `no-link`, and `none`                                                                                                 | `relative`       | No       |
-| `--customObjectsGroupName` | N/A   | The name under which custom objects will be grouped in the Reference Guide                                                                                                                               | `Custom Objects` | No       |
-| `--triggersGroupName`      | N/A   | The name under which triggers will be grouped in the Reference Guide                                                                                                                                     | `Triggers`       | No       |
-| `--includeFieldSecurityMetadata`      | N/A   | Whether to include the compliance category and security classification for fields in the generated files.                                                                                                                                     | `false`       | No       |
-| `--includeInlineHelpTextMetadata`      | N/A   | Whether to include the inline help text for fields in the generated files.                                                                                                                                     | `false`       | No       |
+| Flag                              | Alias | Description                                                                                                                                                                                              | Default          | Required |
+|-----------------------------------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|----------|
+| `--sourceDir`                     | `-s`  | The directory where the source files are located.                                                                                                                                                        | N/A              | *        |
+| `--sourceDirs`                    | N/A   | Multiple source directories (space-separated). Cannot be used with `--sourceDir` or `--useSfdxProjectJson`.                                                                                              | N/A              | *        |
+| `--useSfdxProjectJson`            | N/A   | Read source directories from `sfdx-project.json` packageDirectories. Cannot be used with `--sourceDir` or `--sourceDirs`.                                                                                | `false`          | *        |
+| `--sfdxProjectPath`               | N/A   | Path to directory containing `sfdx-project.json` (defaults to current directory). Only used with `--useSfdxProjectJson`.                                                                                 | `process.cwd()`  | No       |
+| `--targetDir`                     | `-t`  | The directory where the generated files will be placed.                                                                                                                                                  | `docs`           | No       |
+| `--scope`                         | `-p`  | A list of scopes to document. Values should be separated by a space, e.g --scope global public namespaceaccessible.                                                                                      | `[global]`       | No       |
+| `--customObjectVisibility`        | `-v`  | Controls which custom objects are documented. Values should be separated by a space.                                                                                                                     | `[public]`       | No       |
+| `--defaultGroupName`              | N/A   | The default group name to use when a group is not specified.                                                                                                                                             | `Miscellaneous`  | No       |
+| `--namespace`                     | N/A   | The package namespace, if any. If provided, it will be added to the generated files.                                                                                                                     | N/A              | No       |
+| `--sortAlphabetically`            | N/A   | Sorts files appearing in the Reference Guide alphabetically, as well as the members of a class, interface or enum alphabetically. If false, the members will be displayed in the same order as the code. | `false`          | No       |
+| `--includeMetadata `              | N/A   | Whether to include the file's meta.xml information: Whether it is active and and the API version                                                                                                         | `false`          | No       |
+| `--linkingStrategy`               | N/A   | The strategy to use when linking to other classes. Possible values are `relative`, `no-link`, and `none`                                                                                                 | `relative`       | No       |
+| `--customObjectsGroupName`        | N/A   | The name under which custom objects will be grouped in the Reference Guide                                                                                                                               | `Custom Objects` | No       |
+| `--triggersGroupName`             | N/A   | The name under which triggers will be grouped in the Reference Guide                                                                                                                                     | `Triggers`       | No       |
+| `--includeFieldSecurityMetadata`  | N/A   | Whether to include the compliance category and security classification for fields in the generated files.                                                                                                | `false`          | No       |
+| `--includeInlineHelpTextMetadata` | N/A   | Whether to include the inline help text for fields in the generated files.                                                                                                                               | `false`          | No       |
+
+> **Note:** The `*` in the Required column indicates that **one** of the source directory options must be specified:
+> - `--sourceDir` (single directory)
+> - `--sourceDirs` (multiple directories)
+> - `--useSfdxProjectJson` (read from sfdx-project.json)
+>
+> These options are mutually exclusive - you cannot use more than one at the same time.
 
 ##### Linking Strategy
 
@@ -365,7 +385,8 @@ having to copy-paste the same text across multiple classes, polluting your
 source code.
 
 A macro can be defined in your documentation using the `{{macro_name}}` syntax.
-In the configuration file, you can then define the macro behavior as a key-value pair, where the key is the name of the macro, and the value is a function that returns the text to inject in place of the macro.
+In the configuration file, you can then define the macro behavior as a key-value pair, where the key is the name of the
+macro, and the value is a function that returns the text to inject in place of the macro.
 
 **Type**
 
@@ -379,7 +400,8 @@ type MacroSourceMetadata = {
 type MacroFunction = (metadata: MacroSourceMetadata) => string;
 ```
 
-Notice that the `metadata` object contains information about the source of the file for which the macro is being injected. This allows you to optionally
+Notice that the `metadata` object contains information about the source of the file for which the macro is being
+injected. This allows you to optionally
 return different text based on the source of the file.
 
 Example: Injecting a copyright notice
@@ -402,13 +424,14 @@ And then in your source code, you can use the macro like this:
  * @description This is a class
  */
 public class MyClass {
-  //...
+    //...
 }
 ```
 
 ##### **transformReferenceGuide**
 
-Allows changing the frontmatter and content of the reference guide, or if creating a reference guide page altogether should be skipped.
+Allows changing the frontmatter and content of the reference guide, or if creating a reference guide page altogether
+should be skipped.
 
 **Type**
 

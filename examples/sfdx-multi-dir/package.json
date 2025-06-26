@@ -1,0 +1,9 @@
+{
+  "name": "sfdx-multi-dir-example",
+  "scripts": {
+    "apexdocs:build": "ts-node ../../src/cli/generate.ts markdown --useSfdxProjectJson --targetDir ./docs --scope public"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2"
+  }
+}

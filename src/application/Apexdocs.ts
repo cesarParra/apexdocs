@@ -89,16 +89,10 @@ async function processChangeLog(config: UserDefinedChangelogConfig) {
   function loadFiles() {
     const previousVersionConfig = {
       sourceDir: config.previousVersionDir,
-      sourceDirs: config.previousVersionDirs,
-      useSfdxProjectJson: config.useSfdxProjectJsonForPrevious,
-      sfdxProjectPath: config.sfdxProjectPathForPrevious,
     };
 
     const currentVersionConfig = {
       sourceDir: config.currentVersionDir,
-      sourceDirs: config.currentVersionDirs,
-      useSfdxProjectJson: config.useSfdxProjectJsonForCurrent,
-      sfdxProjectPath: config.sfdxProjectPathForCurrent,
     };
 
     return pipe(

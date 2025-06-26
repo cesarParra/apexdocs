@@ -26,8 +26,7 @@ export type MacroSourceMetadata = {
 export type MacroFunction = (metadata: MacroSourceMetadata) => string;
 
 export type CliConfigurableMarkdownConfig = {
-  sourceDir?: string;
-  sourceDirs?: string[];
+  sourceDir?: string | string[];
   useSfdxProjectJson?: boolean;
   sfdxProjectPath?: string;
   targetDir: string;
@@ -54,8 +53,7 @@ export type UserDefinedMarkdownConfig = {
 
 export type UserDefinedOpenApiConfig = {
   targetGenerator: 'openapi';
-  sourceDir?: string;
-  sourceDirs?: string[];
+  sourceDir?: string | string[];
   useSfdxProjectJson?: boolean;
   sfdxProjectPath?: string;
   targetDir: string;
@@ -68,14 +66,8 @@ export type UserDefinedOpenApiConfig = {
 
 export type UserDefinedChangelogConfig = {
   targetGenerator: 'changelog';
-  previousVersionDir?: string;
-  previousVersionDirs?: string[];
-  useSfdxProjectJsonForPrevious?: boolean;
-  sfdxProjectPathForPrevious?: string;
-  currentVersionDir?: string;
-  currentVersionDirs?: string[];
-  useSfdxProjectJsonForCurrent?: boolean;
-  sfdxProjectPathForCurrent?: string;
+  previousVersionDir?: string | string[];
+  currentVersionDir?: string | string[];
   targetDir: string;
   fileName: string;
   scope: string[];

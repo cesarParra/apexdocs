@@ -5,12 +5,13 @@ import { openApiDefaults } from '../../defaults';
  * Custom validation function to ensure at least one source directory method is provided
  */
 export function validateOpenApiArgs(argv: Record<string, unknown>): boolean {
-  const hasSourceDir = argv.sourceDir;
-  const hasSourceDirs = Array.isArray(argv.sourceDirs) && argv.sourceDirs.length > 0;
+  const hasSourceDir =
+    argv.sourceDir &&
+    (typeof argv.sourceDir === 'string' || (Array.isArray(argv.sourceDir) && argv.sourceDir.length > 0));
   const hasUseSfdxProjectJson = argv.useSfdxProjectJson;
 
-  if (!hasSourceDir && !hasSourceDirs && !hasUseSfdxProjectJson) {
-    throw new Error('Must specify one of: --sourceDir, --sourceDirs, or --useSfdxProjectJson');
+  if (!hasSourceDir && !hasUseSfdxProjectJson) {
+    throw new Error('Must specify one of: --sourceDir or --useSfdxProjectJson');
   }
 
   return true;
@@ -19,26 +20,18 @@ export function validateOpenApiArgs(argv: Record<string, unknown>): boolean {
 export const openApiOptions: { [key: string]: Options } = {
   sourceDir: {
     type: 'string',
+    array: true,
     alias: 's',
     demandOption: false,
     describe:
-      'The directory location which contains your apex .cls classes. Cannot be used with sourceDirs or useSfdxProjectJson.',
-    conflicts: ['sourceDirs', 'useSfdxProjectJson'],
-  },
-  sourceDirs: {
-    type: 'string',
-    array: true,
-    demandOption: false,
-    describe:
-      'Multiple directory locations which contain your apex .cls classes. Cannot be used with sourceDir or useSfdxProjectJson.',
-    conflicts: ['sourceDir', 'useSfdxProjectJson'],
+      'The directory location(s) which contain your apex .cls classes. Can specify a single directory or multiple directories. Cannot be used with useSfdxProjectJson.',
+    conflicts: ['useSfdxProjectJson'],
   },
   useSfdxProjectJson: {
     type: 'boolean',
     demandOption: false,
-    describe:
-      'Read source directories from sfdx-project.json packageDirectories. Cannot be used with sourceDir or sourceDirs.',
-    conflicts: ['sourceDir', 'sourceDirs'],
+    describe: 'Read source directories from sfdx-project.json packageDirectories. Cannot be used with sourceDir.',
+    conflicts: ['sourceDir'],
   },
   sfdxProjectPath: {
     type: 'string',

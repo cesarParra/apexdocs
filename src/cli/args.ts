@@ -281,14 +281,12 @@ function extractMultiCommandConfig(
 }
 
 function extractSourceDirectoryConfig(config: Record<string, unknown>): {
-  sourceDir?: string;
-  sourceDirs?: string[];
+  sourceDir?: string | string[];
   useSfdxProjectJson?: boolean;
   sfdxProjectPath?: string;
 } {
   return {
-    sourceDir: config.sourceDir as string | undefined,
-    sourceDirs: config.sourceDirs as string[] | undefined,
+    sourceDir: config.sourceDir as string | string[] | undefined,
     useSfdxProjectJson: config.useSfdxProjectJson as boolean | undefined,
     sfdxProjectPath: config.sfdxProjectPath as string | undefined,
   };
@@ -299,16 +297,10 @@ function validateChangelogConfig(
 ): E.Either<{ message: string }, UserDefinedChangelogConfig> {
   const previousVersionConfig = {
     sourceDir: config.previousVersionDir,
-    sourceDirs: config.previousVersionDirs,
-    useSfdxProjectJson: config.useSfdxProjectJsonForPrevious,
-    sfdxProjectPath: config.sfdxProjectPathForPrevious,
   };
 
   const currentVersionConfig = {
     sourceDir: config.currentVersionDir,
-    sourceDirs: config.currentVersionDirs,
-    useSfdxProjectJson: config.useSfdxProjectJsonForCurrent,
-    sfdxProjectPath: config.sfdxProjectPathForCurrent,
   };
 
   return pipe(

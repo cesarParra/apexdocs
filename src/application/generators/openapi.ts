@@ -20,8 +20,9 @@ export default async function openApi(
   config: UserDefinedOpenApiConfig,
 ) {
   // For backwards compatibility, use sourceDir if provided, otherwise derive from file paths or use current directory
+  // If sourceDir is an array, use the first directory
   const sourceDirectory =
-    config.sourceDir ||
+    (Array.isArray(config.sourceDir) ? config.sourceDir[0] : config.sourceDir) ||
     (fileBodies.length > 0 ? fileBodies[0].filePath.split('/').slice(0, -1).join('/') : process.cwd());
 
   OpenApiSettings.build({
