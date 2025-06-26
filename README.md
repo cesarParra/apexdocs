@@ -107,10 +107,6 @@ Run the following command to generate a changelog for your Salesforce Apex class
 
 ```bash
 apexdocs changelog --previousVersionDir force-app-previous --currentVersionDir force-app
-
-# NEW: Use sfdx-project.json for both versions
-apexdocs changelog --useSfdxProjectJsonForPrevious --sfdxProjectPathForPrevious ./v1.0 \
-                   --useSfdxProjectJsonForCurrent --sfdxProjectPathForCurrent ./v2.0
 ```
 
 ## ▶️ Available Commands
