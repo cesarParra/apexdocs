@@ -2,12 +2,51 @@ import { Options } from 'yargs';
 import { markdownDefaults } from '../../defaults';
 import { CliConfigurableMarkdownConfig } from '../../core/shared/types';
 
+/**
+ * Custom validation function to ensure at least one source directory method is provided
+ */
+export function validateMarkdownArgs(argv: Record<string, unknown>): boolean {
+  const hasSourceDir = argv.sourceDir;
+  const hasSourceDirs = Array.isArray(argv.sourceDirs) && argv.sourceDirs.length > 0;
+  const hasUseSfdxProjectJson = argv.useSfdxProjectJson;
+
+  if (!hasSourceDir && !hasSourceDirs && !hasUseSfdxProjectJson) {
+    throw new Error('Must specify one of: --sourceDir, --sourceDirs, or --useSfdxProjectJson');
+  }
+
+  return true;
+}
+
 export const markdownOptions: Record<keyof CliConfigurableMarkdownConfig, Options> = {
   sourceDir: {
     type: 'string',
     alias: 's',
-    demandOption: true,
-    describe: 'The directory location which contains your apex .cls classes.',
+    demandOption: false,
+    describe:
+      'The directory location which contains your apex .cls classes. Cannot be used with sourceDirs or useSfdxProjectJson.',
+    conflicts: ['sourceDirs', 'useSfdxProjectJson'],
+  },
+  sourceDirs: {
+    type: 'string',
+    array: true,
+    demandOption: false,
+    describe:
+      'Multiple directory locations which contain your apex .cls classes. Cannot be used with sourceDir or useSfdxProjectJson.',
+    conflicts: ['sourceDir', 'useSfdxProjectJson'],
+  },
+  useSfdxProjectJson: {
+    type: 'boolean',
+    demandOption: false,
+    describe:
+      'Read source directories from sfdx-project.json packageDirectories. Cannot be used with sourceDir or sourceDirs.',
+    conflicts: ['sourceDir', 'sourceDirs'],
+  },
+  sfdxProjectPath: {
+    type: 'string',
+    demandOption: false,
+    describe:
+      'Path to the directory containing sfdx-project.json (defaults to current working directory). Only used with useSfdxProjectJson.',
+    implies: 'useSfdxProjectJson',
   },
   targetDir: {
     type: 'string',
@@ -74,7 +113,8 @@ export const markdownOptions: Record<keyof CliConfigurableMarkdownConfig, Option
   },
   includeFieldSecurityMetadata: {
     type: 'boolean',
-    describe: 'Whether to include the compliance category and security classification for fields in the generated files.',
+    describe:
+      'Whether to include the compliance category and security classification for fields in the generated files.',
     default: markdownDefaults.includeFieldSecurityMetadata,
   },
   includeInlineHelpTextMetadata: {

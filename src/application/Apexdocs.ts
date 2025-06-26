@@ -11,12 +11,12 @@ import { DefaultFileSystem } from './file-system';
 import { Logger } from '#utils/logger';
 import {
   UnparsedApexBundle,
-  UnparsedSourceBundle,
   UserDefinedChangelogConfig,
   UserDefinedConfig,
   UserDefinedMarkdownConfig,
   UserDefinedOpenApiConfig,
 } from '../core/shared/types';
+import { resolveAndValidateSourceDirectories } from '../util/source-directory-resolver';
 import { ReflectionError, ReflectionErrors, HookError } from '../core/errors/errors';
 import { FileReadingError, FileWritingError } from './errors';
 
@@ -50,12 +50,16 @@ const readFiles = processFiles(new DefaultFileSystem());
 
 async function processMarkdown(config: UserDefinedMarkdownConfig) {
   return pipe(
-    E.tryCatch(
-      () =>
-        readFiles(allComponentTypes, {
-          includeMetadata: config.includeMetadata,
-        })(config.sourceDir, config.exclude),
-      (e) => new FileReadingError('An error occurred while reading files.', e),
+    resolveAndValidateSourceDirectories(config),
+    E.mapLeft((error) => new FileReadingError(`Failed to resolve source directories: ${error.message}`, error)),
+    E.flatMap((sourceDirs) =>
+      E.tryCatch(
+        () =>
+          readFiles(allComponentTypes, {
+            includeMetadata: config.includeMetadata,
+          })(sourceDirs, config.exclude),
+        (e) => new FileReadingError('An error occurred while reading files.', e),
+      ),
     ),
     TE.fromEither,
     TE.flatMap((fileBodies) => markdown(fileBodies, config)),
@@ -65,20 +69,67 @@ async function processMarkdown(config: UserDefinedMarkdownConfig) {
 }
 
 async function processOpenApi(config: UserDefinedOpenApiConfig, logger: Logger) {
-  const fileBodies = readFiles(['ApexClass'])(config.sourceDir, config.exclude) as UnparsedApexBundle[];
-  return openApi(logger, fileBodies, config);
+  return pipe(
+    resolveAndValidateSourceDirectories(config),
+    E.mapLeft((error) => new FileReadingError(`Failed to resolve source directories: ${error.message}`, error)),
+    TE.fromEither,
+    TE.flatMap((sourceDirs) =>
+      TE.tryCatch(
+        () => {
+          const fileBodies = readFiles(['ApexClass'])(sourceDirs, config.exclude) as UnparsedApexBundle[];
+          return openApi(logger, fileBodies, config);
+        },
+        (e) => new FileReadingError('An error occurred while generating OpenAPI documentation.', e),
+      ),
+    ),
+  );
 }
 
 async function processChangeLog(config: UserDefinedChangelogConfig) {
-  function loadFiles(): [UnparsedSourceBundle[], UnparsedSourceBundle[]] {
-    return [
-      readFiles(allComponentTypes)(config.previousVersionDir, config.exclude),
-      readFiles(allComponentTypes)(config.currentVersionDir, config.exclude),
-    ];
+  function loadFiles() {
+    const previousVersionConfig = {
+      sourceDir: config.previousVersionDir,
+      sourceDirs: config.previousVersionDirs,
+      useSfdxProjectJson: config.useSfdxProjectJsonForPrevious,
+      sfdxProjectPath: config.sfdxProjectPathForPrevious,
+    };
+
+    const currentVersionConfig = {
+      sourceDir: config.currentVersionDir,
+      sourceDirs: config.currentVersionDirs,
+      useSfdxProjectJson: config.useSfdxProjectJsonForCurrent,
+      sfdxProjectPath: config.sfdxProjectPathForCurrent,
+    };
+
+    return pipe(
+      E.Do,
+      E.bind('previousVersionDirs', () =>
+        pipe(
+          resolveAndValidateSourceDirectories(previousVersionConfig),
+          E.mapLeft(
+            (error) =>
+              new FileReadingError(`Failed to resolve previous version source directories: ${error.message}`, error),
+          ),
+        ),
+      ),
+      E.bind('currentVersionDirs', () =>
+        pipe(
+          resolveAndValidateSourceDirectories(currentVersionConfig),
+          E.mapLeft(
+            (error) =>
+              new FileReadingError(`Failed to resolve current version source directories: ${error.message}`, error),
+          ),
+        ),
+      ),
+      E.map(({ previousVersionDirs, currentVersionDirs }) => [
+        readFiles(allComponentTypes)(previousVersionDirs, config.exclude),
+        readFiles(allComponentTypes)(currentVersionDirs, config.exclude),
+      ]),
+    );
   }
 
   return pipe(
-    E.tryCatch(loadFiles, (e) => new FileReadingError('An error occurred while reading files.', e)),
+    loadFiles(),
     TE.fromEither,
     TE.flatMap(([previous, current]) => changelog(previous, current, config)),
     TE.mapLeft(toErrors),
