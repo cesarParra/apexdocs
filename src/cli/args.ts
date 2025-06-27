@@ -9,10 +9,11 @@ import {
   UserDefinedOpenApiConfig,
 } from '../core/shared/types';
 import { TypeScriptLoader } from 'cosmiconfig-typescript-loader';
-import { markdownOptions } from './commands/markdown';
-import { openApiOptions } from './commands/openapi';
-import { changeLogOptions } from './commands/changelog';
+import { markdownOptions, validateMarkdownArgs } from './commands/markdown';
+import { openApiOptions, validateOpenApiArgs } from './commands/openapi';
+import { changeLogOptions, validateChangelogArgs } from './commands/changelog';
 import { pipe } from 'fp-ts/function';
+import { validateSourceDirectoryConfig } from '../util/source-directory-resolver';
 
 const configOnlyMarkdownDefaults: Partial<UserDefinedMarkdownConfig> = {
   targetGenerator: 'markdown',
@@ -91,11 +92,23 @@ function extractArgsForCommandProvidedThroughCli(
 
   switch (mergedConfig.targetGenerator) {
     case 'markdown':
-      return E.right({ ...configOnlyMarkdownDefaults, ...mergedConfig } as UserDefinedMarkdownConfig);
+      return pipe(
+        validateSourceDirectoryConfig(extractSourceDirectoryConfig(mergedConfig)),
+        E.mapLeft((error) => new Error(`Invalid markdown configuration: ${error.message}`)),
+        E.map(() => ({ ...configOnlyMarkdownDefaults, ...mergedConfig }) as UserDefinedMarkdownConfig),
+      );
     case 'openapi':
-      return E.right({ ...configOnlyOpenApiDefaults, ...mergedConfig } as unknown as UserDefinedOpenApiConfig);
+      return pipe(
+        validateSourceDirectoryConfig(extractSourceDirectoryConfig(mergedConfig)),
+        E.mapLeft((error) => new Error(`Invalid openapi configuration: ${error.message}`)),
+        E.map(() => ({ ...configOnlyOpenApiDefaults, ...mergedConfig }) as unknown as UserDefinedOpenApiConfig),
+      );
     case 'changelog':
-      return E.right({ ...configOnlyChangelogDefaults, ...mergedConfig } as unknown as UserDefinedChangelogConfig);
+      return pipe(
+        validateChangelogConfig(mergedConfig as unknown as UserDefinedChangelogConfig),
+        E.mapLeft((error) => new Error(`Invalid changelog configuration: ${error.message}`)),
+        E.map(() => ({ ...configOnlyChangelogDefaults, ...mergedConfig }) as unknown as UserDefinedChangelogConfig),
+      );
     default:
       return E.left(new Error(`Invalid command provided: ${mergedConfig.targetGenerator}`));
   }
@@ -124,12 +137,26 @@ function extractArgsForCommandsProvidedInConfig(
             E.map((cliArgs) => {
               return cliArgs;
             }),
-            E.map((cliArgs) => ({ ...configOnlyMarkdownDefaults, ...generatorConfig, ...cliArgs })),
+            E.flatMap((cliArgs) => {
+              const mergedConfig = { ...configOnlyMarkdownDefaults, ...generatorConfig, ...cliArgs };
+              return pipe(
+                validateSourceDirectoryConfig(extractSourceDirectoryConfig(mergedConfig)),
+                E.mapLeft((error) => new Error(`Invalid markdown configuration: ${error.message}`)),
+                E.map(() => mergedConfig),
+              );
+            }),
           );
         case 'openapi':
           return pipe(
             extractMultiCommandConfig(extractFromProcessFn, 'openapi', generatorConfig),
-            E.map((cliArgs) => ({ ...configOnlyOpenApiDefaults, ...generatorConfig, ...cliArgs })),
+            E.flatMap((cliArgs) => {
+              const mergedConfig = { ...configOnlyOpenApiDefaults, ...generatorConfig, ...cliArgs };
+              return pipe(
+                validateSourceDirectoryConfig(extractSourceDirectoryConfig(mergedConfig)),
+                E.mapLeft((error) => new Error(`Invalid openapi configuration: ${error.message}`)),
+                E.map(() => mergedConfig),
+              );
+            }),
           );
         case 'changelog':
           return pipe(
@@ -137,7 +164,14 @@ function extractArgsForCommandsProvidedInConfig(
             E.map((cliArgs) => {
               return cliArgs;
             }),
-            E.map((cliArgs) => ({ ...configOnlyChangelogDefaults, ...generatorConfig, ...cliArgs })),
+            E.flatMap((cliArgs) => {
+              const mergedConfig = { ...configOnlyChangelogDefaults, ...generatorConfig, ...cliArgs };
+              return pipe(
+                validateChangelogConfig(mergedConfig as unknown as UserDefinedChangelogConfig),
+                E.mapLeft((error) => new Error(`Invalid changelog configuration: ${error.message}`)),
+                E.map(() => mergedConfig),
+              );
+            }),
           );
       }
     });
@@ -193,13 +227,13 @@ function extractYargsDemandingCommand(extractFromProcessFn: ExtractArgsFromProce
   return yargs
     .config(config.config as Record<string, unknown>)
     .command('markdown', 'Generate documentation from Apex classes as a Markdown site.', (yargs) =>
-      yargs.options(markdownOptions),
+      yargs.options(markdownOptions).check(validateMarkdownArgs),
     )
-    .command('openapi', 'Generate an OpenApi REST specification from Apex classes.', () =>
-      yargs.options(openApiOptions),
+    .command('openapi', 'Generate an OpenApi REST specification from Apex classes.', (yargs) =>
+      yargs.options(openApiOptions).check(validateOpenApiArgs),
     )
-    .command('changelog', 'Generate a changelog from 2 versions of the source code.', () =>
-      yargs.options(changeLogOptions),
+    .command('changelog', 'Generate a changelog from 2 versions of the source code.', (yargs) =>
+      yargs.options(changeLogOptions).check(validateChangelogArgs),
     )
     .demandCommand()
     .parseSync(extractFromProcessFn());
@@ -221,14 +255,58 @@ function extractMultiCommandConfig(
     }
   }
 
+  function getValidationFunction(generator: Generators) {
+    switch (generator) {
+      case 'markdown':
+        return validateMarkdownArgs;
+      case 'openapi':
+        return validateOpenApiArgs;
+      case 'changelog':
+        return validateChangelogArgs;
+    }
+  }
+
   const options = getOptions(command);
+  const validator = getValidationFunction(command);
   return E.tryCatch(() => {
     return yargs(extractFromProcessFn())
       .config(config)
       .options(options)
+      .check(validator)
       .fail((msg) => {
         throw new Error(`Invalid configuration for command "${command}": ${msg}`);
       })
       .parseSync();
   }, E.toError);
+}
+
+function extractSourceDirectoryConfig(config: Record<string, unknown>): {
+  sourceDir?: string | string[];
+  useSfdxProjectJson?: boolean;
+  sfdxProjectPath?: string;
+} {
+  return {
+    sourceDir: config.sourceDir as string | string[] | undefined,
+    useSfdxProjectJson: config.useSfdxProjectJson as boolean | undefined,
+    sfdxProjectPath: config.sfdxProjectPath as string | undefined,
+  };
+}
+
+function validateChangelogConfig(
+  config: UserDefinedChangelogConfig,
+): E.Either<{ message: string }, UserDefinedChangelogConfig> {
+  const previousVersionConfig = {
+    sourceDir: config.previousVersionDir,
+  };
+
+  const currentVersionConfig = {
+    sourceDir: config.currentVersionDir,
+  };
+
+  return pipe(
+    E.Do,
+    E.bind('previousValid', () => validateSourceDirectoryConfig(previousVersionConfig)),
+    E.bind('currentValid', () => validateSourceDirectoryConfig(currentVersionConfig)),
+    E.map(() => config),
+  );
 }

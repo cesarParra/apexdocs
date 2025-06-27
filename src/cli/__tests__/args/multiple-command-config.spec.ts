@@ -34,7 +34,7 @@ describe('when extracting arguments', () => {
         expect(configs[0].targetGenerator).toEqual('markdown');
 
         const markdownConfig = configs[0] as UserDefinedMarkdownConfig;
-        expect(markdownConfig.sourceDir).toEqual('force-app');
+        expect(markdownConfig.sourceDir).toEqual(['force-app']);
       });
     });
 
@@ -69,14 +69,14 @@ describe('when extracting arguments', () => {
         expect(configs[2].targetGenerator).toEqual('changelog');
 
         const markdownConfig = configs[0] as UserDefinedMarkdownConfig;
-        expect(markdownConfig.sourceDir).toEqual('force-app');
+        expect(markdownConfig.sourceDir).toEqual(['force-app']);
 
         const openApiConfig = configs[1] as UserDefinedOpenApiConfig;
-        expect(openApiConfig.sourceDir).toEqual('force-app');
+        expect(openApiConfig.sourceDir).toEqual(['force-app']);
 
         const changelogConfig = configs[2] as UserDefinedChangelogConfig;
-        expect(changelogConfig.previousVersionDir).toEqual('previous');
-        expect(changelogConfig.currentVersionDir).toEqual('force-app');
+        expect(changelogConfig.previousVersionDir).toEqual(['previous']);
+        expect(changelogConfig.currentVersionDir).toEqual(['force-app']);
       });
     });
 

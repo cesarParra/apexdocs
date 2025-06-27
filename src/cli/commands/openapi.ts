@@ -1,12 +1,44 @@
 import { Options } from 'yargs';
 import { openApiDefaults } from '../../defaults';
 
+/**
+ * Custom validation function to ensure at least one source directory method is provided
+ */
+export function validateOpenApiArgs(argv: Record<string, unknown>): boolean {
+  const hasSourceDir =
+    argv.sourceDir &&
+    (typeof argv.sourceDir === 'string' || (Array.isArray(argv.sourceDir) && argv.sourceDir.length > 0));
+  const hasUseSfdxProjectJson = argv.useSfdxProjectJson;
+
+  if (!hasSourceDir && !hasUseSfdxProjectJson) {
+    throw new Error('Must specify one of: --sourceDir or --useSfdxProjectJson');
+  }
+
+  return true;
+}
+
 export const openApiOptions: { [key: string]: Options } = {
   sourceDir: {
     type: 'string',
+    array: true,
     alias: 's',
-    demandOption: true,
-    describe: 'The directory location which contains your apex .cls classes.',
+    demandOption: false,
+    describe:
+      'The directory location(s) which contain your apex .cls classes. Can specify a single directory or multiple directories. Cannot be used with useSfdxProjectJson.',
+    conflicts: ['useSfdxProjectJson'],
+  },
+  useSfdxProjectJson: {
+    type: 'boolean',
+    demandOption: false,
+    describe: 'Read source directories from sfdx-project.json packageDirectories. Cannot be used with sourceDir.',
+    conflicts: ['sourceDir'],
+  },
+  sfdxProjectPath: {
+    type: 'string',
+    demandOption: false,
+    describe:
+      'Path to the directory containing sfdx-project.json (defaults to current working directory). Only used with useSfdxProjectJson.',
+    implies: 'useSfdxProjectJson',
   },
   targetDir: {
     type: 'string',

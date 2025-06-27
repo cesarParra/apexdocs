@@ -248,9 +248,13 @@ export function processFiles(fileSystem: FileSystem) {
 
     const convertersToUse = componentTypesToRetrieve.map((componentType) => converters[componentType]);
 
-    return (rootPath: string, exclude: string[]) => {
+    return (rootPaths: string | string[], exclude: string[]) => {
+      const paths = Array.isArray(rootPaths) ? rootPaths : [rootPaths];
+
+      const allComponents = paths.flatMap((path) => fileSystem.getComponents(path));
+
       return pipe(
-        fileSystem.getComponents(rootPath),
+        allComponents,
         (components) => {
           return components.map((component) => {
             const pathLocation = component.type.name === 'ApexClass' ? component.content : component.xml;

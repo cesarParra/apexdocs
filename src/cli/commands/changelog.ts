@@ -1,18 +1,47 @@
 import { Options } from 'yargs';
 import { changeLogDefaults } from '../../defaults';
 
+/**
+ * Custom validation function to ensure source directories are provided for both versions
+ */
+export function validateChangelogArgs(argv: Record<string, unknown>): boolean {
+  const hasPreviousVersionDir =
+    argv.previousVersionDir &&
+    (typeof argv.previousVersionDir === 'string' ||
+      (Array.isArray(argv.previousVersionDir) && argv.previousVersionDir.length > 0));
+
+  const hasCurrentVersionDir =
+    argv.currentVersionDir &&
+    (typeof argv.currentVersionDir === 'string' ||
+      (Array.isArray(argv.currentVersionDir) && argv.currentVersionDir.length > 0));
+
+  if (!hasPreviousVersionDir) {
+    throw new Error('Must specify --previousVersionDir');
+  }
+
+  if (!hasCurrentVersionDir) {
+    throw new Error('Must specify --currentVersionDir');
+  }
+
+  return true;
+}
+
 export const changeLogOptions: { [key: string]: Options } = {
   previousVersionDir: {
     type: 'string',
+    array: true,
     alias: 'p',
-    demandOption: true,
-    describe: 'The directory location of the previous version of the source code.',
+    demandOption: false,
+    describe:
+      'The directory location(s) of the previous version of the source code. Can specify a single directory or multiple directories.',
   },
   currentVersionDir: {
     type: 'string',
+    array: true,
     alias: 'c',
-    demandOption: true,
-    describe: 'The directory location of the current version of the source code.',
+    demandOption: false,
+    describe:
+      'The directory location(s) of the current version of the source code. Can specify a single directory or multiple directories.',
   },
   targetDir: {
     type: 'string',
