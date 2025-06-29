@@ -1,8 +1,6 @@
 export const typeDocPartial = `
 {{#> documentablePartialTemplate}}
 
-
-
 {{#if doc.group}}
 **{{@root.translations.markdown.details.group}}** {{doc.group}}
 {{/if}}
