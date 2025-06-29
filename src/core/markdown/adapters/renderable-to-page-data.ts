@@ -101,7 +101,7 @@ function resolveApexTypeTemplate(renderable: Renderable, translations: Translati
   return {
     template: getTemplate(renderable),
     source: {
-      ...(renderable as RenderableEnum),
+      ...renderable,
       translations,
     },
   };

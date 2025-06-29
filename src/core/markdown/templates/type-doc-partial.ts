@@ -1,25 +1,27 @@
 export const typeDocPartial = `
 {{#> documentablePartialTemplate}}
 
+
+
 {{#if doc.group}}
-**{{#if translations.markdown.details.group}}{{translations.markdown.details.group}}{{else}}Group{{/if}}** {{doc.group}}
+**{{@root.translations.markdown.details.group}}** {{doc.group}}
 {{/if}}
 
 {{#if doc.author}}
-**{{#if translations.markdown.details.author}}{{translations.markdown.details.author}}{{else}}Author{{/if}}** {{doc.author}}
+**{{@root.translations.markdown.details.author}}** {{doc.author}}
 {{/if}}
 
 {{#if doc.date}}
-**{{#if translations.markdown.details.date}}{{translations.markdown.details.date}}{{else}}Date{{/if}}** {{doc.date}}
+**{{@root.translations.markdown.details.date}}** {{doc.date}}
 {{/if}}
 
 {{#each doc.sees}}
-**{{#if ../translations.markdown.details.see}}{{../translations.markdown.details.see}}{{else}}See{{/if}}** {{link this}}
+**{{@root.translations.markdown.details.see}}** {{link this}}
 
 {{/each}}
 
 {{#if namespace}}
-## {{#if translations.markdown.sections.namespace}}{{translations.markdown.sections.namespace}}{{else}}Namespace{{/if}}
+## {{@root.translations.markdown.sections.namespace}}
 {{namespace}}
 {{/if}}
 
