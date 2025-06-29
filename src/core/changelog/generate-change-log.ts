@@ -39,7 +39,7 @@ export function generateChangeLog(
     if (config.skipIfNoChanges && !hasChanges(changelog)) {
       return skip();
     }
-    const translations = mergeTranslations(config.translations);
+    const translations = mergeTranslations({ changelog: config.translations });
     return pipe(
       convertToRenderableChangelog(changelog, newManifest.types, translations),
       compile(translations),

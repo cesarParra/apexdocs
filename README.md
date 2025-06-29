@@ -27,7 +27,7 @@ create a documentation site that fits your needs, hosted in any static web hosti
   - [OpenApi](#openapi-1)
   - [Changelog](#changelog-1)
 - [🔬 Defining a configuration file](#-defining-a-configuration-file)
-- [🌐 Translation](#-translation-support)
+- [🌐 Translation](#-translation)
 - [⤵︎ Importing to your project](#︎-importing-to-your-project)
 - [📖 Documentation Guide](#-documentation-guide)
 - [📄 Generating OpenApi REST Definitions](#-generating-openapi-rest-definitions)
@@ -296,11 +296,9 @@ export default defineMarkdownConfig({
   targetDir: 'docs',
   scope: ['global', 'public'],
   translations: {
-    markdown: {
-      sections: {
-        methods: 'Methods',
-        properties: 'Properties',
-      },
+    sections: {
+      methods: 'Methods',
+      properties: 'Properties',
     },
   },
   ...
@@ -633,8 +631,6 @@ This feature allows you to:
 - **Use custom business terminology** (e.g., "Business Operations" instead of "Methods")
 - **Partially override specific terms** while keeping the rest in English
 
-Translation is supported for the `markdown` and `changelog` generators.
-
 ### How It Works
 
 The translation system uses:
@@ -644,7 +640,8 @@ The translation system uses:
 
 ### Configuration
 
-Add a `translations` property to your ApexDocs configuration (JS or TS file):
+Add a `translations` property to your ApexDocs configuration (JS or TS file) and pass
+the appropriate translation object, depending on the generator you're using:
 
 ```javascript
 import { defineMarkdownConfig } from '@cparra/apexdocs';
@@ -654,12 +651,10 @@ export default defineMarkdownConfig({
   targetDir: 'docs',
   scope: ['public', 'global'],
   translations: {
-    markdown: {
-      sections: {
-        methods: 'Métodos',
-        properties: 'Propiedades',
-        fields: 'Campos',
-      },
+    sections: {
+      methods: 'Métodos',
+      properties: 'Propiedades',
+      fields: 'Campos',
     },
   },
 });
@@ -673,35 +668,25 @@ For TypeScript projects, import the translation types for better autocomplete an
 import { defineMarkdownConfig } from '@cparra/apexdocs';
 import type { UserTranslations } from '@cparra/apexdocs';
 
-const translations: UserTranslations = {
-  markdown: {
-    sections: {
-      methods: 'Functions',
-    },
+const markdownTranslations: UserTranslations['markdown'] = {
+  sections: {
+    methods: 'Functions',
   },
+  // ...other translation keys as needed
 };
 
 export default defineMarkdownConfig({
   sourceDir: 'src',
   targetDir: 'docs',
   scope: ['public', 'global'],
-  translations,
+  translations: markdownTranslations,
 });
 ```
-
-### Best Practices
-
-1. **Start Small**: Begin with partial translations for the most important terms
-2. **Be Consistent**: Use the same terminology across your organization
-3. **Test Thoroughly**: Generate documentation with your translations to verify the output
-4. **Version Control**: Include your translation configurations in version control
 
 ### Notes
 
 - Only the **markdown** and **changelog** generators support translations
-- The **OpenAPI** generator does not use the translation system
 - All translations are optional - anything not specified uses the English default
-- The system uses deep merging, so partial translations work seamlessly
 
 For a complete example, see the [translation example](examples/translation/) in this repository.
 

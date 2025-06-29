@@ -49,7 +49,7 @@ export type MarkdownGeneratorConfig = Omit<
 };
 
 export function generateDocs(unparsedBundles: UnparsedSourceBundle[], config: MarkdownGeneratorConfig) {
-  const translations = mergeTranslations(config.translations);
+  const translations = mergeTranslations({ markdown: config.translations });
   const convertToReferences = apply(parsedFilesToReferenceGuide, config);
   const convertToRenderableBundle = apply(parsedFilesToRenderableBundle, config);
   const convertToDocumentationBundleForTemplate = apply(

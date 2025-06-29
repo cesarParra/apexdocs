@@ -49,7 +49,7 @@ export type UserDefinedMarkdownConfig = {
   targetGenerator: 'markdown';
   excludeTags: string[];
   exclude: string[];
-  translations?: UserTranslations;
+  translations?: UserTranslations['markdown'];
 } & CliConfigurableMarkdownConfig &
   Partial<MarkdownConfigurableHooks>;
 
@@ -76,7 +76,7 @@ export type UserDefinedChangelogConfig = {
   customObjectVisibility: string[];
   exclude: string[];
   skipIfNoChanges: boolean;
-  translations?: UserTranslations;
+  translations?: UserTranslations['changelog'];
 } & Partial<ChangelogConfigurableHooks>;
 
 export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig | UserDefinedChangelogConfig;
