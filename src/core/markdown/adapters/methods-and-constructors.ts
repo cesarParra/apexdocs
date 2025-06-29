@@ -8,11 +8,13 @@ import {
 } from '../../renderables/types';
 import { adaptDescribable, adaptDocumentable } from '../../renderables/documentables';
 import { Documentable } from '../../renderables/types';
+import { Translations } from '../../translations';
 
 export function adaptMethod(
   method: MethodMirror,
   linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number,
+  translations: Translations,
 ): RenderableMethod {
   function buildTitle(method: MethodMirrorWithInheritance): string {
     const { name, parameters } = method;
@@ -39,12 +41,12 @@ export function adaptMethod(
     heading: buildTitle(method as MethodMirrorWithInheritance),
     signature: {
       headingLevel: baseHeadingLevel + 1,
-      heading: 'Signature',
+      heading: translations.markdown.details.signature,
       value: buildSignature(method as MethodMirrorWithInheritance),
     },
     returnType: {
       headingLevel: baseHeadingLevel + 1,
-      heading: 'Return Type',
+      heading: translations.markdown.details.returnType,
       value: {
         ...adaptDescribable(method.docComment?.returnAnnotation?.bodyLines, linkGenerator),
         type: linkGenerator(method.typeReference.rawDeclaration),
@@ -52,12 +54,12 @@ export function adaptMethod(
     },
     throws: {
       headingLevel: baseHeadingLevel + 1,
-      heading: 'Throws',
+      heading: translations.markdown.details.throws,
       value: method.docComment?.throwsAnnotations.map((thrown) => mapThrows(thrown, linkGenerator)),
     },
     parameters: {
       headingLevel: baseHeadingLevel + 1,
-      heading: 'Parameters',
+      heading: translations.markdown.details.parameters,
       value: method.parameters.map((param) => mapParameters(method, param, linkGenerator)),
     },
     inherited: (method as MethodMirrorWithInheritance).inherited,
@@ -69,6 +71,7 @@ export function adaptConstructor(
   constructor: ConstructorMirror,
   linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number,
+  translations: Translations,
 ): RenderableConstructor {
   function buildTitle(name: string, constructor: ConstructorMirror): string {
     const { parameters } = constructor;
@@ -94,17 +97,17 @@ export function adaptConstructor(
     heading: buildTitle(typeName, constructor),
     signature: {
       headingLevel: baseHeadingLevel + 1,
-      heading: 'Signature',
+      heading: translations.markdown.details.signature,
       value: buildSignature(typeName, constructor),
     },
     parameters: {
       headingLevel: baseHeadingLevel + 1,
-      heading: 'Parameters',
+      heading: translations.markdown.details.parameters,
       value: constructor.parameters.map((param) => mapParameters(constructor, param, linkGenerator)),
     },
     throws: {
       headingLevel: baseHeadingLevel + 1,
-      heading: 'Throws',
+      heading: translations.markdown.details.throws,
       value: constructor.docComment?.throwsAnnotations.map((thrown) => mapThrows(thrown, linkGenerator)),
     },
   };

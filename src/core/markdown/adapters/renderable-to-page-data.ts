@@ -1,4 +1,4 @@
-import { ReferenceGuideReference, Renderable, RenderableBundle, RenderableEnum } from '../../renderables/types';
+import { ReferenceGuideReference, Renderable, RenderableBundle } from '../../renderables/types';
 import { DocPageData, DocumentationBundle } from '../../shared/types';
 import { pipe } from 'fp-ts/function';
 import { CompilationRequest, Template } from '../../template';
@@ -8,10 +8,12 @@ import { classMarkdownTemplate } from '../templates/class-template';
 import { markdownDefaults } from '../../../defaults';
 import { customObjectTemplate } from '../templates/custom-object-template';
 import { triggerMarkdownTemplate } from '../templates/trigger-template';
+import { Translations } from '../../translations';
 
 export const convertToDocumentationBundle = (
   referenceGuideTitle: string,
   referenceGuideTemplate: string,
+  translations: Translations,
   { referencesByGroup, renderables }: RenderableBundle,
 ): DocumentationBundle => ({
   referenceGuide: {
@@ -20,7 +22,7 @@ export const convertToDocumentationBundle = (
     outputDocPath: 'index.md',
   },
   docs: renderables.map((renderable: Renderable) =>
-    renderableToPageData(Object.values(referencesByGroup).flat(), renderable),
+    renderableToPageData(Object.values(referencesByGroup).flat(), renderable, translations),
   ),
 });
 
@@ -48,7 +50,11 @@ function referencesToReferenceGuideContent(
   );
 }
 
-function renderableToPageData(referenceGuideReference: ReferenceGuideReference[], renderable: Renderable): DocPageData {
+function renderableToPageData(
+  referenceGuideReference: ReferenceGuideReference[],
+  renderable: Renderable,
+  translations: Translations,
+): DocPageData {
   function buildDocOutput(renderable: Renderable, docContents: string): DocPageData {
     const reference: ReferenceGuideReference = referenceGuideReference.find(
       (ref) => ref.reference.source.name.toLowerCase() === renderable.name.toLowerCase(),
@@ -68,10 +74,15 @@ function renderableToPageData(referenceGuideReference: ReferenceGuideReference[]
     };
   }
 
-  return pipe(renderable, resolveApexTypeTemplate, compile, (docContents) => buildDocOutput(renderable, docContents));
+  return pipe(
+    renderable,
+    (r) => resolveApexTypeTemplate(r, translations),
+    compile,
+    (docContents) => buildDocOutput(renderable, docContents),
+  );
 }
 
-function resolveApexTypeTemplate(renderable: Renderable): CompilationRequest {
+function resolveApexTypeTemplate(renderable: Renderable, translations: Translations): CompilationRequest {
   function getTemplate(renderable: Renderable): string {
     switch (renderable.type) {
       case 'enum':
@@ -89,7 +100,10 @@ function resolveApexTypeTemplate(renderable: Renderable): CompilationRequest {
 
   return {
     template: getTemplate(renderable),
-    source: renderable as RenderableEnum,
+    source: {
+      ...renderable,
+      translations,
+    },
   };
 }
 

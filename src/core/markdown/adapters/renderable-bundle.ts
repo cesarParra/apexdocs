@@ -12,11 +12,13 @@ import { MarkdownGeneratorConfig } from '../generate-docs';
 import { apply } from '#utils/fp';
 import { generateLink } from './generate-link';
 import { getTypeGroup } from '../../shared/utils';
+import { Translations } from '../../translations';
 
 export function parsedFilesToRenderableBundle(
   config: MarkdownGeneratorConfig,
   parsedFiles: ParsedFile<TopLevelType>[],
   references: Record<string, DocPageReference>,
+  translations: Translations,
 ): RenderableBundle {
   const referenceFinder = apply(generateLink(config.linkingStrategy), references);
 
@@ -29,7 +31,12 @@ export function parsedFilesToRenderableBundle(
 
   function toRenderables(parsedFiles: ParsedFile<TopLevelType>[]): Renderable[] {
     return parsedFiles.reduce<Renderable[]>((acc, parsedFile) => {
-      const renderable = typeToRenderable(parsedFile, apply(referenceFinder, parsedFile.source.name), config);
+      const renderable = typeToRenderable(
+        parsedFile,
+        apply(referenceFinder, parsedFile.source.name),
+        config,
+        translations,
+      );
       acc.push(renderable);
       return acc;
     }, []);

@@ -12,6 +12,26 @@ ApexDocs is a non-opinionated documentation generator for Salesforce Apex classe
 It can output documentation in Markdown format, which allows you to use the Static Site Generator of your choice to
 create a documentation site that fits your needs, hosted in any static web hosting service.
 
+## Table of Contents
+
+- [👀 Examples](#-examples)
+- [🚀 Features](#-features)
+- [💿 Installation](#-installation)
+- [⚡ Quick Start](#-quick-start)
+  - [CLI](#cli)
+    - [Markdown](#markdown)
+    - [OpenApi](#openapi)
+    - [Changelog](#changelog)
+- [▶️ Available Commands](#️-available-commands)
+  - [Markdown](#markdown-1)
+  - [OpenApi](#openapi-1)
+  - [Changelog](#changelog-1)
+- [🔬 Defining a configuration file](#-defining-a-configuration-file)
+- [🌐 Translation](#-translation)
+- [⤵︎ Importing to your project](#︎-importing-to-your-project)
+- [📖 Documentation Guide](#-documentation-guide)
+- [📄 Generating OpenApi REST Definitions](#-generating-openapi-rest-definitions)
+
 ## 👀 Examples
 
 ApexDocs generates Markdown files, which can be integrated into any Static Site Generation (SSG) engine,
@@ -64,6 +84,7 @@ Here are some live projects using ApexDocs:
 * Support for ignoring files and members from being documented
 * Namespace support
 * Configuration file support
+* Translation support for different languages and custom terminology
 * Single line ApexDoc Blocks
 * Custom tag support
 * And much, much more!
@@ -274,6 +295,12 @@ export default defineMarkdownConfig({
   sourceDir: 'force-app',
   targetDir: 'docs',
   scope: ['global', 'public'],
+  translations: {
+    sections: {
+      methods: 'Methods',
+      properties: 'Properties',
+    },
+  },
   ...
 });
 ```
@@ -594,6 +621,74 @@ export default {
   }
 };
 ```
+
+## 🌐 Translation
+
+ApexDocs supports translations to customize the language and terminology used in the generated documentation.
+This feature allows you to:
+
+- **Translate documentation to different languages** (Spanish, French, etc.)
+- **Use custom business terminology** (e.g., "Business Operations" instead of "Methods")
+- **Partially override specific terms** while keeping the rest in English
+
+### How It Works
+
+The translation system uses:
+
+- **Default English translations** built into the system
+- **User-provided overrides** that can be partial or complete
+
+### Configuration
+
+Add a `translations` property to your ApexDocs configuration (JS or TS file) and pass
+the appropriate translation object, depending on the generator you're using:
+
+```javascript
+import { defineMarkdownConfig } from '@cparra/apexdocs';
+
+export default defineMarkdownConfig({
+  sourceDir: 'src',
+  targetDir: 'docs',
+  scope: ['public', 'global'],
+  translations: {
+    sections: {
+      methods: 'Métodos',
+      properties: 'Propiedades',
+      fields: 'Campos',
+    },
+  },
+});
+```
+
+### TypeScript Support
+
+For TypeScript projects, import the translation types for better autocomplete and type safety:
+
+```typescript
+import { defineMarkdownConfig } from '@cparra/apexdocs';
+import type { UserTranslations } from '@cparra/apexdocs';
+
+const markdownTranslations: UserTranslations['markdown'] = {
+  sections: {
+    methods: 'Functions',
+  },
+  // ...other translation keys as needed
+};
+
+export default defineMarkdownConfig({
+  sourceDir: 'src',
+  targetDir: 'docs',
+  scope: ['public', 'global'],
+  translations: markdownTranslations,
+});
+```
+
+### Notes
+
+- Only the **markdown** and **changelog** generators support translations
+- All translations are optional - anything not specified uses the English default
+
+For a complete example, see the [translation example](examples/translation/) in this repository.
 
 ## ⤵︎ Importing to your project
 

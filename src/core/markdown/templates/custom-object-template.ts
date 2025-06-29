@@ -3,11 +3,11 @@ export const customObjectTemplate = `
 
 {{{renderContent doc.description}}}
 
-## API Name
+## {{@root.translations.markdown.details.apiName}}
 \`{{apiName}}\`
 
 {{#if publishBehavior}}
-## Publish Behavior
+## {{@root.translations.markdown.sections.publishBehavior}}
 
 **{{publishBehavior}}**
 {{/if}}
@@ -17,7 +17,7 @@ export const customObjectTemplate = `
 {{#each fields.value}}
 {{ heading headingLevel heading }}
 {{#if required}}
-**Required**
+**{{@root.translations.markdown.details.required}}**
 {{/if}}
 
 {{#if description}}
@@ -25,26 +25,26 @@ export const customObjectTemplate = `
 {{/if}}
 
 {{#if inlineHelpText}}
-**Inline Help Text**
+**{{@root.translations.markdown.details.inlineHelpText}}**
 {{inlineHelpText}}
 {{/if}}
 
 {{#if complianceGroup}}
-**Compliance Group**
+**{{@root.translations.markdown.details.complianceGroup}}**
 {{complianceGroup}}
 {{/if}}
 
 {{#if securityClassification}}
-**Security Classification**
+**{{@root.translations.markdown.details.securityClassification}}**
 {{securityClassification}}
 {{/if}}
 
-**API Name**
+**{{@root.translations.markdown.details.apiName}}**
 
 \`{{{apiName}}}\`
 
 {{#if fieldType}}
-**Type**
+**{{@root.translations.markdown.details.type}}**
 
 *{{fieldType}}*
 
@@ -66,14 +66,14 @@ export const customObjectTemplate = `
 {{ heading headingLevel heading }}
 
 {{#if protected}}
-\`Protected\`
+\`{{@root.translations.markdown.details.protected}}\`
 {{/if}}
 
 {{#if description}}
 {{{renderContent description}}}
 {{/if}}
 
-**API Name**
+**{{@root.translations.markdown.details.apiName}}**
 
 \`{{{apiName}}}\`
 

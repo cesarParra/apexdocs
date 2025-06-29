@@ -6,11 +6,13 @@ import {
   GetRenderableContentByTypeName,
 } from '../../renderables/types';
 import { adaptDocumentable } from '../../renderables/documentables';
+import { Translations } from '../../translations';
 
 export function adaptFieldOrProperty(
   field: FieldMirrorWithInheritance | PropertyMirrorWithInheritance,
   linkGenerator: GetRenderableContentByTypeName,
   baseHeadingLevel: number,
+  translations: Translations,
 ): RenderableApexField {
   function buildSignature(): CodeBlock {
     const { access_modifier, name } = field;
@@ -31,14 +33,14 @@ export function adaptFieldOrProperty(
     heading: field.name,
     type: {
       headingLevel: baseHeadingLevel + 1,
-      heading: 'Type',
+      heading: translations.markdown.details.type,
       value: linkGenerator(field.typeReference.rawDeclaration),
     },
     inherited: field.inherited,
     accessModifier: field.access_modifier,
     signature: {
       headingLevel: baseHeadingLevel + 1,
-      heading: 'Signature',
+      heading: translations.markdown.details.signature,
       value: buildSignature(),
     },
   };

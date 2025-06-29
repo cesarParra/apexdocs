@@ -3,6 +3,7 @@ import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-ref
 import { RenderableContent } from '../renderables/types';
 import { adaptDescribable } from '../renderables/documentables';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
+import { Translations } from '../translations';
 
 type NewTypeRenderable = {
   name: string;
@@ -56,7 +57,11 @@ export type RenderableChangelog = {
   removedTriggers: NewOrRemovedTriggerSection | null;
 };
 
-export function convertToRenderableChangelog(changelog: Changelog, newManifest: ParsedType[]): RenderableChangelog {
+export function convertToRenderableChangelog(
+  changelog: Changelog,
+  newManifest: ParsedType[],
+  translations: Translations,
+): RenderableChangelog {
   const allNewTypes = [...changelog.newApexTypes, ...changelog.newCustomObjects].map(
     (newType) => newManifest.find((type) => type.name.toLowerCase() === newType.toLowerCase())!,
   );
@@ -83,8 +88,8 @@ export function convertToRenderableChangelog(changelog: Changelog, newManifest: 
       newClasses.length > 0
         ? {
             __type: 'class',
-            heading: 'New Classes',
-            description: 'These classes are new.',
+            heading: translations.changelog.newClasses.heading,
+            description: translations.changelog.newClasses.description,
             types: newClasses.map(typeToRenderable),
           }
         : null,
@@ -92,8 +97,8 @@ export function convertToRenderableChangelog(changelog: Changelog, newManifest: 
       newInterfaces.length > 0
         ? {
             __type: 'interface',
-            heading: 'New Interfaces',
-            description: 'These interfaces are new.',
+            heading: translations.changelog.newInterfaces.heading,
+            description: translations.changelog.newInterfaces.description,
             types: newInterfaces.map(typeToRenderable),
           }
         : null,
@@ -101,29 +106,35 @@ export function convertToRenderableChangelog(changelog: Changelog, newManifest: 
       newEnums.length > 0
         ? {
             __type: 'enum',
-            heading: 'New Enums',
-            description: 'These enums are new.',
+            heading: translations.changelog.newEnums.heading,
+            description: translations.changelog.newEnums.description,
             types: newEnums.map(typeToRenderable),
           }
         : null,
     removedTypes:
       changelog.removedApexTypes.length > 0
-        ? { heading: 'Removed Types', description: 'These types have been removed.', types: changelog.removedApexTypes }
+        ? {
+            heading: translations.changelog.removedTypes.heading,
+            description: translations.changelog.removedTypes.description,
+            types: changelog.removedApexTypes,
+          }
         : null,
     newOrModifiedMembers:
       changelog.newOrModifiedApexMembers.length > 0
         ? {
-            heading: 'New or Modified Members in Existing Types',
-            description: 'These members have been added or modified.',
-            modifications: changelog.newOrModifiedApexMembers.map(toRenderableModification),
+            heading: translations.changelog.newOrModifiedMembers.heading,
+            description: translations.changelog.newOrModifiedMembers.description,
+            modifications: changelog.newOrModifiedApexMembers.map((member) =>
+              toRenderableModification(member, translations),
+            ),
           }
         : null,
     newCustomObjects:
       newCustomObjects.length > 0
         ? {
             __type: 'customobject',
-            heading: 'New Custom Objects',
-            description: 'These custom objects are new.',
+            heading: translations.changelog.newCustomObjects.heading,
+            description: translations.changelog.newCustomObjects.description,
             types: newCustomObjects.map((type) => ({
               name: type.name,
               description: type.description ? [type.description] : undefined,
@@ -133,32 +144,34 @@ export function convertToRenderableChangelog(changelog: Changelog, newManifest: 
     removedCustomObjects:
       changelog.removedCustomObjects.length > 0
         ? {
-            heading: 'Removed Custom Objects',
-            description: 'These custom objects have been removed.',
+            heading: translations.changelog.removedCustomObjects.heading,
+            description: translations.changelog.removedCustomObjects.description,
             types: changelog.removedCustomObjects,
           }
         : null,
     newOrRemovedCustomFields:
       newOrModifiedCustomFields.length > 0
         ? {
-            heading: 'New or Removed Fields to Custom Objects or Standard Objects',
-            description: 'These custom fields have been added or removed.',
-            modifications: newOrModifiedCustomFields.map(toRenderableModification),
+            heading: translations.changelog.newOrRemovedCustomFields.heading,
+            description: translations.changelog.newOrRemovedCustomFields.description,
+            modifications: newOrModifiedCustomFields.map((member) => toRenderableModification(member, translations)),
           }
         : null,
     newOrRemovedCustomMetadataTypeRecords:
       newOrModifiedCustomMetadataTypeRecords.length > 0
         ? {
-            heading: 'New or Removed Custom Metadata Type Records',
-            description: 'These custom metadata type records have been added or removed.',
-            modifications: newOrModifiedCustomMetadataTypeRecords.map(toRenderableModification),
+            heading: translations.changelog.newOrRemovedCustomMetadataTypeRecords.heading,
+            description: translations.changelog.newOrRemovedCustomMetadataTypeRecords.description,
+            modifications: newOrModifiedCustomMetadataTypeRecords.map((member) =>
+              toRenderableModification(member, translations),
+            ),
           }
         : null,
     newTriggers:
       changelog.newTriggers.length > 0
         ? {
-            heading: 'New Triggers',
-            description: 'These triggers are new.',
+            heading: translations.changelog.newTriggers.heading,
+            description: translations.changelog.newTriggers.description,
             triggerData: changelog.newTriggers.map((trigger) => ({
               triggerName: trigger.triggerName,
               objectName: trigger.objectName,
@@ -168,8 +181,8 @@ export function convertToRenderableChangelog(changelog: Changelog, newManifest: 
     removedTriggers:
       changelog.removedTriggers.length > 0
         ? {
-            heading: 'Removed Triggers',
-            description: 'These triggers have been removed.',
+            heading: translations.changelog.removedTriggers.heading,
+            description: translations.changelog.removedTriggers.description,
             triggerData: changelog.removedTriggers.map((trigger) => ({
               triggerName: trigger.triggerName,
               objectName: trigger.objectName,
@@ -191,14 +204,22 @@ function typeToRenderable(type: Type): NewTypeRenderable {
   };
 }
 
-function toRenderableModification(newOrModifiedMember: NewOrModifiedMember): NewOrModifiedMemberSection {
+function toRenderableModification(
+  newOrModifiedMember: NewOrModifiedMember,
+  translations: Translations,
+): NewOrModifiedMemberSection {
   return {
     typeName: newOrModifiedMember.typeName,
-    modifications: newOrModifiedMember.modifications.map(toRenderableModificationDescription),
+    modifications: newOrModifiedMember.modifications.map((mod) =>
+      toRenderableModificationDescription(mod, translations),
+    ),
   };
 }
 
-function toRenderableModificationDescription(memberModificationType: MemberModificationType): string {
+function toRenderableModificationDescription(
+  memberModificationType: MemberModificationType,
+  translations: Translations,
+): string {
   function withDescription(memberModificationType: MemberModificationType): string {
     if (memberModificationType.description) {
       return `${memberModificationType.name}. ${memberModificationType.description}`;
@@ -208,32 +229,32 @@ function toRenderableModificationDescription(memberModificationType: MemberModif
 
   switch (memberModificationType.__typename) {
     case 'NewEnumValue':
-      return `New Enum Value: ${withDescription(memberModificationType)}`;
+      return `${translations.changelog.memberModifications.newEnumValue}: ${withDescription(memberModificationType)}`;
     case 'RemovedEnumValue':
-      return `Removed Enum Value: ${memberModificationType.name}`;
+      return `${translations.changelog.memberModifications.removedEnumValue}: ${memberModificationType.name}`;
     case 'NewMethod':
-      return `New Method: ${withDescription(memberModificationType)}`;
+      return `${translations.changelog.memberModifications.newMethod}: ${withDescription(memberModificationType)}`;
     case 'RemovedMethod':
-      return `Removed Method: ${memberModificationType.name}`;
+      return `${translations.changelog.memberModifications.removedMethod}: ${memberModificationType.name}`;
     case 'NewProperty':
-      return `New Property: ${withDescription(memberModificationType)}`;
+      return `${translations.changelog.memberModifications.newProperty}: ${withDescription(memberModificationType)}`;
     case 'RemovedProperty':
-      return `Removed Property: ${memberModificationType.name}`;
+      return `${translations.changelog.memberModifications.removedProperty}: ${memberModificationType.name}`;
     case 'NewField':
-      return `New Field: ${withDescription(memberModificationType)}`;
+      return `${translations.changelog.memberModifications.newField}: ${withDescription(memberModificationType)}`;
     case 'RemovedField':
-      return `Removed Field: ${memberModificationType.name}`;
+      return `${translations.changelog.memberModifications.removedField}: ${memberModificationType.name}`;
     case 'NewType':
-      return `New Type: ${withDescription(memberModificationType)}`;
+      return `${translations.changelog.memberModifications.newType}: ${withDescription(memberModificationType)}`;
     case 'RemovedType':
-      return `Removed Type: ${memberModificationType.name}`;
+      return `${translations.changelog.memberModifications.removedType}: ${memberModificationType.name}`;
     case 'NewCustomMetadataRecord':
-      return `New Custom Metadata Record: ${withDescription(memberModificationType)}`;
+      return `${translations.changelog.memberModifications.newCustomMetadataRecord}: ${withDescription(memberModificationType)}`;
     case 'RemovedCustomMetadataRecord':
-      return `Removed Custom Metadata Record: ${memberModificationType.name}`;
+      return `${translations.changelog.memberModifications.removedCustomMetadataRecord}: ${memberModificationType.name}`;
     case 'NewTrigger':
-      return `New Trigger: ${withDescription(memberModificationType)}`;
+      return `${translations.changelog.memberModifications.newTrigger}: ${withDescription(memberModificationType)}`;
     case 'RemovedTrigger':
-      return `Removed Trigger: ${memberModificationType.name}`;
+      return `${translations.changelog.memberModifications.removedTrigger}: ${memberModificationType.name}`;
   }
 }
