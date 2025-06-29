@@ -1,4 +1,4 @@
-import { defineMarkdownConfig, UserTranslations } from '../../src';
+import { defineChangelogConfig, defineMarkdownConfig, UserTranslations } from '../../src';
 
 // Spanish translations
 const spanishTranslations: UserTranslations['markdown'] = {
@@ -37,5 +37,13 @@ export default {
     sourceDir: 'force-app',
     scope: ['global', 'public'],
     translations: spanishTranslations,
+  }),
+  changelog: defineChangelogConfig({
+    previousVersionDir: 'previous',
+    currentVersionDir: 'force-app',
+    scope: ['global', 'public'],
+    translations: {
+      title: 'Registro de Cambios',
+    },
   }),
 };

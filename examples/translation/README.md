@@ -23,12 +23,10 @@ export default defineMarkdownConfig({
   scope: ['public', 'global'],
   translations: {
     // Your custom translations here
-    markdown: {
-      sections: {
-        methods: 'Métodos',
-        properties: 'Propiedades',
-        fields: 'Campos',
-      },
+    sections: {
+      methods: 'Métodos',
+      properties: 'Propiedades',
+      fields: 'Campos',
     },
   },
 });
@@ -54,7 +52,7 @@ export default defineMarkdownConfig({
   sourceDir: 'src',
   targetDir: 'docs',
   scope: ['public', 'global'],
-  translations,
+  translations: translations.markdown,
 });
 ```
 
