@@ -3,6 +3,7 @@ import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-objec
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
 import { TriggerMetadata } from '../reflection/trigger/reflect-trigger-source';
+import { UserTranslations } from '../translations';
 
 export type Generators = 'markdown' | 'openapi' | 'changelog';
 
@@ -48,6 +49,7 @@ export type UserDefinedMarkdownConfig = {
   targetGenerator: 'markdown';
   excludeTags: string[];
   exclude: string[];
+  translations?: UserTranslations;
 } & CliConfigurableMarkdownConfig &
   Partial<MarkdownConfigurableHooks>;
 
@@ -74,6 +76,7 @@ export type UserDefinedChangelogConfig = {
   customObjectVisibility: string[];
   exclude: string[];
   skipIfNoChanges: boolean;
+  translations?: UserTranslations;
 } & Partial<ChangelogConfigurableHooks>;
 
 export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig | UserDefinedChangelogConfig;

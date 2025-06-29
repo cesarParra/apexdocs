@@ -19,6 +19,7 @@ import {
   TopLevelType,
   MacroFunction,
 } from '../shared/types';
+import { mergeTranslations } from '../translations';
 import { parsedFilesToRenderableBundle } from './adapters/renderable-bundle';
 import { reflectApexSource } from '../reflection/apex/reflect-apex-source';
 import { addInheritanceChainToTypes } from '../reflection/apex/inheritance-chain-expanion';
@@ -48,12 +49,14 @@ export type MarkdownGeneratorConfig = Omit<
 };
 
 export function generateDocs(unparsedBundles: UnparsedSourceBundle[], config: MarkdownGeneratorConfig) {
+  const translations = mergeTranslations(config.translations);
   const convertToReferences = apply(parsedFilesToReferenceGuide, config);
   const convertToRenderableBundle = apply(parsedFilesToRenderableBundle, config);
   const convertToDocumentationBundleForTemplate = apply(
     convertToDocumentationBundle,
     config.referenceGuideTitle,
     config.referenceGuideTemplate,
+    translations,
   );
   const sort = apply(sortTypesAndMembers, config.sortAlphabetically);
 
@@ -92,7 +95,7 @@ export function generateDocs(unparsedBundles: UnparsedSourceBundle[], config: Ma
     ),
     TE.flatMap(({ parsedFiles, references }) => transformReferenceHook(config)({ references, parsedFiles })),
     TE.map(({ parsedFiles, references }) =>
-      convertToRenderableBundle(filterOutCustomFieldsAndMetadata(parsedFiles), references),
+      convertToRenderableBundle(filterOutCustomFieldsAndMetadata(parsedFiles), references, translations),
     ),
     TE.map(convertToDocumentationBundleForTemplate),
     TE.flatMap(transformDocumentationBundleHook(config)),

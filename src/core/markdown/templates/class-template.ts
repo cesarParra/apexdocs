@@ -7,13 +7,13 @@ export const classMarkdownTemplate = `
 {{> typeDocumentation}}
 
 {{#if extends.length}}
-**Inheritance**
+**{{#if translations.markdown.inheritance.inheritance}}{{translations.markdown.inheritance.inheritance}}{{else}}Inheritance{{/if}}**
 
 {{#each extends}}{{link this}}{{#unless @last}} < {{/unless}}{{/each}}
 {{/if}}
 
 {{#if implements}}
-**Implements**
+**{{#if translations.markdown.inheritance.implements}}{{translations.markdown.inheritance.implements}}{{else}}Implements{{/if}}**
 
 {{#each implements}}
 {{link this}}{{#unless @last}}, {{/unless}}

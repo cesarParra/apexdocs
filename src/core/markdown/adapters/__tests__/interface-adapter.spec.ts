@@ -3,6 +3,7 @@ import { InterfaceMirrorBuilder } from '../../../../test-helpers/InterfaceMirror
 import { AnnotationBuilder } from '../../../../test-helpers/AnnotationBuilder';
 import { MethodMirrorBuilder, ParameterBuilder } from '../../../../test-helpers/MethodMirrorBuilder';
 import { MarkdownGeneratorConfig } from '../../generate-docs';
+import { defaultTranslations } from '../../../translations';
 
 function linkGenerator(type: string): string {
   return type;
@@ -40,6 +41,7 @@ describe('Conversion from InterfaceMirror to InterfaceSource understandable by t
       },
       linkGenerator,
       defaultMarkdownGeneratorConfig,
+      defaultTranslations,
     );
 
     expect(interfaceSource.name).toBe('SampleInterface');
@@ -58,6 +60,7 @@ describe('Conversion from InterfaceMirror to InterfaceSource understandable by t
       },
       linkGenerator,
       defaultMarkdownGeneratorConfig,
+      defaultTranslations,
     );
 
     expect(interfaceSource.meta.accessModifier).toBe('public');
@@ -78,6 +81,7 @@ describe('Conversion from InterfaceMirror to InterfaceSource understandable by t
       },
       linkGenerator,
       defaultMarkdownGeneratorConfig,
+      defaultTranslations,
     );
 
     expect(interfaceSource.doc.annotations).toEqual(['MYANNOTATION']);
@@ -107,6 +111,7 @@ describe('Conversion from InterfaceMirror to InterfaceSource understandable by t
       },
       linkGenerator,
       defaultMarkdownGeneratorConfig,
+      defaultTranslations,
     );
 
     expect(interfaceSource.methods.value).toHaveLength(1);
@@ -146,6 +151,7 @@ describe('Conversion from InterfaceMirror to InterfaceSource understandable by t
       },
       linkGenerator,
       defaultMarkdownGeneratorConfig,
+      defaultTranslations,
     );
 
     expect(interfaceSource.methods.value).toHaveLength(1);

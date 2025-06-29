@@ -3,11 +3,11 @@ export const customObjectTemplate = `
 
 {{{renderContent doc.description}}}
 
-## API Name
+## {{#if translations.markdown.details.apiName}}{{translations.markdown.details.apiName}}{{else}}API Name{{/if}}
 \`{{apiName}}\`
 
 {{#if publishBehavior}}
-## Publish Behavior
+## {{#if translations.markdown.sections.publishBehavior}}{{translations.markdown.sections.publishBehavior}}{{else}}Publish Behavior{{/if}}
 
 **{{publishBehavior}}**
 {{/if}}
@@ -17,7 +17,7 @@ export const customObjectTemplate = `
 {{#each fields.value}}
 {{ heading headingLevel heading }}
 {{#if required}}
-**Required**
+**{{#if translations.markdown.details.required}}{{translations.markdown.details.required}}{{else}}Required{{/if}}**
 {{/if}}
 
 {{#if description}}
@@ -25,26 +25,26 @@ export const customObjectTemplate = `
 {{/if}}
 
 {{#if inlineHelpText}}
-**Inline Help Text**
+**{{#if translations.markdown.details.inlineHelpText}}{{translations.markdown.details.inlineHelpText}}{{else}}Inline Help Text{{/if}}**
 {{inlineHelpText}}
 {{/if}}
 
 {{#if complianceGroup}}
-**Compliance Group**
+**{{#if translations.markdown.details.complianceGroup}}{{translations.markdown.details.complianceGroup}}{{else}}Compliance Group{{/if}}**
 {{complianceGroup}}
 {{/if}}
 
 {{#if securityClassification}}
-**Security Classification**
+**{{#if translations.markdown.details.securityClassification}}{{translations.markdown.details.securityClassification}}{{else}}Security Classification{{/if}}**
 {{securityClassification}}
 {{/if}}
 
-**API Name**
+**{{#if translations.markdown.details.apiName}}{{translations.markdown.details.apiName}}{{else}}API Name{{/if}}**
 
 \`{{{apiName}}}\`
 
 {{#if fieldType}}
-**Type**
+**{{#if translations.markdown.details.type}}{{translations.markdown.details.type}}{{else}}Type{{/if}}**
 
 *{{fieldType}}*
 
@@ -66,14 +66,14 @@ export const customObjectTemplate = `
 {{ heading headingLevel heading }}
 
 {{#if protected}}
-\`Protected\`
+\`{{#if translations.markdown.details.protected}}{{translations.markdown.details.protected}}{{else}}Protected{{/if}}\`
 {{/if}}
 
 {{#if description}}
 {{{renderContent description}}}
 {{/if}}
 
-**API Name**
+**{{#if translations.markdown.details.apiName}}{{translations.markdown.details.apiName}}{{else}}API Name{{/if}}**
 
 \`{{{apiName}}}\`
 

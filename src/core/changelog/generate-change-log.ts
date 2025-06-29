@@ -7,6 +7,7 @@ import {
   UnparsedSourceBundle,
   UserDefinedChangelogConfig,
 } from '../shared/types';
+import { mergeTranslations } from '../translations';
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
 import { reflectApexSource } from '../reflection/apex/reflect-apex-source';
@@ -38,8 +39,11 @@ export function generateChangeLog(
     if (config.skipIfNoChanges && !hasChanges(changelog)) {
       return skip();
     }
-    return pipe(convertToRenderableChangelog(changelog, newManifest.types), compile, (content) =>
-      convertToPageData(content, changelog),
+    const translations = mergeTranslations(config.translations);
+    return pipe(
+      convertToRenderableChangelog(changelog, newManifest.types, translations),
+      compile(translations),
+      (content) => convertToPageData(content, changelog),
     );
   }
 
@@ -105,13 +109,18 @@ function toManifests({ oldVersion, newVersion }: { oldVersion: ParsedFile[]; new
   };
 }
 
-function compile(renderable: RenderableChangelog): string {
-  const compilationRequest: CompilationRequest = {
-    template: changelogTemplate,
-    source: renderable,
-  };
+function compile(translations: ReturnType<typeof mergeTranslations>) {
+  return (renderable: RenderableChangelog): string => {
+    const compilationRequest: CompilationRequest = {
+      template: changelogTemplate,
+      source: {
+        ...renderable,
+        title: translations.changelog.title,
+      },
+    };
 
-  return Template.getInstance().compile(compilationRequest);
+    return Template.getInstance().compile(compilationRequest);
+  };
 }
 
 function toPageData(fileName: string, content: string, changelog: Changelog): ChangeLogPageData {

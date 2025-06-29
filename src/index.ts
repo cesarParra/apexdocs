@@ -20,6 +20,7 @@ import type {
   ChangelogConfigurableHooks,
   TransformChangelogPage,
 } from './core/shared/types';
+import type { Translations, UserTranslations } from './core/translations';
 import { skip } from './core/shared/utils';
 import { changeLogDefaults, markdownDefaults, openApiDefaults } from './defaults';
 import { process } from './node/process';
@@ -92,4 +93,6 @@ export {
   process,
   ChangelogConfigurableHooks,
   TransformChangelogPage,
+  Translations,
+  UserTranslations,
 };

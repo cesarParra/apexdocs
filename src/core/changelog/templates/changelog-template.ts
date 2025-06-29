@@ -1,5 +1,5 @@
 export const changelogTemplate = `
-# Changelog
+# {{#if title}}{{title}}{{else}}Changelog{{/if}}
 
 {{#if newClasses}}
 ## {{newClasses.heading}}
