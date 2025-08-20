@@ -110,7 +110,7 @@ apexdocs markdown -s force-app
 apexdocs markdown --useSfdxProjectJson
 
 # Specify multiple source directories
-apexdocs markdown --sourceDirs force-app force-lwc force-utils
+apexdocs markdown --sourceDir force-app force-lwc force-utils
 ```
 
 #### OpenApi
