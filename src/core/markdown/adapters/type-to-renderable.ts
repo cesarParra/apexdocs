@@ -13,7 +13,8 @@ import {
   RenderableTrigger,
   RenderableCustomObject,
   RenderableCustomField,
-  RenderableCustomMetadata, RenderableLwc,
+  RenderableCustomMetadata,
+  RenderableLwc,
 } from '../../renderables/types';
 import { adaptDescribable, adaptDocumentable } from '../../renderables/documentables';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
@@ -418,10 +419,10 @@ function fieldMetadataToRenderable(
     inlineHelpText: renderInlineHelpText(field.inlineHelpText, config),
     pickListValues: field.pickListValues
       ? {
-        headingLevel: headingLevel + 1,
-        heading: translations.markdown.details.possibleValues,
-        value: field.pickListValues,
-      }
+          headingLevel: headingLevel + 1,
+          heading: translations.markdown.details.possibleValues,
+          value: field.pickListValues,
+        }
       : undefined,
   };
 }
@@ -437,7 +438,7 @@ function customMetadataToRenderable(metadata: CustomMetadataMetadata, headingLev
   };
 }
 
-function lwcMetadataToRenderable(metadata: LwcMetadata): RenderableLwc {
+export function lwcMetadataToRenderable(metadata: LwcMetadata): RenderableLwc {
   return {
     type: 'lwc',
     headingLevel: 1,
@@ -445,8 +446,8 @@ function lwcMetadataToRenderable(metadata: LwcMetadata): RenderableLwc {
     name: metadata.name,
     doc: {
       // TODO
-      description: undefined
-    }
+      description: undefined,
+    },
   };
 }
 

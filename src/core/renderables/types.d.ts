@@ -183,7 +183,6 @@ export type RenderableTrigger = Omit<RenderableType, 'meta'> & {
   events: string[];
 };
 
-// TODO: Avoid omiting things (if we want them). For now we just want to have the name rendering
 export type RenderableLwc = Omit<RenderableType, 'meta'> & {
   type: 'lwc';
 }

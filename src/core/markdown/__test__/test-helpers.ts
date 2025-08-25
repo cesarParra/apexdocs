@@ -1,6 +1,7 @@
 import {
   UnparsedApexBundle,
   UnparsedCustomObjectBundle,
+  UnparsedLightningComponentBundle,
   UnparsedSourceBundle,
   UnparsedTriggerBundle,
 } from '../../shared/types';
@@ -40,6 +41,21 @@ export function unparsedObjectBundleFromRawString(meta: {
     name: meta.name ?? 'TestObject__c',
     filePath: meta.filePath,
     content: meta.rawContent,
+  };
+}
+
+export function unparsedLwcBundleFromRawString(meta: {
+  jsContent: string;
+  xmlContent: string;
+  filePath: string;
+  name?: string;
+}): UnparsedLightningComponentBundle {
+  return {
+    type: 'lwc',
+    name: meta.name ?? 'TestComponent',
+    filePath: meta.filePath,
+    content: meta.jsContent,
+    metadataContent: meta.xmlContent,
   };
 }
 

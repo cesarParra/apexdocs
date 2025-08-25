@@ -1,8 +1,14 @@
 import { DocPageData, PostHookDocumentationBundle } from '../../shared/types';
 import { extendExpect } from './expect-extensions';
-import { unparsedApexBundleFromRawString, generateDocs, unparsedObjectBundleFromRawString } from './test-helpers';
+import {
+  unparsedApexBundleFromRawString,
+  generateDocs,
+  unparsedObjectBundleFromRawString,
+  unparsedLwcBundleFromRawString,
+} from './test-helpers';
 import { assertEither } from '../../test-helpers/assert-either';
 import { CustomObjectXmlBuilder } from '../../test-helpers/test-data-builders/custom-object-xml-builder';
+import { LwcBuilder } from '../../test-helpers/test-data-builders/lwc-builder';
 
 function aSingleDoc(result: PostHookDocumentationBundle): DocPageData {
   expect(result.docs).toHaveLength(1);
@@ -28,6 +34,19 @@ describe('When generating documentation', () => {
       }
     });
 
+    it('LWC components are named after the component name', async () => {
+      const lwcBuilder = new LwcBuilder().withName('TestComponent');
+      const lwcBundle = unparsedLwcBundleFromRawString({
+        jsContent: lwcBuilder.buildJs(),
+        xmlContent: lwcBuilder.buildMetaXml(),
+        filePath: 'force-app/main/default/lwc/testComponent/testComponent.js',
+        name: 'TestComponent',
+      });
+
+      const result = await generateDocs([lwcBundle])();
+      assertEither(result, (data) => expect(aSingleDoc(data).outputDocPath).toContain('TestComponent.md'));
+    });
+
     it('Apex code is placed in the miscellaneous folder if no group is provided', async () => {
       const properties: [string, string][] = [
         ['public class MyClass {}', 'miscellaneous'],
@@ -39,6 +58,19 @@ describe('When generating documentation', () => {
         const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
         assertEither(result, (data) => expect(aSingleDoc(data).outputDocPath).toContain(expected));
       }
+    });
+
+    it('LWC components are placed in the lightning-web-components folder', async () => {
+      const lwcBuilder = new LwcBuilder().withName('TestComponent');
+      const lwcBundle = unparsedLwcBundleFromRawString({
+        jsContent: lwcBuilder.buildJs(),
+        xmlContent: lwcBuilder.buildMetaXml(),
+        filePath: 'force-app/main/default/lwc/testComponent/testComponent.js',
+        name: 'TestComponent',
+      });
+
+      const result = await generateDocs([lwcBundle])();
+      assertEither(result, (data) => expect(aSingleDoc(data).outputDocPath).toContain('lightning-web-components'));
     });
 
     it('SObject code is placed in the custom objects folder', async () => {
@@ -115,6 +147,19 @@ describe('When generating documentation', () => {
         const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
         assertEither(result, (data) => expect(aSingleDoc(data).source.type).toBe(expected));
       }
+    });
+
+    it('LWC components return the correct type', async () => {
+      const lwcBuilder = new LwcBuilder().withName('TestComponent');
+      const lwcBundle = unparsedLwcBundleFromRawString({
+        jsContent: lwcBuilder.buildJs(),
+        xmlContent: lwcBuilder.buildMetaXml(),
+        filePath: 'force-app/main/default/lwc/testComponent/testComponent.js',
+        name: 'TestComponent',
+      });
+
+      const result = await generateDocs([lwcBundle])();
+      assertEither(result, (data) => expect(aSingleDoc(data).source.type).toBe('lwc'));
     });
 
     it('SObjects return the type', async () => {
@@ -215,6 +260,20 @@ describe('When generating documentation', () => {
       const result = await generateDocs([unparsedObjectBundleFromRawString({ rawContent: input, filePath: 'test' })])();
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContains('MyTestObject'));
+    });
+
+    it('includes a heading with the component name and (LWC) suffix for Lightning Web Components', async () => {
+      const lwcBuilder = new LwcBuilder().withName('AccordionComponent');
+      const lwcBundle = unparsedLwcBundleFromRawString({
+        jsContent: lwcBuilder.buildJs(),
+        xmlContent: lwcBuilder.buildMetaXml(),
+        filePath: 'force-app/main/default/lwc/accordionComponent/accordionComponent.js',
+        name: 'AccordionComponent',
+      });
+
+      const result = await generateDocs([lwcBundle])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('AccordionComponent (LWC)'));
     });
   });
 });

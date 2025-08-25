@@ -4,7 +4,7 @@ import * as A from 'fp-ts/lib/Array';
 import { pipe } from 'fp-ts/function';
 import { Semigroup } from 'fp-ts/Semigroup';
 import { ParsedFile } from '../../shared/types';
-import { ReflectionError, ReflectionErrors } from '../../errors/errors';
+import { ReflectionErrors } from '../../errors/errors';
 
 import { UnparsedLightningComponentBundle } from 'src/core/shared/types';
 
