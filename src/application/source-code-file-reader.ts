@@ -3,20 +3,27 @@ import {
   UnparsedApexBundle,
   UnparsedCustomFieldBundle,
   UnparsedCustomMetadataBundle,
-  UnparsedCustomObjectBundle,
+  UnparsedCustomObjectBundle, UnparsedLightningComponentBundle,
   UnparsedTriggerBundle,
 } from '../core/shared/types';
 import { minimatch } from 'minimatch';
 import { flow, pipe } from 'fp-ts/function';
 import { apply } from '#utils/fp';
 
-export type ComponentTypes = 'ApexClass' | 'CustomObject' | 'CustomField' | 'CustomMetadata' | 'ApexTrigger';
+export type ComponentTypes =
+  'ApexClass'
+  | 'CustomObject'
+  | 'CustomField'
+  | 'CustomMetadata'
+  | 'ApexTrigger'
+  | 'LightningComponentBundle';
 export const allComponentTypes: ComponentTypes[] = [
   'ApexClass',
   'CustomObject',
   'CustomField',
   'CustomMetadata',
   'ApexTrigger',
+  'LightningComponentBundle'
 ];
 
 /**
@@ -42,6 +49,13 @@ type ApexClassApexSourceComponent = {
   xmlPath?: string;
   contentPath: string;
 };
+
+type LightningComponentBundleSourceComponent = {
+  type: 'LightningComponentBundle';
+  name: string;
+  xmlPath: string;
+  contentPath: string;
+}
 
 type TriggerSourceComponent = {
   type: 'ApexTrigger';
@@ -81,6 +95,21 @@ function getApexSourceComponents(
       name: component.name,
       xmlPath: includeMetadata ? component.xml : undefined,
       contentPath: component.content!,
+    }));
+}
+
+function getLightningComponentBundleSourceComponents(
+  sourceComponents: SourceComponentAdapter[],
+): LightningComponentBundleSourceComponent[] {
+  return sourceComponents
+    .filter((component) => component.type.name === 'LightningComponentBundle')
+    .map((component) => ({
+      type: 'LightningComponentBundle' as const,
+      name: component.name,
+      xmlPath: component.xml!,
+      // The content path for an LWC is the JS file, which will be the same path as
+      // the xml but instead of ending in .js-meta.xml it will end in .js
+      contentPath: component.xml!.replace('.js-meta.xml', '.js'),
     }));
 }
 
@@ -209,6 +238,17 @@ function toUnparsedCustomMetadataBundle(
   }));
 }
 
+
+function toUnparsedLWCBundle(fileSystem: FileSystem, lwcSourceComponents: LightningComponentBundleSourceComponent[]): UnparsedLightningComponentBundle[] {
+  return lwcSourceComponents.map((component) => ({
+    type: 'lwc',
+    name: component.name,
+    filePath: component.contentPath,
+    content: fileSystem.readFile(component.contentPath),
+    metadataContent: fileSystem.readFile(component.xmlPath),
+  }));
+}
+
 /**
  * Reads from source code files and returns their raw body.
  */
@@ -227,7 +267,8 @@ export function processFiles(fileSystem: FileSystem) {
         | UnparsedCustomFieldBundle
         | UnparsedCustomMetadataBundle
         | UnparsedTriggerBundle
-      )[]
+        | UnparsedLightningComponentBundle
+        )[]
     > = {
       ApexClass: flow(apply(getApexSourceComponents, options.includeMetadata), (apexSourceComponents) =>
         toUnparsedApexBundle(fileSystem, apexSourceComponents),
@@ -243,6 +284,9 @@ export function processFiles(fileSystem: FileSystem) {
       ),
       ApexTrigger: flow(getTriggerSourceComponents, (triggerSourceComponents) =>
         toUnparsedTriggerBundle(fileSystem, triggerSourceComponents),
+      ),
+      LightningComponentBundle: flow(getLightningComponentBundleSourceComponents, (lwcSourceComponents) =>
+        toUnparsedLWCBundle(fileSystem, lwcSourceComponents),
       ),
     };
 

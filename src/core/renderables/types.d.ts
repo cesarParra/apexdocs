@@ -183,6 +183,11 @@ export type RenderableTrigger = Omit<RenderableType, 'meta'> & {
   events: string[];
 };
 
+// TODO: Avoid omiting things (if we want them). For now we just want to have the name rendering
+export type RenderableLwc = Omit<RenderableType, 'meta'> & {
+  type: 'lwc';
+}
+
 export type RenderableCustomObject = Omit<RenderableType, 'meta'> & {
   apiName: string;
   type: 'customobject';
@@ -222,6 +227,7 @@ export type Renderable = (
   | RenderableEnum
   | RenderableCustomObject
   | RenderableTrigger
+  | RenderableLwc
 ) & {
   filePath: string | undefined;
 };

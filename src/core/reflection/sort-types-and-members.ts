@@ -25,6 +25,8 @@ export function sortTypesAndMembers(
       }
       // For TriggerMetadata or any other types, return the original parsedFile unchanged
       return parsedFile;
+
+      // TODO: Parsed LWC members (properties and methods)
     })
     .sort((a, b) => sortByNames(shouldSort, a.type, b.type));
 }

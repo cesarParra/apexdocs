@@ -30,6 +30,10 @@ Custom object for tracking sales orders.
 
 Represents a speaker at an event.
 
+## Lightning Web Components
+
+### [accordion](lightning-web-components/accordion.md)
+
 ## Miscellaneous
 
 ### [BaseClass](miscellaneous/BaseClass.md)

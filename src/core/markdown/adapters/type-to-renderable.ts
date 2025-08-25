@@ -13,7 +13,7 @@ import {
   RenderableTrigger,
   RenderableCustomObject,
   RenderableCustomField,
-  RenderableCustomMetadata,
+  RenderableCustomMetadata, RenderableLwc,
 } from '../../renderables/types';
 import { adaptDescribable, adaptDocumentable } from '../../renderables/documentables';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
@@ -26,6 +26,7 @@ import { CustomFieldMetadata } from '../../reflection/sobject/reflect-custom-fie
 import { CustomMetadataMetadata } from '../../reflection/sobject/reflect-custom-metadata-source';
 import { TriggerMetadata } from 'src/core/reflection/trigger/reflect-trigger-source';
 import { Translations } from '../../translations';
+import { LwcMetadata } from '../../reflection/lwc/reflect-lwc-source';
 
 type GetReturnRenderable<T extends TopLevelType> = T extends InterfaceMirror
   ? RenderableInterface
@@ -48,7 +49,8 @@ export function typeToRenderable<T extends TopLevelType>(
     | RenderableClass
     | RenderableEnum
     | RenderableTrigger
-    | RenderableCustomObject {
+    | RenderableCustomObject
+    | RenderableLwc {
     const { type } = parsedFile;
     switch (type.type_name) {
       case 'enum':
@@ -61,6 +63,8 @@ export function typeToRenderable<T extends TopLevelType>(
         return triggerMetadataToRenderable(type as TriggerMetadata, linkGenerator, 1, translations);
       case 'customobject':
         return objectMetadataToRenderable(type as CustomObjectMetadata, config, translations);
+      case 'lwc':
+        return lwcMetadataToRenderable(type as LwcMetadata);
     }
   }
 
@@ -414,10 +418,10 @@ function fieldMetadataToRenderable(
     inlineHelpText: renderInlineHelpText(field.inlineHelpText, config),
     pickListValues: field.pickListValues
       ? {
-          headingLevel: headingLevel + 1,
-          heading: translations.markdown.details.possibleValues,
-          value: field.pickListValues,
-        }
+        headingLevel: headingLevel + 1,
+        heading: translations.markdown.details.possibleValues,
+        value: field.pickListValues,
+      }
       : undefined,
   };
 }
@@ -430,6 +434,19 @@ function customMetadataToRenderable(metadata: CustomMetadataMetadata, headingLev
     apiName: metadata.apiName,
     label: metadata.label ?? metadata.name,
     protected: metadata.protected,
+  };
+}
+
+function lwcMetadataToRenderable(metadata: LwcMetadata): RenderableLwc {
+  return {
+    type: 'lwc',
+    headingLevel: 1,
+    heading: metadata.name + ' (LWC)',
+    name: metadata.name,
+    doc: {
+      // TODO
+      description: undefined
+    }
   };
 }
 
@@ -454,6 +471,7 @@ function renderComplianceGroup(complianceGroup: string | null, config: MarkdownG
     return null;
   }
 }
+
 function renderInlineHelpText(inlineHelpText: string | null, config: MarkdownGeneratorConfig) {
   if (config.includeInlineHelpTextMetadata) {
     return inlineHelpText;

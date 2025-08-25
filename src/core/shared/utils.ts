@@ -1,10 +1,10 @@
-import { ExternalMetadata, Frontmatter, Skip, SourceFileMetadata, TopLevelType } from './types';
+import { ExternalMetadata, Frontmatter, ParsedType, Skip, SourceFileMetadata, TopLevelType } from './types';
 import { Type } from '@cparra/apex-reflection';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { MarkdownGeneratorConfig } from '../markdown/generate-docs';
-import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
 import yaml from 'js-yaml';
 import { TriggerMetadata } from '../reflection/trigger/reflect-trigger-source';
+import { LwcMetadata } from '../reflection/lwc/reflect-lwc-source';
 
 /**
  * Represents a file to be skipped.
@@ -20,19 +20,25 @@ export function isSkip(value: unknown): value is Skip {
 }
 
 export function isObjectType(
-  type: Type | CustomObjectMetadata | CustomFieldMetadata | TriggerMetadata,
+  type: ParsedType
 ): type is CustomObjectMetadata {
   return (type as CustomObjectMetadata).type_name === 'customobject';
 }
 
-export function isApexType(type: Type | CustomObjectMetadata | CustomFieldMetadata | TriggerMetadata): type is Type {
-  return !isObjectType(type) && !isTriggerType(type);
+export function isApexType(type: ParsedType): type is Type {
+  return !isObjectType(type) && !isTriggerType(type) && !isLwcType(type);
 }
 
 function isTriggerType(
-  type: Type | CustomObjectMetadata | CustomFieldMetadata | TriggerMetadata,
+  type: ParsedType,
 ): type is TriggerMetadata {
   return type.type_name === 'trigger';
+}
+
+export function isLwcType(
+  type: ParsedType,
+): type is LwcMetadata {
+  return type.type_name === 'lwc';
 }
 
 export function isInSource(source: SourceFileMetadata | ExternalMetadata): source is SourceFileMetadata {
@@ -52,6 +58,8 @@ export function getTypeGroup(type: TopLevelType, config: MarkdownGeneratorConfig
       return config.customObjectsGroupName;
     case 'trigger':
       return config.triggersGroupName;
+    case 'lwc':
+      return 'Lightning Web Components'; // TODO: Make this configurable?
     default:
       return getGroup(type, config);
   }

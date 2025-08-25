@@ -1,6 +1,6 @@
 import {
   ChangeLogPageData,
-  ParsedFile,
+  ParsedFile, ParsedType,
   Skip,
   TransformChangelogPage,
   UnparsedApexBundle,
@@ -11,7 +11,7 @@ import { mergeTranslations } from '../translations';
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
 import { reflectApexSource } from '../reflection/apex/reflect-apex-source';
-import { Changelog, hasChanges, ParsedType, processChangelog, VersionManifest } from './process-changelog';
+import { Changelog, hasChanges, processChangelog, VersionManifest } from './process-changelog';
 import { convertToRenderableChangelog, RenderableChangelog } from './renderable-changelog';
 import { CompilationRequest, Template } from '../template';
 import { changelogTemplate } from './templates/changelog-template';
@@ -70,7 +70,8 @@ function reflect(bundles: UnparsedSourceBundle[], config: Omit<UserDefinedChange
   }
 
   return pipe(
-    reflectApexFiles(filterApexSourceFiles(bundles)),
+    // Filter out LWC. These will be implemented at a later date
+    reflectApexFiles(filterApexSourceFiles(bundles.filter((b) => b.type !== 'lwc'))),
     TE.chain((parsedApexFiles) => {
       return pipe(
         reflectCustomFieldsAndObjectsAndMetadataRecords(
