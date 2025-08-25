@@ -273,7 +273,7 @@ describe('When generating documentation', () => {
 
       const result = await generateDocs([lwcBundle])();
       expect(result).documentationBundleHasLength(1);
-      assertEither(result, (data) => expect(data).firstDocContains('AccordionComponent (LWC)'));
+      assertEither(result, (data) => expect(data).firstDocContains('AccordionComponent'));
     });
   });
 });

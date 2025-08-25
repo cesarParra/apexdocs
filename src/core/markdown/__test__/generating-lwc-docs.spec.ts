@@ -44,7 +44,7 @@ describe('When generating LWC documentation', () => {
       const result = await generateDocs([lwcBundle])();
 
       assertEither(result, (data) => {
-        expect(data).firstDocContains('CustomCard (LWC)');
+        expect(data).firstDocContains('CustomCard');
       });
     });
 
@@ -137,7 +137,7 @@ export default class RecordViewer extends LightningElement {
 
       assertEither(result, (data) => {
         expect(data.docs).toHaveLength(1);
-        expect(data).firstDocContains('RecordViewer (LWC)');
+        expect(data).firstDocContains('RecordViewer');
       });
     });
   });
@@ -197,7 +197,7 @@ export default class RecordViewer extends LightningElement {
 
       assertEither(result, (data) => {
         expect(data.docs).toHaveLength(1);
-        expect(data).firstDocContains('CommunityComponent (LWC)');
+        expect(data).firstDocContains('CommunityComponent');
       });
     });
 

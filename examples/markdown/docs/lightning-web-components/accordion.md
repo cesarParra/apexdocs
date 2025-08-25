@@ -1,1 +1,1 @@
-# accordion (LWC)
+# accordion

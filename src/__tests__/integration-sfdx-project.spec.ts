@@ -199,7 +199,7 @@ describe('SFDX Project Integration Tests', () => {
 
       // Verify content of LWC documentation
       const testComponentContent = fs.readFileSync(testComponentPath, 'utf8');
-      expect(testComponentContent).toContain('testComponent (LWC)');
+      expect(testComponentContent).toContain('testComponent');
 
       // Verify index includes LWC section
       const indexContent = fs.readFileSync(path.join(docsDir, 'index.md'), 'utf8');

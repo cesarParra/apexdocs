@@ -208,7 +208,7 @@ function getCustomMetadataSourceComponents(
 ): CustomMetadataSourceComponent[] {
   function getParentAndNamePair(component: SourceComponentAdapter): [string, string] {
     // Custom metadata take the format [Namespace].[ParentName].[MetadataName], where namespace is optional.
-    // Here we split the strig and return the last 2 elements, representing the parent and the metadata name.
+    // Here we split the string and return the last 2 elements, representing the parent and the metadata name.
     const [parentName, name] = component.name.split('.').slice(-2);
     return [parentName, name];
   }

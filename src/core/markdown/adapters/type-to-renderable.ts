@@ -442,7 +442,7 @@ export function lwcMetadataToRenderable(metadata: LwcMetadata): RenderableLwc {
   return {
     type: 'lwc',
     headingLevel: 1,
-    heading: metadata.name + ' (LWC)',
+    heading: metadata.name,
     name: metadata.name,
     doc: {
       // TODO
