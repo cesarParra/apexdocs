@@ -4,16 +4,43 @@ import * as A from 'fp-ts/lib/Array';
 import { pipe } from 'fp-ts/function';
 import { Semigroup } from 'fp-ts/Semigroup';
 import { ParsedFile } from '../../shared/types';
-import { ReflectionErrors } from '../../errors/errors';
+import { ReflectionError, ReflectionErrors } from '../../errors/errors';
+import * as E from 'fp-ts/Either';
 
 import { UnparsedLightningComponentBundle } from 'src/core/shared/types';
+import { XMLParser } from 'fast-xml-parser';
 
 // TODO: Everything else
 export type LwcMetadata = {
-  description: string | null;
   type_name: 'lwc';
   name: string;
+} & LightningComponentBundle;
+
+type LightningComponentBundle = {
+  isExposed: boolean;
+  description?: string;
+  masterLabel: string;
+  targets?: Target;
+  targetConfigs?: TargetConfig;
+}
+
+type Target = {
+  target: string[];
+}
+
+type TargetConfig = {
+  targetConfig: {
+    property: {
+      '@_name': string;
+      '@_type': string;
+      '@_required'?: boolean;
+      '@_label'?: string;
+      '@_description'?: string;
+    }[],
+    '@_targets': string;
+  }[];
 };
+
 
 export function reflectLwcSource(triggerBundles: UnparsedLightningComponentBundle[]) {
   const semiGroupReflectionError: Semigroup<ReflectionErrors> = {
@@ -27,21 +54,25 @@ export function reflectLwcSource(triggerBundles: UnparsedLightningComponentBundl
 function reflectBundle(
   lwcBundle: UnparsedLightningComponentBundle,
 ): TE.TaskEither<ReflectionErrors, ParsedFile<LwcMetadata>> {
-  function toParsedFile(filePath: string, metadata: LwcMetadata): ParsedFile<LwcMetadata> {
-    return {
-      source: {
-        filePath,
-        name: metadata.name,
-        type: metadata.type_name,
-      },
-      type: metadata,
-    };
-  }
+  return pipe(
+    E.tryCatch(() => new XMLParser().parse(lwcBundle.metadataContent) as LightningComponentBundle, E.toError),
+    E.map((parsed) => toParsedFile(lwcBundle.filePath, lwcBundle.name, parsed)),
+    E.mapLeft((error) => new ReflectionErrors([new ReflectionError(lwcBundle.filePath, error.message)])),
+    TE.fromEither
+  );
+}
 
-  return TE.right(toParsedFile(lwcBundle.filePath, {
-    // TODO: Extract description from jsdoc
-    description: null,
-    type_name: 'lwc',
-    name: lwcBundle.name,
-  }));
+function toParsedFile(filePath: string, name: string, bundle: LightningComponentBundle): ParsedFile<LwcMetadata> {
+  return {
+    source: {
+      filePath,
+      name: name,
+      type: 'lwc',
+    },
+    type: {
+      name: name,
+      type_name: 'lwc',
+      ...bundle,
+    },
+  };
 }
