@@ -8,6 +8,8 @@ describe('LWC Adapter', () => {
         description: 'Test component description',
         type_name: 'lwc',
         name: 'TestComponent',
+        isExposed: true,
+        masterLabel: 'Test Component',
       };
 
       const renderable = lwcMetadataToRenderable(lwcMetadata);
@@ -20,6 +22,8 @@ describe('LWC Adapter', () => {
         description: 'Test component description',
         type_name: 'lwc',
         name: 'TestComponent',
+        isExposed: true,
+        masterLabel: 'Test Component',
       };
 
       const renderable = lwcMetadataToRenderable(lwcMetadata);
@@ -32,6 +36,8 @@ describe('LWC Adapter', () => {
         description: 'Test component description',
         type_name: 'lwc',
         name: 'MyAwesomeComponent',
+        isExposed: true,
+        masterLabel: 'My Awesome Component',
       };
 
       const renderable = lwcMetadataToRenderable(lwcMetadata);
@@ -44,6 +50,8 @@ describe('LWC Adapter', () => {
         description: 'Test component description',
         type_name: 'lwc',
         name: 'DataTableComponent',
+        isExposed: true,
+        masterLabel: 'Data Table Component',
       };
 
       const renderable = lwcMetadataToRenderable(lwcMetadata);
@@ -51,11 +59,13 @@ describe('LWC Adapter', () => {
       expect(renderable.name).toBe('DataTableComponent');
     });
 
-    it('handles null description correctly', () => {
+    it('handles undefined description correctly', () => {
       const lwcMetadata: LwcMetadata = {
-        description: null,
+        description: undefined,
         type_name: 'lwc',
         name: 'TestComponent',
+        isExposed: true,
+        masterLabel: 'Test Component',
       };
 
       const renderable = lwcMetadataToRenderable(lwcMetadata);
@@ -68,6 +78,8 @@ describe('LWC Adapter', () => {
         description: 'A comprehensive test component',
         type_name: 'lwc',
         name: 'TestComponent',
+        isExposed: true,
+        masterLabel: 'Test Component',
       };
 
       const renderable = lwcMetadataToRenderable(lwcMetadata);
@@ -83,6 +95,8 @@ describe('LWC Adapter', () => {
         description: 'Component with underscore',
         type_name: 'lwc',
         name: 'custom_component_v2',
+        isExposed: true,
+        masterLabel: 'Custom Component V2',
       };
 
       const renderable = lwcMetadataToRenderable(lwcMetadata);
@@ -96,6 +110,8 @@ describe('LWC Adapter', () => {
         description: 'CamelCase component',
         type_name: 'lwc',
         name: 'myCustomDataComponent',
+        isExposed: true,
+        masterLabel: 'My Custom Data Component',
       };
 
       const renderable = lwcMetadataToRenderable(lwcMetadata);
@@ -109,6 +125,8 @@ describe('LWC Adapter', () => {
         description: 'PascalCase component',
         type_name: 'lwc',
         name: 'MyCustomDataComponent',
+        isExposed: true,
+        masterLabel: 'My Custom Data Component',
       };
 
       const renderable = lwcMetadataToRenderable(lwcMetadata);
@@ -122,6 +140,8 @@ describe('LWC Adapter', () => {
         description: 'Another test component',
         type_name: 'lwc',
         name: 'AnotherComponent',
+        isExposed: true,
+        masterLabel: 'Another Component',
       };
 
       const renderable = lwcMetadataToRenderable(lwcMetadata);
