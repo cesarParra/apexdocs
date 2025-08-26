@@ -10,7 +10,6 @@ import * as E from 'fp-ts/Either';
 import { UnparsedLightningComponentBundle } from 'src/core/shared/types';
 import { XMLParser } from 'fast-xml-parser';
 
-// TODO: Everything else
 export type LwcMetadata = {
   type_name: 'lwc';
   name: string;
@@ -55,7 +54,10 @@ function reflectBundle(
   lwcBundle: UnparsedLightningComponentBundle,
 ): TE.TaskEither<ReflectionErrors, ParsedFile<LwcMetadata>> {
   return pipe(
-    E.tryCatch(() => new XMLParser().parse(lwcBundle.metadataContent) as LightningComponentBundle, E.toError),
+    E.tryCatch(() => {
+      const result = new XMLParser().parse(lwcBundle.metadataContent);
+      return result['LightningComponentBundle'] as LightningComponentBundle;
+    }, E.toError),
     E.map((parsed) => toParsedFile(lwcBundle.filePath, lwcBundle.name, parsed)),
     E.mapLeft((error) => new ReflectionErrors([new ReflectionError(lwcBundle.filePath, error.message)])),
     TE.fromEither

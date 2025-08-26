@@ -445,8 +445,7 @@ export function lwcMetadataToRenderable(metadata: LwcMetadata): RenderableLwc {
     heading: metadata.name,
     name: metadata.name,
     doc: {
-      // TODO
-      description: undefined,
+      description: metadata.description ? [metadata.description] : undefined
     },
   };
 }

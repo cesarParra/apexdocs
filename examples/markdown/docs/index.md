@@ -34,6 +34,8 @@ Represents a speaker at an event.
 
 ### [accordion](lightning-web-components/accordion.md)
 
+Accordion
+
 ## Miscellaneous
 
 ### [BaseClass](miscellaneous/BaseClass.md)
