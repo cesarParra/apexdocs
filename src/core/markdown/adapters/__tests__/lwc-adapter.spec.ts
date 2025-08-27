@@ -84,10 +84,7 @@ describe('LWC Adapter', () => {
 
       const renderable = lwcMetadataToRenderable(lwcMetadata);
 
-      // Note: Currently the implementation sets description to undefined regardless
-      // This test documents the current behavior - when description extraction is implemented,
-      // this test should be updated to expect the actual description
-      expect(renderable.doc.description).toBeUndefined();
+      expect(renderable.doc.description).toEqual(['A comprehensive test component']);
     });
 
     it('works with components that have special characters in names', () => {
@@ -153,6 +150,129 @@ describe('LWC Adapter', () => {
       expect(renderable).toHaveProperty('name');
       expect(renderable).toHaveProperty('doc');
       expect(renderable.doc).toHaveProperty('description');
+    });
+
+    it('includes isExposed information in custom tags when component is exposed', () => {
+      const lwcMetadata: LwcMetadata = {
+        description: 'Test component description',
+        type_name: 'lwc',
+        name: 'TestComponent',
+        isExposed: true,
+        masterLabel: 'Test Component',
+      };
+
+      const renderable = lwcMetadataToRenderable(lwcMetadata);
+
+      expect(renderable.doc.customTags).toBeDefined();
+      expect(renderable.doc.customTags![0].name).toBe('exposed');
+      expect(renderable.doc.customTags![0].description).toContain('`Exposed`');
+    });
+
+    it('does not include isExposed information when component is not exposed', () => {
+      const lwcMetadata: LwcMetadata = {
+        description: 'Test component description',
+        type_name: 'lwc',
+        name: 'TestComponent',
+        isExposed: false,
+        masterLabel: 'Test Component',
+      };
+
+      const renderable = lwcMetadataToRenderable(lwcMetadata);
+
+      expect(renderable.doc.customTags).toBeUndefined();
+    });
+
+    it('includes master label information in custom tags', () => {
+      const lwcMetadata: LwcMetadata = {
+        description: 'Test component description',
+        type_name: 'lwc',
+        name: 'TestComponent',
+        isExposed: true,
+        masterLabel: 'Test Component Label',
+      };
+
+      const renderable = lwcMetadataToRenderable(lwcMetadata);
+
+      expect(renderable.doc.customTags).toBeDefined();
+      expect(renderable.doc.customTags![0].name).toBe('exposed');
+      expect(renderable.doc.customTags![0].description).toContain('`Exposed`');
+    });
+
+    it('includes targets information in custom tags when available', () => {
+      const lwcMetadata: LwcMetadata = {
+        description: 'Test component description',
+        type_name: 'lwc',
+        name: 'TestComponent',
+        isExposed: true,
+        masterLabel: 'Test Component',
+        targets: {
+          target: ['lightningCommunity__Default', 'lightning__AppPage'],
+        },
+      };
+
+      const renderable = lwcMetadataToRenderable(lwcMetadata);
+
+      expect(renderable.doc.customTags).toBeDefined();
+      expect(renderable.doc.customTags![0].name).toBe('exposed');
+      expect(renderable.doc.customTags![0].description).toContain('`Exposed`');
+      expect(renderable.doc.customTags![1].name).toBe('targets');
+      expect(renderable.doc.customTags![1].description).toEqual([
+        '- lightningCommunity__Default',
+        '- lightning__AppPage',
+      ]);
+    });
+
+    it('includes target configs information in custom tags when available', () => {
+      const lwcMetadata: LwcMetadata = {
+        description: 'Test component description',
+        type_name: 'lwc',
+        name: 'TestComponent',
+        isExposed: true,
+        masterLabel: 'Test Component',
+        targetConfigs: {
+          targetConfig: [
+            {
+              '@_targets': 'lightningCommunity__Default',
+              property: [
+                {
+                  '@_name': 'recordId',
+                  '@_type': 'String',
+                  '@_required': true,
+                  '@_label': 'Record ID',
+                  '@_description': 'The ID of the record to display',
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      const renderable = lwcMetadataToRenderable(lwcMetadata);
+
+      expect(renderable.doc.customTags).toBeDefined();
+      expect(renderable.doc.customTags![0].name).toBe('exposed');
+      expect(renderable.doc.customTags![0].description).toContain('`Exposed`');
+      expect(renderable.doc.customTags![1].name).toBe('targetConfig');
+      expect(renderable.doc.customTags![1].description).toContain('### lightningCommunity__Default');
+      expect(renderable.doc.customTags![1].description).toContain('#### Properties');
+      expect(renderable.doc.customTags![1].description).toContain('**recordId**');
+      expect(renderable.doc.customTags![1].description).toContain('- Type: String');
+      expect(renderable.doc.customTags![1].description).toContain('- Required: true');
+      expect(renderable.doc.customTags![1].description).toContain('- Description: The ID of the record to display');
+    });
+
+    it('handles components with no additional metadata gracefully', () => {
+      const lwcMetadata: LwcMetadata = {
+        description: undefined,
+        type_name: 'lwc',
+        name: 'TestComponent',
+        isExposed: false,
+        masterLabel: 'Test Component',
+      };
+
+      const renderable = lwcMetadataToRenderable(lwcMetadata);
+
+      expect(renderable.doc.description).toBeUndefined();
     });
   });
 });

@@ -13,6 +13,7 @@ export class LwcBuilder {
     label: string;
     description: string;
     default?: string;
+    target?: string;
   }> = [];
 
   withName(name: string): LwcBuilder {
@@ -60,6 +61,7 @@ export class LwcBuilder {
     label: string;
     description: string;
     default?: string;
+    target?: string;
   }): LwcBuilder {
     this.properties.push(property);
     return this;
@@ -70,9 +72,7 @@ export class LwcBuilder {
       return this.jsContent;
     }
 
-    const apiProperties = this.properties
-      .map(prop => `    @api ${prop.name};`)
-      .join('\n');
+    const apiProperties = this.properties.map((prop) => `    @api ${prop.name};`).join('\n');
 
     return `import { LightningElement, api } from 'lwc';
 
@@ -82,18 +82,14 @@ ${apiProperties}
   }
 
   buildMetaXml(): string {
-    const targetsXml = this.targets
-      .map(target => `        <target>${target}</target>`)
-      .join('\n');
+    const targetsXml = this.targets.map((target) => `        <target>${target}</target>`).join('\n');
 
-    const propertiesXml = this.properties.length > 0
-      ? `    <targetConfigs>
-        <targetConfig targets="${this.targets[0]}">
-${this.properties.map(prop => `            <property name="${prop.name}" type="${prop.type}" required="${prop.required}" label="${prop.label}" description="${prop.description}"${prop.default ? ` default="${prop.default}"` : ''}/>`)
-  .join('\n')}
-        </targetConfig>
+    const propertiesXml =
+      this.properties.length > 0
+        ? `    <targetConfigs>
+${this.buildTargetConfigsXml()}
     </targetConfigs>`
-      : '';
+        : '';
 
     return `<?xml version="1.0" encoding="UTF-8"?>
 <LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
@@ -106,5 +102,39 @@ ${targetsXml}
     </targets>
 ${propertiesXml}
 </LightningComponentBundle>`;
+  }
+
+  private buildTargetConfigsXml(): string {
+    if (this.properties.length === 0) {
+      return '';
+    }
+
+    // Group properties by target
+    const propertiesByTarget = new Map<string, Array<(typeof this.properties)[0]>>();
+
+    this.properties.forEach((prop) => {
+      const target = prop.target || this.targets[0];
+      if (!propertiesByTarget.has(target)) {
+        propertiesByTarget.set(target, []);
+      }
+      propertiesByTarget.get(target)!.push(prop);
+    });
+
+    // Build XML for each target config
+    let targetConfigsXml = '';
+    propertiesByTarget.forEach((properties, target) => {
+      const propertiesXml = properties
+        .map(
+          (prop) =>
+            `            <property name="${prop.name}" type="${prop.type}" required="${prop.required}" label="${prop.label}" description="${prop.description}"${prop.default ? ` default="${prop.default}"` : ''}/>`,
+        )
+        .join('\n');
+
+      targetConfigsXml += `        <targetConfig targets="${target}">
+${propertiesXml}
+        </targetConfig>\n`;
+    });
+
+    return targetConfigsXml;
   }
 }

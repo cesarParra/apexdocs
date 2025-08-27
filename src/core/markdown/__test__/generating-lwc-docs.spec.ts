@@ -201,6 +201,81 @@ export default class RecordViewer extends LightningElement {
       });
     });
 
+    it('handles LWC with multiple targetConfigs and different properties', async () => {
+      const lwcBuilder = new LwcBuilder()
+        .withName('MultiConfigComponent')
+        .withDescription('Component with multiple target configurations')
+        .withTargets(['lightningCommunity__Default', 'lightning__AppPage', 'lightning__RecordPage'])
+        .withProperty({
+          name: 'communityTitle',
+          type: 'String',
+          required: true,
+          label: 'Community Title',
+          description: 'Title for community pages',
+          target: 'lightningCommunity__Default',
+        })
+        .withProperty({
+          name: 'appPageTitle',
+          type: 'String',
+          required: false,
+          label: 'App Page Title',
+          description: 'Title for app pages',
+          target: 'lightning__AppPage',
+        })
+        .withProperty({
+          name: 'recordId',
+          type: 'String',
+          required: true,
+          label: 'Record ID',
+          description: 'Record ID for record pages',
+          target: 'lightning__RecordPage',
+        })
+        .withProperty({
+          name: 'showDetails',
+          type: 'Boolean',
+          required: false,
+          label: 'Show Details',
+          description: 'Whether to show detailed information',
+          target: 'lightning__RecordPage',
+          default: 'false',
+        });
+
+      const lwcBundle = unparsedLwcBundleFromRawString({
+        jsContent: lwcBuilder.buildJs(),
+        xmlContent: lwcBuilder.buildMetaXml(),
+        filePath: 'force-app/main/default/lwc/multiConfigComponent/multiConfigComponent.js',
+        name: 'MultiConfigComponent',
+      });
+
+      const result = await generateDocs([lwcBundle])();
+
+      assertEither(result, (data) => {
+        expect(data.docs).toHaveLength(1);
+        expect(data).firstDocContains('MultiConfigComponent');
+        expect(data).firstDocContains(' Targets');
+        expect(data).firstDocContains('- lightningCommunity__Default');
+        expect(data).firstDocContains('- lightning__AppPage');
+        expect(data).firstDocContains('- lightning__RecordPage');
+        expect(data).firstDocContains('lightningCommunity__Default');
+        expect(data).firstDocContains(' Properties');
+        expect(data).firstDocContains('**communityTitle**');
+        expect(data).firstDocContains('- Type: String');
+        expect(data).firstDocContains('- Required: true');
+        expect(data).firstDocContains('lightning__AppPage');
+        expect(data).firstDocContains('**appPageTitle**');
+        expect(data).firstDocContains('- Type: String');
+        expect(data).firstDocContains('- Required: false');
+        expect(data).firstDocContains('lightning__RecordPage');
+        expect(data).firstDocContains('**recordId**');
+        expect(data).firstDocContains('- Type: String');
+        expect(data).firstDocContains('- Required: true');
+        expect(data).firstDocContains('**showDetails**');
+        expect(data).firstDocContains('- Type: Boolean');
+        expect(data).firstDocContains('- Required: false');
+        expect(data).firstDocContains('- Description: Whether to show detailed information');
+      });
+    });
+
     it('handles LWC that is not exposed', async () => {
       const lwcBuilder = new LwcBuilder()
         .withName('InternalComponent')
@@ -255,6 +330,48 @@ export default class MinimalComponent extends LightningElement {}`;
         expect(data.docs).toHaveLength(1);
         expect(data.docs[0].source.name).toBe('MinimalComponent');
         expect(data.docs[0].source.type).toBe('lwc');
+      });
+    });
+
+    it('includes LWC metadata in final documentation output', async () => {
+      const lwcBuilder = new LwcBuilder()
+        .withName('MetadataComponent')
+        .withDescription('Component with full metadata')
+        .withIsExposed(true)
+        .withMasterLabel('Metadata Test Component')
+        .withTargets(['lightningCommunity__Default', 'lightning__AppPage'])
+        .withProperty({
+          name: 'recordId',
+          type: 'String',
+          required: true,
+          label: 'Record ID',
+          description: 'The ID of the record to display',
+        });
+
+      const lwcBundle = unparsedLwcBundleFromRawString({
+        jsContent: lwcBuilder.buildJs(),
+        xmlContent: lwcBuilder.buildMetaXml(),
+        filePath: 'force-app/main/default/lwc/metadataComponent/metadataComponent.js',
+        name: 'MetadataComponent',
+      });
+
+      const result = await generateDocs([lwcBundle])();
+
+      assertEither(result, (data) => {
+        expect(data.docs).toHaveLength(1);
+
+        expect(data).firstDocContains('MetadataComponent');
+        expect(data).firstDocContains('Component with full metadata');
+        expect(data).firstDocContains('`Exposed`');
+        expect(data).firstDocContains(' Targets');
+        expect(data).firstDocContains('- lightningCommunity__Default');
+        expect(data).firstDocContains('- lightning__AppPage');
+        expect(data).firstDocContains('lightningCommunity__Default');
+        expect(data).firstDocContains(' Properties');
+        expect(data).firstDocContains('**recordId**');
+        expect(data).firstDocContains('- Type: String');
+        expect(data).firstDocContains('- Required: true');
+        expect(data).firstDocContains('- Description: The ID of the record to display');
       });
     });
   });

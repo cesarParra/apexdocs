@@ -185,7 +185,22 @@ export type RenderableTrigger = Omit<RenderableType, 'meta'> & {
 
 export type RenderableLwc = Omit<RenderableType, 'meta'> & {
   type: 'lwc';
+  exposed: boolean;
+  description: string | undefined;
+  targets: RenderableSection<string[]>;
+  targetConfigs: RenderableSection<TargetConfigRenderable[]>;
 }
+
+export type TargetConfigRenderable = {
+  targetName: string;
+  properties: {
+    type: string;
+    required: boolean;
+    description: string | undefined;
+    label: string;
+    name: string;
+  }[];
+};
 
 export type RenderableCustomObject = Omit<RenderableType, 'meta'> & {
   apiName: string;

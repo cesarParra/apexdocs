@@ -36,6 +36,12 @@ export class Template {
     Handlebars.registerHelper('heading', heading);
     Handlebars.registerHelper('inlineCode', inlineCode);
     Handlebars.registerHelper('splitAndCapitalize', splitAndCapitalize);
+    Handlebars.registerHelper('eq', eq);
+    Handlebars.registerHelper('add', add);
+    Handlebars.registerHelper('lookup', lookup);
+    Handlebars.registerHelper('parseJSON', parseJSON);
+    Handlebars.registerHelper('startsWith', startsWith);
+    Handlebars.registerHelper('substring', substring);
   }
 
   public static getInstance(): Template {
@@ -71,6 +77,37 @@ const heading = (level: number, text: string) => {
 
 const inlineCode = (text: string) => {
   return new Handlebars.SafeString(`\`${text}\``);
+};
+
+const eq = (a: unknown, b: unknown) => {
+  return a === b;
+};
+
+const add = (a: number, b: number) => {
+  return a + b;
+};
+
+const lookup = (array: unknown[], index: number) => {
+  return array[index];
+};
+
+const parseJSON = (jsonString: string) => {
+  try {
+    return JSON.parse(jsonString);
+  } catch {
+    return null;
+  }
+};
+
+const startsWith = (str: string, prefix: string) => {
+  return str.startsWith(prefix);
+};
+
+const substring = (str: string, start: number, length?: number) => {
+  if (length !== undefined) {
+    return str.substring(start, start + length);
+  }
+  return str.substring(start);
 };
 
 const convertCodeBlock = (codeBlock: CodeBlock): Handlebars.SafeString => {

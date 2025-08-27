@@ -20,26 +20,27 @@ type LightningComponentBundle = {
   description?: string;
   masterLabel: string;
   targets?: Target;
-  targetConfigs?: TargetConfig;
-}
+  targetConfigs?: TargetConfigs;
+};
 
 type Target = {
   target: string[];
-}
-
-type TargetConfig = {
-  targetConfig: {
-    property: {
-      '@_name': string;
-      '@_type': string;
-      '@_required'?: boolean;
-      '@_label'?: string;
-      '@_description'?: string;
-    }[],
-    '@_targets': string;
-  }[];
 };
 
+type TargetConfigs = {
+  targetConfig: TargetConfig[];
+};
+
+export type TargetConfig = {
+  property: {
+    '@_name': string;
+    '@_type': string;
+    '@_required'?: boolean;
+    '@_label'?: string;
+    '@_description'?: string;
+  }[];
+  '@_targets': string;
+};
 
 export function reflectLwcSource(triggerBundles: UnparsedLightningComponentBundle[]) {
   const semiGroupReflectionError: Semigroup<ReflectionErrors> = {
@@ -55,13 +56,48 @@ function reflectBundle(
 ): TE.TaskEither<ReflectionErrors, ParsedFile<LwcMetadata>> {
   return pipe(
     E.tryCatch(() => {
-      const result = new XMLParser().parse(lwcBundle.metadataContent);
-      return result['LightningComponentBundle'] as LightningComponentBundle;
+      const alwaysArray = [
+        'LightningComponentBundle.targets.target',
+        'LightningComponentBundle.targetConfigs.targetConfig',
+        'LightningComponentBundle.targetConfigs.targetConfig.property',
+      ];
+
+      const options = {
+        ignoreAttributes: false,
+        isArray: (_name: string, jpath: string) => {
+          return alwaysArray.indexOf(jpath) !== -1;
+        },
+      };
+      const result = new XMLParser(options).parse(lwcBundle.metadataContent);
+      const bundle = result['LightningComponentBundle'] as LightningComponentBundle;
+      return transformBooleanProperties(bundle);
     }, E.toError),
     E.map((parsed) => toParsedFile(lwcBundle.filePath, lwcBundle.name, parsed)),
     E.mapLeft((error) => new ReflectionErrors([new ReflectionError(lwcBundle.filePath, error.message)])),
-    TE.fromEither
+    TE.fromEither,
   );
+}
+
+function transformBooleanProperties(bundle: LightningComponentBundle): LightningComponentBundle {
+  // Convert string boolean values to actual booleans in targetConfigs
+  if (bundle.targetConfigs?.targetConfig) {
+    bundle.targetConfigs.targetConfig = bundle.targetConfigs.targetConfig.map((config) => {
+      if (config.property) {
+        config.property = config.property.map((prop) => {
+          if (typeof prop['@_required'] === 'string') {
+            if (prop['@_required'] === 'true') {
+              prop['@_required'] = true;
+            } else if (prop['@_required'] === 'false') {
+              prop['@_required'] = false;
+            }
+          }
+          return prop;
+        });
+      }
+      return config;
+    });
+  }
+  return bundle;
 }
 
 function toParsedFile(filePath: string, name: string, bundle: LightningComponentBundle): ParsedFile<LwcMetadata> {

@@ -60,26 +60,22 @@ describe('when parsing LWC components', () => {
     });
   });
 
-  // TODO
-  // test('the description is currently null (TODO implementation)', async () => {
-  //   const lwcBuilder = new LwcBuilder()
-  //     .withName('TestComponent')
-  //     .withDescription('This is a test component');
-  //   const unparsed: UnparsedLightningComponentBundle = {
-  //     type: 'lwc',
-  //     name: 'TestComponent',
-  //     filePath: 'force-app/main/default/lwc/testComponent/testComponent.js',
-  //     content: lwcBuilder.buildJs(),
-  //     metadataContent: lwcBuilder.buildMetaXml(),
-  //   };
-  //
-  //   const result = await reflectLwcSource([unparsed])();
-  //
-  //   assertEither(result, (data) => {
-  //     // Currently description is null as per the TODO in the implementation
-  //     expect(data[0].type.description).toBe(null);
-  //   });
-  // });
+  test('the description is extracted from metadata', async () => {
+    const lwcBuilder = new LwcBuilder().withName('TestComponent').withDescription('This is a test component');
+    const unparsed: UnparsedLightningComponentBundle = {
+      type: 'lwc',
+      name: 'TestComponent',
+      filePath: 'force-app/main/default/lwc/testComponent/testComponent.js',
+      content: lwcBuilder.buildJs(),
+      metadataContent: lwcBuilder.buildMetaXml(),
+    };
+
+    const result = await reflectLwcSource([unparsed])();
+
+    assertEither(result, (data) => {
+      expect(data[0].type.description).toBe('This is a test component');
+    });
+  });
 
   test('can process multiple LWC components', async () => {
     const component1Builder = new LwcBuilder().withName('ComponentOne');
@@ -137,9 +133,7 @@ export default class ComplexComponent extends LightningElement {
     }
 }`;
 
-    const lwcBuilder = new LwcBuilder()
-      .withName('ComplexComponent')
-      .withJsContent(complexJsContent);
+    const lwcBuilder = new LwcBuilder().withName('ComplexComponent').withJsContent(complexJsContent);
 
     const unparsed: UnparsedLightningComponentBundle = {
       type: 'lwc',
@@ -199,6 +193,90 @@ export default class ComplexComponent extends LightningElement {
 
     assertEither(result, (data) => {
       expect(data[0].source.name).toBe('DataTableComponent');
+    });
+  });
+
+  test('the isExposed flag is extracted from metadata', async () => {
+    const lwcBuilder = new LwcBuilder().withName('TestComponent').withIsExposed(false);
+    const unparsed: UnparsedLightningComponentBundle = {
+      type: 'lwc',
+      name: 'TestComponent',
+      filePath: 'force-app/main/default/lwc/testComponent/testComponent.js',
+      content: lwcBuilder.buildJs(),
+      metadataContent: lwcBuilder.buildMetaXml(),
+    };
+
+    const result = await reflectLwcSource([unparsed])();
+
+    assertEither(result, (data) => {
+      expect(data[0].type.isExposed).toBe(false);
+    });
+  });
+
+  test('the masterLabel is extracted from metadata', async () => {
+    const lwcBuilder = new LwcBuilder().withName('TestComponent').withMasterLabel('Custom Label');
+    const unparsed: UnparsedLightningComponentBundle = {
+      type: 'lwc',
+      name: 'TestComponent',
+      filePath: 'force-app/main/default/lwc/testComponent/testComponent.js',
+      content: lwcBuilder.buildJs(),
+      metadataContent: lwcBuilder.buildMetaXml(),
+    };
+
+    const result = await reflectLwcSource([unparsed])();
+
+    assertEither(result, (data) => {
+      expect(data[0].type.masterLabel).toBe('Custom Label');
+    });
+  });
+
+  test('targets are extracted from metadata', async () => {
+    const lwcBuilder = new LwcBuilder()
+      .withName('TestComponent')
+      .withTargets(['lightningCommunity__Default', 'lightning__RecordPage']);
+    const unparsed: UnparsedLightningComponentBundle = {
+      type: 'lwc',
+      name: 'TestComponent',
+      filePath: 'force-app/main/default/lwc/testComponent/testComponent.js',
+      content: lwcBuilder.buildJs(),
+      metadataContent: lwcBuilder.buildMetaXml(),
+    };
+
+    const result = await reflectLwcSource([unparsed])();
+
+    assertEither(result, (data) => {
+      expect(data[0].type.targets?.target).toEqual(['lightningCommunity__Default', 'lightning__RecordPage']);
+    });
+  });
+
+  test('targetConfigs with properties are extracted from metadata', async () => {
+    const lwcBuilder = new LwcBuilder().withName('TestComponent').withProperty({
+      name: 'recordId',
+      type: 'String',
+      required: true,
+      label: 'Record ID',
+      description: 'The ID of the record to display',
+    });
+    const unparsed: UnparsedLightningComponentBundle = {
+      type: 'lwc',
+      name: 'TestComponent',
+      filePath: 'force-app/main/default/lwc/testComponent/testComponent.js',
+      content: lwcBuilder.buildJs(),
+      metadataContent: lwcBuilder.buildMetaXml(),
+    };
+
+    const result = await reflectLwcSource([unparsed])();
+
+    assertEither(result, (data) => {
+      expect(data[0].type.targetConfigs?.targetConfig).toBeDefined();
+      expect(data[0].type.targetConfigs?.targetConfig[0].property).toHaveLength(1);
+      expect(data[0].type.targetConfigs?.targetConfig[0].property[0]['@_name']).toBe('recordId');
+      expect(data[0].type.targetConfigs?.targetConfig[0].property[0]['@_type']).toBe('String');
+      expect(data[0].type.targetConfigs?.targetConfig[0].property[0]['@_required']).toBe(true);
+      expect(data[0].type.targetConfigs?.targetConfig[0].property[0]['@_label']).toBe('Record ID');
+      expect(data[0].type.targetConfigs?.targetConfig[0].property[0]['@_description']).toBe(
+        'The ID of the record to display',
+      );
     });
   });
 });
