@@ -19,9 +19,7 @@ export function isSkip(value: unknown): value is Skip {
   return Object.prototype.hasOwnProperty.call(value, '_tag') && (value as Skip)._tag === 'Skip';
 }
 
-export function isObjectType(
-  type: ParsedType
-): type is CustomObjectMetadata {
+export function isObjectType(type: ParsedType): type is CustomObjectMetadata {
   return (type as CustomObjectMetadata).type_name === 'customobject';
 }
 
@@ -29,15 +27,11 @@ export function isApexType(type: ParsedType): type is Type {
   return !isObjectType(type) && !isTriggerType(type) && !isLwcType(type);
 }
 
-function isTriggerType(
-  type: ParsedType,
-): type is TriggerMetadata {
+function isTriggerType(type: ParsedType): type is TriggerMetadata {
   return type.type_name === 'trigger';
 }
 
-export function isLwcType(
-  type: ParsedType,
-): type is LwcMetadata {
+export function isLwcType(type: ParsedType): type is LwcMetadata {
   return type.type_name === 'lwc';
 }
 
@@ -59,7 +53,7 @@ export function getTypeGroup(type: TopLevelType, config: MarkdownGeneratorConfig
     case 'trigger':
       return config.triggersGroupName;
     case 'lwc':
-      return 'Lightning Web Components'; // TODO: Make this configurable?
+      return config.lwcGroupName;
     default:
       return getGroup(type, config);
   }

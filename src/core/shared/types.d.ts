@@ -9,7 +9,7 @@ import { LwcMetadata } from '../reflection/lwc/reflect-lwc-source';
 export type Generators = 'markdown' | 'openapi' | 'changelog';
 
 type LinkingStrategy =
-// Links will be generated using relative paths.
+  // Links will be generated using relative paths.
   | 'relative'
   // No links will be generated.
   // If the reference is found, the display name will be used.
@@ -38,6 +38,7 @@ export type CliConfigurableMarkdownConfig = {
   defaultGroupName: string;
   customObjectsGroupName: string;
   triggersGroupName: string;
+  lwcGroupName: string;
   sortAlphabetically: boolean;
   includeMetadata: boolean;
   linkingStrategy: LinkingStrategy;
@@ -135,10 +136,10 @@ export type UnparsedLightningComponentBundle = {
   filePath: string;
   content: string;
   metadataContent: string;
-}
+};
 
 type MetadataTypes =
-  'interface'
+  | 'interface'
   | 'class'
   | 'enum'
   | 'customobject'
@@ -167,7 +168,7 @@ export type ExternalMetadata = {
 export type TopLevelType = Type | CustomObjectMetadata | TriggerMetadata | LwcMetadata;
 
 export type ParsedType =
-  Type
+  | Type
   | CustomObjectMetadata
   | CustomFieldMetadata
   | CustomMetadataMetadata
@@ -176,7 +177,7 @@ export type ParsedType =
 
 export type ParsedFile<
   T extends ParsedType =
-      | Type
+    | Type
     | CustomObjectMetadata
     | CustomFieldMetadata
     | CustomMetadataMetadata
