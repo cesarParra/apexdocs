@@ -4,47 +4,54 @@
 
 Accordion
 
- Targets
-
+## Targets
 - lightningCommunity__Default
 - lightningCommunity__Page
+
+## Target Configs
 
 ### lightningCommunity__Default
 
 #### Properties
 
-**contextUrlParam**
+**Context URL Parameter** `contextUrlParam`
 
-- Type: String
-- Required: false
-- Description: Optional - The name of the URL parameter that contains the context ID.
+Optional - The name of the URL parameter that contains the context ID.
 
-**previewContextId**
+- **Type:** String
+- **Required:** false
 
-- Type: String
-- Required: false
-- Description: Optional - The ID of the context record to use when previewing the component in the builder.
+**Preview Context ID** `previewContextId`
 
-**expr**
+Optional - The ID of the context record to use when previewing the component in the builder.
 
-- Type: String
-- Required: true
-- Description: Formula expression to be evaluated.
+- **Type:** String
+- **Required:** false
 
-**respectSharing**
+**Formula Expression** `expr`
 
-- Type: Boolean
-- Required: false
-- Description: Whether to run the evaluation with or without sharing.
+Formula expression to be evaluated.
 
-**autoCollapse**
+- **Type:** String
+- **Required:** true
 
-- Type: Boolean
-- Required: false
-- Description: Whether to automatically collapse the accordion when a new section is expanded.
+**Respect Sharing** `respectSharing`
 
-**flushStyle**
+Whether to run the evaluation with or without sharing.
 
-- Type: Boolean
-- Required: false
-- Description: Removes the background color and rounded borders from the accordion component.
+- **Type:** Boolean
+- **Required:** false
+
+**Auto Collapse** `autoCollapse`
+
+Whether to automatically collapse the accordion when a new section is expanded.
+
+- **Type:** Boolean
+- **Required:** false
+
+**Flush Style** `flushStyle`
+
+Removes the background color and rounded borders from the accordion component.
+
+- **Type:** Boolean
+- **Required:** false

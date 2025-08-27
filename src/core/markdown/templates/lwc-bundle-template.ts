@@ -1,37 +1,38 @@
 export const lwcBundleTemplate = `
 {{ heading headingLevel heading }}
 
-{{#if doc.customTags}}
-{{#each doc.customTags}}
-{{#if (eq name "exposed")}}
-{{#each description}}
-{{{inlineCode this}}}
-{{/each}}
+{{#if exposed}}
+\`Exposed\`
 {{/if}}
+
+{{#if description}}
+{{description}}
+{{/if}}
+
+{{#if targets.value.length}}
+{{ heading targets.headingLevel targets.heading }}
+{{#each targets.value}}
+- {{this}}
 {{/each}}
 {{/if}}
 
-{{{renderContent doc.description}}}
+{{#if targetConfigs.value.length}}
+{{ heading targetConfigs.headingLevel targetConfigs.heading }}
 
-{{#if doc.customTags}}
-{{#each doc.customTags}}
-{{#if (eq name "targets")}}
-{{ heading (add headingLevel 1) "Targets" }}
+{{#each targetConfigs.value}}
+### {{ targetName }}
 
-{{#each description}}
-{{this}}
-{{/each}}
-{{/if}}
-{{/each}}
-{{/if}}
+#### Properties
 
-{{#if doc.customTags}}
-{{#each doc.customTags}}
-{{#if (eq name "targetConfig")}}
-{{#each description}}
-{{this}}
+{{#each properties}}
+**{{label}}** \`{{name}}\`
+
+{{#if description}}{{description}}{{/if}}
+
+- **Type:** {{type}}
+- **Required:** {{required}}
+
 {{/each}}
-{{/if}}
 {{/each}}
 {{/if}}
 `.trim();

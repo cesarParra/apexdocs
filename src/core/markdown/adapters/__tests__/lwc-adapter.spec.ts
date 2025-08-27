@@ -1,7 +1,26 @@
 import { LwcMetadata } from '../../../reflection/lwc/reflect-lwc-source';
 import { lwcMetadataToRenderable } from '../type-to-renderable';
+import { MarkdownGeneratorConfig } from '../../generate-docs';
 
 describe('LWC Adapter', () => {
+  const defaultConfig: MarkdownGeneratorConfig = {
+    targetDir: '',
+    scope: ['global', 'public'],
+    customObjectVisibility: ['public'],
+    namespace: '',
+    defaultGroupName: 'Miscellaneous',
+    customObjectsGroupName: 'Custom Objects',
+    triggersGroupName: 'Triggers',
+    referenceGuideTemplate: '',
+    sortAlphabetically: false,
+    linkingStrategy: 'relative',
+    referenceGuideTitle: 'Apex Reference Guide',
+    includeFieldSecurityMetadata: true,
+    includeInlineHelpTextMetadata: true,
+    exclude: [],
+    excludeTags: [],
+  };
+
   describe('lwcMetadataToRenderable', () => {
     it('converts LWC metadata to renderable with correct type', () => {
       const lwcMetadata: LwcMetadata = {
@@ -12,7 +31,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'Test Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
 
       expect(renderable.type).toBe('lwc');
     });
@@ -26,7 +45,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'Test Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
 
       expect(renderable.headingLevel).toBe(1);
     });
@@ -40,7 +59,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'My Awesome Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
 
       expect(renderable.heading).toBe('MyAwesomeComponent');
     });
@@ -54,7 +73,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'Data Table Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
 
       expect(renderable.name).toBe('DataTableComponent');
     });
@@ -68,7 +87,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'Test Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
 
       expect(renderable.doc.description).toBeUndefined();
     });
@@ -82,9 +101,9 @@ describe('LWC Adapter', () => {
         masterLabel: 'Test Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
 
-      expect(renderable.doc.description).toEqual(['A comprehensive test component']);
+      expect(renderable.description).toEqual('A comprehensive test component');
     });
 
     it('works with components that have special characters in names', () => {
@@ -96,7 +115,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'Custom Component V2',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
 
       expect(renderable.name).toBe('custom_component_v2');
       expect(renderable.heading).toBe('custom_component_v2');
@@ -111,7 +130,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'My Custom Data Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
 
       expect(renderable.name).toBe('myCustomDataComponent');
       expect(renderable.heading).toBe('myCustomDataComponent');
@@ -126,7 +145,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'My Custom Data Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
 
       expect(renderable.name).toBe('MyCustomDataComponent');
       expect(renderable.heading).toBe('MyCustomDataComponent');
@@ -141,7 +160,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'Another Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
 
       // Verify the renderable has the expected structure
       expect(renderable).toHaveProperty('type', 'lwc');
@@ -149,10 +168,10 @@ describe('LWC Adapter', () => {
       expect(renderable).toHaveProperty('heading');
       expect(renderable).toHaveProperty('name');
       expect(renderable).toHaveProperty('doc');
-      expect(renderable.doc).toHaveProperty('description');
+      expect(renderable).toHaveProperty('description');
     });
 
-    it('includes isExposed information in custom tags when component is exposed', () => {
+    it('includes isExposed information when component is exposed', () => {
       const lwcMetadata: LwcMetadata = {
         description: 'Test component description',
         type_name: 'lwc',
@@ -161,11 +180,9 @@ describe('LWC Adapter', () => {
         masterLabel: 'Test Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
 
-      expect(renderable.doc.customTags).toBeDefined();
-      expect(renderable.doc.customTags![0].name).toBe('exposed');
-      expect(renderable.doc.customTags![0].description).toContain('`Exposed`');
+      expect(renderable.exposed).toBe(true);
     });
 
     it('does not include isExposed information when component is not exposed', () => {
@@ -177,12 +194,12 @@ describe('LWC Adapter', () => {
         masterLabel: 'Test Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
 
-      expect(renderable.doc.customTags).toBeUndefined();
+      expect(renderable.exposed).toBe(false);
     });
 
-    it('includes master label information in custom tags', () => {
+    it('includes master label information', () => {
       const lwcMetadata: LwcMetadata = {
         description: 'Test component description',
         type_name: 'lwc',
@@ -191,14 +208,12 @@ describe('LWC Adapter', () => {
         masterLabel: 'Test Component Label',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
 
-      expect(renderable.doc.customTags).toBeDefined();
-      expect(renderable.doc.customTags![0].name).toBe('exposed');
-      expect(renderable.doc.customTags![0].description).toContain('`Exposed`');
+      expect(renderable.exposed).toBe(true);
     });
 
-    it('includes targets information in custom tags when available', () => {
+    it('includes targets information when available', () => {
       const lwcMetadata: LwcMetadata = {
         description: 'Test component description',
         type_name: 'lwc',
@@ -210,19 +225,14 @@ describe('LWC Adapter', () => {
         },
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
 
-      expect(renderable.doc.customTags).toBeDefined();
-      expect(renderable.doc.customTags![0].name).toBe('exposed');
-      expect(renderable.doc.customTags![0].description).toContain('`Exposed`');
-      expect(renderable.doc.customTags![1].name).toBe('targets');
-      expect(renderable.doc.customTags![1].description).toEqual([
-        '- lightningCommunity__Default',
-        '- lightning__AppPage',
-      ]);
+      expect(renderable.targets.value).toEqual(['lightningCommunity__Default', 'lightning__AppPage']);
+      expect(renderable.targets.heading).toBe('Targets');
+      expect(renderable.targets.headingLevel).toBe(2);
     });
 
-    it('includes target configs information in custom tags when available', () => {
+    it('includes target configs information when available', () => {
       const lwcMetadata: LwcMetadata = {
         description: 'Test component description',
         type_name: 'lwc',
@@ -247,18 +257,17 @@ describe('LWC Adapter', () => {
         },
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
 
-      expect(renderable.doc.customTags).toBeDefined();
-      expect(renderable.doc.customTags![0].name).toBe('exposed');
-      expect(renderable.doc.customTags![0].description).toContain('`Exposed`');
-      expect(renderable.doc.customTags![1].name).toBe('targetConfig');
-      expect(renderable.doc.customTags![1].description).toContain('### lightningCommunity__Default');
-      expect(renderable.doc.customTags![1].description).toContain('#### Properties');
-      expect(renderable.doc.customTags![1].description).toContain('**recordId**');
-      expect(renderable.doc.customTags![1].description).toContain('- Type: String');
-      expect(renderable.doc.customTags![1].description).toContain('- Required: true');
-      expect(renderable.doc.customTags![1].description).toContain('- Description: The ID of the record to display');
+      expect(renderable.targetConfigs.value).toHaveLength(1);
+      expect(renderable.targetConfigs.value[0].targetName).toBe('lightningCommunity__Default');
+      expect(renderable.targetConfigs.value[0].properties).toHaveLength(1);
+      expect(renderable.targetConfigs.value[0].properties[0].name).toBe('recordId');
+      expect(renderable.targetConfigs.value[0].properties[0].type).toBe('String');
+      expect(renderable.targetConfigs.value[0].properties[0].required).toBe(true);
+      expect(renderable.targetConfigs.value[0].properties[0].description).toBe('The ID of the record to display');
+      expect(renderable.targetConfigs.heading).toBe('Target Configs');
+      expect(renderable.targetConfigs.headingLevel).toBe(2);
     });
 
     it('handles components with no additional metadata gracefully', () => {
@@ -270,7 +279,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'Test Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
 
       expect(renderable.doc.description).toBeUndefined();
     });

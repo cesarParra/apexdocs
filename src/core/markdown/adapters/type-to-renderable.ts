@@ -447,7 +447,7 @@ export function lwcMetadataToRenderable(metadata: LwcMetadata, config: MarkdownG
         description: prop['@_description'],
         required: prop['@_required'] ?? false,
         type: prop['@_type'],
-        label: prop['@_label'] ?? '',
+        label: prop['@_label'] ?? prop['@_name'],
         name: prop['@_name'],
       }))
     }
