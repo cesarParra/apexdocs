@@ -93,6 +93,7 @@ describe('when extracting arguments', () => {
 
       try {
         await extractArgs(getFromProcess);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         // Do nothing
       }
@@ -112,6 +113,7 @@ describe('when extracting arguments', () => {
 
       try {
         await extractArgs(getFromProcess);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         // Do nothing
       }

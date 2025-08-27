@@ -33,12 +33,11 @@ import { isSkip, passThroughHook, toFrontmatterString } from '../shared/utils';
 import { parsedFilesToReferenceGuide } from './adapters/reference-guide';
 import { removeExcludedTags } from '../reflection/apex/remove-excluded-tags';
 import { HookError } from '../errors/errors';
-import {
-  reflectCustomFieldsAndObjectsAndMetadataRecords
-} from '../reflection/sobject/reflectCustomFieldsAndObjectsAndMetadataRecords';
+import { reflectCustomFieldsAndObjectsAndMetadataRecords } from '../reflection/sobject/reflectCustomFieldsAndObjectsAndMetadataRecords';
 import {
   filterApexSourceFiles,
-  filterCustomObjectsFieldsAndMetadataRecords, filterLwcFiles,
+  filterCustomObjectsFieldsAndMetadataRecords,
+  filterLwcFiles,
   filterTriggerFiles,
 } from '#utils/source-bundle-utils';
 import { reflectTriggerSource } from '../reflection/trigger/reflect-trigger-source';
@@ -91,12 +90,12 @@ export function generateDocs(unparsedBundles: UnparsedSourceBundle[], config: Ma
     TE.chain((parsedFiles) => {
       return pipe(
         reflectLwcSource(filterLwcFiles(unparsedBundles)),
+        TE.map((parsedFiles) => parsedFiles.filter((file) => file.type.isExposed)),
         TE.map((parsedLwcFiles) => [...parsedFiles, ...parsedLwcFiles]),
       );
     }),
     TE.map((parsedFiles) => sort(filterOutCustomFieldsAndMetadata(parsedFiles))),
     TE.bindTo('parsedFiles'),
-    //TE.map((parsedFiles) => { console.log('Parsed Files:', parsedFiles); return parsedFiles; }),
     TE.bind('references', ({ parsedFiles }) =>
       TE.right(
         // Custom fields should not show up in the reference guide
@@ -249,15 +248,15 @@ function postHookCompile(bundle: PostHookDocumentationBundle) {
     referenceGuide: isSkip(bundle.referenceGuide)
       ? bundle.referenceGuide
       : {
-        ...bundle.referenceGuide,
-        content: Template.getInstance().compile({
-          source: {
-            frontmatter: toFrontmatterString(bundle.referenceGuide.frontmatter),
-            content: bundle.referenceGuide.content,
-          },
-          template: hookableTemplate,
-        }),
-      },
+          ...bundle.referenceGuide,
+          content: Template.getInstance().compile({
+            source: {
+              frontmatter: toFrontmatterString(bundle.referenceGuide.frontmatter),
+              content: bundle.referenceGuide.content,
+            },
+            template: hookableTemplate,
+          }),
+        },
     docs: bundle.docs.map((doc) => ({
       ...doc,
       content: Template.getInstance().compile({

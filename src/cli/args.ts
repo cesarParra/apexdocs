@@ -1,5 +1,5 @@
 import { cosmiconfig } from 'cosmiconfig';
-import yargs = require('yargs');
+import yargs from 'yargs';
 import * as E from 'fp-ts/Either';
 import {
   Generators,
@@ -13,7 +13,7 @@ import { markdownOptions, validateMarkdownArgs } from './commands/markdown';
 import { openApiOptions, validateOpenApiArgs } from './commands/openapi';
 import { changeLogOptions, validateChangelogArgs } from './commands/changelog';
 import { pipe } from 'fp-ts/function';
-import { validateSourceDirectoryConfig } from '../util/source-directory-resolver';
+import { validateSourceDirectoryConfig } from '#utils/source-directory-resolver';
 
 const configOnlyMarkdownDefaults: Partial<UserDefinedMarkdownConfig> = {
   targetGenerator: 'markdown',
