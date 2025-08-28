@@ -66,7 +66,7 @@ export function typeToRenderable<T extends TopLevelType>(
       case 'customobject':
         return objectMetadataToRenderable(type as CustomObjectMetadata, config, translations);
       case 'lwc':
-        return lwcMetadataToRenderable(type as LwcMetadata, config);
+        return lwcMetadataToRenderable(type as LwcMetadata, config, translations);
     }
   }
 
@@ -439,7 +439,11 @@ function customMetadataToRenderable(metadata: CustomMetadataMetadata, headingLev
   };
 }
 
-export function lwcMetadataToRenderable(metadata: LwcMetadata, config: MarkdownGeneratorConfig): RenderableLwc {
+export function lwcMetadataToRenderable(
+  metadata: LwcMetadata,
+  config: MarkdownGeneratorConfig,
+  translations: Translations,
+): RenderableLwc {
   function toTargetConfigRenderable(targetConfig: TargetConfig): TargetConfigRenderable {
     return {
       targetName: targetConfig['@_targets'],
@@ -449,8 +453,8 @@ export function lwcMetadataToRenderable(metadata: LwcMetadata, config: MarkdownG
         type: prop['@_type'],
         label: prop['@_label'] ?? prop['@_name'],
         name: prop['@_name'],
-      }))
-    }
+      })),
+    };
   }
 
   return {
@@ -461,19 +465,18 @@ export function lwcMetadataToRenderable(metadata: LwcMetadata, config: MarkdownG
     description: metadata.description,
     exposed: metadata.isExposed,
     targets: {
-      // TODO: Use translatable data
-      heading: 'Targets',
+      heading: translations.markdown.lwc.targets,
       headingLevel: 2,
       value: metadata.targets?.target ?? [],
     },
     targetConfigs: {
-      heading: 'Target Configs',
+      heading: translations.markdown.lwc.targetConfigs,
       headingLevel: 2,
-      value: metadata.targetConfigs?.targetConfig.map(toTargetConfigRenderable) ?? []
+      value: metadata.targetConfigs?.targetConfig.map(toTargetConfigRenderable) ?? [],
     },
     doc: {
       group: getTypeGroup(metadata, config),
-    }
+    },
   };
 }
 

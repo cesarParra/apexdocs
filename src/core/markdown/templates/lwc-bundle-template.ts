@@ -2,7 +2,7 @@ export const lwcBundleTemplate = `
 {{ heading headingLevel heading }}
 
 {{#if exposed}}
-\`Exposed\`
+\`{{@root.translations.markdown.lwc.exposed}}\`
 {{/if}}
 
 {{#if description}}
@@ -22,15 +22,15 @@ export const lwcBundleTemplate = `
 {{#each targetConfigs.value}}
 ### {{ targetName }}
 
-#### Properties
+#### {{@root.translations.markdown.lwc.properties}}
 
 {{#each properties}}
 **{{label}}** \`{{name}}\`
 
 {{#if description}}{{description}}{{/if}}
 
-- **Type:** {{type}}
-- **Required:** {{required}}
+- **{{@root.translations.markdown.details.type}}:** {{type}}
+- **{{@root.translations.markdown.details.required}}:** {{required}}
 
 {{/each}}
 {{/each}}

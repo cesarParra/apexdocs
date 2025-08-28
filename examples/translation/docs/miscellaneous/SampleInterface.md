@@ -4,7 +4,7 @@
 
 This is a sample interface
 
-**Mermaid** 
+**Mermaid**
 
 graph TD 
 A[SampleInterface] --&gt;|extends| B[ParentInterface] 
@@ -33,15 +33,15 @@ sampleInterface.sampleMethod();
 
 This is a sample method
 
-**Custom Tag** 
+**Custom Tag**
 
 This is a custom tag
 
-**Another Custom Tag** 
+**Another Custom Tag**
 
 This is another custom tag
 
-**Mermaid** 
+**Mermaid**
 
 graph TD 
 A[SampleInterface] --&gt;|extends| B[ParentInterface] 

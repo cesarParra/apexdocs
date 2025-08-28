@@ -17,6 +17,7 @@ const defaultMarkdownGeneratorConfig: MarkdownGeneratorConfig = {
   defaultGroupName: 'Miscellaneous',
   customObjectsGroupName: 'Custom Objects',
   triggersGroupName: 'Triggers',
+  lwcGroupName: 'Lightning Web Components',
   referenceGuideTemplate: '',
   sortAlphabetically: false,
   linkingStrategy: 'relative',

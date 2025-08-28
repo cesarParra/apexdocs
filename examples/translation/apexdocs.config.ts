@@ -30,6 +30,12 @@ const spanishTranslations: UserTranslations['markdown'] = {
     inheritance: 'Herencia',
     implements: 'Implementa',
   },
+  lwc: {
+    exposed: 'Expuesto',
+    targets: 'Objetivos',
+    targetConfigs: 'Configuraciones de Objetivos',
+    properties: 'Propiedades',
+  },
 };
 
 export default {

@@ -1,6 +1,7 @@
 import { LwcMetadata } from '../../../reflection/lwc/reflect-lwc-source';
 import { lwcMetadataToRenderable } from '../type-to-renderable';
 import { MarkdownGeneratorConfig } from '../../generate-docs';
+import { defaultTranslations } from '../../../translations';
 
 describe('LWC Adapter', () => {
   const defaultConfig: MarkdownGeneratorConfig = {
@@ -19,6 +20,7 @@ describe('LWC Adapter', () => {
     includeInlineHelpTextMetadata: true,
     exclude: [],
     excludeTags: [],
+    lwcGroupName: 'Lightning Web Components',
   };
 
   describe('lwcMetadataToRenderable', () => {
@@ -31,7 +33,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'Test Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig, defaultTranslations);
 
       expect(renderable.type).toBe('lwc');
     });
@@ -45,7 +47,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'Test Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig, defaultTranslations);
 
       expect(renderable.headingLevel).toBe(1);
     });
@@ -59,7 +61,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'My Awesome Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig, defaultTranslations);
 
       expect(renderable.heading).toBe('MyAwesomeComponent');
     });
@@ -73,7 +75,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'Data Table Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig, defaultTranslations);
 
       expect(renderable.name).toBe('DataTableComponent');
     });
@@ -87,7 +89,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'Test Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig, defaultTranslations);
 
       expect(renderable.doc.description).toBeUndefined();
     });
@@ -101,7 +103,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'Test Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig, defaultTranslations);
 
       expect(renderable.description).toEqual('A comprehensive test component');
     });
@@ -115,7 +117,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'Custom Component V2',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig, defaultTranslations);
 
       expect(renderable.name).toBe('custom_component_v2');
       expect(renderable.heading).toBe('custom_component_v2');
@@ -130,7 +132,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'My Custom Data Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig, defaultTranslations);
 
       expect(renderable.name).toBe('myCustomDataComponent');
       expect(renderable.heading).toBe('myCustomDataComponent');
@@ -145,7 +147,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'My Custom Data Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig, defaultTranslations);
 
       expect(renderable.name).toBe('MyCustomDataComponent');
       expect(renderable.heading).toBe('MyCustomDataComponent');
@@ -160,7 +162,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'Another Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig, defaultTranslations);
 
       // Verify the renderable has the expected structure
       expect(renderable).toHaveProperty('type', 'lwc');
@@ -180,7 +182,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'Test Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig, defaultTranslations);
 
       expect(renderable.exposed).toBe(true);
     });
@@ -194,7 +196,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'Test Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig, defaultTranslations);
 
       expect(renderable.exposed).toBe(false);
     });
@@ -208,7 +210,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'Test Component Label',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig, defaultTranslations);
 
       expect(renderable.exposed).toBe(true);
     });
@@ -225,7 +227,7 @@ describe('LWC Adapter', () => {
         },
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig, defaultTranslations);
 
       expect(renderable.targets.value).toEqual(['lightningCommunity__Default', 'lightning__AppPage']);
       expect(renderable.targets.heading).toBe('Targets');
@@ -257,7 +259,7 @@ describe('LWC Adapter', () => {
         },
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig, defaultTranslations);
 
       expect(renderable.targetConfigs.value).toHaveLength(1);
       expect(renderable.targetConfigs.value[0].targetName).toBe('lightningCommunity__Default');
@@ -279,7 +281,7 @@ describe('LWC Adapter', () => {
         masterLabel: 'Test Component',
       };
 
-      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig);
+      const renderable = lwcMetadataToRenderable(lwcMetadata, defaultConfig, defaultTranslations);
 
       expect(renderable.doc.description).toBeUndefined();
     });
