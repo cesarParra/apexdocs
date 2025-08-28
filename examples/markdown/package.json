@@ -15,6 +15,7 @@
   "apexdocs": {
     "sourceDir": "force-app",
     "scope": ["global", "public", "protected", "private", "namespaceaccessible"],
-    "namespace": "ns"
+    "namespace": "ns",
+    "sortAlphabetically": true
   }
 }
