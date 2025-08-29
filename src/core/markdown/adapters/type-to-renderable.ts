@@ -447,13 +447,14 @@ export function lwcMetadataToRenderable(
   function toTargetConfigRenderable(targetConfig: TargetConfig): TargetConfigRenderable {
     return {
       targetName: targetConfig['@_targets'],
-      properties: targetConfig.property.map((prop) => ({
-        description: prop['@_description'],
-        required: prop['@_required'] ?? false,
-        type: prop['@_type'],
-        label: prop['@_label'] ?? prop['@_name'],
-        name: prop['@_name'],
-      })),
+      properties:
+        targetConfig.property?.map((prop) => ({
+          description: prop['@_description'],
+          required: prop['@_required'] ?? false,
+          type: prop['@_type'],
+          label: prop['@_label'] ?? prop['@_name'],
+          name: prop['@_name'],
+        })) ?? [],
     };
   }
 
@@ -472,7 +473,7 @@ export function lwcMetadataToRenderable(
     targetConfigs: {
       heading: translations.markdown.lwc.targetConfigs,
       headingLevel: 2,
-      value: metadata.targetConfigs?.targetConfig.map(toTargetConfigRenderable) ?? [],
+      value: metadata.targetConfigs?.targetConfig?.map(toTargetConfigRenderable) ?? [],
     },
     doc: {
       group: getTypeGroup(metadata, config),

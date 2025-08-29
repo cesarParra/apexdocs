@@ -269,12 +269,12 @@ export default class ComplexComponent extends LightningElement {
 
     assertEither(result, (data) => {
       expect(data[0].type.targetConfigs?.targetConfig).toBeDefined();
-      expect(data[0].type.targetConfigs?.targetConfig[0].property).toHaveLength(1);
-      expect(data[0].type.targetConfigs?.targetConfig[0].property[0]['@_name']).toBe('recordId');
-      expect(data[0].type.targetConfigs?.targetConfig[0].property[0]['@_type']).toBe('String');
-      expect(data[0].type.targetConfigs?.targetConfig[0].property[0]['@_required']).toBe(true);
-      expect(data[0].type.targetConfigs?.targetConfig[0].property[0]['@_label']).toBe('Record ID');
-      expect(data[0].type.targetConfigs?.targetConfig[0].property[0]['@_description']).toBe(
+      expect(data[0].type.targetConfigs?.targetConfig?.[0].property).toHaveLength(1);
+      expect(data[0].type.targetConfigs?.targetConfig?.[0].property?.[0]?.['@_name']).toBe('recordId');
+      expect(data[0].type.targetConfigs?.targetConfig?.[0].property?.[0]?.['@_type']).toBe('String');
+      expect(data[0].type.targetConfigs?.targetConfig?.[0].property?.[0]?.['@_required']).toBe(true);
+      expect(data[0].type.targetConfigs?.targetConfig?.[0].property?.[0]?.['@_label']).toBe('Record ID');
+      expect(data[0].type.targetConfigs?.targetConfig?.[0].property?.[0]?.['@_description']).toBe(
         'The ID of the record to display',
       );
     });

@@ -337,6 +337,15 @@ Then you only need to run the top level `apexdocs` command, and it will generate
 Note that you can still run the individual commands if you only want to generate one type of documentation by
 providing the subcommand, e.g `apexdocs markdown` or `apexdocs changelog`.
 
+### LWC Documentation Limitations
+
+ApexDocs supports generating documentation for Lightning Web Components (LWC) as well, but please
+be aware of the following limitations:
+
+* Only components marked as `isExposed=true` in the component's meta.xml file will be documented.
+* At the moment, any JSDoc comments are ignored, documentation is based solely on the component's metadata.
+* Changelog generation does not include changes to LWCs.
+
 ### Excluding Files from Being Documented
 
 Any pattern included in the `.forceignore` file will be excluded from the documentation.

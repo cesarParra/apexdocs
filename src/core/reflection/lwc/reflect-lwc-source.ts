@@ -28,17 +28,19 @@ type Target = {
 };
 
 type TargetConfigs = {
-  targetConfig: TargetConfig[];
+  targetConfig: TargetConfig[] | undefined;
 };
 
 export type TargetConfig = {
-  property: {
-    '@_name': string;
-    '@_type': string;
-    '@_required'?: boolean;
-    '@_label'?: string;
-    '@_description'?: string;
-  }[];
+  property:
+    | {
+        '@_name': string;
+        '@_type': string;
+        '@_required'?: boolean;
+        '@_label'?: string;
+        '@_description'?: string;
+      }[]
+    | undefined;
   '@_targets': string;
 };
 

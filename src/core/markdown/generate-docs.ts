@@ -90,7 +90,7 @@ export function generateDocs(unparsedBundles: UnparsedSourceBundle[], config: Ma
     TE.chain((parsedFiles) => {
       return pipe(
         reflectLwcSource(filterLwcFiles(unparsedBundles)),
-        TE.map((parsedFiles) => parsedFiles),
+        TE.map((parsedFiles) => parsedFiles.filter((file) => file.type.isExposed)),
         TE.map((parsedLwcFiles) => [...parsedFiles, ...parsedLwcFiles]),
       );
     }),
