@@ -2,7 +2,7 @@ import {
   UnparsedApexBundle,
   UnparsedCustomFieldBundle,
   UnparsedCustomMetadataBundle,
-  UnparsedCustomObjectBundle,
+  UnparsedCustomObjectBundle, UnparsedLightningComponentBundle,
   UnparsedSourceBundle,
   UnparsedTriggerBundle,
 } from '../core/shared/types';
@@ -22,4 +22,8 @@ export function filterCustomObjectsFieldsAndMetadataRecords(
 
 export function filterTriggerFiles(sourceFiles: UnparsedSourceBundle[]): UnparsedTriggerBundle[] {
   return sourceFiles.filter((sourceFile): sourceFile is UnparsedTriggerBundle => sourceFile.type === 'trigger');
+}
+
+export function filterLwcFiles(sourceFiles: UnparsedSourceBundle[]): UnparsedLightningComponentBundle[] {
+  return sourceFiles.filter((sourceFile): sourceFile is UnparsedLightningComponentBundle => sourceFile.type === 'lwc');
 }

@@ -183,6 +183,25 @@ export type RenderableTrigger = Omit<RenderableType, 'meta'> & {
   events: string[];
 };
 
+export type RenderableLwc = Omit<RenderableType, 'meta'> & {
+  type: 'lwc';
+  exposed: boolean;
+  description: string | undefined;
+  targets: RenderableSection<string[]>;
+  targetConfigs: RenderableSection<TargetConfigRenderable[]>;
+}
+
+export type TargetConfigRenderable = {
+  targetName: string;
+  properties: {
+    type: string;
+    required: boolean;
+    description: string | undefined;
+    label: string;
+    name: string;
+  }[];
+};
+
 export type RenderableCustomObject = Omit<RenderableType, 'meta'> & {
   apiName: string;
   type: 'customobject';
@@ -222,6 +241,7 @@ export type Renderable = (
   | RenderableEnum
   | RenderableCustomObject
   | RenderableTrigger
+  | RenderableLwc
 ) & {
   filePath: string | undefined;
 };

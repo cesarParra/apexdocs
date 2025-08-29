@@ -14,6 +14,8 @@ import {
   RenderableCustomObject,
   RenderableCustomField,
   RenderableCustomMetadata,
+  RenderableLwc,
+  TargetConfigRenderable,
 } from '../../renderables/types';
 import { adaptDescribable, adaptDocumentable } from '../../renderables/documentables';
 import { adaptConstructor, adaptMethod } from './methods-and-constructors';
@@ -26,6 +28,7 @@ import { CustomFieldMetadata } from '../../reflection/sobject/reflect-custom-fie
 import { CustomMetadataMetadata } from '../../reflection/sobject/reflect-custom-metadata-source';
 import { TriggerMetadata } from 'src/core/reflection/trigger/reflect-trigger-source';
 import { Translations } from '../../translations';
+import { LwcMetadata, TargetConfig } from '../../reflection/lwc/reflect-lwc-source';
 
 type GetReturnRenderable<T extends TopLevelType> = T extends InterfaceMirror
   ? RenderableInterface
@@ -48,7 +51,8 @@ export function typeToRenderable<T extends TopLevelType>(
     | RenderableClass
     | RenderableEnum
     | RenderableTrigger
-    | RenderableCustomObject {
+    | RenderableCustomObject
+    | RenderableLwc {
     const { type } = parsedFile;
     switch (type.type_name) {
       case 'enum':
@@ -61,6 +65,8 @@ export function typeToRenderable<T extends TopLevelType>(
         return triggerMetadataToRenderable(type as TriggerMetadata, linkGenerator, 1, translations);
       case 'customobject':
         return objectMetadataToRenderable(type as CustomObjectMetadata, config, translations);
+      case 'lwc':
+        return lwcMetadataToRenderable(type as LwcMetadata, config, translations);
     }
   }
 
@@ -433,6 +439,48 @@ function customMetadataToRenderable(metadata: CustomMetadataMetadata, headingLev
   };
 }
 
+export function lwcMetadataToRenderable(
+  metadata: LwcMetadata,
+  config: MarkdownGeneratorConfig,
+  translations: Translations,
+): RenderableLwc {
+  function toTargetConfigRenderable(targetConfig: TargetConfig): TargetConfigRenderable {
+    return {
+      targetName: targetConfig['@_targets'],
+      properties:
+        targetConfig.property?.map((prop) => ({
+          description: prop['@_description'],
+          required: prop['@_required'] ?? false,
+          type: prop['@_type'],
+          label: prop['@_label'] ?? prop['@_name'],
+          name: prop['@_name'],
+        })) ?? [],
+    };
+  }
+
+  return {
+    type: 'lwc',
+    headingLevel: 1,
+    heading: metadata.name,
+    name: metadata.name,
+    description: metadata.description,
+    exposed: metadata.isExposed,
+    targets: {
+      heading: translations.markdown.lwc.targets,
+      headingLevel: 2,
+      value: metadata.targets?.target ?? [],
+    },
+    targetConfigs: {
+      heading: translations.markdown.lwc.targetConfigs,
+      headingLevel: 2,
+      value: metadata.targetConfigs?.targetConfig?.map(toTargetConfigRenderable) ?? [],
+    },
+    doc: {
+      group: getTypeGroup(metadata, config),
+    },
+  };
+}
+
 function getApiName(currentName: string, config: MarkdownGeneratorConfig) {
   if (config.namespace) {
     // first remove any `__c` suffix
@@ -454,6 +502,7 @@ function renderComplianceGroup(complianceGroup: string | null, config: MarkdownG
     return null;
   }
 }
+
 function renderInlineHelpText(inlineHelpText: string | null, config: MarkdownGeneratorConfig) {
   if (config.includeInlineHelpTextMetadata) {
     return inlineHelpText;

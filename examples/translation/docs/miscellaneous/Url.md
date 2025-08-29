@@ -3,7 +3,7 @@
 Represents a uniform resource locator (URL) and provides access to parts of the URL. 
 Enables access to the base URL used to access your Salesforce org.
 
-**Usage** 
+**Usage**
 
 Use the methods of the `System.URL` class to create links to objects in your organization. Such objects can be files, images, 
 logos, or records that you want to include in external emails, in activities, or in Chatter posts. For example, you can create 
@@ -28,7 +28,7 @@ Account acct = [SELECT Id FROM Account WHERE Name = 'Acme' LIMIT 1];
 String fullRecordURL = URL.getOrgDomainURL().toExternalForm() + '/' + acct.Id;
 ```
 
-**Version Behavior Changes** 
+**Version Behavior Changes**
 
 In API version 41.0 and later, Apex URL objects are represented by the java.net.URI type, not the java.net.URL type. 
  
@@ -95,7 +95,7 @@ global Url(String spec)
 
 Creates a new instance of the URL class by parsing the specified spec within the specified context.
 
-**Usage** 
+**Usage**
 
 The new URL is created from the given context URL and the spec argument as described in RFC2396 &quot;Uniform Resource Identifiers : Generic * Syntax&quot; : 
 ```xml
@@ -174,7 +174,7 @@ The authority portion of the current URL.
 
 Returns the URL of an entire request on a Salesforce instance.
 
-**Usage** 
+**Usage**
 
 An example of a URL for an entire request is https://yourInstance.salesforce.com/apex/myVfPage.apexp.
 
@@ -194,7 +194,7 @@ The URL of the entire request.
 
 Returns the default port number of the protocol associated with the current URL.
 
-**Usage** 
+**Usage**
 
 Returns -1 if the URL scheme or the stream protocol handler for the URL doesn&#x27;t define a default port number.
 
@@ -274,7 +274,7 @@ The host name of the current URL.
 
 Returns the canonical URL for your org. For example, https://MyDomainName.my.salesforce.com.
 
-**Usage** 
+**Usage**
 
 Use getOrgDomainUrl() to interact with Salesforce REST and SOAP APIs in Apex code. Get endpoints for User Interface API calls, for creating and customizing picklist value sets and custom fields, and more. 
  
@@ -282,7 +282,7 @@ Use getOrgDomainUrl() to interact with Salesforce REST and SOAP APIs in Apex cod
  
 You don&#x27;t need a RemoteSiteSetting for your org to interact with the Salesforce APIs using domain URLs retrieved with this method.
 
-**See Also** 
+**See Also**
 
 * [Lightning Aura Components Developer Guide: Making API Calls from Apex](https://developer.salesforce.com/docs/atlas.en-us.250.0.lightning.meta/lightning/apex_api_calls.htm)
 

@@ -3,10 +3,8 @@ import { pipe } from 'fp-ts/function';
 import { areMethodsEqual } from './method-changes-checker';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-source';
-import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
 import { TriggerMetadata } from '../reflection/trigger/reflect-trigger-source';
-
-export type ParsedType = Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata | TriggerMetadata;
+import { ParsedType } from '../shared/types';
 
 export type VersionManifest = {
   types: ParsedType[];

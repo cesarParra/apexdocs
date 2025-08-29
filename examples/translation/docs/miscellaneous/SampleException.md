@@ -2,7 +2,7 @@
 
 This is a sample exception.
 
-**Usage** 
+**Usage**
 
 You can use the exception the following way. 
 You can also take a look at [SampleClass](../samplegroup/SampleClass.md) to see how it is used. 

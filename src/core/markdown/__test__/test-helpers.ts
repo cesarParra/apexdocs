@@ -1,6 +1,7 @@
 import {
   UnparsedApexBundle,
   UnparsedCustomObjectBundle,
+  UnparsedLightningComponentBundle,
   UnparsedSourceBundle,
   UnparsedTriggerBundle,
 } from '../../shared/types';
@@ -43,6 +44,21 @@ export function unparsedObjectBundleFromRawString(meta: {
   };
 }
 
+export function unparsedLwcBundleFromRawString(meta: {
+  jsContent: string;
+  xmlContent: string;
+  filePath: string;
+  name?: string;
+}): UnparsedLightningComponentBundle {
+  return {
+    type: 'lwc',
+    name: meta.name ?? 'TestComponent',
+    filePath: meta.filePath,
+    content: meta.jsContent,
+    metadataContent: meta.xmlContent,
+  };
+}
+
 export function generateDocs(bundles: UnparsedSourceBundle[], config?: Partial<MarkdownGeneratorConfig>) {
   return gen(bundles, {
     targetDir: 'target',
@@ -59,6 +75,7 @@ export function generateDocs(bundles: UnparsedSourceBundle[], config?: Partial<M
     includeFieldSecurityMetadata: true,
     includeInlineHelpTextMetadata: true,
     exclude: [],
+    lwcGroupName: 'Lightning Web Components',
     ...config,
   });
 }

@@ -1,9 +1,10 @@
-import { Changelog, MemberModificationType, NewOrModifiedMember, ParsedType } from './process-changelog';
+import { Changelog, MemberModificationType, NewOrModifiedMember } from './process-changelog';
 import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
 import { RenderableContent } from '../renderables/types';
 import { adaptDescribable } from '../renderables/documentables';
 import { CustomObjectMetadata } from '../reflection/sobject/reflect-custom-object-sources';
 import { Translations } from '../translations';
+import { ParsedType } from '../shared/types';
 
 type NewTypeRenderable = {
   name: string;

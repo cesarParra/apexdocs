@@ -75,6 +75,8 @@ function getRenderableDescription(
   switch (type.type_name) {
     case 'customobject':
       return type.description ? [type.description] : null;
+    case 'lwc':
+      return type.description ? [type.description] : null;
     default:
       return adaptDescribable(type.docComment?.descriptionLines, findLinkFromHome).description ?? null;
   }

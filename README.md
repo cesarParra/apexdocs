@@ -77,7 +77,7 @@ Here are some live projects using ApexDocs:
 
 ## 🚀 Features
 
-* Generate documentation for Salesforce Apex classes as Markdown files
+* Generate documentation for Salesforce code (Apex, triggers, custom objects, LWCs) as Markdown files
 * Generate an OpenApi REST specification based on `@RestResource` classes
 * Generate a changelog based on the differences between two versions of your Salesforce Apex classes
 * Support for grouping blocks of related code within a class
@@ -149,10 +149,11 @@ apexdocs changelog --previousVersionDir force-app-previous --currentVersionDir f
 | `--defaultGroupName`              | N/A   | The default group name to use when a group is not specified.                                                                                                                                             | `Miscellaneous`  | No       |
 | `--namespace`                     | N/A   | The package namespace, if any. If provided, it will be added to the generated files.                                                                                                                     | N/A              | No       |
 | `--sortAlphabetically`            | N/A   | Sorts files appearing in the Reference Guide alphabetically, as well as the members of a class, interface or enum alphabetically. If false, the members will be displayed in the same order as the code. | `false`          | No       |
-| `--includeMetadata `              | N/A   | Whether to include the file's meta.xml information: Whether it is active and and the API version                                                                                                         | `false`          | No       |
+| `--includeMetadata `              | N/A   | Whether to include the file's meta.xml information: Whether it is active and the API version                                                                                                             | `false`          | No       |
 | `--linkingStrategy`               | N/A   | The strategy to use when linking to other classes. Possible values are `relative`, `no-link`, and `none`                                                                                                 | `relative`       | No       |
 | `--customObjectsGroupName`        | N/A   | The name under which custom objects will be grouped in the Reference Guide                                                                                                                               | `Custom Objects` | No       |
 | `--triggersGroupName`             | N/A   | The name under which triggers will be grouped in the Reference Guide                                                                                                                                     | `Triggers`       | No       |
+| `--lwcGroupName`                  | N/A   | The name under which Lightning Web Components will be grouped in the Reference Guide                                                                                                                     | `Triggers`       | No       |
 | `--includeFieldSecurityMetadata`  | N/A   | Whether to include the compliance category and security classification for fields in the generated files.                                                                                                | `false`          | No       |
 | `--includeInlineHelpTextMetadata` | N/A   | Whether to include the inline help text for fields in the generated files.                                                                                                                               | `false`          | No       |
 
@@ -335,6 +336,15 @@ Then you only need to run the top level `apexdocs` command, and it will generate
 
 Note that you can still run the individual commands if you only want to generate one type of documentation by
 providing the subcommand, e.g `apexdocs markdown` or `apexdocs changelog`.
+
+### LWC Documentation Limitations
+
+ApexDocs supports generating documentation for Lightning Web Components (LWC) as well, but please
+be aware of the following limitations:
+
+* Only components marked as `isExposed=true` in the component's meta.xml file will be documented.
+* At the moment, any JSDoc comments are ignored, documentation is based solely on the component's metadata.
+* Changelog generation does not include changes to LWCs.
 
 ### Excluding Files from Being Documented
 
@@ -525,7 +535,7 @@ macro, and the value is a function that returns the text to inject in place of t
 
 ```typescript
 type MacroSourceMetadata = {
-  type: 'apex' | 'customobject' | 'customfield' | 'custommetadata' | 'trigger';
+  type: 'apex' | 'customobject' | 'customfield' | 'custommetadata' | 'trigger' | 'lwc';
   name: string;
   filePath: string;
 };

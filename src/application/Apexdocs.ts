@@ -16,7 +16,7 @@ import {
   UserDefinedMarkdownConfig,
   UserDefinedOpenApiConfig,
 } from '../core/shared/types';
-import { resolveAndValidateSourceDirectories } from '../util/source-directory-resolver';
+import { resolveAndValidateSourceDirectories } from '#utils/source-directory-resolver';
 import { ReflectionError, ReflectionErrors, HookError } from '../core/errors/errors';
 import { FileReadingError, FileWritingError } from './errors';
 

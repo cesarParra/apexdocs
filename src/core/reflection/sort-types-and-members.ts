@@ -1,7 +1,8 @@
 import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
 import { ParsedFile, TopLevelType } from '../shared/types';
-import { isApexType, isObjectType } from '../shared/utils';
+import { isApexType, isLwcType, isObjectType } from '../shared/utils';
 import { CustomObjectMetadata } from './sobject/reflect-custom-object-sources';
+import { LwcMetadata } from './lwc/reflect-lwc-source';
 
 type Named = { name: string };
 
@@ -23,6 +24,13 @@ export function sortTypesAndMembers(
           type: sortCustomObjectFields(parsedFile.type, shouldSort),
         };
       }
+      if (isLwcType(parsedFile.type)) {
+        return {
+          ...parsedFile,
+          type: sortLwcMetadata(parsedFile.type, shouldSort),
+        };
+      }
+
       // For TriggerMetadata or any other types, return the original parsedFile unchanged
       return parsedFile;
     })
@@ -82,4 +90,38 @@ function sortClassMembers(shouldSort: boolean, classType: ClassMirror): ClassMir
     methods: sortNamed(shouldSort, classType.methods),
     properties: sortNamed(shouldSort, classType.properties),
   };
+}
+
+function sortLwcMetadata(type: LwcMetadata, shouldSort: boolean): LwcMetadata {
+  if (!shouldSort) {
+    return type;
+  }
+
+  const sortedType = { ...type };
+
+  // Sort targets.
+  if (sortedType.targets?.target) {
+    sortedType.targets = {
+      ...sortedType.targets,
+      target: [...sortedType.targets.target].sort(),
+    };
+  }
+
+  // Sort targetConfigs.
+  if (sortedType.targetConfigs?.targetConfig) {
+    sortedType.targetConfigs = {
+      ...sortedType.targetConfigs,
+      targetConfig: sortedType.targetConfigs.targetConfig.map((config) => {
+        if (config.property) {
+          return {
+            ...config,
+            property: [...config.property].sort((a, b) => a['@_name'].localeCompare(b['@_name'])),
+          };
+        }
+        return config;
+      }),
+    };
+  }
+
+  return sortedType;
 }

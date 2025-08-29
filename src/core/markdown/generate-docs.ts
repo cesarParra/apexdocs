@@ -37,9 +37,11 @@ import { reflectCustomFieldsAndObjectsAndMetadataRecords } from '../reflection/s
 import {
   filterApexSourceFiles,
   filterCustomObjectsFieldsAndMetadataRecords,
+  filterLwcFiles,
   filterTriggerFiles,
 } from '#utils/source-bundle-utils';
 import { reflectTriggerSource } from '../reflection/trigger/reflect-trigger-source';
+import { reflectLwcSource } from '../reflection/lwc/reflect-lwc-source';
 
 export type MarkdownGeneratorConfig = Omit<
   UserDefinedMarkdownConfig,
@@ -83,6 +85,13 @@ export function generateDocs(unparsedBundles: UnparsedSourceBundle[], config: Ma
       return pipe(
         reflectTriggerSource(filterTriggerFiles(unparsedBundles)),
         TE.map((parsedTriggerFiles) => [...parsedFiles, ...parsedTriggerFiles]),
+      );
+    }),
+    TE.chain((parsedFiles) => {
+      return pipe(
+        reflectLwcSource(filterLwcFiles(unparsedBundles)),
+        TE.map((parsedFiles) => parsedFiles.filter((file) => file.type.isExposed)),
+        TE.map((parsedLwcFiles) => [...parsedFiles, ...parsedLwcFiles]),
       );
     }),
     TE.map((parsedFiles) => sort(filterOutCustomFieldsAndMetadata(parsedFiles))),

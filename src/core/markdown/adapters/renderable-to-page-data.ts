@@ -9,6 +9,7 @@ import { markdownDefaults } from '../../../defaults';
 import { customObjectTemplate } from '../templates/custom-object-template';
 import { triggerMarkdownTemplate } from '../templates/trigger-template';
 import { Translations } from '../../translations';
+import { lwcBundleTemplate } from '../templates/lwc-bundle-template';
 
 export const convertToDocumentationBundle = (
   referenceGuideTitle: string,
@@ -76,13 +77,13 @@ function renderableToPageData(
 
   return pipe(
     renderable,
-    (r) => resolveApexTypeTemplate(r, translations),
+    (r) => resolveTemplate(r, translations),
     compile,
     (docContents) => buildDocOutput(renderable, docContents),
   );
 }
 
-function resolveApexTypeTemplate(renderable: Renderable, translations: Translations): CompilationRequest {
+function resolveTemplate(renderable: Renderable, translations: Translations): CompilationRequest {
   function getTemplate(renderable: Renderable): string {
     switch (renderable.type) {
       case 'enum':
@@ -95,6 +96,8 @@ function resolveApexTypeTemplate(renderable: Renderable, translations: Translati
         return customObjectTemplate;
       case 'trigger':
         return triggerMarkdownTemplate;
+      case 'lwc':
+        return lwcBundleTemplate;
     }
   }
 

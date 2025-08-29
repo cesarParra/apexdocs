@@ -45,12 +45,6 @@ Represents an event that people can register for.
 
 Used to store the U.S. social security number in 9 digit format.
 
-**Compliance Group**
-PII
-
-**Security Classification**
-Internal
-
 **API Name**
 
 `ns__Social_Security_Number__c`

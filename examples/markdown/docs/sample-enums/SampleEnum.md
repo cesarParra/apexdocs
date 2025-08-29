@@ -6,12 +6,12 @@ This is a sample enum. This references [ReferencedEnum](../miscellaneous/Referen
  
 This description has several lines
 
-**Some Custom** 
+**Some Custom**
 
 Test. I can also have a [ReferencedEnum](../miscellaneous/ReferencedEnum.md) here. 
 And it can be multiline.
 
-**Mermaid** 
+**Mermaid**
 
 graph TD 
 A[SampleEnum] --&gt;|references| B[ReferencedEnum] 

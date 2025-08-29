@@ -174,6 +174,38 @@ describe('SFDX Project Integration Tests', () => {
       // OpenAPI generator may not create output if no REST resources are found
       // This is expected behavior, so we just verify the command succeeded
     });
+
+    it('should generate documentation for Lightning Web Components', () => {
+      setupTestProjectWithLWC(testDir);
+
+      const command = `node "${apexdocsPath}" markdown --useSfdxProjectJson --targetDir ./docs --scope public`;
+      const result = execSync(command, {
+        cwd: testDir,
+        encoding: 'utf8',
+        stdio: 'pipe',
+      });
+
+      expect(result).toContain('Documentation generated successfully');
+
+      const docsDir = path.join(testDir, 'docs');
+      expect(fs.existsSync(docsDir)).toBe(true);
+
+      // Verify LWC documentation was generated
+      const lwcDocsDir = path.join(docsDir, 'lightning-web-components');
+      expect(fs.existsSync(lwcDocsDir)).toBe(true);
+
+      const testComponentPath = path.join(lwcDocsDir, 'testComponent.md');
+      expect(fs.existsSync(testComponentPath)).toBe(true);
+
+      // Verify content of LWC documentation
+      const testComponentContent = fs.readFileSync(testComponentPath, 'utf8');
+      expect(testComponentContent).toContain('testComponent');
+
+      // Verify index includes LWC section
+      const indexContent = fs.readFileSync(path.join(docsDir, 'index.md'), 'utf8');
+      expect(indexContent).toContain('Lightning Web Components');
+      expect(indexContent).toContain('testComponent');
+    });
   });
 
   function setupTestProject(projectDir: string) {
@@ -275,6 +307,83 @@ describe('SFDX Project Integration Tests', () => {
 </ApexClass>`;
 
     fs.writeFileSync(path.join(fullClassPath, `${className}.cls-meta.xml`), metaXml);
+  }
+
+  function setupTestProjectWithLWC(projectDir: string) {
+    // Create sfdx-project.json
+    const sfdxProject = {
+      packageDirectories: [{ path: 'force-app', default: true }],
+      name: 'lwc-test-project',
+      namespace: '',
+      sfdcLoginUrl: 'https://login.salesforce.com',
+      sourceApiVersion: '60.0',
+    };
+
+    fs.writeFileSync(path.join(projectDir, 'sfdx-project.json'), JSON.stringify(sfdxProject, null, 2));
+
+    // Create LWC component
+    createTestLWCComponent(
+      projectDir,
+      'force-app/main/default/lwc/testComponent',
+      'testComponent',
+      `import { LightningElement, api } from 'lwc';
+
+/**
+ * @description Test Lightning Web Component for documentation
+ */
+export default class TestComponent extends LightningElement {
+    @api recordId;
+    @api variant = 'base';
+
+    /**
+     * @description Handle click event
+     */
+    handleClick() {
+        this.dispatchEvent(new CustomEvent('click'));
+    }
+}`,
+      `<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>60.0</apiVersion>
+    <description>Test component for documentation generation</description>
+    <isExposed>true</isExposed>
+    <masterLabel>Test Component</masterLabel>
+    <targets>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="recordId" type="String" required="true" label="Record ID" description="The ID of the record"/>
+            <property name="variant" type="String" required="false" label="Variant" description="The variant style" default="base"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>`,
+    );
+  }
+
+  function createTestLWCComponent(
+    projectDir: string,
+    componentPath: string,
+    componentName: string,
+    jsContent: string,
+    xmlContent: string,
+  ) {
+    const fullComponentPath = path.join(projectDir, componentPath);
+    createDirectory(fullComponentPath);
+
+    // Create .js file
+    fs.writeFileSync(path.join(fullComponentPath, `${componentName}.js`), jsContent);
+
+    // Create .js-meta.xml file
+    fs.writeFileSync(path.join(fullComponentPath, `${componentName}.js-meta.xml`), xmlContent);
+
+    // Create .html file (template)
+    const htmlContent = `<template>
+    <div class="test-component">
+        <p>Test Component Content</p>
+    </div>
+</template>`;
+    fs.writeFileSync(path.join(fullComponentPath, `${componentName}.html`), htmlContent);
   }
 
   function createDirectory(dirPath: string) {

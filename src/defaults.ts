@@ -14,6 +14,7 @@ export const markdownDefaults = {
   defaultGroupName: 'Miscellaneous',
   customObjectsGroupName: 'Custom Objects',
   triggersGroupName: 'Triggers',
+  lwcGroupName: 'Lightning Web Components',
   includeMetadata: false,
   sortAlphabetically: false,
   linkingStrategy: 'relative' as const,

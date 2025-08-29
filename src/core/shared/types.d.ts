@@ -4,6 +4,7 @@ import { CustomFieldMetadata } from '../reflection/sobject/reflect-custom-field-
 import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-metadata-source';
 import { TriggerMetadata } from '../reflection/trigger/reflect-trigger-source';
 import { UserTranslations } from '../translations';
+import { LwcMetadata } from '../reflection/lwc/reflect-lwc-source';
 
 export type Generators = 'markdown' | 'openapi' | 'changelog';
 
@@ -19,7 +20,7 @@ type LinkingStrategy =
   | 'none';
 
 export type MacroSourceMetadata = {
-  type: 'apex' | 'customobject' | 'customfield' | 'custommetadata' | 'trigger';
+  type: 'apex' | 'customobject' | 'customfield' | 'custommetadata' | 'trigger' | 'lwc';
   name: string;
   filePath: string;
 };
@@ -37,6 +38,7 @@ export type CliConfigurableMarkdownConfig = {
   defaultGroupName: string;
   customObjectsGroupName: string;
   triggersGroupName: string;
+  lwcGroupName: string;
   sortAlphabetically: boolean;
   includeMetadata: boolean;
   linkingStrategy: LinkingStrategy;
@@ -86,7 +88,8 @@ export type UnparsedSourceBundle =
   | UnparsedCustomObjectBundle
   | UnparsedCustomFieldBundle
   | UnparsedCustomMetadataBundle
-  | UnparsedTriggerBundle;
+  | UnparsedTriggerBundle
+  | UnparsedLightningComponentBundle;
 
 export type UnparsedCustomObjectBundle = {
   type: 'customobject';
@@ -127,7 +130,23 @@ export type UnparsedTriggerBundle = {
   content: string;
 };
 
-type MetadataTypes = 'interface' | 'class' | 'enum' | 'customobject' | 'customfield' | 'custommetadata' | 'trigger';
+export type UnparsedLightningComponentBundle = {
+  type: 'lwc';
+  name: string;
+  filePath: string;
+  content: string;
+  metadataContent: string;
+};
+
+type MetadataTypes =
+  | 'interface'
+  | 'class'
+  | 'enum'
+  | 'customobject'
+  | 'customfield'
+  | 'custommetadata'
+  | 'trigger'
+  | 'lwc';
 
 export type SourceFileMetadata = {
   filePath: string;
@@ -146,15 +165,24 @@ export type ExternalMetadata = {
   type: MetadataTypes;
 };
 
-export type TopLevelType = Type | CustomObjectMetadata | TriggerMetadata;
+export type TopLevelType = Type | CustomObjectMetadata | TriggerMetadata | LwcMetadata;
+
+export type ParsedType =
+  | Type
+  | CustomObjectMetadata
+  | CustomFieldMetadata
+  | CustomMetadataMetadata
+  | TriggerMetadata
+  | LwcMetadata;
 
 export type ParsedFile<
-  T extends Type | CustomObjectMetadata | CustomFieldMetadata | CustomMetadataMetadata | TriggerMetadata =
+  T extends ParsedType =
     | Type
     | CustomObjectMetadata
     | CustomFieldMetadata
     | CustomMetadataMetadata
-    | TriggerMetadata,
+    | TriggerMetadata
+    | LwcMetadata,
 > = {
   source: SourceFileMetadata | ExternalMetadata;
   type: T;
@@ -188,7 +216,7 @@ export type DocPageData = {
   outputDocPath: string;
   frontmatter: Frontmatter;
   content: string;
-  type: 'class' | 'interface' | 'enum' | 'customobject' | 'trigger';
+  type: 'class' | 'interface' | 'enum' | 'customobject' | 'trigger' | 'lwc';
 };
 
 export type OpenApiPageData = Omit<DocPageData, 'source' | 'type'>;

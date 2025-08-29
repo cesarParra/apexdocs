@@ -106,7 +106,6 @@ export type Translations = {
       enum: string;
       trigger: string;
     };
-    // Trigger events
     triggerEvents: {
       beforeInsert: string;
       beforeUpdate: string;
@@ -116,15 +115,19 @@ export type Translations = {
       afterDelete: string;
       afterUndelete: string;
     };
-    // Publish behaviors
     publishBehaviors: {
       publishImmediately: string;
       publishAfterCommit: string;
     };
-    // Inheritance and implementation
     inheritance: {
       inheritance: string;
       implements: string;
+    };
+    lwc: {
+      exposed: string;
+      targets: string;
+      targetConfigs: string;
+      properties: string;
     };
   };
 };
@@ -247,6 +250,12 @@ export const defaultTranslations: Translations = {
     inheritance: {
       inheritance: 'Inheritance',
       implements: 'Implements',
+    },
+    lwc: {
+      exposed: 'Exposed',
+      targets: 'Targets',
+      targetConfigs: 'Target Configs',
+      properties: 'Properties',
     },
   },
 };
