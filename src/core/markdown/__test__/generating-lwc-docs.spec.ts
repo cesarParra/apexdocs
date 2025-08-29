@@ -284,8 +284,8 @@ export default class RecordViewer extends LightningElement {
       const result = await generateDocs([lwcBundle])();
 
       assertEither(result, (data) => {
-        expect(data.docs).toHaveLength(1);
-        expect(data.docs[0].source.name).toBe('InternalComponent');
+        // Non-exposed components should be filtered out
+        expect(data.docs).toHaveLength(0);
       });
     });
   });
@@ -303,7 +303,7 @@ export default class RecordViewer extends LightningElement {
       const minimalXml = `<?xml version="1.0" encoding="UTF-8"?>
 <LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>60.0</apiVersion>
-    <isExposed>false</isExposed>
+    <isExposed>true</isExposed>
 </LightningComponentBundle>`;
 
       const minimalJs = `import { LightningElement } from 'lwc';
