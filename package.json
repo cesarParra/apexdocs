@@ -92,6 +92,7 @@
     ]
   },
   "dependencies": {
+    "@babel/parser": "^7.28.3",
     "@cparra/apex-reflection": "2.19.0",
     "@salesforce/source-deploy-retrieve": "^12.20.1",
     "@types/js-yaml": "^4.0.9",
@@ -104,6 +105,7 @@
     "handlebars": "^4.7.8",
     "js-yaml": "^4.1.0",
     "minimatch": "^10.0.1",
+    "ts-pattern": "^5.8.0",
     "yargs": "^17.7.2"
   },
   "imports": {

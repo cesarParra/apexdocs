@@ -60,6 +60,23 @@ describe('when parsing LWC components', () => {
     });
   });
 
+  test('the class name is parsed from the JS content', async () => {
+    const lwcBuilder = new LwcBuilder().withName('TestComponent').withDescription('This is a test component');
+    const unparsed: UnparsedLightningComponentBundle = {
+      type: 'lwc',
+      name: 'TestComponent',
+      filePath: 'force-app/main/default/lwc/testComponent/testComponent.js',
+      content: lwcBuilder.buildJs(),
+      metadataContent: lwcBuilder.buildMetaXml(),
+    };
+
+    const result = await reflectLwcSource([unparsed])();
+
+    assertEither(result, (data) => {
+      expect(data[0].type.parsed.className).toBe('TestComponent');
+    });
+  });
+
   test('the description is extracted from metadata', async () => {
     const lwcBuilder = new LwcBuilder().withName('TestComponent').withDescription('This is a test component');
     const unparsed: UnparsedLightningComponentBundle = {
