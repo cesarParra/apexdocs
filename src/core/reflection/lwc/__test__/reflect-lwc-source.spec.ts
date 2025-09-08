@@ -77,6 +77,38 @@ describe('when parsing LWC components', () => {
     });
   });
 
+  test('the class public properties are parsed from the JS content', async () => {
+    const lwcBuilder = new LwcBuilder()
+      .withName('TestComponent')
+      .withDescription('This is a test component')
+      .withDecoratedProperty({
+        name: 'variant',
+      })
+      .withDecoratedProperty({
+        name: 'size'
+      })
+      .withNonDecoratedProperty({
+        name: '_internalValue'
+      })
+    const unparsed: UnparsedLightningComponentBundle = {
+      type: 'lwc',
+      name: 'TestComponent',
+      filePath: 'force-app/main/default/lwc/testComponent/testComponent.js',
+      content: lwcBuilder.buildJs(),
+      metadataContent: lwcBuilder.buildMetaXml(),
+    };
+
+    const result = await reflectLwcSource([unparsed])();
+
+    assertEither(result, (data) => {
+      expect(data[0].type.parsed.properties).toHaveLength(2);
+      expect(data[0].type.parsed.properties?.map(p => p.name)).toEqual(expect.arrayContaining(['variant', 'size']));
+    });
+  });
+
+  // TODO: Getters/Setters
+  // TODO: methods
+
   test('the description is extracted from metadata', async () => {
     const lwcBuilder = new LwcBuilder().withName('TestComponent').withDescription('This is a test component');
     const unparsed: UnparsedLightningComponentBundle = {
@@ -267,7 +299,7 @@ export default class ComplexComponent extends LightningElement {
   });
 
   test('targetConfigs with properties are extracted from metadata', async () => {
-    const lwcBuilder = new LwcBuilder().withName('TestComponent').withProperty({
+    const lwcBuilder = new LwcBuilder().withName('TestComponent').withDecoratedProperty({
       name: 'recordId',
       type: 'String',
       required: true,

@@ -1,3 +1,13 @@
+type Property = {
+  name: string;
+  type?: string;
+  required?: boolean;
+  label?: string;
+  description?: string;
+  default?: string;
+  target?: string;
+}
+
 export class LwcBuilder {
   private name: string = 'TestComponent';
   private description: string = 'Test Lightning Web Component';
@@ -6,15 +16,8 @@ export class LwcBuilder {
   private masterLabel: string = 'Test Component';
   private targets: string[] = ['lightningCommunity__Default'];
   private jsContent: string = '';
-  private properties: Array<{
-    name: string;
-    type: string;
-    required: boolean;
-    label: string;
-    description: string;
-    default?: string;
-    target?: string;
-  }> = [];
+  private decoratedProperties: Array<Property> = [];
+  private nonDecoratedProperties: Array<Property> = [];
 
   withName(name: string): LwcBuilder {
     this.name = name;
@@ -54,16 +57,13 @@ export class LwcBuilder {
     return this;
   }
 
-  withProperty(property: {
-    name: string;
-    type: string;
-    required: boolean;
-    label: string;
-    description: string;
-    default?: string;
-    target?: string;
-  }): LwcBuilder {
-    this.properties.push(property);
+  withDecoratedProperty(property: Property): LwcBuilder {
+    this.decoratedProperties.push(property);
+    return this;
+  }
+
+  withNonDecoratedProperty(property: Property): LwcBuilder {
+    this.nonDecoratedProperties.push(property);
     return this;
   }
 
@@ -72,12 +72,14 @@ export class LwcBuilder {
       return this.jsContent;
     }
 
-    const apiProperties = this.properties.map((prop) => `    @api ${prop.name};`).join('\n');
+    const apiProperties = this.decoratedProperties.map((prop) => `    @api ${prop.name};`).join('\n');
+    const nonApiProperties = this.nonDecoratedProperties.map((prop) => `    ${prop.name};`).join('\n');
 
     return `import { LightningElement, api } from 'lwc';
 
 export default class ${this.name} extends LightningElement {
 ${apiProperties}
+${nonApiProperties}
 }`;
   }
 
@@ -85,7 +87,7 @@ ${apiProperties}
     const targetsXml = this.targets.map((target) => `        <target>${target}</target>`).join('\n');
 
     const propertiesXml =
-      this.properties.length > 0
+      this.decoratedProperties.length > 0
         ? `    <targetConfigs>
 ${this.buildTargetConfigsXml()}
     </targetConfigs>`
@@ -105,14 +107,14 @@ ${propertiesXml}
   }
 
   private buildTargetConfigsXml(): string {
-    if (this.properties.length === 0) {
+    if (this.decoratedProperties.length === 0) {
       return '';
     }
 
     // Group properties by target
-    const propertiesByTarget = new Map<string, Array<(typeof this.properties)[0]>>();
+    const propertiesByTarget = new Map<string, Array<(typeof this.decoratedProperties)[0]>>();
 
-    this.properties.forEach((prop) => {
+    this.decoratedProperties.forEach((prop) => {
       const target = prop.target || this.targets[0];
       if (!propertiesByTarget.has(target)) {
         propertiesByTarget.set(target, []);

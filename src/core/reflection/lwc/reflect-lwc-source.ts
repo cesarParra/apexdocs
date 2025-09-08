@@ -7,13 +7,16 @@ import { ParsedFile } from '../../shared/types';
 import { ReflectionError, ReflectionErrors } from '../../errors/errors';
 import * as E from 'fp-ts/Either';
 import { parse as babelParser, } from '@babel/parser';
-import { Statement } from '@babel/types';
-import { match, P } from 'ts-pattern';
+import { Statement, type ClassDeclaration, type ClassBody } from '@babel/types';
+import { match } from 'ts-pattern';
 
 import { UnparsedLightningComponentBundle } from 'src/core/shared/types';
 import { XMLParser } from 'fast-xml-parser';
 
 type ParsedJs = {
+  properties: {
+    name: string;
+  }[];
   className: string;
 };
 
@@ -76,11 +79,13 @@ function parse(lwcBundle: UnparsedLightningComponentBundle): [ParsedJs, Lightnin
   return [parseJsContent(lwcBundle.content), parseLwcMetadataXml(lwcBundle)];
 }
 
-type Match = {type: 'match', data: {name: string | undefined}};
-type NoMatch = {type: 'no_match'};
+type ApiProperty = { name: string };
+type Match = { type: 'match', data: ParsedJs };
+type NoMatch = { type: 'no_match' };
 
 type MatchedClass = Match | NoMatch;
 
+//function parseJsContent(content: string): E.Either<string, ParsedJs> {
 function parseJsContent(content: string): ParsedJs {
   const parsed = babelParser(content, {
     sourceType: 'module',
@@ -88,23 +93,48 @@ function parseJsContent(content: string): ParsedJs {
   });
 
   function walk(statement: Statement) {
+    function getApiProperties(body: ClassBody): ApiProperty[] {
+      return body.body
+        .filter((something) => something.type === 'ClassProperty')
+        .filter(property => property.decorators && property.decorators.length > 0)
+        .filter(property => property.decorators!.some(decorator => {
+          return decorator.expression.type === 'Identifier' && decorator.expression.name === 'api';
+        }))
+        .map(property => property.key)
+        .filter(key => key.type === 'Identifier')
+        .map(({name}) => ({ name }));
+    }
+
+    function matchedClassDeclaration({ declaration }: { declaration: ClassDeclaration }): MatchedClass {
+      return {
+        type: 'match',
+        data: { className: declaration.id!.name, properties: getApiProperties(declaration.body) }
+      };
+    }
+
     return match(statement)
       .returnType<MatchedClass>()
       .with(
-        { type: 'ExportDefaultDeclaration', declaration: { type: 'ClassDeclaration', id: P.select() } },
-        (id) => ({type: 'match', data: { name: id?.name }})
+        { type: 'ExportDefaultDeclaration', declaration: { type: 'ClassDeclaration' } },
+        matchedClassDeclaration
       )
       .otherwise(() => ({ type: 'no_match' }));
   }
 
-  function getClassName() {
+  function findClass() {
     const matches = parsed.program.body.map(walk);
     return matches.find((match) => match.type === 'match');
   }
 
-  return {
-    className: getClassName()?.data?.name ?? 'not_found'
-  };
+  return findClass()!.data;
+
+  // TODO: Handle potential issues
+  //const result = findClass();
+  // return match(result)
+  //   .returnType<E.Either<string, ParsedJs>>()
+  //   .with(undefined, () => E.left('An issue occurred parsing the LWC JS code.'))
+  //   .with({ type: 'match' }, (match) => E.right(match.data))
+  //   .exhaustive();
 }
 
 function parseLwcMetadataXml(lwcBundle: UnparsedLightningComponentBundle) {

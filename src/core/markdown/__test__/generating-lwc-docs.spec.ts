@@ -68,14 +68,14 @@ export default class DataDisplay extends LightningElement {
         .withName('DataDisplay')
         .withDescription('Displays data in various formats')
         .withJsContent(complexJsContent)
-        .withProperty({
+        .withDecoratedProperty({
           name: 'recordId',
           type: 'String',
           required: true,
           label: 'Record ID',
           description: 'The ID of the record to display',
         })
-        .withProperty({
+        .withDecoratedProperty({
           name: 'variant',
           type: 'String',
           required: false,
@@ -178,7 +178,7 @@ export default class RecordViewer extends LightningElement {
         .withName('CommunityComponent')
         .withDescription('Component for Experience Cloud')
         .withTargets(['lightningCommunity__Default', 'lightningCommunity__Page'])
-        .withProperty({
+        .withDecoratedProperty({
           name: 'title',
           type: 'String',
           required: true,
@@ -206,7 +206,7 @@ export default class RecordViewer extends LightningElement {
         .withName('MultiConfigComponent')
         .withDescription('Component with multiple target configurations')
         .withTargets(['lightningCommunity__Default', 'lightning__AppPage', 'lightning__RecordPage'])
-        .withProperty({
+        .withDecoratedProperty({
           name: 'communityTitle',
           type: 'String',
           required: true,
@@ -214,7 +214,7 @@ export default class RecordViewer extends LightningElement {
           description: 'Title for community pages',
           target: 'lightningCommunity__Default',
         })
-        .withProperty({
+        .withDecoratedProperty({
           name: 'appPageTitle',
           type: 'String',
           required: false,
@@ -222,7 +222,7 @@ export default class RecordViewer extends LightningElement {
           description: 'Title for app pages',
           target: 'lightning__AppPage',
         })
-        .withProperty({
+        .withDecoratedProperty({
           name: 'recordId',
           type: 'String',
           required: true,
@@ -230,7 +230,7 @@ export default class RecordViewer extends LightningElement {
           description: 'Record ID for record pages',
           target: 'lightning__RecordPage',
         })
-        .withProperty({
+        .withDecoratedProperty({
           name: 'showDetails',
           type: 'Boolean',
           required: false,
@@ -332,7 +332,7 @@ export default class MinimalComponent extends LightningElement {}`;
         .withIsExposed(true)
         .withMasterLabel('Metadata Test Component')
         .withTargets(['lightningCommunity__Default', 'lightning__AppPage'])
-        .withProperty({
+        .withDecoratedProperty({
           name: 'recordId',
           type: 'String',
           required: true,
