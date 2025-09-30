@@ -1,0 +1,12 @@
+{{makeHeader name}}
+{{#if docComment.description}}{{docComment.description}}
+{{/if}}
+{{#if docComment.exampleAnnotation.bodyLines}}example:
+```{{#each docComment.exampleAnnotation.bodyLines}}
+{{{.}}}{{/each}}
+```
+{{/if}}
+
+{{> (partial "methodSection.hbr") .}}
+
+[home](../index.md)

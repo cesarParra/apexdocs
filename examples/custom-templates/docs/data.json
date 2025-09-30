@@ -1,0 +1,1774 @@
+{
+  "apex": [
+    {
+      "docComment": null,
+      "access_modifier": "public",
+      "annotations": [],
+      "name": "BaseClass",
+      "group": null,
+      "groupDescription": null,
+      "type_name": "class",
+      "methods": [],
+      "sharingModifier": null,
+      "classModifier": "abstract",
+      "extended_class": null,
+      "implemented_interfaces": [],
+      "properties": [],
+      "fields": [
+        {
+          "docComment": null,
+          "access_modifier": "public",
+          "annotations": [],
+          "name": "sampleEnumFromBase",
+          "group": null,
+          "groupDescription": null,
+          "memberModifiers": [],
+          "typeReference": {
+            "type": "SampleEnum",
+            "rawDeclaration": "SampleEnum"
+          },
+          "fullName": "public SampleEnum sampleEnumFromBase"
+        }
+      ],
+      "constructors": [],
+      "enums": [],
+      "interfaces": [],
+      "classes": []
+    },
+    {
+      "docComment": null,
+      "access_modifier": "public",
+      "annotations": [],
+      "name": "MultiInheritanceClass",
+      "group": null,
+      "groupDescription": null,
+      "type_name": "class",
+      "methods": [],
+      "sharingModifier": null,
+      "classModifier": null,
+      "extended_class": "SampleClass",
+      "implemented_interfaces": [],
+      "properties": [],
+      "fields": [],
+      "constructors": [],
+      "enums": [],
+      "interfaces": [],
+      "classes": []
+    },
+    {
+      "docComment": null,
+      "access_modifier": "public",
+      "annotations": [],
+      "name": "ParentInterface",
+      "group": null,
+      "groupDescription": null,
+      "type_name": "interface",
+      "methods": [
+        {
+          "docComment": null,
+          "access_modifier": "public",
+          "annotations": [],
+          "name": "sampleParentMethod",
+          "group": null,
+          "groupDescription": null,
+          "memberModifiers": [],
+          "typeReference": {
+            "type": "void",
+            "rawDeclaration": "void"
+          },
+          "parameters": [],
+          "signature": "sampleParentMethod()"
+        }
+      ],
+      "sharingModifier": null,
+      "extended_interfaces": []
+    },
+    {
+      "docComment": null,
+      "access_modifier": "public",
+      "annotations": [],
+      "name": "ReferencedEnum",
+      "group": null,
+      "groupDescription": null,
+      "type_name": "enum",
+      "values": []
+    },
+    {
+      "docComment": {
+        "rawDeclaration": "/**\r\n * @description aliquip ex sunt officia ullamco anim deserunt magna aliquip nisi eiusmod in sit officia veniam ex\r\n *              deserunt ea officia exercitation laboris enim in duis quis enim eiusmod eu amet cupidatat.\r\n * @group SampleGroup\r\n * @example\r\n * SampleClass sample = new SampleClass();\r\n * sample.doSomething();\r\n */",
+        "paramAnnotations": [],
+        "returnAnnotation": null,
+        "exampleAnnotation": {
+          "bodyLines": [
+            "SampleClass sample = new SampleClass();",
+            "sample.doSomething();"
+          ]
+        },
+        "throwsAnnotations": [],
+        "annotations": [
+          {
+            "name": "description",
+            "bodyLines": [
+              "aliquip ex sunt officia ullamco anim deserunt magna aliquip nisi eiusmod in sit officia veniam ex",
+              "             deserunt ea officia exercitation laboris enim in duis quis enim eiusmod eu amet cupidatat."
+            ],
+            "body": "aliquip ex sunt officia ullamco anim deserunt magna aliquip nisi eiusmod in sit officia veniam ex\n             deserunt ea officia exercitation laboris enim in duis quis enim eiusmod eu amet cupidatat."
+          },
+          {
+            "name": "group",
+            "bodyLines": [
+              "SampleGroup"
+            ],
+            "body": "SampleGroup"
+          }
+        ],
+        "error": null,
+        "descriptionLines": [
+          "aliquip ex sunt officia ullamco anim deserunt magna aliquip nisi eiusmod in sit officia veniam ex",
+          "             deserunt ea officia exercitation laboris enim in duis quis enim eiusmod eu amet cupidatat."
+        ],
+        "description": "aliquip ex sunt officia ullamco anim deserunt magna aliquip nisi eiusmod in sit officia veniam ex\n             deserunt ea officia exercitation laboris enim in duis quis enim eiusmod eu amet cupidatat."
+      },
+      "access_modifier": "public",
+      "annotations": [],
+      "name": "SampleClass",
+      "group": null,
+      "groupDescription": null,
+      "type_name": "class",
+      "methods": [
+        {
+          "docComment": null,
+          "access_modifier": "public",
+          "annotations": [],
+          "name": "doSomething",
+          "group": "Available Methods",
+          "groupDescription": null,
+          "memberModifiers": [],
+          "typeReference": {
+            "type": "void",
+            "rawDeclaration": "void"
+          },
+          "parameters": [],
+          "signature": "doSomething()"
+        },
+        {
+          "docComment": {
+            "rawDeclaration": "/**\r\n     * @description This is a sample method.\r\n     * @return A string value.\r\n     * @example\r\n     * SampleClass sample = new SampleClass();\r\n     * sample.doSomething();\r\n     */",
+            "paramAnnotations": [],
+            "returnAnnotation": {
+              "bodyLines": [
+                "A string value."
+              ]
+            },
+            "exampleAnnotation": {
+              "bodyLines": [
+                "SampleClass sample = new SampleClass();",
+                "sample.doSomething();"
+              ]
+            },
+            "throwsAnnotations": [],
+            "annotations": [
+              {
+                "name": "description",
+                "bodyLines": [
+                  "This is a sample method."
+                ],
+                "body": "This is a sample method."
+              }
+            ],
+            "error": null,
+            "descriptionLines": [
+              "This is a sample method."
+            ],
+            "description": "This is a sample method."
+          },
+          "access_modifier": "public",
+          "annotations": [
+            {
+              "rawDeclaration": "@Deprecated",
+              "name": "deprecated",
+              "type": "deprecated",
+              "elementValues": []
+            }
+          ],
+          "name": "sayHello",
+          "group": "Deprecated Methods",
+          "groupDescription": null,
+          "memberModifiers": [
+            "virtual"
+          ],
+          "typeReference": {
+            "type": "String",
+            "rawDeclaration": "String"
+          },
+          "parameters": [],
+          "signature": "sayHello()"
+        }
+      ],
+      "sharingModifier": "withSharing",
+      "classModifier": "virtual",
+      "extended_class": "BaseClass",
+      "implemented_interfaces": [
+        "SampleInterface",
+        "ParentInterface"
+      ],
+      "properties": [
+        {
+          "docComment": null,
+          "access_modifier": "public",
+          "annotations": [],
+          "name": "someProperty",
+          "group": "Group Name",
+          "groupDescription": null,
+          "memberModifiers": [],
+          "typeReference": {
+            "type": "String",
+            "rawDeclaration": "String"
+          },
+          "fullName": "public String someProperty"
+        }
+      ],
+      "fields": [
+        {
+          "docComment": {
+            "rawDeclaration": "/**\r\n     * @description This is a sample field.\r\n     */",
+            "paramAnnotations": [],
+            "returnAnnotation": null,
+            "exampleAnnotation": null,
+            "throwsAnnotations": [],
+            "annotations": [
+              {
+                "name": "description",
+                "bodyLines": [
+                  "This is a sample field."
+                ],
+                "body": "This is a sample field."
+              }
+            ],
+            "error": null,
+            "descriptionLines": [
+              "This is a sample field."
+            ],
+            "description": "This is a sample field."
+          },
+          "access_modifier": "private",
+          "annotations": [],
+          "name": "name",
+          "group": "Group Name",
+          "groupDescription": null,
+          "memberModifiers": [
+            "final"
+          ],
+          "typeReference": {
+            "type": "String",
+            "rawDeclaration": "String"
+          },
+          "fullName": "private String name"
+        }
+      ],
+      "constructors": [
+        {
+          "docComment": {
+            "rawDeclaration": "/**\r\n     * @description This is a sample constructor.\r\n     */",
+            "paramAnnotations": [],
+            "returnAnnotation": null,
+            "exampleAnnotation": null,
+            "throwsAnnotations": [],
+            "annotations": [
+              {
+                "name": "description",
+                "bodyLines": [
+                  "This is a sample constructor."
+                ],
+                "body": "This is a sample constructor."
+              }
+            ],
+            "error": null,
+            "descriptionLines": [
+              "This is a sample constructor."
+            ],
+            "description": "This is a sample constructor."
+          },
+          "access_modifier": "public",
+          "annotations": [],
+          "group": null,
+          "groupDescription": null,
+          "parameters": []
+        },
+        {
+          "docComment": null,
+          "access_modifier": "public",
+          "annotations": [],
+          "group": "Other Constructors",
+          "groupDescription": null,
+          "parameters": [
+            {
+              "memberModifiers": [],
+              "name": "name",
+              "typeReference": {
+                "type": "String",
+                "rawDeclaration": "String"
+              }
+            }
+          ]
+        }
+      ],
+      "enums": [
+        {
+          "docComment": {
+            "rawDeclaration": "/**\r\n     * @description This enum is used for foo and bar.\r\n     */",
+            "paramAnnotations": [],
+            "returnAnnotation": null,
+            "exampleAnnotation": null,
+            "throwsAnnotations": [],
+            "annotations": [
+              {
+                "name": "description",
+                "bodyLines": [
+                  "This enum is used for foo and bar."
+                ],
+                "body": "This enum is used for foo and bar."
+              }
+            ],
+            "error": null,
+            "descriptionLines": [
+              "This enum is used for foo and bar."
+            ],
+            "description": "This enum is used for foo and bar."
+          },
+          "access_modifier": "public",
+          "annotations": [],
+          "name": "SomeEnum",
+          "group": null,
+          "groupDescription": null,
+          "type_name": "enum",
+          "values": [
+            {
+              "docComment": {
+                "rawDeclaration": "/** @description This is a test. */",
+                "paramAnnotations": [],
+                "returnAnnotation": null,
+                "exampleAnnotation": null,
+                "throwsAnnotations": [],
+                "annotations": [
+                  {
+                    "name": "description",
+                    "bodyLines": [
+                      "This is a test."
+                    ],
+                    "body": "This is a test."
+                  }
+                ],
+                "error": null,
+                "descriptionLines": [
+                  "This is a test."
+                ],
+                "description": "This is a test."
+              },
+              "name": "TEST_1",
+              "value": null
+            },
+            {
+              "docComment": null,
+              "name": "TEST_2",
+              "value": null
+            },
+            {
+              "docComment": null,
+              "name": "TEST_3",
+              "value": null
+            }
+          ]
+        }
+      ],
+      "interfaces": [
+        {
+          "docComment": null,
+          "access_modifier": "public",
+          "annotations": [],
+          "name": "SomeInterface",
+          "group": null,
+          "groupDescription": null,
+          "type_name": "interface",
+          "methods": [
+            {
+              "docComment": null,
+              "access_modifier": "public",
+              "annotations": [],
+              "name": "doSomething",
+              "group": null,
+              "groupDescription": null,
+              "memberModifiers": [],
+              "typeReference": {
+                "type": "void",
+                "rawDeclaration": "void"
+              },
+              "parameters": [],
+              "signature": "doSomething()"
+            }
+          ],
+          "sharingModifier": null,
+          "extended_interfaces": []
+        }
+      ],
+      "classes": [
+        {
+          "docComment": null,
+          "access_modifier": "public",
+          "annotations": [],
+          "name": "SomeInnerClass",
+          "group": null,
+          "groupDescription": null,
+          "type_name": "class",
+          "methods": [
+            {
+              "docComment": null,
+              "access_modifier": "public",
+              "annotations": [],
+              "name": "doSomething",
+              "group": null,
+              "groupDescription": null,
+              "memberModifiers": [],
+              "typeReference": {
+                "type": "void",
+                "rawDeclaration": "void"
+              },
+              "parameters": [],
+              "signature": "doSomething()"
+            }
+          ],
+          "sharingModifier": null,
+          "classModifier": null,
+          "extended_class": null,
+          "implemented_interfaces": [],
+          "properties": [],
+          "fields": [
+            {
+              "docComment": null,
+              "access_modifier": "public",
+              "annotations": [],
+              "name": "someInnerField",
+              "group": null,
+              "groupDescription": null,
+              "memberModifiers": [],
+              "typeReference": {
+                "type": "String",
+                "rawDeclaration": "String"
+              },
+              "fullName": "public String someInnerField"
+            }
+          ],
+          "constructors": [],
+          "enums": [],
+          "interfaces": [],
+          "classes": []
+        }
+      ]
+    },
+    {
+      "docComment": {
+        "rawDeclaration": "/**\r\n * @description This is a sample enum. This references {@link ReferencedEnum}.\r\n *\r\n * This description has several lines\r\n * @group Sample Enums\r\n * @author John Doe\r\n * @date 2022-01-01\r\n * @some-custom Test. I can also have a {@link ReferencedEnum} here.\r\n *                    And it can be multiline.\r\n * @see ReferencedEnum\r\n * @mermaid\r\n * graph TD\r\n *  A[SampleEnum] -->|references| B[ReferencedEnum]\r\n *  B -->|referenced by| A\r\n */",
+        "paramAnnotations": [],
+        "returnAnnotation": null,
+        "exampleAnnotation": null,
+        "throwsAnnotations": [],
+        "annotations": [
+          {
+            "name": "description",
+            "bodyLines": [
+              "This is a sample enum. This references {@link ReferencedEnum}.",
+              "",
+              "This description has several lines"
+            ],
+            "body": "This is a sample enum. This references {@link ReferencedEnum}.\n\nThis description has several lines"
+          },
+          {
+            "name": "group",
+            "bodyLines": [
+              "Sample Enums"
+            ],
+            "body": "Sample Enums"
+          },
+          {
+            "name": "author",
+            "bodyLines": [
+              "John Doe"
+            ],
+            "body": "John Doe"
+          },
+          {
+            "name": "date",
+            "bodyLines": [
+              "2022-01-01"
+            ],
+            "body": "2022-01-01"
+          },
+          {
+            "name": "some-custom",
+            "bodyLines": [
+              "Test. I can also have a {@link ReferencedEnum} here.",
+              "                   And it can be multiline."
+            ],
+            "body": "Test. I can also have a {@link ReferencedEnum} here.\n                   And it can be multiline."
+          },
+          {
+            "name": "see",
+            "bodyLines": [
+              "ReferencedEnum"
+            ],
+            "body": "ReferencedEnum"
+          },
+          {
+            "name": "mermaid",
+            "bodyLines": [
+              "graph TD",
+              " A[SampleEnum] -->|references| B[ReferencedEnum]",
+              " B -->|referenced by| A"
+            ],
+            "body": "graph TD\n A[SampleEnum] -->|references| B[ReferencedEnum]\n B -->|referenced by| A"
+          }
+        ],
+        "error": null,
+        "descriptionLines": [
+          "This is a sample enum. This references {@link ReferencedEnum}.",
+          "",
+          "This description has several lines"
+        ],
+        "description": "This is a sample enum. This references {@link ReferencedEnum}.\n\nThis description has several lines"
+      },
+      "access_modifier": "public",
+      "annotations": [
+        {
+          "rawDeclaration": "@NamespaceAccessible",
+          "name": "namespaceaccessible",
+          "type": "namespaceAccessible",
+          "elementValues": []
+        }
+      ],
+      "name": "SampleEnum",
+      "group": null,
+      "groupDescription": null,
+      "type_name": "enum",
+      "values": [
+        {
+          "docComment": {
+            "rawDeclaration": "/**\r\n     * @description This is value 1\r\n     */",
+            "paramAnnotations": [],
+            "returnAnnotation": null,
+            "exampleAnnotation": null,
+            "throwsAnnotations": [],
+            "annotations": [
+              {
+                "name": "description",
+                "bodyLines": [
+                  "This is value 1"
+                ],
+                "body": "This is value 1"
+              }
+            ],
+            "error": null,
+            "descriptionLines": [
+              "This is value 1"
+            ],
+            "description": "This is value 1"
+          },
+          "name": "VALUE1",
+          "value": null
+        },
+        {
+          "docComment": {
+            "rawDeclaration": "/**\r\n     * @description This is value 2\r\n     */",
+            "paramAnnotations": [],
+            "returnAnnotation": null,
+            "exampleAnnotation": null,
+            "throwsAnnotations": [],
+            "annotations": [
+              {
+                "name": "description",
+                "bodyLines": [
+                  "This is value 2"
+                ],
+                "body": "This is value 2"
+              }
+            ],
+            "error": null,
+            "descriptionLines": [
+              "This is value 2"
+            ],
+            "description": "This is value 2"
+          },
+          "name": "VALUE2",
+          "value": null
+        },
+        {
+          "docComment": {
+            "rawDeclaration": "/**\r\n     * @description This is value 3\r\n     */",
+            "paramAnnotations": [],
+            "returnAnnotation": null,
+            "exampleAnnotation": null,
+            "throwsAnnotations": [],
+            "annotations": [
+              {
+                "name": "description",
+                "bodyLines": [
+                  "This is value 3"
+                ],
+                "body": "This is value 3"
+              }
+            ],
+            "error": null,
+            "descriptionLines": [
+              "This is value 3"
+            ],
+            "description": "This is value 3"
+          },
+          "name": "VALUE3",
+          "value": null
+        }
+      ]
+    },
+    {
+      "docComment": {
+        "rawDeclaration": "/**\r\n * @description This is a sample exception.\r\n * @usage\r\n *\r\n * You can use the exception the following way.\r\n * You can also take a look at {@link SampleClass} to see how it is used.\r\n * This is a dangerous HTML tag: <script>alert('Hello');</script>\r\n *\r\n * ```\r\n * try {\r\n *    throw new SampleException();\r\n * } catch (SampleException e) {\r\n *   System.debug('Caught exception');\r\n * }\r\n * ```\r\n */",
+        "paramAnnotations": [],
+        "returnAnnotation": null,
+        "exampleAnnotation": null,
+        "throwsAnnotations": [],
+        "annotations": [
+          {
+            "name": "description",
+            "bodyLines": [
+              "This is a sample exception."
+            ],
+            "body": "This is a sample exception."
+          },
+          {
+            "name": "usage",
+            "bodyLines": [
+              "You can use the exception the following way.",
+              "You can also take a look at {@link SampleClass} to see how it is used.",
+              "This is a dangerous HTML tag: <script>alert('Hello');</script>",
+              "",
+              "```",
+              "try {",
+              "   throw new SampleException();",
+              "} catch (SampleException e) {",
+              "  System.debug('Caught exception');",
+              "}",
+              "```"
+            ],
+            "body": "You can use the exception the following way.\nYou can also take a look at {@link SampleClass} to see how it is used.\nThis is a dangerous HTML tag: <script>alert('Hello');</script>\n\n```\ntry {\n   throw new SampleException();\n} catch (SampleException e) {\n  System.debug('Caught exception');\n}\n```"
+          }
+        ],
+        "error": null,
+        "descriptionLines": [
+          "This is a sample exception."
+        ],
+        "description": "This is a sample exception."
+      },
+      "access_modifier": "public",
+      "annotations": [],
+      "name": "SampleException",
+      "group": null,
+      "groupDescription": null,
+      "type_name": "class",
+      "methods": [],
+      "sharingModifier": null,
+      "classModifier": null,
+      "extended_class": "Exception",
+      "implemented_interfaces": [],
+      "properties": [],
+      "fields": [],
+      "constructors": [],
+      "enums": [],
+      "interfaces": [],
+      "classes": []
+    },
+    {
+      "docComment": {
+        "rawDeclaration": "/**\r\n * @description This is a sample interface\r\n * @author John Doe\r\n * @date 2020-01-01\r\n * @see SampleEnum\r\n * @see ReferencedEnum\r\n * @mermaid\r\n * ```mermaid\r\n * graph TD\r\n *    A[SampleInterface] -->|extends| B[ParentInterface]\r\n *    B -->|extends| C[GrandParentInterface]\r\n *    C -->|extends| D[GreatGrandParentInterface]\r\n * ```\r\n * @example\r\n * ```apex\r\n * SampleInterface sampleInterface = new SampleInterface();\r\n * sampleInterface.sampleMethod();\r\n * ```\r\n */",
+        "paramAnnotations": [],
+        "returnAnnotation": null,
+        "exampleAnnotation": {
+          "bodyLines": [
+            "```apex",
+            "SampleInterface sampleInterface = new SampleInterface();",
+            "sampleInterface.sampleMethod();",
+            "```"
+          ]
+        },
+        "throwsAnnotations": [],
+        "annotations": [
+          {
+            "name": "description",
+            "bodyLines": [
+              "This is a sample interface"
+            ],
+            "body": "This is a sample interface"
+          },
+          {
+            "name": "author",
+            "bodyLines": [
+              "John Doe"
+            ],
+            "body": "John Doe"
+          },
+          {
+            "name": "date",
+            "bodyLines": [
+              "2020-01-01"
+            ],
+            "body": "2020-01-01"
+          },
+          {
+            "name": "see",
+            "bodyLines": [
+              "SampleEnum"
+            ],
+            "body": "SampleEnum"
+          },
+          {
+            "name": "see",
+            "bodyLines": [
+              "ReferencedEnum"
+            ],
+            "body": "ReferencedEnum"
+          },
+          {
+            "name": "mermaid",
+            "bodyLines": [
+              "```mermaid",
+              "graph TD",
+              "   A[SampleInterface] -->|extends| B[ParentInterface]",
+              "   B -->|extends| C[GrandParentInterface]",
+              "   C -->|extends| D[GreatGrandParentInterface]",
+              "```"
+            ],
+            "body": "```mermaid\ngraph TD\n   A[SampleInterface] -->|extends| B[ParentInterface]\n   B -->|extends| C[GrandParentInterface]\n   C -->|extends| D[GreatGrandParentInterface]\n```"
+          }
+        ],
+        "error": null,
+        "descriptionLines": [
+          "This is a sample interface"
+        ],
+        "description": "This is a sample interface"
+      },
+      "access_modifier": "public",
+      "annotations": [
+        {
+          "rawDeclaration": "@NamespaceAccessible",
+          "name": "namespaceaccessible",
+          "type": "namespaceAccessible",
+          "elementValues": []
+        }
+      ],
+      "name": "SampleInterface",
+      "group": null,
+      "groupDescription": null,
+      "type_name": "interface",
+      "methods": [
+        {
+          "docComment": {
+            "rawDeclaration": "/**\r\n     * @description This is a sample method\r\n     * @return Some return value\r\n     * @throws SampleException This is a sample exception\r\n     * @throws AnotherSampleException This is another sample exception\r\n     * @custom-tag This is a custom tag\r\n     * @another-custom-tag This is another custom tag\r\n     * @mermaid\r\n     * graph TD\r\n     *   A[SampleInterface] -->|extends| B[ParentInterface]\r\n     *   B -->|extends| C[GrandParentInterface]\r\n     *   C -->|extends| D[GreatGrandParentInterface]\r\n     * @example\r\n     * SampleInterface sampleInterface = new SampleInterface();\r\n     * sampleInterface.sampleMethod();\r\n     */",
+            "paramAnnotations": [],
+            "returnAnnotation": {
+              "bodyLines": [
+                "Some return value"
+              ]
+            },
+            "exampleAnnotation": {
+              "bodyLines": [
+                "SampleInterface sampleInterface = new SampleInterface();",
+                "sampleInterface.sampleMethod();"
+              ]
+            },
+            "throwsAnnotations": [
+              {
+                "bodyLines": [
+                  "This is a sample exception"
+                ],
+                "exceptionName": "SampleException"
+              },
+              {
+                "bodyLines": [
+                  "This is another sample exception"
+                ],
+                "exceptionName": "AnotherSampleException"
+              }
+            ],
+            "annotations": [
+              {
+                "name": "description",
+                "bodyLines": [
+                  "This is a sample method"
+                ],
+                "body": "This is a sample method"
+              },
+              {
+                "name": "custom-tag",
+                "bodyLines": [
+                  "This is a custom tag"
+                ],
+                "body": "This is a custom tag"
+              },
+              {
+                "name": "another-custom-tag",
+                "bodyLines": [
+                  "This is another custom tag"
+                ],
+                "body": "This is another custom tag"
+              },
+              {
+                "name": "mermaid",
+                "bodyLines": [
+                  "graph TD",
+                  "  A[SampleInterface] -->|extends| B[ParentInterface]",
+                  "  B -->|extends| C[GrandParentInterface]",
+                  "  C -->|extends| D[GreatGrandParentInterface]"
+                ],
+                "body": "graph TD\n  A[SampleInterface] -->|extends| B[ParentInterface]\n  B -->|extends| C[GrandParentInterface]\n  C -->|extends| D[GreatGrandParentInterface]"
+              }
+            ],
+            "error": null,
+            "descriptionLines": [
+              "This is a sample method"
+            ],
+            "description": "This is a sample method"
+          },
+          "access_modifier": "public",
+          "annotations": [
+            {
+              "rawDeclaration": "@NamespaceAccessible",
+              "name": "namespaceaccessible",
+              "type": "namespaceAccessible",
+              "elementValues": []
+            }
+          ],
+          "name": "sampleMethod",
+          "group": null,
+          "groupDescription": null,
+          "memberModifiers": [],
+          "typeReference": {
+            "type": "String",
+            "rawDeclaration": "String"
+          },
+          "parameters": [],
+          "signature": "sampleMethod()"
+        },
+        {
+          "docComment": {
+            "rawDeclaration": "/**\r\n     * @description This is a sample method with parameters\r\n     *              Sometimes it won't be possible to find a {@link NonExistent} link.\r\n     * @param param1 This is the first parameter\r\n     * @param param2 This is the second parameter\r\n     * @param theEnum This is an enum parameter\r\n     * @return Some return value\r\n     */",
+            "paramAnnotations": [
+              {
+                "bodyLines": [
+                  "This is the first parameter"
+                ],
+                "paramName": "param1"
+              },
+              {
+                "bodyLines": [
+                  "This is the second parameter"
+                ],
+                "paramName": "param2"
+              },
+              {
+                "bodyLines": [
+                  "This is an enum parameter"
+                ],
+                "paramName": "theEnum"
+              }
+            ],
+            "returnAnnotation": {
+              "bodyLines": [
+                "Some return value"
+              ]
+            },
+            "exampleAnnotation": null,
+            "throwsAnnotations": [],
+            "annotations": [
+              {
+                "name": "description",
+                "bodyLines": [
+                  "This is a sample method with parameters",
+                  "             Sometimes it won't be possible to find a {@link NonExistent} link."
+                ],
+                "body": "This is a sample method with parameters\n             Sometimes it won't be possible to find a {@link NonExistent} link."
+              }
+            ],
+            "error": null,
+            "descriptionLines": [
+              "This is a sample method with parameters",
+              "             Sometimes it won't be possible to find a {@link NonExistent} link."
+            ],
+            "description": "This is a sample method with parameters\n             Sometimes it won't be possible to find a {@link NonExistent} link."
+          },
+          "access_modifier": "public",
+          "annotations": [
+            {
+              "rawDeclaration": "@NamespaceAccessible",
+              "name": "namespaceaccessible",
+              "type": "namespaceAccessible",
+              "elementValues": []
+            },
+            {
+              "rawDeclaration": "@Deprecated",
+              "name": "deprecated",
+              "type": "deprecated",
+              "elementValues": []
+            }
+          ],
+          "name": "sampleMethodWithParams",
+          "group": null,
+          "groupDescription": null,
+          "memberModifiers": [],
+          "typeReference": {
+            "type": "SampleEnum",
+            "rawDeclaration": "SampleEnum"
+          },
+          "parameters": [
+            {
+              "memberModifiers": [],
+              "name": "param1",
+              "typeReference": {
+                "type": "String",
+                "rawDeclaration": "String"
+              }
+            },
+            {
+              "memberModifiers": [],
+              "name": "param2",
+              "typeReference": {
+                "type": "Integer",
+                "rawDeclaration": "Integer"
+              }
+            },
+            {
+              "memberModifiers": [],
+              "name": "theEnum",
+              "typeReference": {
+                "type": "SampleEnum",
+                "rawDeclaration": "SampleEnum"
+              }
+            }
+          ],
+          "signature": "sampleMethodWithParams(String, Integer, SampleEnum)"
+        }
+      ],
+      "sharingModifier": null,
+      "extended_interfaces": [
+        "ParentInterface"
+      ]
+    },
+    {
+      "docComment": {
+        "rawDeclaration": "/**\r\n * @description Represents a uniform resource locator (URL) and provides access to parts of the URL.\r\n * Enables access to the base URL used to access your Salesforce org.\r\n *\r\n * ## Usage\r\n * Use the methods of the `System.URL` class to create links to objects in your organization. Such objects can be files, images,\r\n * logos, or records that you want to include in external emails, in activities, or in Chatter posts. For example, you can create\r\n * a link to a file uploaded as an attachment to a Chatter post by concatenating the Salesforce base URL with the file ID:\r\n *\r\n * ```apex\r\n * // Get a file uploaded through Chatter.\r\n * ContentDocument doc = [SELECT Id FROM ContentDocument\r\n *         WHERE Title = 'myfile'];\r\n * // Create a link to the file.\r\n * String fullFileURL = URL.getOrgDomainURL().toExternalForm() +\r\n * '/' + doc.id;\r\n * system.debug(fullFileURL);\r\n * ```\r\n *\r\n * The following example creates a link to a Salesforce record. The full URL is created by concatenating the Salesforce base\r\n * URL with the record ID.\r\n *\r\n * ```ape\r\n * Account acct = [SELECT Id FROM Account WHERE Name = 'Acme' LIMIT 1];\r\n * String fullRecordURL = URL.getOrgDomainURL().toExternalForm() + '/' + acct.Id;\r\n * ```\r\n *\r\n * ## Example\r\n * In this example, the base URL and the full request URL of the current Salesforce server instance are retrieved. Next, a URL\r\n * pointing to a specific account object is created. Finally, components of the base and full URL are obtained. This example\r\n * prints out all the results to the debug log output.\r\n *\r\n * ```apex\r\n * // Create a new account called Acme that we will create a link for later.\r\n * Account myAccount = new Account(Name='Acme');\r\n * insert myAccount;\r\n *\r\n * // Get the base URL.\r\n * String sfdcBaseURL = URL.getOrgDomainURL().toExternalForm();\r\n * System.debug('Base URL: ' + sfdcBaseURL );\r\n *\r\n * // Get the URL for the current request.\r\n * String currentRequestURL = URL.getCurrentRequestUrl().toExternalForm();\r\n * System.debug('Current request URL: ' + currentRequestURL);\r\n *\r\n * // Create the account URL from the base URL.\r\n * String accountURL = URL.getOrgDomainURL().toExternalForm() +\r\n *                        '/' + myAccount.Id;\r\n * System.debug('URL of a particular account: ' + accountURL);\r\n *\r\n * // Get some parts of the base URL.\r\n * System.debug('Host: ' + URL.getOrgDomainURL().getHost());\r\n * System.debug('Protocol: ' + URL.getOrgDomainURL().getProtocol());\r\n *\r\n * // Get the query string of the current request.\r\n * System.debug('Query: ' + URL.getCurrentRequestUrl().getQuery());\r\n * ```\r\n *\r\n * ## Version Behavior Changes\r\n * In API version 41.0 and later, Apex URL objects are represented by the java.net.URI type, not the java.net.URL type.\r\n * The API version in which the URL object was instantiated determines the behavior of subsequent method calls to the\r\n * specific instance. Salesforce strongly encourages you to use API 41.0 and later versions for fully RFC-compliant URL\r\n * parsing that includes proper handling of edge cases of complex URL structures. API 41.0 and later versions also enforce\r\n * that inputs are valid, RFC-compliant URL or URI strings.\r\n *\r\n * * [URL Constructors](https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_methods_system_url.htm#apex_System_URL_constructors)\r\n * * [URL Methods](https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_methods_system_url.htm#apex_System_URL_methods)\r\n *\r\n * **See Also**\r\n * * [URL Class](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_classes_url.htm)\r\n */",
+        "paramAnnotations": [],
+        "returnAnnotation": null,
+        "exampleAnnotation": null,
+        "throwsAnnotations": [],
+        "annotations": [
+          {
+            "name": "description",
+            "bodyLines": [
+              "Represents a uniform resource locator (URL) and provides access to parts of the URL.",
+              "Enables access to the base URL used to access your Salesforce org.",
+              "",
+              "## Usage",
+              "Use the methods of the `System.URL` class to create links to objects in your organization. Such objects can be files, images,",
+              "logos, or records that you want to include in external emails, in activities, or in Chatter posts. For example, you can create",
+              "a link to a file uploaded as an attachment to a Chatter post by concatenating the Salesforce base URL with the file ID:",
+              "",
+              "```apex",
+              "// Get a file uploaded through Chatter.",
+              "ContentDocument doc = [SELECT Id FROM ContentDocument",
+              "        WHERE Title = 'myfile'];",
+              "// Create a link to the file.",
+              "String fullFileURL = URL.getOrgDomainURL().toExternalForm() +",
+              "'/' + doc.id;",
+              "system.debug(fullFileURL);",
+              "```",
+              "",
+              "The following example creates a link to a Salesforce record. The full URL is created by concatenating the Salesforce base",
+              "URL with the record ID.",
+              "",
+              "```ape",
+              "Account acct = [SELECT Id FROM Account WHERE Name = 'Acme' LIMIT 1];",
+              "String fullRecordURL = URL.getOrgDomainURL().toExternalForm() + '/' + acct.Id;",
+              "```",
+              "",
+              "## Example",
+              "In this example, the base URL and the full request URL of the current Salesforce server instance are retrieved. Next, a URL",
+              "pointing to a specific account object is created. Finally, components of the base and full URL are obtained. This example",
+              "prints out all the results to the debug log output.",
+              "",
+              "```apex",
+              "// Create a new account called Acme that we will create a link for later.",
+              "Account myAccount = new Account(Name='Acme');",
+              "insert myAccount;",
+              "",
+              "// Get the base URL.",
+              "String sfdcBaseURL = URL.getOrgDomainURL().toExternalForm();",
+              "System.debug('Base URL: ' + sfdcBaseURL );",
+              "",
+              "// Get the URL for the current request.",
+              "String currentRequestURL = URL.getCurrentRequestUrl().toExternalForm();",
+              "System.debug('Current request URL: ' + currentRequestURL);",
+              "",
+              "// Create the account URL from the base URL.",
+              "String accountURL = URL.getOrgDomainURL().toExternalForm() +",
+              "                       '/' + myAccount.Id;",
+              "System.debug('URL of a particular account: ' + accountURL);",
+              "",
+              "// Get some parts of the base URL.",
+              "System.debug('Host: ' + URL.getOrgDomainURL().getHost());",
+              "System.debug('Protocol: ' + URL.getOrgDomainURL().getProtocol());",
+              "",
+              "// Get the query string of the current request.",
+              "System.debug('Query: ' + URL.getCurrentRequestUrl().getQuery());",
+              "```",
+              "",
+              "## Version Behavior Changes",
+              "In API version 41.0 and later, Apex URL objects are represented by the java.net.URI type, not the java.net.URL type.",
+              "The API version in which the URL object was instantiated determines the behavior of subsequent method calls to the",
+              "specific instance. Salesforce strongly encourages you to use API 41.0 and later versions for fully RFC-compliant URL",
+              "parsing that includes proper handling of edge cases of complex URL structures. API 41.0 and later versions also enforce",
+              "that inputs are valid, RFC-compliant URL or URI strings.",
+              "",
+              "* [URL Constructors](https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_methods_system_url.htm#apex_System_URL_constructors)",
+              "* [URL Methods](https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_methods_system_url.htm#apex_System_URL_methods)",
+              "",
+              "**See Also**",
+              "* [URL Class](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_classes_url.htm)"
+            ],
+            "body": "Represents a uniform resource locator (URL) and provides access to parts of the URL.\nEnables access to the base URL used to access your Salesforce org.\n\n## Usage\nUse the methods of the `System.URL` class to create links to objects in your organization. Such objects can be files, images,\nlogos, or records that you want to include in external emails, in activities, or in Chatter posts. For example, you can create\na link to a file uploaded as an attachment to a Chatter post by concatenating the Salesforce base URL with the file ID:\n\n```apex\n// Get a file uploaded through Chatter.\nContentDocument doc = [SELECT Id FROM ContentDocument\n        WHERE Title = 'myfile'];\n// Create a link to the file.\nString fullFileURL = URL.getOrgDomainURL().toExternalForm() +\n'/' + doc.id;\nsystem.debug(fullFileURL);\n```\n\nThe following example creates a link to a Salesforce record. The full URL is created by concatenating the Salesforce base\nURL with the record ID.\n\n```ape\nAccount acct = [SELECT Id FROM Account WHERE Name = 'Acme' LIMIT 1];\nString fullRecordURL = URL.getOrgDomainURL().toExternalForm() + '/' + acct.Id;\n```\n\n## Example\nIn this example, the base URL and the full request URL of the current Salesforce server instance are retrieved. Next, a URL\npointing to a specific account object is created. Finally, components of the base and full URL are obtained. This example\nprints out all the results to the debug log output.\n\n```apex\n// Create a new account called Acme that we will create a link for later.\nAccount myAccount = new Account(Name='Acme');\ninsert myAccount;\n\n// Get the base URL.\nString sfdcBaseURL = URL.getOrgDomainURL().toExternalForm();\nSystem.debug('Base URL: ' + sfdcBaseURL );\n\n// Get the URL for the current request.\nString currentRequestURL = URL.getCurrentRequestUrl().toExternalForm();\nSystem.debug('Current request URL: ' + currentRequestURL);\n\n// Create the account URL from the base URL.\nString accountURL = URL.getOrgDomainURL().toExternalForm() +\n                       '/' + myAccount.Id;\nSystem.debug('URL of a particular account: ' + accountURL);\n\n// Get some parts of the base URL.\nSystem.debug('Host: ' + URL.getOrgDomainURL().getHost());\nSystem.debug('Protocol: ' + URL.getOrgDomainURL().getProtocol());\n\n// Get the query string of the current request.\nSystem.debug('Query: ' + URL.getCurrentRequestUrl().getQuery());\n```\n\n## Version Behavior Changes\nIn API version 41.0 and later, Apex URL objects are represented by the java.net.URI type, not the java.net.URL type.\nThe API version in which the URL object was instantiated determines the behavior of subsequent method calls to the\nspecific instance. Salesforce strongly encourages you to use API 41.0 and later versions for fully RFC-compliant URL\nparsing that includes proper handling of edge cases of complex URL structures. API 41.0 and later versions also enforce\nthat inputs are valid, RFC-compliant URL or URI strings.\n\n* [URL Constructors](https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_methods_system_url.htm#apex_System_URL_constructors)\n* [URL Methods](https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_methods_system_url.htm#apex_System_URL_methods)\n\n**See Also**\n* [URL Class](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_classes_url.htm)"
+          }
+        ],
+        "error": null,
+        "descriptionLines": [
+          "Represents a uniform resource locator (URL) and provides access to parts of the URL.",
+          "Enables access to the base URL used to access your Salesforce org.",
+          "",
+          "## Usage",
+          "Use the methods of the `System.URL` class to create links to objects in your organization. Such objects can be files, images,",
+          "logos, or records that you want to include in external emails, in activities, or in Chatter posts. For example, you can create",
+          "a link to a file uploaded as an attachment to a Chatter post by concatenating the Salesforce base URL with the file ID:",
+          "",
+          "```apex",
+          "// Get a file uploaded through Chatter.",
+          "ContentDocument doc = [SELECT Id FROM ContentDocument",
+          "        WHERE Title = 'myfile'];",
+          "// Create a link to the file.",
+          "String fullFileURL = URL.getOrgDomainURL().toExternalForm() +",
+          "'/' + doc.id;",
+          "system.debug(fullFileURL);",
+          "```",
+          "",
+          "The following example creates a link to a Salesforce record. The full URL is created by concatenating the Salesforce base",
+          "URL with the record ID.",
+          "",
+          "```ape",
+          "Account acct = [SELECT Id FROM Account WHERE Name = 'Acme' LIMIT 1];",
+          "String fullRecordURL = URL.getOrgDomainURL().toExternalForm() + '/' + acct.Id;",
+          "```",
+          "",
+          "## Example",
+          "In this example, the base URL and the full request URL of the current Salesforce server instance are retrieved. Next, a URL",
+          "pointing to a specific account object is created. Finally, components of the base and full URL are obtained. This example",
+          "prints out all the results to the debug log output.",
+          "",
+          "```apex",
+          "// Create a new account called Acme that we will create a link for later.",
+          "Account myAccount = new Account(Name='Acme');",
+          "insert myAccount;",
+          "",
+          "// Get the base URL.",
+          "String sfdcBaseURL = URL.getOrgDomainURL().toExternalForm();",
+          "System.debug('Base URL: ' + sfdcBaseURL );",
+          "",
+          "// Get the URL for the current request.",
+          "String currentRequestURL = URL.getCurrentRequestUrl().toExternalForm();",
+          "System.debug('Current request URL: ' + currentRequestURL);",
+          "",
+          "// Create the account URL from the base URL.",
+          "String accountURL = URL.getOrgDomainURL().toExternalForm() +",
+          "                       '/' + myAccount.Id;",
+          "System.debug('URL of a particular account: ' + accountURL);",
+          "",
+          "// Get some parts of the base URL.",
+          "System.debug('Host: ' + URL.getOrgDomainURL().getHost());",
+          "System.debug('Protocol: ' + URL.getOrgDomainURL().getProtocol());",
+          "",
+          "// Get the query string of the current request.",
+          "System.debug('Query: ' + URL.getCurrentRequestUrl().getQuery());",
+          "```",
+          "",
+          "## Version Behavior Changes",
+          "In API version 41.0 and later, Apex URL objects are represented by the java.net.URI type, not the java.net.URL type.",
+          "The API version in which the URL object was instantiated determines the behavior of subsequent method calls to the",
+          "specific instance. Salesforce strongly encourages you to use API 41.0 and later versions for fully RFC-compliant URL",
+          "parsing that includes proper handling of edge cases of complex URL structures. API 41.0 and later versions also enforce",
+          "that inputs are valid, RFC-compliant URL or URI strings.",
+          "",
+          "* [URL Constructors](https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_methods_system_url.htm#apex_System_URL_constructors)",
+          "* [URL Methods](https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_methods_system_url.htm#apex_System_URL_methods)",
+          "",
+          "**See Also**",
+          "* [URL Class](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_classes_url.htm)"
+        ],
+        "description": "Represents a uniform resource locator (URL) and provides access to parts of the URL.\nEnables access to the base URL used to access your Salesforce org.\n\n## Usage\nUse the methods of the `System.URL` class to create links to objects in your organization. Such objects can be files, images,\nlogos, or records that you want to include in external emails, in activities, or in Chatter posts. For example, you can create\na link to a file uploaded as an attachment to a Chatter post by concatenating the Salesforce base URL with the file ID:\n\n```apex\n// Get a file uploaded through Chatter.\nContentDocument doc = [SELECT Id FROM ContentDocument\n        WHERE Title = 'myfile'];\n// Create a link to the file.\nString fullFileURL = URL.getOrgDomainURL().toExternalForm() +\n'/' + doc.id;\nsystem.debug(fullFileURL);\n```\n\nThe following example creates a link to a Salesforce record. The full URL is created by concatenating the Salesforce base\nURL with the record ID.\n\n```ape\nAccount acct = [SELECT Id FROM Account WHERE Name = 'Acme' LIMIT 1];\nString fullRecordURL = URL.getOrgDomainURL().toExternalForm() + '/' + acct.Id;\n```\n\n## Example\nIn this example, the base URL and the full request URL of the current Salesforce server instance are retrieved. Next, a URL\npointing to a specific account object is created. Finally, components of the base and full URL are obtained. This example\nprints out all the results to the debug log output.\n\n```apex\n// Create a new account called Acme that we will create a link for later.\nAccount myAccount = new Account(Name='Acme');\ninsert myAccount;\n\n// Get the base URL.\nString sfdcBaseURL = URL.getOrgDomainURL().toExternalForm();\nSystem.debug('Base URL: ' + sfdcBaseURL );\n\n// Get the URL for the current request.\nString currentRequestURL = URL.getCurrentRequestUrl().toExternalForm();\nSystem.debug('Current request URL: ' + currentRequestURL);\n\n// Create the account URL from the base URL.\nString accountURL = URL.getOrgDomainURL().toExternalForm() +\n                       '/' + myAccount.Id;\nSystem.debug('URL of a particular account: ' + accountURL);\n\n// Get some parts of the base URL.\nSystem.debug('Host: ' + URL.getOrgDomainURL().getHost());\nSystem.debug('Protocol: ' + URL.getOrgDomainURL().getProtocol());\n\n// Get the query string of the current request.\nSystem.debug('Query: ' + URL.getCurrentRequestUrl().getQuery());\n```\n\n## Version Behavior Changes\nIn API version 41.0 and later, Apex URL objects are represented by the java.net.URI type, not the java.net.URL type.\nThe API version in which the URL object was instantiated determines the behavior of subsequent method calls to the\nspecific instance. Salesforce strongly encourages you to use API 41.0 and later versions for fully RFC-compliant URL\nparsing that includes proper handling of edge cases of complex URL structures. API 41.0 and later versions also enforce\nthat inputs are valid, RFC-compliant URL or URI strings.\n\n* [URL Constructors](https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_methods_system_url.htm#apex_System_URL_constructors)\n* [URL Methods](https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_methods_system_url.htm#apex_System_URL_methods)\n\n**See Also**\n* [URL Class](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_classes_url.htm)"
+      },
+      "access_modifier": "global",
+      "annotations": [],
+      "name": "Url",
+      "group": null,
+      "groupDescription": null,
+      "type_name": "class",
+      "methods": [
+        {
+          "docComment": {
+            "rawDeclaration": "/**\r\n     * @description Returns the authority portion of the current URL.\r\n     * @return The authority portion of the current URL.\r\n     */",
+            "paramAnnotations": [],
+            "returnAnnotation": {
+              "bodyLines": [
+                "The authority portion of the current URL."
+              ]
+            },
+            "exampleAnnotation": null,
+            "throwsAnnotations": [],
+            "annotations": [
+              {
+                "name": "description",
+                "bodyLines": [
+                  "Returns the authority portion of the current URL."
+                ],
+                "body": "Returns the authority portion of the current URL."
+              }
+            ],
+            "error": null,
+            "descriptionLines": [
+              "Returns the authority portion of the current URL."
+            ],
+            "description": "Returns the authority portion of the current URL."
+          },
+          "access_modifier": "global",
+          "annotations": [],
+          "name": "getAuthority",
+          "group": null,
+          "groupDescription": null,
+          "memberModifiers": [],
+          "typeReference": {
+            "type": "String",
+            "rawDeclaration": "String"
+          },
+          "parameters": [],
+          "signature": "getAuthority()"
+        },
+        {
+          "docComment": {
+            "rawDeclaration": "/**\r\n     * @description Returns the URL of an entire request on a Salesforce instance.\r\n     * @return The URL of the entire request.\r\n     * @usage An example of a URL for an entire request is https://yourInstance.salesforce.com/apex/myVfPage.apexp.\r\n     */",
+            "paramAnnotations": [],
+            "returnAnnotation": {
+              "bodyLines": [
+                "The URL of the entire request."
+              ]
+            },
+            "exampleAnnotation": null,
+            "throwsAnnotations": [],
+            "annotations": [
+              {
+                "name": "description",
+                "bodyLines": [
+                  "Returns the URL of an entire request on a Salesforce instance."
+                ],
+                "body": "Returns the URL of an entire request on a Salesforce instance."
+              },
+              {
+                "name": "usage",
+                "bodyLines": [
+                  "An example of a URL for an entire request is https://yourInstance.salesforce.com/apex/myVfPage.apexp."
+                ],
+                "body": "An example of a URL for an entire request is https://yourInstance.salesforce.com/apex/myVfPage.apexp."
+              }
+            ],
+            "error": null,
+            "descriptionLines": [
+              "Returns the URL of an entire request on a Salesforce instance."
+            ],
+            "description": "Returns the URL of an entire request on a Salesforce instance."
+          },
+          "access_modifier": "global",
+          "annotations": [],
+          "name": "getCurrentRequestUrl",
+          "group": null,
+          "groupDescription": null,
+          "memberModifiers": [
+            "static"
+          ],
+          "typeReference": {
+            "type": "Url",
+            "rawDeclaration": "Url"
+          },
+          "parameters": [],
+          "signature": "getCurrentRequestUrl()"
+        },
+        {
+          "docComment": {
+            "rawDeclaration": "/**\r\n     * @description Returns the default port number of the protocol associated with the current URL.\r\n     * @return The default port number of the protocol associated with the current URL.\r\n     * @usage Returns -1 if the URL scheme or the stream protocol handler for the URL doesn't define a default port number.\r\n     */",
+            "paramAnnotations": [],
+            "returnAnnotation": {
+              "bodyLines": [
+                "The default port number of the protocol associated with the current URL."
+              ]
+            },
+            "exampleAnnotation": null,
+            "throwsAnnotations": [],
+            "annotations": [
+              {
+                "name": "description",
+                "bodyLines": [
+                  "Returns the default port number of the protocol associated with the current URL."
+                ],
+                "body": "Returns the default port number of the protocol associated with the current URL."
+              },
+              {
+                "name": "usage",
+                "bodyLines": [
+                  "Returns -1 if the URL scheme or the stream protocol handler for the URL doesn't define a default port number."
+                ],
+                "body": "Returns -1 if the URL scheme or the stream protocol handler for the URL doesn't define a default port number."
+              }
+            ],
+            "error": null,
+            "descriptionLines": [
+              "Returns the default port number of the protocol associated with the current URL."
+            ],
+            "description": "Returns the default port number of the protocol associated with the current URL."
+          },
+          "access_modifier": "global",
+          "annotations": [],
+          "name": "getDefPort",
+          "group": null,
+          "groupDescription": null,
+          "memberModifiers": [],
+          "typeReference": {
+            "type": "Integer",
+            "rawDeclaration": "Integer"
+          },
+          "parameters": [],
+          "signature": "getDefPort()"
+        },
+        {
+          "docComment": {
+            "rawDeclaration": "/**\r\n     * @description Returns the file name of the current URL.\r\n     * @return The file name of the current URL.\r\n     */",
+            "paramAnnotations": [],
+            "returnAnnotation": {
+              "bodyLines": [
+                "The file name of the current URL."
+              ]
+            },
+            "exampleAnnotation": null,
+            "throwsAnnotations": [],
+            "annotations": [
+              {
+                "name": "description",
+                "bodyLines": [
+                  "Returns the file name of the current URL."
+                ],
+                "body": "Returns the file name of the current URL."
+              }
+            ],
+            "error": null,
+            "descriptionLines": [
+              "Returns the file name of the current URL."
+            ],
+            "description": "Returns the file name of the current URL."
+          },
+          "access_modifier": "global",
+          "annotations": [],
+          "name": "getFile",
+          "group": null,
+          "groupDescription": null,
+          "memberModifiers": [],
+          "typeReference": {
+            "type": "String",
+            "rawDeclaration": "String"
+          },
+          "parameters": [],
+          "signature": "getFile()"
+        },
+        {
+          "docComment": {
+            "rawDeclaration": "/**\r\n     * @description Returns the download URL for a file attachment.\r\n     * @param entityId Specifies the ID of the entity that holds the file data.\r\n     * @param fieldName Specifies the API name of a file field component, such as `AttachmentBody`.\r\n     * @return The download URL for the file attachment.\r\n     * @example\r\n     * String fileURL =\r\n     * URL.getFileFieldURL(\r\n     *   '087000000000123' ,\r\n     *   'AttachmentBody');\r\n     */",
+            "paramAnnotations": [
+              {
+                "bodyLines": [
+                  "Specifies the ID of the entity that holds the file data."
+                ],
+                "paramName": "entityId"
+              },
+              {
+                "bodyLines": [
+                  "Specifies the API name of a file field component, such as `AttachmentBody`."
+                ],
+                "paramName": "fieldName"
+              }
+            ],
+            "returnAnnotation": {
+              "bodyLines": [
+                "The download URL for the file attachment."
+              ]
+            },
+            "exampleAnnotation": {
+              "bodyLines": [
+                "String fileURL =",
+                "URL.getFileFieldURL(",
+                "  '087000000000123' ,",
+                "  'AttachmentBody');"
+              ]
+            },
+            "throwsAnnotations": [],
+            "annotations": [
+              {
+                "name": "description",
+                "bodyLines": [
+                  "Returns the download URL for a file attachment."
+                ],
+                "body": "Returns the download URL for a file attachment."
+              }
+            ],
+            "error": null,
+            "descriptionLines": [
+              "Returns the download URL for a file attachment."
+            ],
+            "description": "Returns the download URL for a file attachment."
+          },
+          "access_modifier": "global",
+          "annotations": [],
+          "name": "getFileFieldURL",
+          "group": null,
+          "groupDescription": null,
+          "memberModifiers": [
+            "static"
+          ],
+          "typeReference": {
+            "type": "String",
+            "rawDeclaration": "String"
+          },
+          "parameters": [
+            {
+              "memberModifiers": [],
+              "name": "entityId",
+              "typeReference": {
+                "type": "String",
+                "rawDeclaration": "String"
+              }
+            },
+            {
+              "memberModifiers": [],
+              "name": "fieldName",
+              "typeReference": {
+                "type": "String",
+                "rawDeclaration": "String"
+              }
+            }
+          ],
+          "signature": "getFileFieldURL(String, String)"
+        },
+        {
+          "docComment": {
+            "rawDeclaration": "/**\r\n     * @description Returns the host name of the current URL.\r\n     * @return The host name of the current URL.\r\n     */",
+            "paramAnnotations": [],
+            "returnAnnotation": {
+              "bodyLines": [
+                "The host name of the current URL."
+              ]
+            },
+            "exampleAnnotation": null,
+            "throwsAnnotations": [],
+            "annotations": [
+              {
+                "name": "description",
+                "bodyLines": [
+                  "Returns the host name of the current URL."
+                ],
+                "body": "Returns the host name of the current URL."
+              }
+            ],
+            "error": null,
+            "descriptionLines": [
+              "Returns the host name of the current URL."
+            ],
+            "description": "Returns the host name of the current URL."
+          },
+          "access_modifier": "global",
+          "annotations": [],
+          "name": "getHost",
+          "group": null,
+          "groupDescription": null,
+          "memberModifiers": [],
+          "typeReference": {
+            "type": "String",
+            "rawDeclaration": "String"
+          },
+          "parameters": [],
+          "signature": "getHost()"
+        },
+        {
+          "docComment": {
+            "rawDeclaration": "/**\r\n     * @description Returns the canonical URL for your org. For example, https://MyDomainName.my.salesforce.com.\r\n     * @return getOrgDomainUrl() always returns the login URL for your org, regardless of context. Use that URL when making API calls to your org.\r\n     * @usage\r\n     * Use getOrgDomainUrl() to interact with Salesforce REST and SOAP APIs in Apex code. Get endpoints for User Interface API calls, for creating and customizing picklist value sets and custom fields, and more.\r\n     *\r\n     * `getOrgDomainUrl()` can access the domain URL only for the org in which the Apex code is running.\r\n     *\r\n     * You don't need a RemoteSiteSetting for your org to interact with the Salesforce APIs using domain URLs retrieved with this method.\r\n     *\r\n     * @example\r\n     * This example uses the Salesforce REST API to get organization limit values. For information on limits, see Limits in the REST API Developer Guide.\r\n     * ```apex\r\n     * Http h = new Http();\r\n     * HttpRequest req = new HttpRequest();\r\n     * req.setEndpoint(Url.getOrgDomainUrl().toExternalForm()\r\n     *    + '/services/data/v44.0/limits');\r\n     * req.setMethod('GET');\r\n     * req.setHeader('Authorization', 'Bearer ' + UserInfo.getSessionId());\r\n     * HttpResponse res = h.send(req);\r\n     * ```\r\n     *\r\n     * @see-also\r\n     * * [Lightning Aura Components Developer Guide: Making API Calls from Apex](https://developer.salesforce.com/docs/atlas.en-us.250.0.lightning.meta/lightning/apex_api_calls.htm)\r\n     */",
+            "paramAnnotations": [],
+            "returnAnnotation": {
+              "bodyLines": [
+                "getOrgDomainUrl() always returns the login URL for your org, regardless of context. Use that URL when making API calls to your org."
+              ]
+            },
+            "exampleAnnotation": {
+              "bodyLines": [
+                "This example uses the Salesforce REST API to get organization limit values. For information on limits, see Limits in the REST API Developer Guide.",
+                "```apex",
+                "Http h = new Http();",
+                "HttpRequest req = new HttpRequest();",
+                "req.setEndpoint(Url.getOrgDomainUrl().toExternalForm()",
+                "   + '/services/data/v44.0/limits');",
+                "req.setMethod('GET');",
+                "req.setHeader('Authorization', 'Bearer ' + UserInfo.getSessionId());",
+                "HttpResponse res = h.send(req);",
+                "```"
+              ]
+            },
+            "throwsAnnotations": [],
+            "annotations": [
+              {
+                "name": "description",
+                "bodyLines": [
+                  "Returns the canonical URL for your org. For example, https://MyDomainName.my.salesforce.com."
+                ],
+                "body": "Returns the canonical URL for your org. For example, https://MyDomainName.my.salesforce.com."
+              },
+              {
+                "name": "usage",
+                "bodyLines": [
+                  "Use getOrgDomainUrl() to interact with Salesforce REST and SOAP APIs in Apex code. Get endpoints for User Interface API calls, for creating and customizing picklist value sets and custom fields, and more.",
+                  "",
+                  "`getOrgDomainUrl()` can access the domain URL only for the org in which the Apex code is running.",
+                  "",
+                  "You don't need a RemoteSiteSetting for your org to interact with the Salesforce APIs using domain URLs retrieved with this method."
+                ],
+                "body": "Use getOrgDomainUrl() to interact with Salesforce REST and SOAP APIs in Apex code. Get endpoints for User Interface API calls, for creating and customizing picklist value sets and custom fields, and more.\n\n`getOrgDomainUrl()` can access the domain URL only for the org in which the Apex code is running.\n\nYou don't need a RemoteSiteSetting for your org to interact with the Salesforce APIs using domain URLs retrieved with this method."
+              },
+              {
+                "name": "see-also",
+                "bodyLines": [
+                  "* [Lightning Aura Components Developer Guide: Making API Calls from Apex](https://developer.salesforce.com/docs/atlas.en-us.250.0.lightning.meta/lightning/apex_api_calls.htm)"
+                ],
+                "body": "* [Lightning Aura Components Developer Guide: Making API Calls from Apex](https://developer.salesforce.com/docs/atlas.en-us.250.0.lightning.meta/lightning/apex_api_calls.htm)"
+              }
+            ],
+            "error": null,
+            "descriptionLines": [
+              "Returns the canonical URL for your org. For example, https://MyDomainName.my.salesforce.com."
+            ],
+            "description": "Returns the canonical URL for your org. For example, https://MyDomainName.my.salesforce.com."
+          },
+          "access_modifier": "global",
+          "annotations": [],
+          "name": "getOrgDomainUrl",
+          "group": null,
+          "groupDescription": null,
+          "memberModifiers": [
+            "static"
+          ],
+          "typeReference": {
+            "type": "Url",
+            "rawDeclaration": "Url"
+          },
+          "parameters": [],
+          "signature": "getOrgDomainUrl()"
+        }
+      ],
+      "sharingModifier": null,
+      "classModifier": null,
+      "extended_class": null,
+      "implemented_interfaces": [],
+      "properties": [],
+      "fields": [],
+      "constructors": [
+        {
+          "docComment": {
+            "rawDeclaration": "/**\r\n     * @description Creates a new instance of the URL class using the specified string representation of the URL.\r\n     * @param spec The string to parse as a URL.\r\n     */",
+            "paramAnnotations": [
+              {
+                "bodyLines": [
+                  "The string to parse as a URL."
+                ],
+                "paramName": "spec"
+              }
+            ],
+            "returnAnnotation": null,
+            "exampleAnnotation": null,
+            "throwsAnnotations": [],
+            "annotations": [
+              {
+                "name": "description",
+                "bodyLines": [
+                  "Creates a new instance of the URL class using the specified string representation of the URL."
+                ],
+                "body": "Creates a new instance of the URL class using the specified string representation of the URL."
+              }
+            ],
+            "error": null,
+            "descriptionLines": [
+              "Creates a new instance of the URL class using the specified string representation of the URL."
+            ],
+            "description": "Creates a new instance of the URL class using the specified string representation of the URL."
+          },
+          "access_modifier": "global",
+          "annotations": [],
+          "group": null,
+          "groupDescription": null,
+          "parameters": [
+            {
+              "memberModifiers": [],
+              "name": "spec",
+              "typeReference": {
+                "type": "String",
+                "rawDeclaration": "String"
+              }
+            }
+          ]
+        },
+        {
+          "docComment": {
+            "rawDeclaration": "/**\r\n     * @description Creates a new instance of the URL class by parsing the specified spec within the specified context.\r\n     * @param context The context in which to parse the specification.\r\n     * @param spec The string to parse as a URL.\r\n     *\r\n     * @usage\r\n     * The new URL is created from the given context URL and the spec argument as described in RFC2396 \"Uniform Resource Identifiers : Generic * Syntax\" :\r\n     * ```xml\r\n     * <scheme>://<authority><path>?<query>#<fragment>\r\n     * ```\r\n     *\r\n     * For more information about the arguments of this constructor, see the corresponding URL(java.net.URL, java.lang.String) constructor for Java.\r\n     */",
+            "paramAnnotations": [
+              {
+                "bodyLines": [
+                  "The context in which to parse the specification."
+                ],
+                "paramName": "context"
+              },
+              {
+                "bodyLines": [
+                  "The string to parse as a URL."
+                ],
+                "paramName": "spec"
+              }
+            ],
+            "returnAnnotation": null,
+            "exampleAnnotation": null,
+            "throwsAnnotations": [],
+            "annotations": [
+              {
+                "name": "description",
+                "bodyLines": [
+                  "Creates a new instance of the URL class by parsing the specified spec within the specified context."
+                ],
+                "body": "Creates a new instance of the URL class by parsing the specified spec within the specified context."
+              },
+              {
+                "name": "usage",
+                "bodyLines": [
+                  "The new URL is created from the given context URL and the spec argument as described in RFC2396 \"Uniform Resource Identifiers : Generic * Syntax\" :",
+                  "```xml",
+                  "<scheme>://<authority><path>?<query>#<fragment>",
+                  "```",
+                  "",
+                  "For more information about the arguments of this constructor, see the corresponding URL(java.net.URL, java.lang.String) constructor for Java."
+                ],
+                "body": "The new URL is created from the given context URL and the spec argument as described in RFC2396 \"Uniform Resource Identifiers : Generic * Syntax\" :\n```xml\n<scheme>://<authority><path>?<query>#<fragment>\n```\n\nFor more information about the arguments of this constructor, see the corresponding URL(java.net.URL, java.lang.String) constructor for Java."
+              }
+            ],
+            "error": null,
+            "descriptionLines": [
+              "Creates a new instance of the URL class by parsing the specified spec within the specified context."
+            ],
+            "description": "Creates a new instance of the URL class by parsing the specified spec within the specified context."
+          },
+          "access_modifier": "global",
+          "annotations": [],
+          "group": null,
+          "groupDescription": null,
+          "parameters": [
+            {
+              "memberModifiers": [],
+              "name": "context",
+              "typeReference": {
+                "type": "Url",
+                "rawDeclaration": "Url"
+              }
+            },
+            {
+              "memberModifiers": [],
+              "name": "spec",
+              "typeReference": {
+                "type": "String",
+                "rawDeclaration": "String"
+              }
+            }
+          ]
+        },
+        {
+          "docComment": {
+            "rawDeclaration": "/**\r\n     * @description Creates a new instance of the URL class using the specified protocol, host, and file on the host. The default port for the specified protocol is used.\r\n     * @param protocol The protocol name for this URL.\r\n     * @param host The host name for this URL.\r\n     * @param file The file name for this URL.\r\n     */",
+            "paramAnnotations": [
+              {
+                "bodyLines": [
+                  "The protocol name for this URL."
+                ],
+                "paramName": "protocol"
+              },
+              {
+                "bodyLines": [
+                  "The host name for this URL."
+                ],
+                "paramName": "host"
+              },
+              {
+                "bodyLines": [
+                  "The file name for this URL."
+                ],
+                "paramName": "file"
+              }
+            ],
+            "returnAnnotation": null,
+            "exampleAnnotation": null,
+            "throwsAnnotations": [],
+            "annotations": [
+              {
+                "name": "description",
+                "bodyLines": [
+                  "Creates a new instance of the URL class using the specified protocol, host, and file on the host. The default port for the specified protocol is used."
+                ],
+                "body": "Creates a new instance of the URL class using the specified protocol, host, and file on the host. The default port for the specified protocol is used."
+              }
+            ],
+            "error": null,
+            "descriptionLines": [
+              "Creates a new instance of the URL class using the specified protocol, host, and file on the host. The default port for the specified protocol is used."
+            ],
+            "description": "Creates a new instance of the URL class using the specified protocol, host, and file on the host. The default port for the specified protocol is used."
+          },
+          "access_modifier": "global",
+          "annotations": [],
+          "group": null,
+          "groupDescription": null,
+          "parameters": [
+            {
+              "memberModifiers": [],
+              "name": "protocol",
+              "typeReference": {
+                "type": "String",
+                "rawDeclaration": "String"
+              }
+            },
+            {
+              "memberModifiers": [],
+              "name": "host",
+              "typeReference": {
+                "type": "String",
+                "rawDeclaration": "String"
+              }
+            },
+            {
+              "memberModifiers": [],
+              "name": "file",
+              "typeReference": {
+                "type": "String",
+                "rawDeclaration": "String"
+              }
+            }
+          ]
+        },
+        {
+          "docComment": {
+            "rawDeclaration": "/**\r\n     * @description Creates a new instance of the URL class using the specified protocol, host, port number, and file on the host.\r\n     * @param protocol The protocol name for this URL.\r\n     * @param host The host name for this URL.\r\n     * @param port The port number for this URL.\r\n     * @param file The file name for this URL.\r\n     */",
+            "paramAnnotations": [
+              {
+                "bodyLines": [
+                  "The protocol name for this URL."
+                ],
+                "paramName": "protocol"
+              },
+              {
+                "bodyLines": [
+                  "The host name for this URL."
+                ],
+                "paramName": "host"
+              },
+              {
+                "bodyLines": [
+                  "The port number for this URL."
+                ],
+                "paramName": "port"
+              },
+              {
+                "bodyLines": [
+                  "The file name for this URL."
+                ],
+                "paramName": "file"
+              }
+            ],
+            "returnAnnotation": null,
+            "exampleAnnotation": null,
+            "throwsAnnotations": [],
+            "annotations": [
+              {
+                "name": "description",
+                "bodyLines": [
+                  "Creates a new instance of the URL class using the specified protocol, host, port number, and file on the host."
+                ],
+                "body": "Creates a new instance of the URL class using the specified protocol, host, port number, and file on the host."
+              }
+            ],
+            "error": null,
+            "descriptionLines": [
+              "Creates a new instance of the URL class using the specified protocol, host, port number, and file on the host."
+            ],
+            "description": "Creates a new instance of the URL class using the specified protocol, host, port number, and file on the host."
+          },
+          "access_modifier": "global",
+          "annotations": [],
+          "group": null,
+          "groupDescription": null,
+          "parameters": [
+            {
+              "memberModifiers": [],
+              "name": "protocol",
+              "typeReference": {
+                "type": "String",
+                "rawDeclaration": "String"
+              }
+            },
+            {
+              "memberModifiers": [],
+              "name": "host",
+              "typeReference": {
+                "type": "String",
+                "rawDeclaration": "String"
+              }
+            },
+            {
+              "memberModifiers": [],
+              "name": "port",
+              "typeReference": {
+                "type": "Integer",
+                "rawDeclaration": "Integer"
+              }
+            },
+            {
+              "memberModifiers": [],
+              "name": "file",
+              "typeReference": {
+                "type": "String",
+                "rawDeclaration": "String"
+              }
+            }
+          ]
+        }
+      ],
+      "enums": [],
+      "interfaces": [],
+      "classes": []
+    }
+  ]
+}
