@@ -26,6 +26,7 @@ const defaultMarkdownGeneratorConfig: MarkdownGeneratorConfig = {
   includeInlineHelpTextMetadata: true,
   exclude: [],
   excludeTags: [],
+  experimentalLwcSupport: true
 };
 
 describe('Conversion from InterfaceMirror to InterfaceSource understandable by the templating engine', () => {

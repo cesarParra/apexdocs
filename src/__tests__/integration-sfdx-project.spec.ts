@@ -178,7 +178,7 @@ describe('SFDX Project Integration Tests', () => {
     it('should generate documentation for Lightning Web Components', () => {
       setupTestProjectWithLWC(testDir);
 
-      const command = `node "${apexdocsPath}" markdown --useSfdxProjectJson --targetDir ./docs --scope public`;
+      const command = `node "${apexdocsPath}" markdown --useSfdxProjectJson --targetDir ./docs --scope public --experimentalLwcSupport`;
       const result = execSync(command, {
         cwd: testDir,
         encoding: 'utf8',

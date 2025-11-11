@@ -61,6 +61,10 @@ Represents a speaker at an event.
 
 ### [BaseClass](miscellaneous/BaseClass)
 
+This is a base class. 
+ 
+{@literal some literal &lt;script&gt;text&lt;/script&gt;}
+
 ### [MultiInheritanceClass](miscellaneous/MultiInheritanceClass)
 
 ### [ParentInterface](miscellaneous/ParentInterface)

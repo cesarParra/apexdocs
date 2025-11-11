@@ -22,6 +22,7 @@ export const markdownDefaults = {
   excludeTags: [],
   includeFieldSecurityMetadata: false,
   includeInlineHelpTextMetadata: false,
+  experimentalLwcSupport: false,
 };
 
 export const openApiDefaults = {
