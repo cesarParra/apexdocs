@@ -21,6 +21,7 @@ describe('LWC Adapter', () => {
     exclude: [],
     excludeTags: [],
     lwcGroupName: 'Lightning Web Components',
+    experimentalLwcSupport: true
   };
 
   describe('lwcMetadataToRenderable', () => {

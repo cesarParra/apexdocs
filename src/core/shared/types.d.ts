@@ -45,6 +45,7 @@ export type CliConfigurableMarkdownConfig = {
   referenceGuideTitle: string;
   includeFieldSecurityMetadata: boolean;
   includeInlineHelpTextMetadata: boolean;
+  experimentalLwcSupport: boolean;
 };
 
 export type UserDefinedMarkdownConfig = {

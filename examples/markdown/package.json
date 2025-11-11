@@ -16,6 +16,7 @@
     "sourceDir": "force-app",
     "scope": ["global", "public", "protected", "private", "namespaceaccessible"],
     "namespace": "ns",
-    "sortAlphabetically": true
+    "sortAlphabetically": true,
+    "experimentalLwcSupport": true
   }
 }

@@ -76,6 +76,7 @@ export function generateDocs(bundles: UnparsedSourceBundle[], config?: Partial<M
     includeInlineHelpTextMetadata: true,
     exclude: [],
     lwcGroupName: 'Lightning Web Components',
+    experimentalLwcSupport: true,
     ...config,
   });
 }
