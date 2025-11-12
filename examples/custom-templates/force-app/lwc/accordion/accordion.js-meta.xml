@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>60.0</apiVersion>
+    <description>Accordion</description>
+    <isExposed>true</isExposed>
+    <masterLabel>Accordion</masterLabel>
+    <targets>
+        <target>lightningCommunity__Default</target>
+        <target>lightningCommunity__Page</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="contextUrlParam" type="String" required="false" label="Context URL Parameter"
+                      description="Optional - The name of the URL parameter that contains the context ID."/>
+            <property name="previewContextId" type="String" required="false" label="Preview Context ID"
+                      description="Optional - The ID of the context record to use when previewing the component in the builder."/>
+            <property name="expr" type="String" placeholder="1 + 1" required="true" label="Formula Expression"
+                      description="Formula expression to be evaluated." default=""/>
+            <property name="respectSharing" type="Boolean" default="true" label="Respect Sharing"
+                      description="Whether to run the evaluation with or without sharing."/>
+            <property name="autoCollapse" type="Boolean" default="false" label="Auto Collapse"
+                      description="Whether to automatically collapse the accordion when a new section is expanded."/>
+            <property name="flushStyle" type="Boolean" default="false" label="Flush Style"
+                      description="Removes the background color and rounded borders from the accordion component."/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Percent__c</fullName>
+    <description>Use this field to calculate the price based on the list price&apos;s percentage instead of providing a flat price.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Use this field to calculate the price based on the list price&apos;s percentage instead of providing a flat price.</inlineHelpText>
+    <label>Percent</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Percent</type>
+</CustomField>

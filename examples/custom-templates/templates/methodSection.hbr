@@ -1,0 +1,20 @@
+## Methods
+
+### Summary
+  
+{{#each methods}}
+  - [{{signature}}](#{{urlEncode signature}}){{#if docComment.description}}: {{docComment.description}}{{/if}}
+
+{{/each}}
+{{#each methods}}
+### {{signature}}
+
+{{#if docComment.description}}
+{{docComment.description}}
+
+{{/if}}
+access: {{access_modifier}}
+
+return: {{typeReference.type}}
+
+{{/each}}
