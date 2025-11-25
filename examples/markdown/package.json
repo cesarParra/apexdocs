@@ -14,9 +14,15 @@
   },
   "apexdocs": {
     "sourceDir": "force-app",
-    "scope": ["global", "public", "protected", "private", "namespaceaccessible"],
+    "scope": [
+      "global",
+      "public",
+      "protected",
+      "private",
+      "namespaceaccessible"
+    ],
     "namespace": "ns",
     "sortAlphabetically": true,
-    "experimentalLwcSupport": true
+    "experimentalLwcSupport": false
   }
 }
