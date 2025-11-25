@@ -33,7 +33,7 @@ describe('File Reader', () => {
   it('returns an empty list when no source components are found', async () => {
     const fileSystem = new TestFileSystem([]);
 
-    const result = processFiles(fileSystem)(['ApexClass'])('', []);
+    const result = processFiles(fileSystem, { experimentalLwcSupport: false })(['ApexClass'])('', []);
 
     expect(result.length).toBe(0);
   });
@@ -51,7 +51,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = processFiles(fileSystem)(['ApexClass'])('', []);
+    const result = processFiles(fileSystem, { experimentalLwcSupport: false })(['ApexClass'])('', []);
     expect(result.length).toBe(0);
   });
 
@@ -77,7 +77,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = processFiles(fileSystem)(['ApexClass'])('', []);
+    const result = processFiles(fileSystem, { experimentalLwcSupport: false })(['ApexClass'])('', []);
     expect(result.length).toBe(2);
     expect(result[0].content).toBe('public class Speaker{}');
     expect(result[1].content).toBe('public class AnotherSpeaker{}');
@@ -96,7 +96,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = processFiles(fileSystem)(['CustomObject'])('', []);
+    const result = processFiles(fileSystem, { experimentalLwcSupport: false })(['CustomObject'])('', []);
     expect(result.length).toBe(1);
     expect(result[0].content).toContain('test object for testing');
   });
@@ -123,7 +123,7 @@ describe('File Reader', () => {
       },
     ]);
 
-    const result = processFiles(fileSystem)(['ApexClass'])('', ['**/Speaker.cls']);
+    const result = processFiles(fileSystem, { experimentalLwcSupport: false })(['ApexClass'])('', ['**/Speaker.cls']);
     expect(result.length).toBe(1);
     expect(result[0].content).toBe('public class AnotherSpeaker{}');
   });
