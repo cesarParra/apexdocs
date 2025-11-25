@@ -30,12 +30,6 @@ Represents a line item on a sales order.
 
 Represents a speaker at an event.
 
-## Lightning Web Components
-
-### [accordion](lightning-web-components/accordion.md)
-
-Accordion
-
 ## Miscellaneous
 
 ### [BaseClass](miscellaneous/BaseClass.md)

@@ -19,6 +19,7 @@ import {
 import { resolveAndValidateSourceDirectories } from '#utils/source-directory-resolver';
 import { ReflectionError, ReflectionErrors, HookError } from '../core/errors/errors';
 import { FileReadingError, FileWritingError } from './errors';
+import { apply } from '#utils/fp';
 
 /**
  * Application entry-point to generate documentation out of Apex source files.
@@ -46,7 +47,7 @@ export class Apexdocs {
   }
 }
 
-const readFiles = processFiles(new DefaultFileSystem());
+const readFiles = apply(processFiles, new DefaultFileSystem());
 
 async function processMarkdown(config: UserDefinedMarkdownConfig) {
   return pipe(
@@ -55,7 +56,7 @@ async function processMarkdown(config: UserDefinedMarkdownConfig) {
     E.flatMap((sourceDirs) =>
       E.tryCatch(
         () =>
-          readFiles(allComponentTypes, {
+          readFiles({ experimentalLwcSupport: config.experimentalLwcSupport })(allComponentTypes, {
             includeMetadata: config.includeMetadata,
           })(sourceDirs, config.exclude),
         (e) => new FileReadingError('An error occurred while reading files.', e),
@@ -76,7 +77,10 @@ async function processOpenApi(config: UserDefinedOpenApiConfig, logger: Logger) 
     TE.flatMap((sourceDirs) =>
       TE.tryCatch(
         () => {
-          const fileBodies = readFiles(['ApexClass'])(sourceDirs, config.exclude) as UnparsedApexBundle[];
+          const fileBodies = readFiles({ experimentalLwcSupport: false })(['ApexClass'])(
+            sourceDirs,
+            config.exclude,
+          ) as UnparsedApexBundle[];
           return openApi(logger, fileBodies, config);
         },
         (e) => new FileReadingError('An error occurred while generating OpenAPI documentation.', e),
@@ -116,8 +120,8 @@ async function processChangeLog(config: UserDefinedChangelogConfig) {
         ),
       ),
       E.map(({ previousVersionDirs, currentVersionDirs }) => [
-        readFiles(allComponentTypes)(previousVersionDirs, config.exclude),
-        readFiles(allComponentTypes)(currentVersionDirs, config.exclude),
+        readFiles({ experimentalLwcSupport: false })(allComponentTypes)(previousVersionDirs, config.exclude),
+        readFiles({ experimentalLwcSupport: false })(allComponentTypes)(currentVersionDirs, config.exclude),
       ]),
     );
   }

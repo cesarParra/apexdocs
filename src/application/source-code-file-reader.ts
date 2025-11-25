@@ -3,7 +3,8 @@ import {
   UnparsedApexBundle,
   UnparsedCustomFieldBundle,
   UnparsedCustomMetadataBundle,
-  UnparsedCustomObjectBundle, UnparsedLightningComponentBundle,
+  UnparsedCustomObjectBundle,
+  UnparsedLightningComponentBundle,
   UnparsedTriggerBundle,
 } from '../core/shared/types';
 import { minimatch } from 'minimatch';
@@ -11,7 +12,7 @@ import { flow, pipe } from 'fp-ts/function';
 import { apply } from '#utils/fp';
 
 export type ComponentTypes =
-  'ApexClass'
+  | 'ApexClass'
   | 'CustomObject'
   | 'CustomField'
   | 'CustomMetadata'
@@ -23,7 +24,7 @@ export const allComponentTypes: ComponentTypes[] = [
   'CustomField',
   'CustomMetadata',
   'ApexTrigger',
-  'LightningComponentBundle'
+  'LightningComponentBundle',
 ];
 
 /**
@@ -55,7 +56,7 @@ type LightningComponentBundleSourceComponent = {
   name: string;
   xmlPath: string;
   contentPath: string;
-}
+};
 
 type TriggerSourceComponent = {
   type: 'ApexTrigger';
@@ -238,8 +239,10 @@ function toUnparsedCustomMetadataBundle(
   }));
 }
 
-
-function toUnparsedLWCBundle(fileSystem: FileSystem, lwcSourceComponents: LightningComponentBundleSourceComponent[]): UnparsedLightningComponentBundle[] {
+function toUnparsedLWCBundle(
+  fileSystem: FileSystem,
+  lwcSourceComponents: LightningComponentBundleSourceComponent[],
+): UnparsedLightningComponentBundle[] {
   return lwcSourceComponents.map((component) => ({
     type: 'lwc',
     name: component.name,
@@ -252,7 +255,7 @@ function toUnparsedLWCBundle(fileSystem: FileSystem, lwcSourceComponents: Lightn
 /**
  * Reads from source code files and returns their raw body.
  */
-export function processFiles(fileSystem: FileSystem) {
+export function processFiles(fileSystem: FileSystem, config: { experimentalLwcSupport: boolean }) {
   return <T extends ComponentTypes[]>(
     componentTypesToRetrieve: T,
     options: { includeMetadata: boolean } = { includeMetadata: false },
@@ -268,7 +271,7 @@ export function processFiles(fileSystem: FileSystem) {
         | UnparsedCustomMetadataBundle
         | UnparsedTriggerBundle
         | UnparsedLightningComponentBundle
-        )[]
+      )[]
     > = {
       ApexClass: flow(apply(getApexSourceComponents, options.includeMetadata), (apexSourceComponents) =>
         toUnparsedApexBundle(fileSystem, apexSourceComponents),
@@ -285,8 +288,9 @@ export function processFiles(fileSystem: FileSystem) {
       ApexTrigger: flow(getTriggerSourceComponents, (triggerSourceComponents) =>
         toUnparsedTriggerBundle(fileSystem, triggerSourceComponents),
       ),
-      LightningComponentBundle: flow(getLightningComponentBundleSourceComponents, (lwcSourceComponents) =>
-        toUnparsedLWCBundle(fileSystem, lwcSourceComponents),
+      LightningComponentBundle: flow(
+        config.experimentalLwcSupport ? getLightningComponentBundleSourceComponents : () => [],
+        (lwcSourceComponents) => toUnparsedLWCBundle(fileSystem, lwcSourceComponents),
       ),
     };
 
