@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Price_Component__c</fullName>
+    <externalId>false</externalId>
+    <label>Price Component</label>
+    <referenceTo>Price_Component__c</referenceTo>
+    <relationshipLabel>Product Price Components</relationshipLabel>
+    <relationshipName>Product_Price_Components</relationshipName>
+    <relationshipOrder>1</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>
