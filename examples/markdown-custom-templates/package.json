@@ -1,0 +1,17 @@
+{
+  "name": "markdown-custom-templates",
+  "version": "1.0.0",
+  "description": "Example demonstrating custom template functionality in ApexDocs",
+  "scripts": {
+    "docs:clean": "rimraf docs",
+    "docs:build": "ts-node ../../src/cli/generate.ts markdown --config ./apexdocs.config.ts",
+    "docs:help": "ts-node ../../src/cli/generate.ts markdown --help",
+    "docs:gen": "npm run docs:clean && npm run docs:build"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2"
+  },
+  "dependencies": {
+    "rimraf": "^5.0.7"
+  }
+}

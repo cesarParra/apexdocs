@@ -1,5 +1,5 @@
 import { ReferenceGuideReference, Renderable, RenderableBundle } from '../../renderables/types';
-import { DocPageData, DocumentationBundle } from '../../shared/types';
+import { DocPageData, DocumentationBundle, TemplateConfig, TemplateHelpers } from '../../shared/types';
 import { pipe } from 'fp-ts/function';
 import { CompilationRequest, Template } from '../../template';
 import { enumMarkdownTemplate } from '../templates/enum-template';
@@ -10,20 +10,27 @@ import { customObjectTemplate } from '../templates/custom-object-template';
 import { triggerMarkdownTemplate } from '../templates/trigger-template';
 import { Translations } from '../../translations';
 import { lwcBundleTemplate } from '../templates/lwc-bundle-template';
+import { templateHelpers } from '../../template-helpers';
 
 export const convertToDocumentationBundle = (
   referenceGuideTitle: string,
   referenceGuideTemplate: string,
   translations: Translations,
   { referencesByGroup, renderables }: RenderableBundle,
+  templates?: TemplateConfig,
 ): DocumentationBundle => ({
   referenceGuide: {
     frontmatter: null,
-    content: referencesToReferenceGuideContent(referenceGuideTitle, referencesByGroup, referenceGuideTemplate),
+    content: referencesToReferenceGuideContent(
+      referenceGuideTitle,
+      referencesByGroup,
+      referenceGuideTemplate,
+      templates,
+    ),
     outputDocPath: 'index.md',
   },
   docs: renderables.map((renderable: Renderable) =>
-    renderableToPageData(Object.values(referencesByGroup).flat(), renderable, translations),
+    renderableToPageData(Object.values(referencesByGroup).flat(), renderable, translations, templates),
   ),
 });
 
@@ -31,6 +38,7 @@ function referencesToReferenceGuideContent(
   referenceGuideTitle: string,
   references: { [key: string]: ReferenceGuideReference[] },
   template: string,
+  templates?: TemplateConfig,
 ): string {
   function alphabetizeReferences(references: { [key: string]: ReferenceGuideReference[] }): {
     [key: string]: ReferenceGuideReference[];
@@ -43,6 +51,24 @@ function referencesToReferenceGuideContent(
       }, {});
   }
 
+  // Use custom reference guide template if provided
+  const referenceGuideTemplateConfig = templates?.referenceGuide;
+  if (referenceGuideTemplateConfig) {
+    if (typeof referenceGuideTemplateConfig === 'function') {
+      // For function templates, we need to handle async, but this is a sync function
+      // We'll throw an error because async templates need to be handled differently
+      throw new Error('Async function templates are not supported for reference guide. Use a string template instead.');
+    }
+    // Use the custom string template
+    return pipe(references, alphabetizeReferences, (references) =>
+      compile({
+        template: referenceGuideTemplateConfig,
+        source: { referenceGuideTitle: referenceGuideTitle, references },
+      }),
+    );
+  }
+
+  // Use the default template
   return pipe(references, alphabetizeReferences, (references) =>
     compile({
       template: template,
@@ -55,6 +81,7 @@ function renderableToPageData(
   referenceGuideReference: ReferenceGuideReference[],
   renderable: Renderable,
   translations: Translations,
+  templates?: TemplateConfig,
 ): DocPageData {
   function buildDocOutput(renderable: Renderable, docContents: string): DocPageData {
     const reference: ReferenceGuideReference = referenceGuideReference.find(
@@ -77,13 +104,24 @@ function renderableToPageData(
 
   return pipe(
     renderable,
-    (r) => resolveTemplate(r, translations),
-    compile,
+    (r) => resolveTemplate(r, translations, templates),
+    (templateOrRequest) => compileTemplate(templateOrRequest),
     (docContents) => buildDocOutput(renderable, docContents),
   );
 }
 
-function resolveTemplate(renderable: Renderable, translations: Translations): CompilationRequest {
+function resolveTemplate(
+  renderable: Renderable,
+  translations: Translations,
+  templates?: TemplateConfig,
+): CompilationRequest | { template: string; source: unknown } {
+  // Check for custom template
+  const customTemplate = getCustomTemplate(renderable, templates);
+  if (customTemplate) {
+    return customTemplate;
+  }
+
+  // Use default template
   function getTemplate(renderable: Renderable): string {
     switch (renderable.type) {
       case 'enum':
@@ -110,6 +148,86 @@ function resolveTemplate(renderable: Renderable, translations: Translations): Co
   };
 }
 
+function getCustomTemplate(
+  renderable: Renderable,
+  templates?: TemplateConfig,
+): { template: string; source: unknown } | null {
+  if (!templates) {
+    return null;
+  }
+
+  switch (renderable.type) {
+    case 'enum':
+      if (templates.enum) {
+        return handleTemplateConfig(templates.enum, renderable, templateHelpers);
+      }
+      break;
+    case 'interface':
+      if (templates.interface) {
+        return handleTemplateConfig(templates.interface, renderable, templateHelpers);
+      }
+      break;
+    case 'class':
+      if (templates.class) {
+        return handleTemplateConfig(templates.class, renderable, templateHelpers);
+      }
+      break;
+    case 'customobject':
+      if (templates.customObject) {
+        return handleTemplateConfig(templates.customObject, renderable, templateHelpers);
+      }
+      break;
+    case 'trigger':
+      if (templates.trigger) {
+        return handleTemplateConfig(templates.trigger, renderable, templateHelpers);
+      }
+      break;
+    case 'lwc':
+      if (templates.lwc) {
+        return handleTemplateConfig(templates.lwc, renderable, templateHelpers);
+      }
+      break;
+  }
+
+  return null;
+}
+
+function handleTemplateConfig<T>(
+  templateConfig: string | ((renderable: T, helpers: TemplateHelpers) => string | Promise<string>),
+  renderable: T,
+  helpers: TemplateHelpers,
+): { template: string; source: unknown } {
+  if (typeof templateConfig === 'string') {
+    // String template - return as-is for Handlebars compilation
+    return {
+      template: templateConfig,
+      source: renderable,
+    };
+  } else {
+    // Function template - execute it synchronously (throw if async)
+    const result = templateConfig(renderable, helpers);
+    if (typeof result === 'string') {
+      // For string results, we need to wrap it in a simple template
+      return {
+        template: '{{{content}}}',
+        source: { content: result },
+      };
+    } else {
+      // Async function - we can't handle here, need async pipeline
+      throw new Error(
+        'Async function templates are not supported in this context. Use a string template or handle asynchronously.',
+      );
+    }
+  }
+}
+
 function compile(request: CompilationRequest): string {
   return Template.getInstance().compile(request);
+}
+
+function compileTemplate(templateOrRequest: CompilationRequest | { template: string; source: unknown }): string {
+  if ('template' in templateOrRequest) {
+    return Template.getInstance().compile(templateOrRequest);
+  }
+  throw new Error('Invalid template request');
 }

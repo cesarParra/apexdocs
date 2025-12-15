@@ -575,6 +575,155 @@ public class MyClass {
 }
 ```
 
+##### **templates**
+
+Allows providing custom templates for generating markdown documentation, giving you complete control over the output format. You can define templates for each type of renderable (class, interface, enum, trigger, LWC, custom object, and reference guide) using either string templates (Handlebars syntax) or function templates (JavaScript/TypeScript functions).
+
+**Types**
+
+```typescript
+type TemplateConfig = {
+  class?: string | ((renderable: RenderableClass, helpers: TemplateHelpers) => string | Promise<string>);
+  interface?: string | ((renderable: RenderableInterface, helpers: TemplateHelpers) => string | Promise<string>);
+  enum?: string | ((renderable: RenderableEnum, helpers: TemplateHelpers) => string | Promise<string>);
+  trigger?: string | ((renderable: RenderableTrigger, helpers: TemplateHelpers) => string | Promise<string>);
+  lwc?: string | ((renderable: RenderableLwc, helpers: TemplateHelpers) => string | Promise<string>);
+  customObject?: string | ((renderable: RenderableCustomObject, helpers: TemplateHelpers) => string | Promise<string>);
+  referenceGuide?: string | ((data: ReferenceGuideData, helpers: TemplateHelpers) => string | Promise<string>);
+};
+
+type TemplateHelpers = {
+  link: (source: StringOrLink) => string;
+  code: (codeBlock: CodeBlock) => string;
+  renderContent: (content?: RenderableContent[]) => string;
+  heading: (level: number, text: string) => string;
+  inlineCode: (text: string) => string;
+  eq: (a: unknown, b: unknown) => boolean;
+  add: (a: number, b: number) => number;
+  lookup: (array: unknown[], index: number) => unknown;
+  parseJSON: (jsonString: string) => unknown | null;
+  startsWith: (str: string, prefix: string) => boolean;
+  substring: (str: string, start: number, length?: number) => string;
+  splitAndCapitalize: (text: string) => string;
+};
+
+type ReferenceGuideData = {
+  referenceGuideTitle: string;
+  references: Record<string, ReferenceGuideReference[]>;
+};
+```
+
+**String Template Example**
+
+```typescript
+import { defineMarkdownConfig } from '@cparra/apexdocs';
+
+export default defineMarkdownConfig({
+  // ... other configuration
+  templates: {
+    class: `# {{name}}
+{{#if annotations.length}}
+{{#each annotations}}
+**{{name}}**{{#if value}} - {{value}}{{/if}}
+{{/each}}
+{{/if}}
+
+{{renderContent description}}
+
+{{#if methods.length}}
+## Methods
+{{#each methods}}
+### {{name}}
+{{renderContent description}}
+{{#if parameters.length}}
+#### Parameters
+{{#each parameters}}
+- **{{name}}** ({{type.name}}){{#if description}}: {{renderContent description}}{{/if}}
+{{/each}}
+{{/if}}
+{{#if returnType}}
+#### Returns
+{{renderContent returnType.description}}
+{{/if}}
+{{/each}}
+{{/if}}`,
+    
+    referenceGuide: `# {{referenceGuideTitle}}
+
+{{#each references}}
+## {{@key}}
+{{#each this}}
+- [{{title}}]({{url}})
+{{/each}}
+{{/each}}`
+  }
+});
+```
+
+**Function Template Example**
+
+```typescript
+import { defineMarkdownConfig, templateHelpers } from '@cparra/apexdocs';
+import type { RenderableClass, TemplateHelpers } from '@cparra/apexdocs';
+
+export default defineMarkdownConfig({
+  // ... other configuration
+  templates: {
+    class: (renderable: RenderableClass, helpers: TemplateHelpers) => {
+      const { heading, renderContent, inlineCode } = helpers;
+      
+      let output = `${heading(1, renderable.name)}\n\n`;
+      
+      if (renderable.annotations.length > 0) {
+        output += '**Annotations:**\n';
+        renderable.annotations.forEach(annotation => {
+          output += `- ${annotation.name}`;
+          if (annotation.value) output += `: ${annotation.value}`;
+          output += '\n';
+        });
+        output += '\n';
+      }
+      
+      output += `${renderContent(renderable.description)}\n\n`;
+      
+      if (renderable.methods.length > 0) {
+        output += `${heading(2, 'Methods')}\n\n`;
+        renderable.methods.forEach(method => {
+          output += `${heading(3, method.name)}\n\n`;
+          output += `${renderContent(method.description)}\n\n`;
+          
+          if (method.parameters.length > 0) {
+            output += `${heading(4, 'Parameters')}\n\n`;
+            method.parameters.forEach(param => {
+              output += `- ${inlineCode(param.name)} (${param.type.name})`;
+              if (param.description) output += `: ${renderContent(param.description)}`;
+              output += '\n';
+            });
+            output += '\n';
+          }
+        });
+      }
+      
+      return output;
+    },
+    
+    enum: (renderable, helpers) => {
+      return `${helpers.heading(1, renderable.name)}\n\n` +
+        `**Values:** ${renderable.values.map(v => helpers.inlineCode(v.name)).join(', ')}`;
+    }
+  }
+});
+```
+
+**Notes**
+
+- String templates use Handlebars syntax and have access to all built-in helpers (`link`, `code`, `renderContent`, `heading`, etc.)
+- Function templates receive the renderable object and a `TemplateHelpers` object with pure function versions of all helpers
+- Function templates can be async (return `Promise<string>`), but synchronous functions are recommended for better performance
+- When using custom templates, translation support is not automatically applied - you must handle translations in your template if needed
+- You can mix and match string and function templates for different renderable types
+- All built-in helpers are available via the `templateHelpers` export for use in your own code
+
 #### Changelog Hooks
 
 ##### **transformChangeLogPage**
