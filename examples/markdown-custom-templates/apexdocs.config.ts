@@ -1,16 +1,20 @@
-import { defineMarkdownConfig, templateHelpers } from '@cparra/apexdocs';
+import { defineMarkdownConfig } from '../../src';
 import type {
   TemplateConfig,
   TemplateHelpers,
   RenderableClass,
-  RenderableInterface,
-  RenderableEnum,
   RenderableTrigger,
-  RenderableLwc,
-  RenderableCustomObject,
   ReferenceGuideData,
   ReferenceGuideReference,
-} from '@cparra/apexdocs';
+} from '../../src';
+import type {
+  Renderable,
+  RenderableConstructor,
+  RenderableMethod,
+  RenderableApexField,
+  GroupedMember,
+  RenderableMethodParameter,
+} from '../../src/core/renderables/types';
 
 /**
  * Custom template configuration for ApexDocs markdown generation.
@@ -23,146 +27,252 @@ const customTemplates: TemplateConfig = {
    */
   class: (renderable: RenderableClass, helpers: TemplateHelpers): string => {
     const { heading, renderContent, inlineCode, splitAndCapitalize } = helpers;
+    // Type alias for renderable with filePath (available in actual Renderable union)
+    const renderableWithFile = renderable as RenderableClass & Pick<Renderable, 'filePath'>;
 
     let output = `${heading(1, renderable.name)}\n\n`;
 
     // Class metadata
     output += '## Class Information\n\n';
     output += `- **Type:** ${splitAndCapitalize(renderable.type)}\n`;
-    output += `- **Access Modifier:** ${renderable.accessModifier || 'public'}\n`;
+    output += `- **Access Modifier:** ${renderable.meta.accessModifier || 'public'}\n`;
 
-    if (renderable.extends) {
-      output += `- **Extends:** ${renderable.extends.name}\n`;
+    if (renderable.extends && renderable.extends.length > 0) {
+      output += `- **Extends:** ${renderable.extends.map((e) => (typeof e === 'string' ? e : e.title)).join(', ')}\n`;
     }
 
     if (renderable.implements && renderable.implements.length > 0) {
-      output += `- **Implements:** ${renderable.implements.map(i => i.name).join(', ')}\n`;
+      output += `- **Implements:** ${renderable.implements.map((i) => (typeof i === 'string' ? i : i.title)).join(', ')}\n`;
     }
 
-    output += `- **File:** ${renderable.filePath}\n\n`;
+    if (renderableWithFile.filePath) {
+      output += `- **File:** ${renderableWithFile.filePath}\n`;
+    }
+    output += '\n';
 
     // Annotations
-    if (renderable.annotations.length > 0) {
+    if (renderable.doc.annotations && renderable.doc.annotations.length > 0) {
       output += `${heading(2, 'Annotations')}\n\n`;
-      renderable.annotations.forEach(annotation => {
-        output += `- ${inlineCode(annotation.name)}`;
-        if (annotation.value) output += `: ${annotation.value}`;
+      renderable.doc.annotations.forEach((annotation) => {
+        output += `- ${inlineCode(annotation)}`;
         output += '\n';
       });
       output += '\n';
     }
 
     // Description
-    if (renderable.description && renderable.description.length > 0) {
+    if (renderable.doc.description && renderable.doc.description.length > 0) {
       output += `${heading(2, 'Description')}\n\n`;
-      output += `${renderContent(renderable.description)}\n\n`;
+      output += `${renderContent(renderable.doc.description)}\n\n`;
     }
 
     // Constructors
-    if (renderable.constructors.length > 0) {
+    if (
+      renderable.constructors.value &&
+      Array.isArray(renderable.constructors.value) &&
+      renderable.constructors.value.length > 0
+    ) {
       output += `${heading(2, 'Constructors')}\n\n`;
-      renderable.constructors.forEach(constructor => {
-        output += `${heading(3, constructor.name)}`;
 
-        if (constructor.accessModifier !== 'public') {
-          output += ` (${constructor.accessModifier})`;
-        }
-        output += '\n\n';
+      if (renderable.constructors.isGrouped) {
+        // Value is GroupedMember<RenderableConstructor>[]
+        const groupedConstructors = renderable.constructors.value as GroupedMember<RenderableConstructor>[];
+        groupedConstructors.forEach((group) => {
+          if (group.groupDescription) {
+            output += `${heading(3, group.heading)}\n\n`;
+            output += `${renderContent([group.groupDescription])}\n\n`;
+          }
+          group.value.forEach((ctor: RenderableConstructor) => {
+            output += `${heading(3, ctor.heading)}\n\n`;
 
-        if (constructor.description && constructor.description.length > 0) {
-          output += `${renderContent(constructor.description)}\n\n`;
-        }
-
-        if (constructor.parameters.length > 0) {
-          output += `${heading(4, 'Parameters')}\n\n`;
-          constructor.parameters.forEach(param => {
-            output += `- ${inlineCode(param.name)}`;
-            output += ` (${param.type.name})`;
-            if (param.description && param.description.length > 0) {
-              output += `: ${renderContent(param.description)}`;
+            if (ctor.doc && ctor.doc.description && ctor.doc.description.length > 0) {
+              output += `${renderContent(ctor.doc.description)}\n\n`;
             }
-            output += '\n';
+
+            if (ctor.parameters && ctor.parameters.value && ctor.parameters.value.length > 0) {
+              output += `${heading(4, 'Parameters')}\n\n`;
+              ctor.parameters.value.forEach((param: RenderableMethodParameter) => {
+                output += `- ${inlineCode(param.name)}`;
+                output += ` (${typeof param.type === 'string' ? param.type : param.type.title})`;
+                if (param.description && param.description.length > 0) {
+                  output += `: ${renderContent(param.description)}`;
+                }
+                output += '\n';
+              });
+              output += '\n';
+            }
           });
-          output += '\n';
-        }
-      });
+        });
+      } else {
+        // Value is RenderableConstructor[]
+        const constructors = renderable.constructors.value as RenderableConstructor[];
+        constructors.forEach((ctor: RenderableConstructor) => {
+          output += `${heading(3, ctor.heading)}\n\n`;
+
+          if (ctor.doc && ctor.doc.description && ctor.doc.description.length > 0) {
+            output += `${renderContent(ctor.doc.description)}\n\n`;
+          }
+
+          if (ctor.parameters && ctor.parameters.value && ctor.parameters.value.length > 0) {
+            output += `${heading(4, 'Parameters')}\n\n`;
+            ctor.parameters.value.forEach((param: RenderableMethodParameter) => {
+              output += `- ${inlineCode(param.name)}`;
+              output += ` (${typeof param.type === 'string' ? param.type : param.type.title})`;
+              if (param.description && param.description.length > 0) {
+                output += `: ${renderContent(param.description)}`;
+              }
+              output += '\n';
+            });
+            output += '\n';
+          }
+        });
+      }
     }
 
     // Properties
-    if (renderable.properties.length > 0) {
+    if (
+      renderable.properties.value &&
+      Array.isArray(renderable.properties.value) &&
+      renderable.properties.value.length > 0
+    ) {
       output += `${heading(2, 'Properties')}\n\n`;
-      renderable.properties.forEach(property => {
-        output += `${heading(3, property.name)}`;
 
-        if (property.accessModifier !== 'public') {
-          output += ` (${property.accessModifier})`;
-        }
-        output += '\n\n';
+      if (renderable.properties.isGrouped) {
+        // Value is GroupedMember<RenderableApexField>[]
+        const groupedProperties = renderable.properties.value as GroupedMember<RenderableApexField>[];
+        groupedProperties.forEach((group) => {
+          if (group.groupDescription) {
+            output += `${heading(3, group.heading)}\n\n`;
+            output += `${renderContent([group.groupDescription])}\n\n`;
+          }
+          group.value.forEach((prop: RenderableApexField) => {
+            output += `${heading(3, prop.heading)}\n\n`;
 
-        if (property.description && property.description.length > 0) {
-          output += `${renderContent(property.description)}\n\n`;
-        }
+            if (prop.doc && prop.doc.description && prop.doc.description.length > 0) {
+              output += `${renderContent(prop.doc.description)}\n\n`;
+            }
 
-        output += `- **Type:** ${property.type.name}\n`;
-        if (property.defaultValue) {
-          output += `- **Default:** ${inlineCode(property.defaultValue)}\n`;
-        }
-        output += '\n';
-      });
-    }
-
-    // Methods
-    if (renderable.methods.length > 0) {
-      output += `${heading(2, 'Methods')}\n\n`;
-      renderable.methods.forEach(method => {
-        output += `${heading(3, method.name)}`;
-
-        if (method.accessModifier !== 'public') {
-          output += ` (${method.accessModifier})`;
-        }
-        if (method.modifiers && method.modifiers.length > 0) {
-          output += ` [${method.modifiers.join(', ')}]`;
-        }
-        output += '\n\n';
-
-        if (method.description && method.description.length > 0) {
-          output += `${renderContent(method.description)}\n\n`;
-        }
-
-        if (method.parameters.length > 0) {
-          output += `${heading(4, 'Parameters')}\n\n`;
-          method.parameters.forEach(param => {
-            output += `- ${inlineCode(param.name)}`;
-            output += ` (${param.type.name})`;
-            if (param.description && param.description.length > 0) {
-              output += `: ${renderContent(param.description)}`;
+            output += `- **Type:** ${typeof prop.type.value === 'string' ? prop.type.value : prop.type.value.title}\n`;
+            if (prop.accessModifier && prop.accessModifier !== 'public') {
+              output += `- **Access:** ${prop.accessModifier}\n`;
             }
             output += '\n';
           });
-          output += '\n';
-        }
+        });
+      } else {
+        // Value is RenderableApexField[]
+        const properties = renderable.properties.value as RenderableApexField[];
+        properties.forEach((prop: RenderableApexField) => {
+          output += `${heading(3, prop.heading)}\n\n`;
 
-        if (method.returnType) {
-          output += `${heading(4, 'Returns')}\n\n`;
-          output += `- **Type:** ${method.returnType.type.name}\n`;
-          if (method.returnType.description && method.returnType.description.length > 0) {
-            output += `- **Description:** ${renderContent(method.returnType.description)}\n`;
+          if (prop.doc && prop.doc.description && prop.doc.description.length > 0) {
+            output += `${renderContent(prop.doc.description)}\n\n`;
+          }
+
+          output += `- **Type:** ${typeof prop.type.value === 'string' ? prop.type.value : prop.type.value.title}\n`;
+          if (prop.accessModifier && prop.accessModifier !== 'public') {
+            output += `- **Access:** ${prop.accessModifier}\n`;
           }
           output += '\n';
-        }
+        });
+      }
+    }
 
-        // Add separator between methods
-        output += '---\n\n';
-      });
+    // Methods
+    if (renderable.methods.value && Array.isArray(renderable.methods.value) && renderable.methods.value.length > 0) {
+      output += `${heading(2, 'Methods')}\n\n`;
+
+      if (renderable.methods.isGrouped) {
+        // Value is GroupedMember<RenderableMethod>[]
+        const groupedMethods = renderable.methods.value as GroupedMember<RenderableMethod>[];
+        groupedMethods.forEach((group) => {
+          if (group.groupDescription) {
+            output += `${heading(3, group.heading)}\n\n`;
+            output += `${renderContent([group.groupDescription])}\n\n`;
+          }
+          group.value.forEach((method: RenderableMethod) => {
+            output += `${heading(3, method.heading)}\n\n`;
+
+            if (method.doc && method.doc.description && method.doc.description.length > 0) {
+              output += `${renderContent(method.doc.description)}\n\n`;
+            }
+
+            if (method.parameters && method.parameters.value && method.parameters.value.length > 0) {
+              output += `${heading(4, 'Parameters')}\n\n`;
+              method.parameters.value.forEach((param: RenderableMethodParameter) => {
+                output += `- ${inlineCode(param.name)}`;
+                output += ` (${typeof param.type === 'string' ? param.type : param.type.title})`;
+                if (param.description && param.description.length > 0) {
+                  output += `: ${renderContent(param.description)}`;
+                }
+                output += '\n';
+              });
+              output += '\n';
+            }
+
+            if (method.returnType && method.returnType.value) {
+              output += `${heading(4, 'Returns')}\n\n`;
+              output += `- **Type:** ${typeof method.returnType.value.type === 'string' ? method.returnType.value.type : method.returnType.value.type.title}\n`;
+              if (method.returnType.value.description && method.returnType.value.description.length > 0) {
+                output += `- **Description:** ${renderContent(method.returnType.value.description)}\n`;
+              }
+              output += '\n';
+            }
+
+            // Add separator between methods
+            output += '---\n\n';
+          });
+        });
+      } else {
+        // Value is RenderableMethod[]
+        const methods = renderable.methods.value as RenderableMethod[];
+        methods.forEach((method: RenderableMethod) => {
+          output += `${heading(3, method.heading)}\n\n`;
+
+          if (method.doc && method.doc.description && method.doc.description.length > 0) {
+            output += `${renderContent(method.doc.description)}\n\n`;
+          }
+
+          if (method.parameters && method.parameters.value && method.parameters.value.length > 0) {
+            output += `${heading(4, 'Parameters')}\n\n`;
+            method.parameters.value.forEach((param: RenderableMethodParameter) => {
+              output += `- ${inlineCode(param.name)}`;
+              output += ` (${typeof param.type === 'string' ? param.type : param.type.title})`;
+              if (param.description && param.description.length > 0) {
+                output += `: ${renderContent(param.description)}`;
+              }
+              output += '\n';
+            });
+            output += '\n';
+          }
+
+          if (method.returnType && method.returnType.value) {
+            output += `${heading(4, 'Returns')}\n\n`;
+            output += `- **Type:** ${typeof method.returnType.value.type === 'string' ? method.returnType.value.type : method.returnType.value.type.title}\n`;
+            if (method.returnType.value.description && method.returnType.value.description.length > 0) {
+              output += `- **Description:** ${renderContent(method.returnType.value.description)}\n`;
+            }
+            output += '\n';
+          }
+
+          // Add separator between methods
+          output += '---\n\n';
+        });
+      }
     }
 
     // Example section
-    output += `${heading(2, 'Examples')}\n\n`;
-    output += '```apex\n';
-    output += `// Example usage of ${renderable.name}\n`;
-    output += `${renderable.name} instance = new ${renderable.name}();\n`;
-    output += '// Add your example code here\n';
-    output += '```\n';
+    if (renderable.doc.example && renderable.doc.example.value && renderable.doc.example.value.length > 0) {
+      output += `${heading(2, 'Examples')}\n\n`;
+      output += `${renderContent(renderable.doc.example.value)}\n`;
+    } else {
+      output += `${heading(2, 'Examples')}\n\n`;
+      output += '```apex\n';
+      output += `// Example usage of ${renderable.name}\n`;
+      output += `${renderable.name} instance = new ${renderable.name}();\n`;
+      output += '// Add your example code here\n';
+      output += '```\n';
+    }
 
     return output;
   },
@@ -173,36 +283,14 @@ const customTemplates: TemplateConfig = {
    */
   enum: `# {{name}}
 
-{{renderContent description}}
+{{renderContent doc.description}}
 
 ## Enum Values
 
-{{#each values}}
-### {{name}}
+{{#each values.value}}
+### {{value}}
 {{#if description}}
 {{renderContent description}}
-{{/if}}
-{{/each}}
-
-## Methods
-
-{{#each methods}}
-### {{name}}
-{{renderContent description}}
-
-{{#if parameters.length}}
-#### Parameters
-{{#each parameters}}
-- **{{name}}** ({{type.name}}){{#if description}}: {{renderContent description}}{{/if}}
-{{/each}}
-{{/if}}
-
-{{#if returnType}}
-#### Returns
-- **Type:** {{returnType.type.name}}
-{{#if returnType.description}}
-- **Description:** {{renderContent returnType.description}}
-{{/if}}
 {{/if}}
 {{/each}}
 
@@ -215,31 +303,31 @@ const customTemplates: TemplateConfig = {
    */
   interface: `# {{name}} Interface
 
-{{renderContent description}}
+{{renderContent doc.description}}
 
 ## Interface Details
 - **Type:** Interface
-- **Access Modifier:** {{accessModifier}}
+- **Access Modifier:** {{meta.accessModifier}}
 
 {{#if extends.length}}
 ## Extended Interfaces
 {{#each extends}}
-- {{name}}
+- {{this}}
 {{/each}}
 {{/if}}
 
 ## Methods
 
-{{#each methods}}
-### {{name}}
-{{renderContent description}}
+{{#each methods.value}}
+### {{heading}}
+{{renderContent doc.description}}
 
-**Signature:** {{accessModifier}} {{name}}({{#each parameters}}{{type.name}} {{name}}{{#unless @last}}, {{/unless}}{{/each}}){{#if returnType}}: {{returnType.type.name}}{{/if}}
+**Signature:** {{meta.accessModifier}} {{heading}}({{#each parameters.value}}{{type}} {{name}}{{#unless @last}}, {{/unless}}{{/each}}){{#if returnType.value}}: {{returnType.value.type}}{{/if}}
 
-{{#if parameters.length}}
+{{#if parameters.value.length}}
 #### Parameters
-{{#each parameters}}
-- **{{name}}** ({{type.name}}){{#if description}}: {{renderContent description}}{{/if}}
+{{#each parameters.value}}
+- **{{name}}** ({{type}}){{#if description}}: {{renderContent description}}{{/if}}
 {{/each}}
 {{/if}}
 
@@ -253,11 +341,19 @@ const customTemplates: TemplateConfig = {
    * Simple function template for triggers
    */
   trigger: (renderable: RenderableTrigger, helpers: TemplateHelpers): string => {
-    return `${helpers.heading(1, renderable.name)}\n\n` +
-      `${helpers.renderContent(renderable.description)}\n\n` +
-      `**Object:** ${renderable.object}\n\n` +
-      `**Events:** ${renderable.events.join(', ')}\n\n` +
-      `*Custom trigger template generated*`;
+    const { heading, renderContent } = helpers;
+
+    let output = `${heading(1, renderable.name)}\n\n`;
+
+    if (renderable.doc.description && renderable.doc.description.length > 0) {
+      output += `${renderContent(renderable.doc.description)}\n\n`;
+    }
+
+    output += `**Object:** ${renderable.objectName}\n\n`;
+    output += `**Events:** ${renderable.events.join(', ')}\n\n`;
+    output += `*Custom trigger template generated*\n`;
+
+    return output;
   },
 
   /**
@@ -271,7 +367,7 @@ const customTemplates: TemplateConfig = {
 
     // Count total references
     let totalCount = 0;
-    Object.values(data.references).forEach(group => {
+    Object.values(data.references).forEach((group) => {
       totalCount += group.length;
     });
 
@@ -282,13 +378,13 @@ const customTemplates: TemplateConfig = {
     // Group references alphabetically
     const sortedGroups = Object.keys(data.references).sort();
 
-    sortedGroups.forEach(groupName => {
+    sortedGroups.forEach((groupName) => {
       const groupItems = data.references[groupName];
 
       output += `${heading(2, groupName)}\n\n`;
 
       groupItems.forEach((item: ReferenceGuideReference) => {
-        output += `- [${item.title}](${item.url})`;
+        output += `- [${item.title.title}](${item.title.url})`;
         if (item.description && item.description.length > 0) {
           output += ` - ${renderContent(item.description)}`;
         }

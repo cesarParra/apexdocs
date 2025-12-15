@@ -1,5 +1,11 @@
 import { ReferenceGuideReference, Renderable, RenderableBundle } from '../../renderables/types';
-import { DocPageData, DocumentationBundle, TemplateConfig, TemplateHelpers } from '../../shared/types';
+import {
+  DocPageData,
+  DocumentationBundle,
+  TemplateConfig,
+  TemplateHelpers,
+  ReferenceGuideData,
+} from '../../shared/types';
 import { pipe } from 'fp-ts/function';
 import { CompilationRequest, Template } from '../../template';
 import { enumMarkdownTemplate } from '../templates/enum-template';
@@ -54,18 +60,26 @@ function referencesToReferenceGuideContent(
   // Use custom reference guide template if provided
   const referenceGuideTemplateConfig = templates?.referenceGuide;
   if (referenceGuideTemplateConfig) {
-    if (typeof referenceGuideTemplateConfig === 'function') {
-      // For function templates, we need to handle async, but this is a sync function
-      // We'll throw an error because async templates need to be handled differently
-      throw new Error('Async function templates are not supported for reference guide. Use a string template instead.');
+    // Alphabetize references first
+    const alphabetizedReferences = alphabetizeReferences(references);
+    const referenceGuideData: ReferenceGuideData = {
+      referenceGuideTitle,
+      references: alphabetizedReferences,
+    };
+
+    // Handle the template configuration
+    const templateRequest = handleTemplateConfig(referenceGuideTemplateConfig, referenceGuideData, templateHelpers);
+
+    // If handleTemplateConfig returned a template string, compile it
+    if ('template' in templateRequest) {
+      return compile({
+        template: templateRequest.template,
+        source: templateRequest.source,
+      });
     }
-    // Use the custom string template
-    return pipe(references, alphabetizeReferences, (references) =>
-      compile({
-        template: referenceGuideTemplateConfig,
-        source: { referenceGuideTitle: referenceGuideTitle, references },
-      }),
-    );
+
+    // This shouldn't happen based on handleTemplateConfig implementation
+    throw new Error('Unexpected template request type');
   }
 
   // Use the default template
