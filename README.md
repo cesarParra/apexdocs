@@ -577,7 +577,9 @@ public class MyClass {
 
 ##### **templates**
 
-Allows providing custom templates for generating markdown documentation, giving you complete control over the output format. You can define templates for each type of renderable (class, interface, enum, trigger, LWC, custom object, and reference guide) using either string templates (Handlebars syntax) or function templates (JavaScript/TypeScript functions).
+Allows providing custom templates for generating markdown documentation, giving you complete control over the output format. 
+You can define templates for each type of renderable (class, interface, enum, trigger, LWC, custom object, and reference guide) 
+using either string templates (Handlebars syntax) or function templates (JavaScript/TypeScript functions).
 
 **Types**
 
@@ -613,7 +615,7 @@ type ReferenceGuideData = {
 };
 ```
 
-**String Template Example**
+**String Template Example (Handlebars syntax)**
 
 ```typescript
 import { defineMarkdownConfig } from '@cparra/apexdocs';
@@ -719,7 +721,6 @@ export default defineMarkdownConfig({
 
 - String templates use Handlebars syntax and have access to all built-in helpers (`link`, `code`, `renderContent`, `heading`, etc.)
 - Function templates receive the renderable object and a `TemplateHelpers` object with pure function versions of all helpers
-- Function templates can be async (return `Promise<string>`), but synchronous functions are recommended for better performance
 - When using custom templates, translation support is not automatically applied - you must handle translations in your template if needed
 - You can mix and match string and function templates for different renderable types
 - All built-in helpers are available via the `templateHelpers` export for use in your own code
