@@ -5,9 +5,7 @@ title: BaseClass
 # BaseClass Class
 `abstract`
 
-This is a base class. 
- 
-{@literal some literal &lt;script&gt;text&lt;/script&gt;}
+This is a base class.
 
 ## Namespace
 apexdocs

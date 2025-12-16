@@ -11,6 +11,7 @@ import {
   TransformDocPage,
   TransformDocs,
   TransformReferenceGuide,
+  TemplateConfig,
   UserDefinedMarkdownConfig,
   DocPageReference,
   TransformReference,
@@ -21,6 +22,7 @@ import {
 } from '../shared/types';
 import { mergeTranslations } from '../translations';
 import { parsedFilesToRenderableBundle } from './adapters/renderable-bundle';
+import { RenderableBundle } from '../renderables/types';
 import { reflectApexSource } from '../reflection/apex/reflect-apex-source';
 import { addInheritanceChainToTypes } from '../reflection/apex/inheritance-chain-expanion';
 import { addInheritedMembersToTypes } from '../reflection/apex/inherited-member-expansion';
@@ -54,12 +56,14 @@ export function generateDocs(unparsedBundles: UnparsedSourceBundle[], config: Ma
   const translations = mergeTranslations({ markdown: config.translations });
   const convertToReferences = apply(parsedFilesToReferenceGuide, config);
   const convertToRenderableBundle = apply(parsedFilesToRenderableBundle, config);
-  const convertToDocumentationBundleForTemplate = apply(
-    convertToDocumentationBundle,
-    config.referenceGuideTitle,
-    config.referenceGuideTemplate,
-    translations,
-  );
+  const convertToDocumentationBundleForTemplate = (bundle: RenderableBundle, templates?: TemplateConfig) =>
+    convertToDocumentationBundle(
+      config.referenceGuideTitle,
+      config.referenceGuideTemplate,
+      translations,
+      bundle,
+      templates,
+    );
   const sort = apply(sortTypesAndMembers, config.sortAlphabetically);
 
   function filterOutCustomFieldsAndMetadata(parsedFiles: ParsedFile[]): ParsedFile<TopLevelType>[] {
@@ -109,7 +113,7 @@ export function generateDocs(unparsedBundles: UnparsedSourceBundle[], config: Ma
     TE.map(({ parsedFiles, references }) =>
       convertToRenderableBundle(filterOutCustomFieldsAndMetadata(parsedFiles), references, translations),
     ),
-    TE.map(convertToDocumentationBundleForTemplate),
+    TE.map((bundle) => convertToDocumentationBundleForTemplate(bundle, config.templates)),
     TE.flatMap(transformDocumentationBundleHook(config)),
     TE.map(postHookCompile),
   );

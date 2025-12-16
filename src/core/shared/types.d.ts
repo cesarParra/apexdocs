@@ -5,6 +5,18 @@ import { CustomMetadataMetadata } from '../reflection/sobject/reflect-custom-met
 import { TriggerMetadata } from '../reflection/trigger/reflect-trigger-source';
 import { UserTranslations } from '../translations';
 import { LwcMetadata } from '../reflection/lwc/reflect-lwc-source';
+import type {
+  RenderableClass,
+  RenderableInterface,
+  RenderableEnum,
+  RenderableTrigger,
+  RenderableLwc,
+  RenderableCustomObject,
+  RenderableContent,
+  CodeBlock,
+  StringOrLink,
+  ReferenceGuideReference,
+} from '../renderables/types';
 
 export type Generators = 'markdown' | 'openapi' | 'changelog';
 
@@ -275,6 +287,45 @@ export type PostHookDocumentationBundle = {
 // CONFIGURABLE HOOKS
 
 /**
+ * Template configuration for customizing markdown output.
+ */
+export type TemplateConfig = {
+  class?: string | ((renderable: RenderableClass, helpers: TemplateHelpers) => string);
+  interface?: string | ((renderable: RenderableInterface, helpers: TemplateHelpers) => string);
+  enum?: string | ((renderable: RenderableEnum, helpers: TemplateHelpers) => string);
+  trigger?: string | ((renderable: RenderableTrigger, helpers: TemplateHelpers) => string);
+  lwc?: string | ((renderable: RenderableLwc, helpers: TemplateHelpers) => string);
+  customObject?: string | ((renderable: RenderableCustomObject, helpers: TemplateHelpers) => string);
+  referenceGuide?: string | ((data: ReferenceGuideData, helpers: TemplateHelpers) => string);
+};
+
+/**
+ * Template helpers for consistent rendering.
+ */
+export type TemplateHelpers = {
+  link: (source: StringOrLink) => string;
+  code: (codeBlock: CodeBlock) => string;
+  renderContent: (content?: RenderableContent[]) => string;
+  heading: (level: number, text: string) => string;
+  inlineCode: (text: string) => string;
+  eq: (a: unknown, b: unknown) => boolean;
+  add: (a: number, b: number) => number;
+  lookup: (array: unknown[], index: number) => unknown;
+  parseJSON: (jsonString: string) => unknown | null;
+  startsWith: (str: string, prefix: string) => boolean;
+  substring: (str: string, start: number, length?: number) => string;
+  splitAndCapitalize: (text: string) => string;
+};
+
+/**
+ * Data structure passed to reference guide template functions.
+ */
+export type ReferenceGuideData = {
+  referenceGuideTitle: string;
+  references: Record<string, ReferenceGuideReference[]>;
+};
+
+/**
  * The configurable hooks that can be used to modify the output of the Markdown generator.
  */
 export type MarkdownConfigurableHooks = {
@@ -283,6 +334,7 @@ export type MarkdownConfigurableHooks = {
   transformDocs: TransformDocs;
   transformDocPage: TransformDocPage;
   transformReference: TransformReference;
+  templates?: TemplateConfig;
 };
 
 export type ConfigurableDocPageReference = Omit<DocPageReference, 'source'>;

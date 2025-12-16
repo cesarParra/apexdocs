@@ -19,9 +19,34 @@ import type {
   UserDefinedChangelogConfig,
   ChangelogConfigurableHooks,
   TransformChangelogPage,
+  TemplateConfig,
+  TemplateHelpers,
+  ReferenceGuideData,
 } from './core/shared/types';
 import type { Translations, UserTranslations } from './core/translations';
+import type {
+  Renderable,
+  RenderableClass,
+  RenderableInterface,
+  RenderableEnum,
+  RenderableTrigger,
+  RenderableLwc,
+  RenderableCustomObject,
+  RenderableContent,
+  Link,
+  CodeBlock,
+  StringOrLink,
+  ReferenceGuideReference,
+  RenderableSection,
+  GroupedMember,
+  RenderableConstructor,
+  RenderableMethod,
+  RenderableApexField,
+  RenderableMethodParameter,
+  TypeSource
+} from './core/renderables/types';
 import { skip } from './core/shared/utils';
+import { templateHelpers } from './core/template-helpers';
 import { changeLogDefaults, markdownDefaults, openApiDefaults } from './defaults';
 import { process } from './node/process';
 
@@ -95,4 +120,27 @@ export {
   TransformChangelogPage,
   Translations,
   UserTranslations,
+  TemplateConfig,
+  TemplateHelpers,
+  templateHelpers,
+  ReferenceGuideData,
+  Renderable,
+  RenderableClass,
+  RenderableInterface,
+  RenderableEnum,
+  RenderableTrigger,
+  RenderableLwc,
+  RenderableCustomObject,
+  RenderableConstructor,
+  RenderableApexField,
+  RenderableMethod,
+  RenderableContent,
+  RenderableMethodParameter,
+  TypeSource,
+  Link,
+  CodeBlock,
+  StringOrLink,
+  ReferenceGuideReference,
+  RenderableSection,
+  GroupedMember,
 };

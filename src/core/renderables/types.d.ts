@@ -189,7 +189,7 @@ export type RenderableLwc = Omit<RenderableType, 'meta'> & {
   description: string | undefined;
   targets: RenderableSection<string[]>;
   targetConfigs: RenderableSection<TargetConfigRenderable[]>;
-}
+};
 
 export type TargetConfigRenderable = {
   targetName: string;
