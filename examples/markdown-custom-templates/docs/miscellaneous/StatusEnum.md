@@ -1,7 +1,7 @@
 ---
 title: StatusEnum
 type: enum
-generated: '2025-12-16T22:04:50.004Z'
+generated: '2025-12-16T22:12:58.491Z'
 template: custom
 ---
 

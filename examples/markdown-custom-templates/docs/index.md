@@ -11,7 +11,8 @@
 
 - [BaseClass](miscellaneous/BaseClass.md) - Base class providing common functionality for derived classes. 
 This class demonstrates inheritance features that can be captured in custom templates. 
-It includes protected methods and properties that inherited classes can use.
+It includes protected methods and properties that inherited classes can use. 
+This is a link to [MyClass](miscellaneous/MyClass.md) and this is a link to something that does not exist NonExistentClass .
 - [MyClass](miscellaneous/MyClass.md) - This is a sample class to demonstrate custom template functionality in ApexDocs. 
 It contains various elements that can be rendered using custom templates: 
 - Class-level annotations 

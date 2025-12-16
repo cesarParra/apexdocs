@@ -1,7 +1,7 @@
 ---
 title: BaseClass
 type: class
-generated: '2025-12-16T22:04:50.004Z'
+generated: '2025-12-16T22:12:58.491Z'
 template: custom
 ---
 
@@ -11,13 +11,13 @@ template: custom
 
 - **Type:** Class
 - **Access Modifier:** public
-- **File:** force-app/main/default/classes/BaseClass.cls
 
 ## Description
 
 Base class providing common functionality for derived classes. 
 This class demonstrates inheritance features that can be captured in custom templates. 
-It includes protected methods and properties that inherited classes can use.
+It includes protected methods and properties that inherited classes can use. 
+This is a link to MyClass and this is a link to something that does not exist NonExistentClass .
 
 ## Constructors
 

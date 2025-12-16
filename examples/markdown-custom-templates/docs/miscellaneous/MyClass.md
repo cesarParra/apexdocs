@@ -1,7 +1,7 @@
 ---
 title: MyClass
 type: class
-generated: '2025-12-16T22:04:50.004Z'
+generated: '2025-12-16T22:12:58.491Z'
 template: custom
 ---
 
@@ -12,7 +12,6 @@ template: custom
 - **Type:** Class
 - **Access Modifier:** public
 - **Extends:** BaseClass
-- **File:** force-app/main/default/classes/MyClass.cls
 
 ## Description
 

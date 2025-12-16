@@ -2,6 +2,7 @@
  * @description Base class providing common functionality for derived classes.
  * This class demonstrates inheritance features that can be captured in custom templates.
  * It includes protected methods and properties that inherited classes can use.
+ * This is a link to {@link MyClass} and this is a link to something that does not exist {@link NonExistentClass}.
  *
  * @author Example User
  * @since v1.0.0
