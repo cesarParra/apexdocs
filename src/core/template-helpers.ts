@@ -48,7 +48,7 @@ function inlineCodeToString(inlineCode: InlineCode): string {
 /**
  * Render RenderableContent array to a markdown string.
  */
-export function renderContent(content?: RenderableContent[]): string {
+export function renderContent(content?: RenderableContent[] | null): string {
   if (!content || content.length === 0) {
     return '';
   }
