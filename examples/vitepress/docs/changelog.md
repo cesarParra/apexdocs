@@ -10,9 +10,7 @@ These classes are new.
 
 ### BaseClass
 
-This is a base class. 
- 
-{@literal some literal &lt;script&gt;text&lt;/script&gt;}
+This is a base class.
 ### MultiInheritanceClass
 
 ### Url

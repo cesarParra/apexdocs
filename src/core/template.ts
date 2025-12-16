@@ -1,6 +1,4 @@
 import Handlebars from 'handlebars';
-import { CodeBlock, RenderableContent, StringOrLink } from './renderables/types';
-import { isCodeBlock, isEmptyLine, isInlineCode } from './markdown/adapters/type-utils';
 import { typeDocPartial } from './markdown/templates/type-doc-partial';
 import { documentablePartialTemplate } from './markdown/templates/documentable-partial-template';
 import { methodsPartialTemplate } from './markdown/templates/methods-partial-template';
@@ -10,6 +8,20 @@ import { fieldsPartialTemplate } from './markdown/templates/fieldsPartialTemplat
 import { classMarkdownTemplate } from './markdown/templates/class-template';
 import { enumMarkdownTemplate } from './markdown/templates/enum-template';
 import { interfaceMarkdownTemplate } from './markdown/templates/interface-template';
+import {
+  link,
+  code,
+  renderContent,
+  heading,
+  inlineCode,
+  eq,
+  add,
+  lookup,
+  parseJSON,
+  startsWith,
+  substring,
+  splitAndCapitalize,
+} from './template-helpers';
 
 export type CompilationRequest = {
   template: string;
@@ -30,11 +42,22 @@ export class Template {
     Handlebars.registerPartial('enumTemplate', enumMarkdownTemplate);
     Handlebars.registerPartial('interfaceTemplate', interfaceMarkdownTemplate);
 
-    Handlebars.registerHelper('link', link);
-    Handlebars.registerHelper('code', convertCodeBlock);
-    Handlebars.registerHelper('renderContent', resolveRenderableContent);
+    // Register helpers from template-helpers
+    Handlebars.registerHelper('link', (source) => {
+      return new Handlebars.SafeString(link(source));
+    });
+    Handlebars.registerHelper('code', (codeBlock) => {
+      return new Handlebars.SafeString(code(codeBlock));
+    });
+    // Pass escapeExpression to renderContent for security - it escapes HTML special characters
+    // in user-provided content (like strings and link titles) to prevent XSS attacks
+    Handlebars.registerHelper('renderContent', (content) => {
+      return renderContent(content, Handlebars.escapeExpression);
+    });
     Handlebars.registerHelper('heading', heading);
-    Handlebars.registerHelper('inlineCode', inlineCode);
+    Handlebars.registerHelper('inlineCode', (text) => {
+      return new Handlebars.SafeString(inlineCode(text));
+    });
     Handlebars.registerHelper('splitAndCapitalize', splitAndCapitalize);
     Handlebars.registerHelper('eq', eq);
     Handlebars.registerHelper('add', add);
@@ -61,91 +84,3 @@ export class Template {
     );
   }
 }
-
-const splitAndCapitalize = (text: string) => {
-  const words = text.split(/[-_]+/);
-  const capitalizedWords = [];
-  for (const word of words) {
-    capitalizedWords.push(word.charAt(0).toUpperCase() + word.slice(1));
-  }
-  return capitalizedWords.join(' ');
-};
-
-const heading = (level: number, text: string) => {
-  return `${'#'.repeat(level)} ${text}`;
-};
-
-const inlineCode = (text: string) => {
-  return new Handlebars.SafeString(`\`${text}\``);
-};
-
-const eq = (a: unknown, b: unknown) => {
-  return a === b;
-};
-
-const add = (a: number, b: number) => {
-  return a + b;
-};
-
-const lookup = (array: unknown[], index: number) => {
-  return array[index];
-};
-
-const parseJSON = (jsonString: string) => {
-  try {
-    return JSON.parse(jsonString);
-  } catch {
-    return null;
-  }
-};
-
-const startsWith = (str: string, prefix: string) => {
-  return str.startsWith(prefix);
-};
-
-const substring = (str: string, start: number, length?: number) => {
-  if (length !== undefined) {
-    return str.substring(start, start + length);
-  }
-  return str.substring(start);
-};
-
-const convertCodeBlock = (codeBlock: CodeBlock): Handlebars.SafeString => {
-  return new Handlebars.SafeString(
-    `
-\`\`\`${codeBlock.language}
-${codeBlock.content.join('\n')}
-\`\`\`
-  `.trim(),
-  );
-};
-
-const resolveRenderableContent = (description?: RenderableContent[]): string => {
-  if (!description) {
-    return '';
-  }
-
-  function reduceDescription(acc: string, curr: RenderableContent) {
-    if (isEmptyLine(curr)) {
-      return acc + '\n';
-    }
-    if (isCodeBlock(curr)) {
-      return acc + convertCodeBlock(curr) + '\n';
-    }
-    if (isInlineCode(curr)) {
-      return acc + inlineCode(curr.content).toString() + ' ';
-    } else {
-      return acc + Handlebars.escapeExpression(link(curr)).trim() + ' ';
-    }
-  }
-
-  return description.reduce(reduceDescription, '').trim();
-};
-
-const link = (source: StringOrLink): string => {
-  if (typeof source === 'string') {
-    return source;
-  } else {
-    return `[${source.title}](${source.url})`;
-  }
-};

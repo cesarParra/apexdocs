@@ -3,32 +3,20 @@ import { isEmptyLine, isCodeBlock, isInlineCode } from './markdown/adapters/type
 import type { TemplateHelpers } from './shared/types';
 
 /**
- * Simple HTML escaping for safety when rendering content that may contain HTML.
- */
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
-
-/**
- * Convert a StringOrLink to a markdown link string.
- * If the source is a string, it's returned as-is (with HTML escaping).
- * If it's a Link object, returns markdown link syntax: [title](url).
+ * Convert a StringOrLink to a Markdown link string.
+ * If the source is a string, it's returned as-is.
+ * If it's a Link object, returns Markdown link syntax: [title](url).
  */
 export function link(source: StringOrLink): string {
   if (typeof source === 'string') {
-    return escapeHtml(source);
+    return source;
   } else {
-    return `[${escapeHtml(source.title)}](${escapeHtml(source.url)})`;
+    return `[${source.title}](${source.url})`;
   }
 }
 
 /**
- * Convert a CodeBlock to a markdown code block string.
+ * Convert a CodeBlock to a Markdown code block string.
  */
 export function code(codeBlock: CodeBlock): string {
   return `
@@ -39,7 +27,7 @@ ${codeBlock.content.join('\n')}
 }
 
 /**
- * Convert InlineCode to a markdown inline code string.
+ * Convert InlineCode to a Markdown inline code string.
  */
 function inlineCodeToString(inlineCode: InlineCode): string {
   return `\`${inlineCode.content}\``;
@@ -47,8 +35,22 @@ function inlineCodeToString(inlineCode: InlineCode): string {
 
 /**
  * Render RenderableContent array to a markdown string.
+ *
+ * @param content - The content to render
+ * @param escapeFunction - Optional function to escape dangerous expressions for security.
+ *                         When used in template contexts like Handlebars, pass Handlebars.escapeExpression
+ *                         to prevent XSS attacks by escaping HTML special characters in user-provided content.
+ *                         When used outside of templates, this can be omitted.
+ *
+ * @example
+ * // In a Handlebars template context (with escaping):
+ * renderContent(content, Handlebars.escapeExpression);
+ *
+ * @example
+ * // For direct markdown generation (without escaping):
+ * renderContent(content);
  */
-export function renderContent(content?: RenderableContent[] | null): string {
+export function renderContent(content?: RenderableContent[] | null, escapeFunction?: (text: string) => string): string {
   if (!content || content.length === 0) {
     return '';
   }
@@ -64,7 +66,10 @@ export function renderContent(content?: RenderableContent[] | null): string {
       return acc + inlineCodeToString(curr) + ' ';
     } else {
       // For strings or links, use the link function which handles both
-      return acc + link(curr as StringOrLink).trim() + ' ';
+      const linkResult = link(curr as StringOrLink);
+      // Apply escape function if provided (for security in template contexts)
+      const escapedLink = escapeFunction ? escapeFunction(linkResult) : linkResult;
+      return acc + escapedLink.trim() + ' ';
     }
   }
 
@@ -72,20 +77,20 @@ export function renderContent(content?: RenderableContent[] | null): string {
 }
 
 /**
- * Create a markdown heading with the given level and text.
+ * Create a Markdown heading with the given level and text.
  */
 export function heading(level: number, text: string): string {
   if (level < 1 || level > 6) {
     throw new Error(`Heading level must be between 1 and 6, got ${level}`);
   }
-  return `${'#'.repeat(level)} ${escapeHtml(text)}`;
+  return `${'#'.repeat(level)} ${text}`;
 }
 
 /**
- * Create markdown inline code.
+ * Create Markdown inline code.
  */
 export function inlineCode(text: string): string {
-  return `\`${escapeHtml(text)}\``;
+  return `\`${text}\``;
 }
 
 /**
@@ -155,7 +160,7 @@ export function splitAndCapitalize(text: string): string {
 export const templateHelpers: TemplateHelpers = {
   link,
   code,
-  renderContent,
+  renderContent: (content) => renderContent(content), // Wrap to match TemplateHelpers signature
   heading,
   inlineCode,
   eq,
