@@ -3,7 +3,8 @@ import {
   UnparsedApexBundle,
   UnparsedCustomFieldBundle,
   UnparsedCustomMetadataBundle,
-  UnparsedCustomObjectBundle, UnparsedLightningComponentBundle,
+  UnparsedCustomObjectBundle,
+  UnparsedLightningComponentBundle,
   UnparsedTriggerBundle,
 } from '../core/shared/types';
 import { minimatch } from 'minimatch';
@@ -11,7 +12,7 @@ import { flow, pipe } from 'fp-ts/function';
 import { apply } from '#utils/fp';
 
 export type ComponentTypes =
-  'ApexClass'
+  | 'ApexClass'
   | 'CustomObject'
   | 'CustomField'
   | 'CustomMetadata'
@@ -23,7 +24,7 @@ export const allComponentTypes: ComponentTypes[] = [
   'CustomField',
   'CustomMetadata',
   'ApexTrigger',
-  'LightningComponentBundle'
+  'LightningComponentBundle',
 ];
 
 /**
@@ -55,7 +56,7 @@ type LightningComponentBundleSourceComponent = {
   name: string;
   xmlPath: string;
   contentPath: string;
-}
+};
 
 type TriggerSourceComponent = {
   type: 'ApexTrigger';
@@ -117,20 +118,24 @@ function toUnparsedApexBundle(
   fileSystem: FileSystem,
   apexSourceComponents: ApexClassApexSourceComponent[],
 ): UnparsedApexBundle[] {
-  return apexSourceComponents.map((component) => {
-    const apexComponentTuple: [string, string | null] = [
-      fileSystem.readFile(component.contentPath),
-      component.xmlPath ? fileSystem.readFile(component.xmlPath) : null,
-    ];
+  return apexSourceComponents
+    .map((component) => {
+      const content = fileSystem.readFile(component.contentPath);
+      if (content === null) {
+        return null;
+      }
 
-    return {
-      type: 'apex',
-      name: component.name,
-      filePath: component.contentPath,
-      content: apexComponentTuple[0],
-      metadataContent: apexComponentTuple[1],
-    };
-  });
+      const metadataContent = component.xmlPath ? fileSystem.readFile(component.xmlPath) : null;
+
+      return {
+        type: 'apex' as const,
+        name: component.name,
+        filePath: component.contentPath,
+        content: content,
+        metadataContent: metadataContent,
+      };
+    })
+    .filter((bundle): bundle is UnparsedApexBundle => bundle !== null);
 }
 
 function getTriggerSourceComponents(sourceComponents: SourceComponentAdapter[]): TriggerSourceComponent[] {
@@ -147,12 +152,21 @@ function toUnparsedTriggerBundle(
   fileSystem: FileSystem,
   triggerSourceComponents: TriggerSourceComponent[],
 ): UnparsedTriggerBundle[] {
-  return triggerSourceComponents.map((component) => ({
-    type: 'trigger',
-    name: component.name,
-    filePath: component.contentPath,
-    content: fileSystem.readFile(component.contentPath),
-  }));
+  return triggerSourceComponents
+    .map((component) => {
+      const content = fileSystem.readFile(component.contentPath);
+      if (content === null) {
+        return null;
+      }
+
+      return {
+        type: 'trigger' as const,
+        name: component.name,
+        filePath: component.contentPath,
+        content: content,
+      };
+    })
+    .filter((bundle): bundle is UnparsedTriggerBundle => bundle !== null);
 }
 
 function getCustomObjectSourceComponents(sourceComponents: SourceComponentAdapter[]): CustomObjectSourceComponent[] {
@@ -169,14 +183,21 @@ function toUnparsedSObjectBundle(
   fileSystem: FileSystem,
   customObjectSourceComponents: CustomObjectSourceComponent[],
 ): UnparsedCustomObjectBundle[] {
-  return customObjectSourceComponents.map((component) => {
-    return {
-      type: 'customobject',
-      name: component.name,
-      filePath: component.contentPath,
-      content: fileSystem.readFile(component.contentPath),
-    };
-  });
+  return customObjectSourceComponents
+    .map((component) => {
+      const content = fileSystem.readFile(component.contentPath);
+      if (content === null) {
+        return null;
+      }
+
+      return {
+        type: 'customobject' as const,
+        name: component.name,
+        filePath: component.contentPath,
+        content: content,
+      };
+    })
+    .filter((bundle): bundle is UnparsedCustomObjectBundle => bundle !== null);
 }
 
 function getCustomFieldSourceComponents(sourceComponents: SourceComponentAdapter[]): CustomFieldSourceComponent[] {
@@ -194,13 +215,22 @@ function toUnparsedCustomFieldBundle(
   fileSystem: FileSystem,
   customFieldSourceComponents: CustomFieldSourceComponent[],
 ): UnparsedCustomFieldBundle[] {
-  return customFieldSourceComponents.map((component) => ({
-    type: 'customfield',
-    name: component.name,
-    filePath: component.contentPath,
-    content: fileSystem.readFile(component.contentPath),
-    parentName: component.parentName,
-  }));
+  return customFieldSourceComponents
+    .map((component) => {
+      const content = fileSystem.readFile(component.contentPath);
+      if (content === null) {
+        return null;
+      }
+
+      return {
+        type: 'customfield' as const,
+        name: component.name,
+        filePath: component.contentPath,
+        content: content,
+        parentName: component.parentName,
+      };
+    })
+    .filter((bundle): bundle is UnparsedCustomFieldBundle => bundle !== null);
 }
 
 function getCustomMetadataSourceComponents(
@@ -228,31 +258,54 @@ function toUnparsedCustomMetadataBundle(
   fileSystem: FileSystem,
   customMetadataSourceComponents: CustomMetadataSourceComponent[],
 ): UnparsedCustomMetadataBundle[] {
-  return customMetadataSourceComponents.map((component) => ({
-    apiName: component.apiName,
-    type: 'custommetadata',
-    name: component.name,
-    filePath: component.contentPath,
-    content: fileSystem.readFile(component.contentPath),
-    parentName: component.parentName,
-  }));
+  return customMetadataSourceComponents
+    .map((component) => {
+      const content = fileSystem.readFile(component.contentPath);
+      if (content === null) {
+        return null;
+      }
+
+      return {
+        apiName: component.apiName,
+        type: 'custommetadata' as const,
+        name: component.name,
+        filePath: component.contentPath,
+        content: content,
+        parentName: component.parentName,
+      };
+    })
+    .filter((bundle): bundle is UnparsedCustomMetadataBundle => bundle !== null);
 }
 
+function toUnparsedLWCBundle(
+  fileSystem: FileSystem,
+  lwcSourceComponents: LightningComponentBundleSourceComponent[],
+): UnparsedLightningComponentBundle[] {
+  return lwcSourceComponents
+    .map((component) => {
+      const content = fileSystem.readFile(component.contentPath);
+      const metadataContent = fileSystem.readFile(component.xmlPath);
 
-function toUnparsedLWCBundle(fileSystem: FileSystem, lwcSourceComponents: LightningComponentBundleSourceComponent[]): UnparsedLightningComponentBundle[] {
-  return lwcSourceComponents.map((component) => ({
-    type: 'lwc',
-    name: component.name,
-    filePath: component.contentPath,
-    content: fileSystem.readFile(component.contentPath),
-    metadataContent: fileSystem.readFile(component.xmlPath),
-  }));
+      // Skip if either content or metadata content failed to load
+      if (content === null || metadataContent === null) {
+        return null;
+      }
+
+      return {
+        type: 'lwc' as const,
+        name: component.name,
+        filePath: component.contentPath,
+        content: content,
+        metadataContent: metadataContent,
+      };
+    })
+    .filter((bundle): bundle is UnparsedLightningComponentBundle => bundle !== null);
 }
 
 /**
  * Reads from source code files and returns their raw body.
  */
-export function processFiles(fileSystem: FileSystem) {
+export function processFiles(fileSystem: FileSystem, config: { experimentalLwcSupport: boolean }) {
   return <T extends ComponentTypes[]>(
     componentTypesToRetrieve: T,
     options: { includeMetadata: boolean } = { includeMetadata: false },
@@ -268,7 +321,7 @@ export function processFiles(fileSystem: FileSystem) {
         | UnparsedCustomMetadataBundle
         | UnparsedTriggerBundle
         | UnparsedLightningComponentBundle
-        )[]
+      )[]
     > = {
       ApexClass: flow(apply(getApexSourceComponents, options.includeMetadata), (apexSourceComponents) =>
         toUnparsedApexBundle(fileSystem, apexSourceComponents),
@@ -285,8 +338,9 @@ export function processFiles(fileSystem: FileSystem) {
       ApexTrigger: flow(getTriggerSourceComponents, (triggerSourceComponents) =>
         toUnparsedTriggerBundle(fileSystem, triggerSourceComponents),
       ),
-      LightningComponentBundle: flow(getLightningComponentBundleSourceComponents, (lwcSourceComponents) =>
-        toUnparsedLWCBundle(fileSystem, lwcSourceComponents),
+      LightningComponentBundle: flow(
+        config.experimentalLwcSupport ? getLightningComponentBundleSourceComponents : () => [],
+        (lwcSourceComponents) => toUnparsedLWCBundle(fileSystem, lwcSourceComponents),
       ),
     };
 

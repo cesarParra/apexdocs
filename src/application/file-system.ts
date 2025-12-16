@@ -6,7 +6,7 @@ import * as nodePath from 'path';
 
 export interface FileSystem {
   getComponents(path: string): SourceComponentAdapter[];
-  readFile: (path: string) => string;
+  readFile: (path: string) => string | null;
 }
 
 export class DefaultFileSystem implements FileSystem {
@@ -32,7 +32,12 @@ export class DefaultFileSystem implements FileSystem {
     return [...components, ...fieldComponents];
   }
 
-  readFile(pathToRead: string): string {
-    return fs.readFileSync(pathToRead, 'utf8');
+  readFile(pathToRead: string): string | null {
+    try {
+      return fs.readFileSync(pathToRead, 'utf8');
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      return null;
+    }
   }
 }
