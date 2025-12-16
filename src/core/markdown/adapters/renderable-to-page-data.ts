@@ -77,9 +77,6 @@ function referencesToReferenceGuideContent(
         source: templateRequest.source,
       });
     }
-
-    // This shouldn't happen based on handleTemplateConfig implementation
-    throw new Error('Unexpected template request type');
   }
 
   // Use the default template
@@ -207,7 +204,7 @@ function getCustomTemplate(
 }
 
 function handleTemplateConfig<T>(
-  templateConfig: string | ((renderable: T, helpers: TemplateHelpers) => string | Promise<string>),
+  templateConfig: string | ((renderable: T, helpers: TemplateHelpers) => string),
   renderable: T,
   helpers: TemplateHelpers,
 ): { template: string; source: unknown } {
@@ -220,18 +217,11 @@ function handleTemplateConfig<T>(
   } else {
     // Function template - execute it synchronously (throw if async)
     const result = templateConfig(renderable, helpers);
-    if (typeof result === 'string') {
-      // For string results, we need to wrap it in a simple template
-      return {
-        template: '{{{content}}}',
-        source: { content: result },
-      };
-    } else {
-      // Async function - we can't handle here, need async pipeline
-      throw new Error(
-        'Async function templates are not supported in this context. Template functions must be synchronous.'
-      );
-    }
+     // For string results, we need to wrap it in a simple template
+    return {
+      template: '{{{content}}}',
+      source: { content: result },
+    };
   }
 }
 
