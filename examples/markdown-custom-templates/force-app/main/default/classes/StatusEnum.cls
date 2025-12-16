@@ -3,14 +3,6 @@
  * This enum demonstrates various status transitions and provides utility methods
  * for status validation and progression.
  *
- * @example
- * // Get the next status in the workflow
- * Status currentStatus = StatusEnum.PENDING;
- * Status nextStatus = currentStatus.next();
- *
- * // Check if a status is terminal
- * Boolean isTerminal = StatusEnum.COMPLETED.isTerminal();
- *
  * @author Example User
  * @since v1.0.0
  */

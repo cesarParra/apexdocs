@@ -39,6 +39,11 @@ import type {
   ReferenceGuideReference,
   RenderableSection,
   GroupedMember,
+  RenderableConstructor,
+  RenderableMethod,
+  RenderableApexField,
+  RenderableMethodParameter,
+  TypeSource
 } from './core/renderables/types';
 import { skip } from './core/shared/utils';
 import { templateHelpers } from './core/template-helpers';
@@ -126,7 +131,12 @@ export {
   RenderableTrigger,
   RenderableLwc,
   RenderableCustomObject,
+  RenderableConstructor,
+  RenderableApexField,
+  RenderableMethod,
   RenderableContent,
+  RenderableMethodParameter,
+  TypeSource,
   Link,
   CodeBlock,
   StringOrLink,

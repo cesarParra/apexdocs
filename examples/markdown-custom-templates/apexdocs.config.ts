@@ -6,9 +6,6 @@ import type {
   RenderableTrigger,
   ReferenceGuideData,
   ReferenceGuideReference,
-} from '../../src';
-import type {
-  Renderable,
   RenderableConstructor,
   RenderableMethod,
   RenderableApexField,
@@ -16,14 +13,12 @@ import type {
   RenderableMethodParameter,
   RenderableSection,
   TypeSource,
-} from '../../src/core/renderables/types';
+} from '../../src';
 
 /**
- * Custom template configuration for ApexDocs markdown generation.
+ * Custom template configuration for ApexDocs Markdown generation.
  * This example demonstrates both string templates (Handlebars) and function templates (JavaScript/TypeScript).
  */
-
-// Helper functions to reduce duplication in class template
 
 /**
  * Renders parameters section for constructors and methods
@@ -185,8 +180,6 @@ const customTemplates: TemplateConfig = {
    */
   class: (renderable: RenderableClass, helpers: TemplateHelpers): string => {
     const { heading, renderContent, inlineCode, splitAndCapitalize } = helpers;
-    // Type alias for renderable with filePath (available in actual Renderable union)
-    const renderableWithFile = renderable as RenderableClass & Pick<Renderable, 'filePath'>;
 
     let output = `${heading(1, renderable.name)}\n\n`;
 
@@ -203,9 +196,6 @@ const customTemplates: TemplateConfig = {
       output += `- **Implements:** ${renderable.implements.map((i) => (typeof i === 'string' ? i : i.title)).join(', ')}\n`;
     }
 
-    if (renderableWithFile.filePath) {
-      output += `- **File:** ${renderableWithFile.filePath}\n`;
-    }
     output += '\n';
 
     // Annotations
