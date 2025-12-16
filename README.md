@@ -582,7 +582,7 @@ You can define templates for each type of metadata
 supported by the `markdown` command (class, interface, enum, trigger, LWC, custom object, and reference guide) .
 
 For detailed information about creating custom templates, including examples, available helpers, and configuration options, 
-please refer to the wiki documentation (TODO: URL to be added). You can also find a working example in the 
+please refer to the [wiki documentation](https://github.com/cesarParra/apexdocs/wiki/5.-Custom-Templates). You can also find a working example in the 
 `examples/markdown-custom-templates` directory.
 
 #### Changelog Hooks

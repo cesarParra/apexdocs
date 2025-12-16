@@ -290,13 +290,13 @@ export type PostHookDocumentationBundle = {
  * Template configuration for customizing markdown output.
  */
 export type TemplateConfig = {
-  class?: string | ((renderable: RenderableClass, helpers: TemplateHelpers) => string | Promise<string>);
-  interface?: string | ((renderable: RenderableInterface, helpers: TemplateHelpers) => string | Promise<string>);
-  enum?: string | ((renderable: RenderableEnum, helpers: TemplateHelpers) => string | Promise<string>);
-  trigger?: string | ((renderable: RenderableTrigger, helpers: TemplateHelpers) => string | Promise<string>);
-  lwc?: string | ((renderable: RenderableLwc, helpers: TemplateHelpers) => string | Promise<string>);
-  customObject?: string | ((renderable: RenderableCustomObject, helpers: TemplateHelpers) => string | Promise<string>);
-  referenceGuide?: string | ((data: ReferenceGuideData, helpers: TemplateHelpers) => string | Promise<string>);
+  class?: string | ((renderable: RenderableClass, helpers: TemplateHelpers) => string);
+  interface?: string | ((renderable: RenderableInterface, helpers: TemplateHelpers) => string);
+  enum?: string | ((renderable: RenderableEnum, helpers: TemplateHelpers) => string);
+  trigger?: string | ((renderable: RenderableTrigger, helpers: TemplateHelpers) => string);
+  lwc?: string | ((renderable: RenderableLwc, helpers: TemplateHelpers) => string);
+  customObject?: string | ((renderable: RenderableCustomObject, helpers: TemplateHelpers) => string);
+  referenceGuide?: string | ((data: ReferenceGuideData, helpers: TemplateHelpers) => string);
 };
 
 /**

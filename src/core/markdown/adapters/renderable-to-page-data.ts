@@ -229,7 +229,7 @@ function handleTemplateConfig<T>(
     } else {
       // Async function - we can't handle here, need async pipeline
       throw new Error(
-        'Async function templates are not supported in this context. Use a string template or handle asynchronously.',
+        'Async function templates are not supported in this context. Template functions must be synchronous.'
       );
     }
   }
