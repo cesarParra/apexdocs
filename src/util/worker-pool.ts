@@ -106,9 +106,7 @@ export class WorkerPool {
     }
 
     if (this.queue.length >= this.maxQueueSize) {
-      return Promise.reject(
-        new Error(`WorkerPool queue limit exceeded (maxQueueSize=${this.maxQueueSize}).`),
-      );
+      return Promise.reject(new Error(`WorkerPool queue limit exceeded (maxQueueSize=${this.maxQueueSize}).`));
     }
 
     const id = this.nextTaskId++;
@@ -169,10 +167,10 @@ export class WorkerPool {
     }
 
     // Terminate all workers (reject any in-flight tasks they still have).
-    const terminations = Array.from(this.allWorkers).map(async (w) => {
-      this.rejectInFlight(w, new Error('WorkerPool terminated with task still in flight.'));
+    const terminations = Array.from(this.allWorkers).map(async (worker) => {
+      this.rejectInFlight(worker, new Error('WorkerPool terminated with task still in flight.'));
       try {
-        await w.terminate();
+        await worker.terminate();
       } catch {
         // Ignore termination errors; worker could already be dead.
       }
@@ -214,13 +212,13 @@ export class WorkerPool {
 
   private getIdleOrCreateWorker(): Worker | null {
     // Prefer idle.
-    const idle = this.idleWorkers.pop();
-    if (idle) return idle;
+    const idleWorker = this.idleWorkers.pop();
+    if (idleWorker) return idleWorker;
 
     // Create new if allowed.
     if (this.allWorkers.size < this.maxWorkers) {
-      const w = this.spawnWorker();
-      return w;
+      const spawnedWorker = this.spawnWorker();
+      return spawnedWorker;
     }
 
     return null;
@@ -266,13 +264,13 @@ export class WorkerPool {
 
     try {
       worker.postMessage({ id: task.id, payload: task.payload });
-    } catch (e) {
+    } catch (error) {
       // `postMessage` can throw on clone errors etc.
       this.inFlightByWorker.delete(worker);
       this.busyWorkers.delete(worker);
       this.idleWorkers.push(worker);
 
-      task.reject(e);
+      task.reject(error);
       this.failedTasks++;
 
       // Continue pumping remaining tasks.
@@ -288,16 +286,14 @@ export class WorkerPool {
     }
 
     // Best-effort validation of message shape.
-    const m = msg as { id?: unknown; ok?: unknown; result?: unknown; error?: unknown };
-    const sameId = typeof m?.id === 'number' && m.id === inFlight.id;
-    const okFlag = typeof m?.ok === 'boolean';
+    const message = msg as { id?: unknown; ok?: unknown; result?: unknown; error?: unknown };
+    const isSameTaskId = typeof message?.id === 'number' && message.id === inFlight.id;
+    const hasOkFlag = typeof message?.ok === 'boolean';
 
     // If message doesn't match expected task, treat as failure for that task.
-    if (!sameId || !okFlag) {
+    if (!isSameTaskId || !hasOkFlag) {
       this.finishTask(worker);
-      inFlight.reject(
-        new Error('WorkerPool received an invalid response message for the in-flight task.'),
-      );
+      inFlight.reject(new Error('WorkerPool received an invalid response message for the in-flight task.'));
       this.failedTasks++;
       this.pump();
       return;
@@ -305,13 +301,13 @@ export class WorkerPool {
 
     this.finishTask(worker);
 
-    if (m.ok) {
+    if (message.ok) {
       this.completedTasks++;
-      inFlight.resolve(m.result);
+      inFlight.resolve(message.result);
     } else {
       this.failedTasks++;
       // Preserve worker-provided error payload if possible.
-      inFlight.reject(m.error ?? new Error('Worker indicated failure without an error payload.'));
+      inFlight.reject(message.error ?? new Error('Worker indicated failure without an error payload.'));
     }
 
     this.pump();
@@ -363,9 +359,9 @@ export class WorkerPool {
   }
 
   private idleWorkersRemove(worker: Worker): void {
-    const idx = this.idleWorkers.indexOf(worker);
-    if (idx !== -1) {
-      this.idleWorkers.splice(idx, 1);
+    const workerIndex = this.idleWorkers.indexOf(worker);
+    if (workerIndex !== -1) {
+      this.idleWorkers.splice(workerIndex, 1);
     }
   }
 

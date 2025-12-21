@@ -2,6 +2,9 @@
   "name": "@cparra/apexdocs",
   "version": "3.17.0-beta.4",
   "description": "Library with CLI capabilities to generate documentation for Salesforce Apex classes.",
+  "engines": {
+    "node": ">=18"
+  },
   "keywords": [
     "apex",
     "salesforce",
@@ -13,7 +16,8 @@
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "scripts/build-worker-entrypoints.mjs"
   ],
   "bin": {
     "apexdocs": "./dist/cli/generate.js"
@@ -36,7 +40,7 @@
       "output": []
     },
     "build": {
-      "command": "tsc --noEmit --pretty && pkgroll --target node18 && node -e \"const fs=require('fs'); const path=require('path'); const src=path.join(__dirname,'src','core','reflection','apex','apex-reflection.worker.ts'); const distRoot=path.join(__dirname,'dist'); const candidates=[]; (function walk(dir){ for (const ent of fs.readdirSync(dir,{withFileTypes:true})) { const p=path.join(dir,ent.name); if (ent.isDirectory()) walk(p); else if (ent.isFile() && ent.name==='generate.js') candidates.push(p); } })(distRoot); if (!candidates.length) throw new Error('Could not locate dist bundle to determine worker output location'); const distEntry=candidates[0]; const destDir=path.join(path.dirname(distEntry),'..','core','reflection','apex'); fs.mkdirSync(destDir,{recursive:true}); const out=path.join(destDir,'apex-reflection.worker.js'); const ts=require('typescript'); const input=fs.readFileSync(src,'utf8'); const res=ts.transpileModule(input,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2018,esModuleInterop:true}}); fs.writeFileSync(out,res.outputText,'utf8'); if (!fs.existsSync(out)) throw new Error('Failed to write worker entrypoint'); const rootOut=path.join(distRoot,'apex-reflection.worker.js'); fs.copyFileSync(out, rootOut); if (!fs.existsSync(rootOut)) throw new Error('Failed to copy worker entrypoint to dist root');\"",
+      "command": "tsc --noEmit --pretty && pkgroll --target node18 && node ./scripts/build-worker-entrypoints.mjs",
       "dependencies": [
         "lint"
       ],
