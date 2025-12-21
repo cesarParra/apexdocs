@@ -35,8 +35,6 @@ export default async function openApi(
     version: config.apiVersion,
   });
 
-  // Reflect Apex types using the shared reflection pipeline (worker-thread parallelism supported).
-  // Honor user-facing flags for consistency with other generators.
   const parsedFilesEither = await reflectApexSource(fileBodies, {
     parallelReflection: config.parallelReflection,
     parallelReflectionMaxWorkers: config.parallelReflectionMaxWorkers,
@@ -48,19 +46,14 @@ export default async function openApi(
     return;
   }
 
-  // Convert ParsedFile[] into the reflection function signature expected by OpenAPI's manifest builder.
-  // We construct a lookup by filePath so the existing OpenAPI parser can behave as before (one file at a time).
   const parsedFiles = parsedFilesEither.right;
   const reflectionByPath = new Map<string, ReflectionResult>();
 
   for (const parsed of parsedFiles) {
-    // ParsedFile.source can be SourceFileMetadata (has filePath) or ExternalMetadata (no filePath).
-    // OpenAPI is only built from actual Apex source files, so only use entries that have a filePath.
     if (!('filePath' in parsed.source)) {
       continue;
     }
 
-    // ParsedFile.type is the reflected Type mirror. Wrap it as a ReflectionResult.
     reflectionByPath.set(parsed.source.filePath, { typeMirror: parsed.type });
   }
 
@@ -69,7 +62,7 @@ export default async function openApi(
     if (result) {
       return result;
     }
-    // Preserve behavior of logging missing/failed reflections.
+
     logger.error(`${apexBundle.filePath} - Parsing error Unknown error`);
     return { typeMirror: null, error: new Error('Unknown error') } as unknown as ReflectionResult;
   }

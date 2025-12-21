@@ -21,8 +21,7 @@ const config = {
   previousVersionDir: '',
   exclude: [],
   skipIfNoChanges: false,
-
-  // Unit tests run under ts-jest and should avoid spawning worker threads by default.
+  // Unit tests run should avoid spawning worker threads by default.
   parallelReflection: false,
   parallelReflectionMaxWorkers: undefined,
 };

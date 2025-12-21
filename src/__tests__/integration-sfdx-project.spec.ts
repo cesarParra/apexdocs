@@ -28,7 +28,6 @@ describe('SFDX Project Integration Tests', () => {
       setupTestProject(testDir);
 
       // Run apexdocs with useSfdxProjectJson
-      // Disable parallel reflection for test stability (worker thread + bundler behavior can vary by environment).
       const command = `node "${apexdocsPath}" markdown --useSfdxProjectJson --targetDir ./docs --scope public --parallelReflection false`;
       const result = execSync(command, {
         cwd: testDir,
@@ -69,7 +68,6 @@ describe('SFDX Project Integration Tests', () => {
     it('should work with sourceDir parameter (multiple directories)', () => {
       setupTestProject(testDir);
 
-      // Disable parallel reflection for test stability (worker thread + bundler behavior can vary by environment).
       const command = `node "${apexdocsPath}" markdown --sourceDir force-app force-utils --targetDir ./docs-manual --scope public --parallelReflection false`;
       const result = execSync(command, {
         cwd: testDir,
@@ -144,7 +142,6 @@ describe('SFDX Project Integration Tests', () => {
       createDirectory(projectSubDir);
       setupTestProject(projectSubDir);
 
-      // Disable parallel reflection for test stability (worker thread + bundler behavior can vary by environment).
       const command = `node "${apexdocsPath}" markdown --useSfdxProjectJson --sfdxProjectPath ./my-project --targetDir ./docs --scope public --parallelReflection false`;
       const result = execSync(command, {
         cwd: testDir,
@@ -181,7 +178,6 @@ describe('SFDX Project Integration Tests', () => {
     it('should generate documentation for Lightning Web Components', () => {
       setupTestProjectWithLWC(testDir);
 
-      // Disable parallel reflection for test stability (worker thread + bundler behavior can vary by environment).
       const command = `node "${apexdocsPath}" markdown --useSfdxProjectJson --targetDir ./docs --scope public --experimentalLwcSupport --parallelReflection false`;
       const result = execSync(command, {
         cwd: testDir,
