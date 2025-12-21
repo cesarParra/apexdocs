@@ -89,6 +89,14 @@ Here are some live projects using ApexDocs:
 * Custom tag support
 * And much, much more!
 
+## ⚡ Parallel reflection (performance)
+
+ApexDocs can speed up documentation generation by running reflection work in parallel (enabled by default).
+If you run into issues or want deterministic behavior, you can disable it with:
+
+- `--parallelReflection false`
+- or via config: `parallelReflection: false`
+
 ## 💿 Installation
 
 ```bash
@@ -157,6 +165,8 @@ apexdocs changelog --previousVersionDir force-app-previous --currentVersionDir f
 | `--lwcGroupName`                  | N/A   | The name under which Lightning Web Components will be grouped in the Reference Guide                                                                                                                     | `Lightning Web Components` | No       |
 | `--includeFieldSecurityMetadata`  | N/A   | Whether to include the compliance category and security classification for fields in the generated files.                                                                                                | `false`                    | No       |
 | `--includeInlineHelpTextMetadata` | N/A   | Whether to include the inline help text for fields in the generated files.                                                                                                                               | `false`                    | No       |
+| `--parallelReflection`            | N/A   | Parallelize CPU-heavy reflection via worker threads.                                                                                                                                                     | `true`                     | No       |
+| `--parallelReflectionMaxWorkers`  | N/A   | Maximum number of worker threads to use for parallel reflection. Defaults to a reasonable value based on CPU count.                                                                                     | N/A                        | No       |
 
 > **Note:** The `*` in the Required column indicates that **one** of the source directory options must be specified:
 > - `--sourceDir` (single directory or array of directories)
@@ -204,14 +214,16 @@ apexdocs markdown -s force-app -t docs -p global public namespaceaccessible -n M
 
 #### Flags
 
-| Flag           | Alias | Description                                                                   | Default         | Required |
-|----------------|-------|-------------------------------------------------------------------------------|-----------------|----------|
-| `--sourceDir`  | `-s`  | The directory where the source files are located.                             | N/A             | Yes      |
-| `--targetDir`  | `-t`  | The directory where the generated files will be placed.                       | `docs`          | No       |
-| `--fileName`   | N/A   | The name of the OpenApi file.                                                 | `openapi.json`  | No       |
-| `--namespace`  | N/A   | The package namespace, if any. This will be added to the API file Server Url. | N/A             | No       |
-| `--title`      | N/A   | The title of the OpenApi file.                                                | `Apex REST API` | No       |
-| `--apiVersion` | N/A   | The version of the API.                                                       | `1.0.0`         | No       |
+| Flag                           | Alias | Description                                                                                              | Default         | Required |
+|--------------------------------|-------|----------------------------------------------------------------------------------------------------------|-----------------|----------|
+| `--sourceDir`                  | `-s`  | The directory where the source files are located.                                                        | N/A             | Yes      |
+| `--targetDir`                  | `-t`  | The directory where the generated files will be placed.                                                  | `docs`          | No       |
+| `--fileName`                   | N/A   | The name of the OpenApi file.                                                                            | `openapi.json`  | No       |
+| `--namespace`                  | N/A   | The package namespace, if any. This will be added to the API file Server Url.                            | N/A             | No       |
+| `--title`                      | N/A   | The title of the OpenApi file.                                                                           | `Apex REST API` | No       |
+| `--apiVersion`                 | N/A   | The version of the API.                                                                                  | `1.0.0`         | No       |
+| `--parallelReflection`         | N/A   | Parallelize CPU-heavy reflection via worker threads.                                                      | `true`          | No       |
+| `--parallelReflectionMaxWorkers` | N/A | Maximum number of worker threads to use for parallel reflection. Defaults to a reasonable value.         | N/A             | No       |
 
 #### Sample Usage
 
@@ -225,15 +237,17 @@ apexdocs openapi -s force-app -t docs -n MyNamespace --title "My Custom OpenApi 
 
 #### Flags
 
-| Flag                       | Alias | Description                                                                          | Default     | Required |
-|----------------------------|-------|--------------------------------------------------------------------------------------|-------------|----------|
-| `--previousVersionDir`     | `-p`  | The directory location of the previous version of the source code.                   | N/A         | Yes      |
-| `--currentVersionDir`      | `-t`  | The directory location of the current version of the source code.                    | N/A         | Yes      |
-| `--targetDir`              | `-t`  | The directory location where the changelog file will be generated.                   | `./docs/`   | No       |
-| `--fileName`               | N/A   | The name of the changelog file to be generated.                                      | `changelog` | No       |
-| `--scope`                  | N/A   | The list of scope to respect when generating the changelog.                          | ['global']  | No       |
-| `--customObjectVisibility` | `-v`  | Controls which custom objects are documented. Values should be separated by a space. | ['public']  | No       |
-| `--skipIfNoChanges`        | N/A   | Whether to skip generating the changelog if there are no changes.                    | `true`      | No       |
+| Flag                           | Alias | Description                                                                                              | Default     | Required |
+|--------------------------------|-------|----------------------------------------------------------------------------------------------------------|-------------|----------|
+| `--previousVersionDir`         | `-p`  | The directory location of the previous version of the source code.                                       | N/A         | Yes      |
+| `--currentVersionDir`          | `-t`  | The directory location of the current version of the source code.                                        | N/A         | Yes      |
+| `--targetDir`                  | `-t`  | The directory location where the changelog file will be generated.                                       | `./docs/`   | No       |
+| `--fileName`                   | N/A   | The name of the changelog file to be generated.                                                          | `changelog` | No       |
+| `--scope`                      | N/A   | The list of scope to respect when generating the changelog.                                              | ['global']  | No       |
+| `--customObjectVisibility`     | `-v`  | Controls which custom objects are documented. Values should be separated by a space.                     | ['public']  | No       |
+| `--skipIfNoChanges`            | N/A   | Whether to skip generating the changelog if there are no changes.                                        | `true`      | No       |
+| `--parallelReflection`         | N/A   | Parallelize CPU-heavy reflection via worker threads.                                                      | `true`      | No       |
+| `--parallelReflectionMaxWorkers` | N/A | Maximum number of worker threads to use for parallel reflection. Defaults to a reasonable value.         | N/A         | No       |
 
 #### Sample Usage
 

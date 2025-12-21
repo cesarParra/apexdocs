@@ -36,9 +36,10 @@ export default async function openApi(
   });
 
   // Reflect Apex types using the shared reflection pipeline (worker-thread parallelism supported).
+  // Honor user-facing flags for consistency with other generators.
   const parsedFilesEither = await reflectApexSource(fileBodies, {
-    parallelReflection: true,
-    parallelReflectionMaxWorkers: undefined,
+    parallelReflection: config.parallelReflection,
+    parallelReflectionMaxWorkers: config.parallelReflectionMaxWorkers,
   })();
 
   if (E.isLeft(parsedFilesEither)) {

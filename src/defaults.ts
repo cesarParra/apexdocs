@@ -36,6 +36,11 @@ export const openApiDefaults = {
   title: 'Apex REST API',
   apiVersion: '1.0.0',
   exclude: [],
+
+  // Performance: parallel reflection via worker threads (enabled by default).
+  parallelReflection: true,
+  // Default is computed at runtime if not provided.
+  parallelReflectionMaxWorkers: undefined,
 };
 
 export const changeLogDefaults = {

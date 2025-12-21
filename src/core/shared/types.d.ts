@@ -91,6 +91,18 @@ export type UserDefinedOpenApiConfig = {
   title: string;
   apiVersion: string;
   exclude: string[];
+
+  /**
+   * Parallelize CPU-heavy reflection via worker threads.
+   * Defaults to true.
+   */
+  parallelReflection: boolean;
+
+  /**
+   * Maximum number of worker threads to use for parallel reflection.
+   * Defaults to a reasonable value based on CPU count.
+   */
+  parallelReflectionMaxWorkers?: number;
 };
 
 export type UserDefinedChangelogConfig = {
