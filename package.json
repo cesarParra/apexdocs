@@ -1,7 +1,10 @@
 {
   "name": "@cparra/apexdocs",
-  "version": "3.16.1",
+  "version": "3.17.0",
   "description": "Library with CLI capabilities to generate documentation for Salesforce Apex classes.",
+  "engines": {
+    "node": ">=18"
+  },
   "keywords": [
     "apex",
     "salesforce",
@@ -36,13 +39,14 @@
       "output": []
     },
     "build": {
-      "command": "tsc --noEmit --pretty && pkgroll",
+      "command": "tsc --noEmit --pretty && pkgroll --target node18 && tsc --project ./tsconfig.worker.json",
       "dependencies": [
         "lint"
       ],
       "files": [
         "src/**/*.ts",
-        "tsconfig.json"
+        "tsconfig.json",
+        "tsconfig.worker.json"
       ],
       "output": [
         "dist"
@@ -92,7 +96,7 @@
     ]
   },
   "dependencies": {
-    "@cparra/apex-reflection": "2.21.1",
+    "@cparra/apex-reflection": "2.22.0",
     "@salesforce/source-deploy-retrieve": "^12.20.1",
     "@types/js-yaml": "^4.0.9",
     "@types/yargs": "^17.0.32",

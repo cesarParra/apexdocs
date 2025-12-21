@@ -65,4 +65,15 @@ export const openApiOptions: { [key: string]: Options } = {
     default: openApiDefaults.apiVersion,
     describe: 'The version of the OpenApi file.',
   },
+  parallelReflection: {
+    type: 'boolean',
+    describe: 'Parallelize CPU-heavy reflection via worker threads.',
+    default: openApiDefaults.parallelReflection,
+  },
+  parallelReflectionMaxWorkers: {
+    type: 'number',
+    describe:
+      'Maximum number of worker threads to use for parallel reflection. Defaults to a reasonable value based on CPU count.',
+    default: openApiDefaults.parallelReflectionMaxWorkers,
+  },
 };

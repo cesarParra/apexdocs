@@ -1,6 +1,7 @@
 import {
   ChangeLogPageData,
-  ParsedFile, ParsedType,
+  ParsedFile,
+  ParsedType,
   Skip,
   TransformChangelogPage,
   UnparsedApexBundle,
@@ -25,6 +26,13 @@ import { hookableTemplate } from '../markdown/templates/hookable';
 import changelogToSourceChangelog from './helpers/changelog-to-source-changelog';
 import { reflectTriggerSource } from '../reflection/trigger/reflect-trigger-source';
 import { filterTriggerFiles } from '#utils/source-bundle-utils';
+
+function changelogReflectionConfig(config: Omit<UserDefinedChangelogConfig, 'targetGenerator'>) {
+  return {
+    parallelReflection: config.parallelReflection,
+    parallelReflectionMaxWorkers: config.parallelReflectionMaxWorkers,
+  } as const;
+}
 
 type Config = Omit<UserDefinedChangelogConfig, 'targetGenerator'>;
 
@@ -66,7 +74,7 @@ function reflect(bundles: UnparsedSourceBundle[], config: Omit<UserDefinedChange
   const filterOutOfScopeApex = apply(filterScope, config.scope);
 
   function reflectApexFiles(sourceFiles: UnparsedApexBundle[]) {
-    return pipe(reflectApexSource(sourceFiles), TE.map(filterOutOfScopeApex));
+    return pipe(reflectApexSource(sourceFiles, changelogReflectionConfig(config)), TE.map(filterOutOfScopeApex));
   }
 
   return pipe(

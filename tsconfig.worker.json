@@ -1,0 +1,43 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    /*
+     * Compile just the worker entrypoint to a real JS file at:
+     *   dist/apex-reflection.worker.js
+     * This avoids needing a post-build copy step.
+     */
+    "module": "commonjs",
+    /*
+     * Safe baseline for worker output.
+     */
+    "target": "ES2018",
+    /*
+     * Force the output filename and location by:
+     * - setting `rootDir` to the directory containing the worker source, so the
+     *   worker file becomes the "root" of the program
+     * - setting `outDir` to dist
+     *
+     * With:
+     *   rootDir: ./src/core/reflection/apex
+     * and:
+     *   include: ["./src/core/reflection/apex/apex-reflection.worker.ts"]
+     *
+     * tsc will emit:
+     *   dist/apex-reflection.worker.js
+     */
+    "rootDir": "./src/core/reflection/apex",
+    "outDir": "./dist",
+    /*
+     * This config is only for emitting the worker JS; we don't want .d.ts files
+     * or sourcemaps for this entrypoint.
+     */
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "incremental": false,
+    "pretty": false,
+    "skipLibCheck": true,
+  },
+  "include": ["./src/core/reflection/apex/apex-reflection.worker.ts"],
+  "exclude": ["node_modules", "**/__tests__/*"],
+}

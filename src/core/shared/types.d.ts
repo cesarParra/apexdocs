@@ -58,6 +58,8 @@ export type CliConfigurableMarkdownConfig = {
   includeFieldSecurityMetadata: boolean;
   includeInlineHelpTextMetadata: boolean;
   experimentalLwcSupport: boolean;
+  parallelReflection: boolean;
+  parallelReflectionMaxWorkers?: number;
 };
 
 export type UserDefinedMarkdownConfig = {
@@ -79,6 +81,8 @@ export type UserDefinedOpenApiConfig = {
   title: string;
   apiVersion: string;
   exclude: string[];
+  parallelReflection: boolean;
+  parallelReflectionMaxWorkers?: number;
 };
 
 export type UserDefinedChangelogConfig = {
@@ -92,6 +96,8 @@ export type UserDefinedChangelogConfig = {
   exclude: string[];
   skipIfNoChanges: boolean;
   translations?: UserTranslations['changelog'];
+  parallelReflection: boolean;
+  parallelReflectionMaxWorkers?: number;
 } & Partial<ChangelogConfigurableHooks>;
 
 export type UserDefinedConfig = UserDefinedMarkdownConfig | UserDefinedOpenApiConfig | UserDefinedChangelogConfig;

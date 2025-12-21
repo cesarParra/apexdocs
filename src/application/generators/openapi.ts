@@ -4,7 +4,7 @@ import { TypesRepository } from '../../core/openapi/types-repository';
 import Transpiler from '../../core/openapi/transpiler';
 import { Logger } from '#utils/logger';
 import ErrorLogger from '#utils/error-logger';
-import { reflect, ReflectionResult } from '@cparra/apex-reflection';
+import { ReflectionResult } from '@cparra/apex-reflection';
 import Manifest from '../../core/manifest';
 import { PageData, UnparsedApexBundle, UserDefinedOpenApiConfig } from '../../core/shared/types';
 import { OpenApiDocsProcessor } from '../../core/openapi/open-api-docs-processor';
@@ -12,7 +12,8 @@ import { writeFiles } from '../file-writer';
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
 import { OpenApiSettings } from '../../core/openapi/openApiSettings';
-import { apply } from '#utils/fp';
+import { reflectApexSource } from '../../core/reflection/apex/reflect-apex-source';
+import * as E from 'fp-ts/Either';
 
 export default async function openApi(
   logger: Logger,
@@ -34,7 +35,39 @@ export default async function openApi(
     version: config.apiVersion,
   });
 
-  const manifest = createManifest(new RawBodyParser(logger, fileBodies), apply(reflectionWithLogger, logger));
+  const parsedFilesEither = await reflectApexSource(fileBodies, {
+    parallelReflection: config.parallelReflection,
+    parallelReflectionMaxWorkers: config.parallelReflectionMaxWorkers,
+  })();
+
+  if (E.isLeft(parsedFilesEither)) {
+    const errors = parsedFilesEither.left;
+    logger.error(errors);
+    return;
+  }
+
+  const parsedFiles = parsedFilesEither.right;
+  const reflectionByPath = new Map<string, ReflectionResult>();
+
+  for (const parsed of parsedFiles) {
+    if (!('filePath' in parsed.source)) {
+      continue;
+    }
+
+    reflectionByPath.set(parsed.source.filePath, { typeMirror: parsed.type });
+  }
+
+  function reflectFromMap(apexBundle: UnparsedApexBundle): ReflectionResult {
+    const result = reflectionByPath.get(apexBundle.filePath);
+    if (result) {
+      return result;
+    }
+
+    logger.error(`${apexBundle.filePath} - Parsing error Unknown error`);
+    return { typeMirror: null, error: new Error('Unknown error') } as unknown as ReflectionResult;
+  }
+
+  const manifest = createManifest(new RawBodyParser(logger, fileBodies), reflectFromMap);
   TypesRepository.getInstance().populateAll(manifest.types);
   const filteredTypes = filterByScopes(logger, manifest);
   const processor = new OpenApiDocsProcessor(logger);
@@ -50,14 +83,6 @@ export default async function openApi(
 
   // Logs any errors that the types might have in their doc comment's error field
   ErrorLogger.logErrors(logger, filteredTypes);
-}
-
-function reflectionWithLogger(logger: Logger, apexBundle: UnparsedApexBundle): ReflectionResult {
-  const result = reflect(apexBundle.content);
-  if (result.error) {
-    logger.error(`${apexBundle.filePath} - Parsing error ${result.error?.message}`);
-  }
-  return result;
 }
 
 function filterByScopes(logger: Logger, manifest: Manifest) {

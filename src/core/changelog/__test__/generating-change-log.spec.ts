@@ -21,6 +21,9 @@ const config = {
   previousVersionDir: '',
   exclude: [],
   skipIfNoChanges: false,
+  // Unit tests run should avoid spawning worker threads by default.
+  parallelReflection: false,
+  parallelReflectionMaxWorkers: undefined,
 };
 
 describe('when generating a changelog', () => {

@@ -23,6 +23,8 @@ export const markdownDefaults = {
   includeFieldSecurityMetadata: false,
   includeInlineHelpTextMetadata: false,
   experimentalLwcSupport: false,
+  parallelReflection: true,
+  parallelReflectionMaxWorkers: undefined,
 };
 
 export const openApiDefaults = {
@@ -31,10 +33,14 @@ export const openApiDefaults = {
   title: 'Apex REST API',
   apiVersion: '1.0.0',
   exclude: [],
+  parallelReflection: true,
+  parallelReflectionMaxWorkers: undefined,
 };
 
 export const changeLogDefaults = {
   ...markdownAndChangelogDefaults,
   fileName: 'changelog',
   skipIfNoChanges: true,
+  parallelReflection: true,
+  parallelReflectionMaxWorkers: undefined,
 };

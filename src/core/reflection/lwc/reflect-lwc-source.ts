@@ -7,7 +7,7 @@ import { ParsedFile } from '../../shared/types';
 import { ReflectionError, ReflectionErrors } from '../../errors/errors';
 import * as E from 'fp-ts/Either';
 
-import { UnparsedLightningComponentBundle } from 'src/core/shared/types';
+import { UnparsedLightningComponentBundle } from '../../shared/types';
 import { XMLParser } from 'fast-xml-parser';
 
 export type LwcMetadata = {
