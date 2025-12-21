@@ -124,4 +124,15 @@ export const markdownOptions: Record<keyof CliConfigurableMarkdownConfig, Option
     describe: 'Enable experimental support for documenting Lightning Web Components (LWC).',
     default: markdownDefaults.experimentalLwcSupport,
   },
+  parallelReflection: {
+    type: 'boolean',
+    describe: 'Parallelize CPU-heavy reflection via worker threads.',
+    default: markdownDefaults.parallelReflection,
+  },
+  parallelReflectionMaxWorkers: {
+    type: 'number',
+    describe:
+      'Maximum number of worker threads to use for parallel reflection. Defaults to a reasonable value based on CPU count.',
+    default: markdownDefaults.parallelReflectionMaxWorkers,
+  },
 };

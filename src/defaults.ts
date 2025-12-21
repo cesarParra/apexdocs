@@ -23,6 +23,11 @@ export const markdownDefaults = {
   includeFieldSecurityMetadata: false,
   includeInlineHelpTextMetadata: false,
   experimentalLwcSupport: false,
+
+  // Performance: parallel reflection via worker threads (enabled by default).
+  parallelReflection: true,
+  // Default is computed at runtime if not provided.
+  parallelReflectionMaxWorkers: undefined,
 };
 
 export const openApiDefaults = {

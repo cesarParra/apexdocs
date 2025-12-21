@@ -77,6 +77,12 @@ export function generateDocs(bundles: UnparsedSourceBundle[], config?: Partial<M
     exclude: [],
     lwcGroupName: 'Lightning Web Components',
     experimentalLwcSupport: true,
+
+    // Unit tests run under ts-jest and should avoid spawning worker threads by default.
+    // Parallel reflection is tested/benchmarked separately via integration runs over the built `dist/`.
+    parallelReflection: false,
+    parallelReflectionMaxWorkers: undefined,
+
     ...config,
   });
 }

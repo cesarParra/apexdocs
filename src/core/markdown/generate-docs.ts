@@ -150,7 +150,11 @@ function generateForApex(apexBundles: UnparsedApexBundle[], config: MarkdownGene
 
   return pipe(
     apexBundles,
-    reflectApexSource,
+    (bundles) =>
+      reflectApexSource(bundles, {
+        parallelReflection: config.parallelReflection,
+        parallelReflectionMaxWorkers: config.parallelReflectionMaxWorkers,
+      }),
     TE.map(filterOutOfScope),
     TE.map(addInheritedMembersToTypes),
     TE.map(addInheritanceChainToTypes),

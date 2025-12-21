@@ -1,6 +1,7 @@
 import {
   ChangeLogPageData,
-  ParsedFile, ParsedType,
+  ParsedFile,
+  ParsedType,
   Skip,
   TransformChangelogPage,
   UnparsedApexBundle,
@@ -25,6 +26,18 @@ import { hookableTemplate } from '../markdown/templates/hookable';
 import changelogToSourceChangelog from './helpers/changelog-to-source-changelog';
 import { reflectTriggerSource } from '../reflection/trigger/reflect-trigger-source';
 import { filterTriggerFiles } from '#utils/source-bundle-utils';
+
+/**
+ * Changelog generation is commonly exercised by unit tests running under ts-jest.
+ * In that environment, spawning worker threads for reflection can be fragile because the
+ * built worker entrypoint is not available.
+ *
+ * For now, disable worker reflection explicitly for the changelog code path.
+ * (Markdown keeps worker reflection enabled by default, configurable via CLI/config.)
+ */
+const changelogReflectionConfig = {
+  parallelReflection: false,
+} as const;
 
 type Config = Omit<UserDefinedChangelogConfig, 'targetGenerator'>;
 
@@ -66,7 +79,7 @@ function reflect(bundles: UnparsedSourceBundle[], config: Omit<UserDefinedChange
   const filterOutOfScopeApex = apply(filterScope, config.scope);
 
   function reflectApexFiles(sourceFiles: UnparsedApexBundle[]) {
-    return pipe(reflectApexSource(sourceFiles), TE.map(filterOutOfScopeApex));
+    return pipe(reflectApexSource(sourceFiles, changelogReflectionConfig), TE.map(filterOutOfScopeApex));
   }
 
   return pipe(

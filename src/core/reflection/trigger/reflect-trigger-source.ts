@@ -9,7 +9,7 @@ import { Semigroup } from 'fp-ts/Semigroup';
 import { ParsedFile } from '../../shared/types';
 import { ReflectionError, ReflectionErrors } from '../../errors/errors';
 
-import { UnparsedTriggerBundle } from 'src/core/shared/types';
+import { UnparsedTriggerBundle } from '../../shared/types';
 
 export type TriggerMetadata = TriggerMirror & {
   type_name: 'trigger';
