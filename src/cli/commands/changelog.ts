@@ -1,5 +1,6 @@
 import { Options } from 'yargs';
 import { changeLogDefaults } from '../../defaults';
+import { markdownDefaults } from '../../defaults';
 
 /**
  * Custom validation function to ensure source directories are provided for both versions
@@ -27,6 +28,17 @@ export function validateChangelogArgs(argv: Record<string, unknown>): boolean {
 }
 
 export const changeLogOptions: { [key: string]: Options } = {
+  parallelReflection: {
+    type: 'boolean',
+    describe: 'Parallelize CPU-heavy reflection via worker threads.',
+    default: markdownDefaults.parallelReflection,
+  },
+  parallelReflectionMaxWorkers: {
+    type: 'number',
+    describe:
+      'Maximum number of worker threads to use for parallel reflection. Defaults to a reasonable value based on CPU count.',
+    default: markdownDefaults.parallelReflectionMaxWorkers,
+  },
   previousVersionDir: {
     type: 'string',
     array: true,

@@ -28,16 +28,20 @@ import { reflectTriggerSource } from '../reflection/trigger/reflect-trigger-sour
 import { filterTriggerFiles } from '#utils/source-bundle-utils';
 
 /**
- * Changelog generation is commonly exercised by unit tests running under ts-jest.
- * In that environment, spawning worker threads for reflection can be fragile because the
- * built worker entrypoint is not available.
+ * Changelog reflection can be parallelized via worker threads, just like markdown.
  *
- * For now, disable worker reflection explicitly for the changelog code path.
- * (Markdown keeps worker reflection enabled by default, configurable via CLI/config.)
+ * We honor the user config so end users can get the speedup by default (via defaults + CLI),
+ * while unit tests can keep stability by explicitly passing `parallelReflection: false`.
+ *
+ * NOTE:
+ * - The reflection layer also supports an env override (`APEXDOCS_WORKER_REFLECTION`) for troubleshooting.
  */
-const changelogReflectionConfig = {
-  parallelReflection: false,
-} as const;
+function changelogReflectionConfig(config: Omit<UserDefinedChangelogConfig, 'targetGenerator'>) {
+  return {
+    parallelReflection: config.parallelReflection,
+    parallelReflectionMaxWorkers: config.parallelReflectionMaxWorkers,
+  } as const;
+}
 
 type Config = Omit<UserDefinedChangelogConfig, 'targetGenerator'>;
 
@@ -79,7 +83,7 @@ function reflect(bundles: UnparsedSourceBundle[], config: Omit<UserDefinedChange
   const filterOutOfScopeApex = apply(filterScope, config.scope);
 
   function reflectApexFiles(sourceFiles: UnparsedApexBundle[]) {
-    return pipe(reflectApexSource(sourceFiles, changelogReflectionConfig), TE.map(filterOutOfScopeApex));
+    return pipe(reflectApexSource(sourceFiles, changelogReflectionConfig(config)), TE.map(filterOutOfScopeApex));
   }
 
   return pipe(
