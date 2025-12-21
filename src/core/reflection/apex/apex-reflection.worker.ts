@@ -3,15 +3,10 @@ import { reflect as mirrorReflection, Type, ParsingError } from '@cparra/apex-re
 
 /**
  * Worker entrypoint for Apex reflection tasks.
- *
  * Protocol:
  * - Main thread sends: { id: number, payload: { content: string } }
  * - Worker responds:  { id: number, ok: true, result: Type }
  *                 or: { id: number, ok: false, error: { message: string } }
- *
- * Note:
- * - The returned `Type` must be structured-cloneable (plain object graph). The `@cparra/apex-reflection`
- *   `Type` mirrors are plain data objects in practice.
  */
 type RequestMessage = {
   id: number;
@@ -34,21 +29,32 @@ type ErrorResponse = {
   };
 };
 
-function isRequestMessage(msg: unknown): msg is RequestMessage {
-  if (!msg || typeof msg !== 'object') return false;
-  const m = msg as { id?: unknown; payload?: unknown };
-  if (typeof m.id !== 'number') return false;
-  if (!m.payload || typeof m.payload !== 'object') return false;
-  const p = m.payload as { content?: unknown };
-  return typeof p.content === 'string';
+function isRequestMessage(message: unknown): message is RequestMessage {
+  if (!message || typeof message !== 'object') {
+    return false;
+  }
+
+  const candidateMessage = message as { id?: unknown; payload?: unknown };
+
+  if (typeof candidateMessage.id !== 'number') {
+    return false;
+  }
+
+  if (!candidateMessage.payload || typeof candidateMessage.payload !== 'object') {
+    return false;
+  }
+
+  const candidatePayload = candidateMessage.payload as { content?: unknown };
+  return typeof candidatePayload.content === 'string';
 }
 
-function post(msg: SuccessResponse | ErrorResponse): void {
+function post(responseMessage: SuccessResponse | ErrorResponse): void {
   // `parentPort` should always exist in a worker, but guard anyway.
   if (!parentPort) {
     return;
   }
-  parentPort.postMessage(msg);
+
+  parentPort.postMessage(responseMessage);
 }
 
 function reflectOrThrow(rawSource: string): Type {
@@ -69,28 +75,26 @@ if (!parentPort) {
   throw new Error('apex-reflection.worker started without a parentPort');
 }
 
-parentPort.on('message', (msg: unknown) => {
-  if (!isRequestMessage(msg)) {
+parentPort.on('message', (message: unknown) => {
+  if (!isRequestMessage(message)) {
     // Can't correlate without a valid id; ignore.
     return;
   }
 
-  const { id, payload } = msg;
+  const { id, payload } = message;
 
   try {
     const typeMirror = reflectOrThrow(payload.content);
     post({ id, ok: true, result: typeMirror });
-  } catch (e) {
-    const message =
-      (e as ParsingError | Error | { message?: unknown })?.message &&
-      typeof (e as { message: unknown }).message === 'string'
-        ? (e as { message: string }).message
-        : 'Unknown error';
+  } catch (caughtError) {
+    const candidateMessage = (caughtError as ParsingError | Error | { message?: unknown })?.message;
+
+    const errorMessage = typeof candidateMessage === 'string' ? candidateMessage : 'Unknown error';
 
     post({
       id,
       ok: false,
-      error: { message },
+      error: { message: errorMessage },
     });
   }
 });

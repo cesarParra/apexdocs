@@ -58,17 +58,7 @@ export type CliConfigurableMarkdownConfig = {
   includeFieldSecurityMetadata: boolean;
   includeInlineHelpTextMetadata: boolean;
   experimentalLwcSupport: boolean;
-
-  /**
-   * Whether to parallelize CPU-heavy reflection steps via worker threads.
-   * Defaults to true.
-   */
   parallelReflection: boolean;
-
-  /**
-   * Max number of worker threads to use for parallel reflection.
-   * Defaults to a reasonable value based on CPU count.
-   */
   parallelReflectionMaxWorkers?: number;
 };
 
@@ -91,17 +81,7 @@ export type UserDefinedOpenApiConfig = {
   title: string;
   apiVersion: string;
   exclude: string[];
-
-  /**
-   * Parallelize CPU-heavy reflection via worker threads.
-   * Defaults to true.
-   */
   parallelReflection: boolean;
-
-  /**
-   * Maximum number of worker threads to use for parallel reflection.
-   * Defaults to a reasonable value based on CPU count.
-   */
   parallelReflectionMaxWorkers?: number;
 };
 
@@ -116,17 +96,7 @@ export type UserDefinedChangelogConfig = {
   exclude: string[];
   skipIfNoChanges: boolean;
   translations?: UserTranslations['changelog'];
-
-  /**
-   * Parallelize CPU-heavy reflection via worker threads.
-   * Defaults to true.
-   */
   parallelReflection: boolean;
-
-  /**
-   * Maximum number of worker threads to use for parallel reflection.
-   * Defaults to a reasonable value based on CPU count.
-   */
   parallelReflectionMaxWorkers?: number;
 } & Partial<ChangelogConfigurableHooks>;
 

@@ -2,10 +2,9 @@ import * as TE from 'fp-ts/TaskEither';
 import * as E from 'fp-ts/Either';
 import * as T from 'fp-ts/Task';
 import * as A from 'fp-ts/lib/Array';
-import { Annotation, reflect as mirrorReflection, Type } from '@cparra/apex-reflection';
+import { Annotation, ParsingError, reflect as mirrorReflection, Type } from '@cparra/apex-reflection';
 import { pipe } from 'fp-ts/function';
 import * as O from 'fp-ts/Option';
-import { ParsingError } from '@cparra/apex-reflection';
 import { apply } from '#utils/fp';
 import { Semigroup } from 'fp-ts/Semigroup';
 import { ParsedFile, UnparsedApexBundle, UserDefinedMarkdownConfig } from '../../shared/types';
@@ -16,7 +15,7 @@ import { Worker } from 'node:worker_threads';
 import path from 'node:path';
 import os from 'node:os';
 import fs from 'node:fs';
-import { WorkerPool } from '../../../util/worker-pool';
+import { WorkerPool } from '#utils/worker-pool';
 
 async function reflectAsync(rawSource: string): Promise<Type> {
   return new Promise((resolve, reject) => {
@@ -42,10 +41,13 @@ function supportsWorkerThreads(): boolean {
 
 function isWorkerReflectionEnabled(config?: Pick<UserDefinedMarkdownConfig, 'parallelReflection'>): boolean {
   // Enabled by default via config (markdownDefaults.parallelReflection === true).
-  // NOTE: keep env-var override for troubleshooting.
   const env = (process.env.APEXDOCS_WORKER_REFLECTION ?? '').toLowerCase();
-  if (env === 'true' || env === '1') return true;
-  if (env === 'false' || env === '0') return false;
+  if (env === 'true' || env === '1') {
+    return true;
+  }
+  if (env === 'false' || env === '0') {
+    return false;
+  }
 
   // Default to true if config isn't provided.
   return config?.parallelReflection ?? true;
@@ -78,17 +80,14 @@ function reflectAsTaskParallel(
 
       const pool = new WorkerPool(() => new Worker(getWorkerEntrypointPath()), {
         maxWorkers,
-        // Keep default queue size (Infinity) unless we later decide to bound it via config.
       });
 
       try {
-        const results = await Promise.all(
+        return await Promise.all(
           apexBundles.map(async (bundle) => {
-            const typeMirror = await pool.run<{ content: string }, Type>({ content: bundle.content });
-            return typeMirror;
+            return await pool.run<{ content: string }, Type>({ content: bundle.content });
           }),
         );
-        return results;
       } finally {
         await pool.terminate();
       }
@@ -111,7 +110,6 @@ export function reflectApexSource(
   };
   const Ap = TE.getApplicativeTaskValidation(T.ApplyPar, semiGroupReflectionError);
 
-  // Parallel by default; configurable via CLI/config and env override.
   if (!isWorkerReflectionEnabled(config) || !supportsWorkerThreads()) {
     return pipe(apexBundles, A.traverse(Ap)(reflectBundle));
   }
@@ -121,7 +119,7 @@ export function reflectApexSource(
     TE.map((typeMirrors) => typeMirrors.map((t, idx) => ({ t, idx }))),
     TE.mapLeft((errs) => errs),
     TE.flatMap((pairs) => {
-      // Rebuild ParsedFile list and attach per-file metadata sequentially (cheap).
+      // Rebuild ParsedFile list and attach per-file metadata sequentially.
       const parsedTasks = pairs.map(({ t, idx }) => {
         const bundle = apexBundles[idx];
         const convertToParsedFile: (typeMirror: Type) => ParsedFile<Type> = apply(toParsedFile, bundle.filePath);

@@ -27,15 +27,6 @@ import changelogToSourceChangelog from './helpers/changelog-to-source-changelog'
 import { reflectTriggerSource } from '../reflection/trigger/reflect-trigger-source';
 import { filterTriggerFiles } from '#utils/source-bundle-utils';
 
-/**
- * Changelog reflection can be parallelized via worker threads, just like markdown.
- *
- * We honor the user config so end users can get the speedup by default (via defaults + CLI),
- * while unit tests can keep stability by explicitly passing `parallelReflection: false`.
- *
- * NOTE:
- * - The reflection layer also supports an env override (`APEXDOCS_WORKER_REFLECTION`) for troubleshooting.
- */
 function changelogReflectionConfig(config: Omit<UserDefinedChangelogConfig, 'targetGenerator'>) {
   return {
     parallelReflection: config.parallelReflection,

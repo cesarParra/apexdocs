@@ -37,21 +37,12 @@ export type WorkerPoolStats = {
 type CreateWorker = () => Worker;
 
 /**
- * A small, generic worker-thread pool.
- *
- * Design goals:
- * - Simple request/response `postMessage` protocol (one response per task).
- * - Avoid guessing payload shapes: the worker should echo `{ id, ok, result|error }`.
- * - Safe termination semantics.
+ * Generic worker-thread pool.
  *
  * Worker message contract:
  * - Main thread sends: `{ id: number, payload: unknown }`
  * - Worker responds: `{ id: number, ok: true, result: unknown }`
  *                or `{ id: number, ok: false, error: unknown }`
- *
- * Notes:
- * - The pool does NOT enforce structured cloning safety; your payload/result must be cloneable.
- * - If a worker exits with an in-flight task, that task is rejected and the worker is replaced on demand.
  */
 export class WorkerPool {
   private readonly createWorker: CreateWorker;
@@ -121,23 +112,6 @@ export class WorkerPool {
       this.pump();
     });
   }
-
-  /**
-   * Returns current pool stats.
-   */
-  stats(): WorkerPoolStats {
-    return {
-      maxWorkers: this.maxWorkers,
-      activeWorkers: this.allWorkers.size,
-      idleWorkers: this.idleWorkers.length,
-      queuedTasks: this.queue.length,
-      inFlightTasks: this.inFlightByWorker.size,
-      createdWorkers: this.createdWorkers,
-      completedTasks: this.completedTasks,
-      failedTasks: this.failedTasks,
-    };
-  }
-
   /**
    * Terminates all workers and rejects queued tasks (unless drainOnTerminate=true).
    *
@@ -217,8 +191,7 @@ export class WorkerPool {
 
     // Create new if allowed.
     if (this.allWorkers.size < this.maxWorkers) {
-      const spawnedWorker = this.spawnWorker();
-      return spawnedWorker;
+      return this.spawnWorker();
     }
 
     return null;
