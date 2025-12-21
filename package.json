@@ -1,6 +1,6 @@
 {
   "name": "@cparra/apexdocs",
-  "version": "3.17.0-beta.4",
+  "version": "3.17.0-beta.6",
   "description": "Library with CLI capabilities to generate documentation for Salesforce Apex classes.",
   "engines": {
     "node": ">=18"
@@ -16,8 +16,7 @@
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist",
-    "scripts/build-worker-entrypoints.mjs"
+    "dist"
   ],
   "bin": {
     "apexdocs": "./dist/cli/generate.js"
@@ -40,13 +39,14 @@
       "output": []
     },
     "build": {
-      "command": "tsc --noEmit --pretty && pkgroll --target node18 && node ./scripts/build-worker-entrypoints.mjs",
+      "command": "tsc --noEmit --pretty && pkgroll --target node18 && tsc --project ./tsconfig.worker.json",
       "dependencies": [
         "lint"
       ],
       "files": [
         "src/**/*.ts",
-        "tsconfig.json"
+        "tsconfig.json",
+        "tsconfig.worker.json"
       ],
       "output": [
         "dist"

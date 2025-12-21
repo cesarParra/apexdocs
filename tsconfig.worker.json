@@ -1,0 +1,59 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    /*
+     * Compile just the worker entrypoint to a real JS file at:
+     *   dist/apex-reflection.worker.js
+     *
+     * This avoids needing a post-build copy step.
+     *
+     * We intentionally emit CommonJS here because the main package output is
+     * currently CommonJS and the worker is created via `new Worker(<path>)`.
+     */
+    "module": "commonjs",
+
+    /*
+     * Node 18 supports far newer syntax than ES2018, but ES2018 is a safe baseline
+     * for worker output and matches what we previously transpiled to.
+     */
+    "target": "ES2018",
+
+    /*
+     * Force the output filename and location by:
+     * - setting `rootDir` to the directory containing the worker source, so the
+     *   worker file becomes the "root" of the program
+     * - setting `outDir` to dist
+     *
+     * With:
+     *   rootDir: ./src/core/reflection/apex
+     * and:
+     *   include: ["./src/core/reflection/apex/apex-reflection.worker.ts"]
+     *
+     * tsc will emit:
+     *   dist/apex-reflection.worker.js
+     */
+    "rootDir": "./src/core/reflection/apex",
+    "outDir": "./dist",
+
+    /*
+     * This config is only for emitting the worker JS; we don't want .d.ts files
+     * or sourcemaps for this entrypoint.
+     */
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+
+    /*
+     * Make this a "narrow" build: no incremental emit cache, no pretty output.
+     */
+    "incremental": false,
+    "pretty": false,
+
+    /*
+     * Keep the worker compile isolated and fast.
+     */
+    "skipLibCheck": true,
+  },
+  "include": ["./src/core/reflection/apex/apex-reflection.worker.ts"],
+  "exclude": ["node_modules", "**/__tests__/*"],
+}

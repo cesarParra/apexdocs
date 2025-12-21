@@ -16,7 +16,6 @@ npm-debug.log
 /out/
 target/
 /.illuminatedCloud/
-**/tsconfig*.json
 **/*.tsbuildinfo
 
 **/graphql.config.yml

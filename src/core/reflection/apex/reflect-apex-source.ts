@@ -52,55 +52,17 @@ function isWorkerReflectionEnabled(config?: Pick<UserDefinedMarkdownConfig, 'par
 }
 
 function getWorkerEntrypointPath(): string {
-  // The worker file is emitted as a standalone JS file during build.
+  // The worker entrypoint is emitted as a standalone JS file during build at:
+  //   dist/apex-reflection.worker.js
   //
-  // Build may place it under either:
-  //   dist/core/reflection/apex/apex-reflection.worker.js
-  // or (depending on bundler layout / package exports):
-  //   dist/core/reflection/apex/apex-reflection.worker.js (but __dirname may be dist/core/reflection/apex/apex/)
-  //
-  // Because this project is bundled, the runtime location of this file can vary.
-  // We resolve relative to this module's directory first, then try a couple dist-root heuristics.
-  const candidate1 = path.resolve(__dirname, './apex-reflection.worker.js');
-  if (fs.existsSync(candidate1)) {
-    return candidate1;
-  }
-
-  // Some bundlers may nest source module paths under an extra "apex/" directory at runtime:
-  //   .../dist/core/reflection/apex/apex/reflect-*.js
-  // while the worker is emitted at:
-  //   .../dist/core/reflection/apex/apex-reflection.worker.js
-  const candidate1b = path.resolve(__dirname, '../apex-reflection.worker.js');
-  if (fs.existsSync(candidate1b)) {
-    return candidate1b;
-  }
-
-  // Fallback: walk up from this file and probe a few likely dist layouts.
-  // This is a best-effort safety net for bundler output layouts.
-  let dir = __dirname;
-  for (let i = 0; i < 10; i++) {
-    // Try treating "dir/../../.." as dist root (existing heuristic)
-    const maybeDist1 = path.resolve(dir, '../../..');
-    const candidate2a = path.resolve(maybeDist1, 'core', 'reflection', 'apex', 'apex-reflection.worker.js');
-    if (fs.existsSync(candidate2a)) {
-      return candidate2a;
-    }
-
-    // Try one-level-deeper "dist/core/..." layout, in case the runtime file lives under dist/core/...
-    // and we need to step to dist/ then append core/...
-    const maybeDist2 = path.resolve(dir, '../../../..');
-    const candidate2b = path.resolve(maybeDist2, 'core', 'reflection', 'apex', 'apex-reflection.worker.js');
-    if (fs.existsSync(candidate2b)) {
-      return candidate2b;
-    }
-
-    const parent = path.dirname(dir);
-    if (parent === dir) break;
-    dir = parent;
+  // We resolve it relative to this module by walking up to the dist root.
+  const candidate = path.resolve(__dirname, './apex-reflection.worker.js');
+  if (fs.existsSync(candidate)) {
+    return candidate;
   }
 
   // Keep a deterministic path in the error message.
-  return candidate1;
+  return candidate;
 }
 
 function reflectAsTaskParallel(
