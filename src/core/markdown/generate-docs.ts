@@ -23,7 +23,7 @@ import {
 import { mergeTranslations } from '../translations';
 import { parsedFilesToRenderableBundle } from './adapters/renderable-bundle';
 import { RenderableBundle } from '../renderables/types';
-import { reflectApexSource } from '../reflection/apex/reflect-apex-source';
+import { reflectApexSourceBestEffort, type ReflectionDebugLogger } from '../reflection/apex/reflect-apex-source';
 import { addInheritanceChainToTypes } from '../reflection/apex/inheritance-chain-expanion';
 import { addInheritedMembersToTypes } from '../reflection/apex/inherited-member-expansion';
 import { convertToDocumentationBundle } from './adapters/renderable-to-page-data';
@@ -52,7 +52,11 @@ export type MarkdownGeneratorConfig = Omit<
   referenceGuideTemplate: string;
 };
 
-export function generateDocs(unparsedBundles: UnparsedSourceBundle[], config: MarkdownGeneratorConfig) {
+export function generateDocs(
+  unparsedBundles: UnparsedSourceBundle[],
+  config: MarkdownGeneratorConfig,
+  debugLogger: ReflectionDebugLogger,
+) {
   const translations = mergeTranslations({ markdown: config.translations });
   const convertToReferences = apply(parsedFilesToReferenceGuide, config);
   const convertToRenderableBundle = apply(parsedFilesToRenderableBundle, config);
@@ -75,7 +79,7 @@ export function generateDocs(unparsedBundles: UnparsedSourceBundle[], config: Ma
 
   return pipe(
     TE.right(replaceMacros(unparsedBundles, config.macros)),
-    TE.flatMap((unparsedBundles) => generateForApex(filterApexSourceFiles(unparsedBundles), config)),
+    TE.flatMap((unparsedBundles) => generateForApex(filterApexSourceFiles(unparsedBundles), config, debugLogger)),
     TE.chain((parsedApexFiles) => {
       return pipe(
         reflectCustomFieldsAndObjectsAndMetadataRecords(
@@ -144,21 +148,46 @@ function replaceMacros(
   });
 }
 
-function generateForApex(apexBundles: UnparsedApexBundle[], config: MarkdownGeneratorConfig) {
+function generateForApex(
+  apexBundles: UnparsedApexBundle[],
+  config: MarkdownGeneratorConfig,
+  debugLogger: ReflectionDebugLogger,
+) {
   const filterOutOfScope = apply(filterScope, config.scope);
   const removeExcluded = apply(removeExcludedTags, config.excludeTags);
 
   return pipe(
     apexBundles,
     (bundles) =>
-      reflectApexSource(bundles, {
-        parallelReflection: config.parallelReflection,
-        parallelReflectionMaxWorkers: config.parallelReflectionMaxWorkers,
-      }),
-    TE.map(filterOutOfScope),
-    TE.map(addInheritedMembersToTypes),
-    TE.map(addInheritanceChainToTypes),
-    TE.map(removeExcluded),
+      reflectApexSourceBestEffort(
+        bundles,
+        {
+          parallelReflection: config.parallelReflection,
+          parallelReflectionMaxWorkers: config.parallelReflectionMaxWorkers,
+        },
+        debugLogger,
+      ),
+    TE.flatMap(({ successes, errors }) => {
+      // Proceed with whatever we could parse, but if any Apex files failed
+      // reflection, fail at the end so the CLI can aggregate and report all failures.
+      const filtered = pipe(
+        TE.right(successes),
+        TE.map(filterOutOfScope),
+        TE.map(addInheritedMembersToTypes),
+        TE.map(addInheritanceChainToTypes),
+        TE.map(removeExcluded),
+      );
+
+      return pipe(
+        filtered,
+        TE.flatMap((parsed) => {
+          if (errors.errors.length > 0) {
+            return TE.left(errors);
+          }
+          return TE.right(parsed);
+        }),
+      );
+    }),
   );
 }
 

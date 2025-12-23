@@ -3,6 +3,7 @@ import { NoLogger } from '#utils/logger';
 import { Apexdocs } from '../application/Apexdocs';
 import * as E from 'fp-ts/Either';
 import { changeLogDefaults, markdownDefaults, openApiDefaults } from '../defaults';
+import { createReflectionDebugLogger } from '#utils/reflection-debug-logger';
 
 type CallableConfig = Partial<UserDefinedConfig> & { sourceDir: string; targetGenerator: Generators };
 
@@ -12,6 +13,8 @@ type CallableConfig = Partial<UserDefinedConfig> & { sourceDir: string; targetGe
  */
 export async function process(config: CallableConfig): Promise<void> {
   const logger = new NoLogger();
+  const reflectionDebugLogger = createReflectionDebugLogger(logger);
+
   const configWithDefaults = {
     ...getDefault(config),
     ...config,
@@ -21,7 +24,7 @@ export async function process(config: CallableConfig): Promise<void> {
     throw new Error('sourceDir is required');
   }
 
-  const result = await Apexdocs.generate(configWithDefaults as UserDefinedConfig, logger);
+  const result = await Apexdocs.generate(configWithDefaults as UserDefinedConfig, { logger, reflectionDebugLogger });
   E.match(
     (errors) => {
       throw errors;

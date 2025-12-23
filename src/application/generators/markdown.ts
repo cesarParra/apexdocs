@@ -11,19 +11,32 @@ import * as TE from 'fp-ts/TaskEither';
 import { isSkip } from '../../core/shared/utils';
 import { writeFiles } from '../file-writer';
 import { FileWritingError } from '../errors';
+import type { ReflectionDebugLogger } from '../../core/reflection/apex/reflect-apex-source';
 
-export default function generate(bundles: UnparsedSourceBundle[], config: UserDefinedMarkdownConfig) {
+export default function generate(
+  bundles: UnparsedSourceBundle[],
+  config: UserDefinedMarkdownConfig,
+  debugLogger: ReflectionDebugLogger,
+) {
   return pipe(
-    generateDocumentationBundle(bundles, config),
+    generateDocumentationBundle(bundles, config, debugLogger),
     TE.flatMap((files) => writeFilesToSystem(files, config.targetDir)),
   );
 }
 
-function generateDocumentationBundle(bundles: UnparsedSourceBundle[], config: UserDefinedMarkdownConfig) {
-  return generateDocs(bundles, {
-    ...config,
-    referenceGuideTemplate: referenceGuideTemplate,
-  });
+function generateDocumentationBundle(
+  bundles: UnparsedSourceBundle[],
+  config: UserDefinedMarkdownConfig,
+  debugLogger: ReflectionDebugLogger,
+) {
+  return generateDocs(
+    bundles,
+    {
+      ...config,
+      referenceGuideTemplate: referenceGuideTemplate,
+    },
+    debugLogger,
+  );
 }
 
 function writeFilesToSystem(files: PostHookDocumentationBundle, outputDir: string) {

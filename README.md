@@ -159,6 +159,7 @@ apexdocs changelog --previousVersionDir force-app-previous --currentVersionDir f
 | `--includeInlineHelpTextMetadata` | N/A   | Whether to include the inline help text for fields in the generated files.                                                                                                                               | `false`                    | No       |
 | `--parallelReflection`            | N/A   | Parallelize CPU-heavy reflection via worker threads.                                                                                                                                                     | `true`                     | No       |
 | `--parallelReflectionMaxWorkers`  | N/A   | Maximum number of worker threads to use for parallel reflection. Defaults to a reasonable value based on CPU count.                                                                                      | N/A                        | No       |
+| `--debug`                         | N/A   | Enable debug logging. Prints file-by-file parsing progress and success/failure.                                                                                                                          | `false`                    | No       |
 
 > **Note:** The `*` in the Required column indicates that **one** of the source directory options must be specified:
 > - `--sourceDir` (single directory or array of directories)
@@ -216,6 +217,7 @@ apexdocs markdown -s force-app -t docs -p global public namespaceaccessible -n M
 | `--apiVersion`                   | N/A   | The version of the API.                                                                          | `1.0.0`         | No       |
 | `--parallelReflection`           | N/A   | Parallelize CPU-heavy reflection via worker threads.                                             | `true`          | No       |
 | `--parallelReflectionMaxWorkers` | N/A   | Maximum number of worker threads to use for parallel reflection. Defaults to a reasonable value. | N/A             | No       |
+| `--debug`                        | N/A   | Enable debug logging. Prints file-by-file parsing progress and success/failure.                   | `false`         | No       |
 
 #### Sample Usage
 
@@ -240,6 +242,7 @@ apexdocs openapi -s force-app -t docs -n MyNamespace --title "My Custom OpenApi 
 | `--skipIfNoChanges`              | N/A   | Whether to skip generating the changelog if there are no changes.                                | `true`      | No       |
 | `--parallelReflection`           | N/A   | Parallelize CPU-heavy reflection via worker threads.                                             | `true`      | No       |
 | `--parallelReflectionMaxWorkers` | N/A   | Maximum number of worker threads to use for parallel reflection. Defaults to a reasonable value. | N/A         | No       |
+| `--debug`                        | N/A   | Enable debug logging. Prints file-by-file parsing progress and success/failure.                   | `false`     | No       |
 
 #### Sample Usage
 
