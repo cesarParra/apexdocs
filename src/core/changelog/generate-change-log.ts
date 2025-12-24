@@ -94,9 +94,8 @@ export function generateChangeLog(
             parsedFiles: [...apex.parsedFiles, ...parsedObjectFiles],
             errors: apex.errors,
           })),
-          // We swallow failures here and keep going, because
-          // this helper's left type is `never`. Any such failures are treated as if
-          // this step produced no additional parsed files.
+          // We swallow failures here and keep going, because this helper's left type is `never`.
+          // Any such failures are treated as if this step produced no additional parsed files.
           TE.orElseW(() => TE.right({ parsedFiles: apex.parsedFiles, errors: apex.errors })),
         ),
       ),
@@ -107,9 +106,8 @@ export function generateChangeLog(
             parsedFiles: [...objects.parsedFiles, ...parsedTriggerFiles],
             errors: objects.errors,
           })),
-          // We swallow failures here and keep going, because
-          // this helper's left type is `never`. Any such failures are treated as if
-          // no triggers were parsed.
+          // We swallow failures here and keep going, because this helper's left type is `never`.
+          // Any such failures are treated as if no triggers were parsed.
           TE.orElseW(() => TE.right({ parsedFiles: objects.parsedFiles, errors: objects.errors })),
         ),
       ),
