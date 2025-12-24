@@ -12,8 +12,11 @@ import { writeFiles } from '../file-writer';
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
 import { OpenApiSettings } from '../../core/openapi/openApiSettings';
-import { reflectApexSource } from '../../core/reflection/apex/reflect-apex-source';
+import { reflectApexSourceBestEffort } from '../../core/reflection/apex/reflect-apex-source';
+import { ReflectionErrors } from '../../core/errors/errors';
 import * as E from 'fp-ts/Either';
+import { FileWritingError } from '../errors';
+import { createReflectionDebugLogger } from '#utils/reflection-debug-logger';
 
 export default async function openApi(
   logger: Logger,
@@ -35,18 +38,40 @@ export default async function openApi(
     version: config.apiVersion,
   });
 
-  const parsedFilesEither = await reflectApexSource(fileBodies, {
-    parallelReflection: config.parallelReflection,
-    parallelReflectionMaxWorkers: config.parallelReflectionMaxWorkers,
-  })();
+  const debugLogger = createReflectionDebugLogger(logger);
 
-  if (E.isLeft(parsedFilesEither)) {
-    const errors = parsedFilesEither.left;
-    logger.error(errors);
-    return;
+  const reflectedEither = await reflectApexSourceBestEffort(
+    fileBodies,
+    {
+      parallelReflection: config.parallelReflection,
+      parallelReflectionMaxWorkers: config.parallelReflectionMaxWorkers,
+    },
+    debugLogger,
+  )();
+
+  if (E.isLeft(reflectedEither)) {
+    // Propagate the failure to the caller instead of swallowing it.
+    // The CLI/application layer is responsible for end-of-run aggregation.
+    return E.left(reflectedEither.left);
   }
 
-  const parsedFiles = parsedFilesEither.right;
+  const { successes: parsedFiles, errors: recoverableErrors } = reflectedEither.right;
+
+  if (recoverableErrors.errors.length > 0) {
+    logger.logSingle(
+      `⚠️ ${recoverableErrors.errors.length} file(s) failed to parse/reflect. Continuing with successfully reflected files.`,
+      'red',
+    );
+
+    logger.error(
+      new ReflectionErrors(
+        recoverableErrors.errors.map((e) => ({
+          ...e,
+        })),
+      ),
+    );
+  }
+
   const reflectionByPath = new Map<string, ReflectionResult>();
 
   for (const parsed of parsedFiles) {
@@ -74,15 +99,32 @@ export default async function openApi(
   Transpiler.generate(filteredTypes, processor);
   const generatedFiles = processor.fileBuilder().files();
 
-  await pipe(
+  const writeResult = await pipe(
     writeFiles(generatedFiles, config.targetDir, (file: PageData) => {
       logger.logSingle(`${file.outputDocPath} processed.`, 'green');
     }),
-    TE.mapError((error) => logger.error(error)),
+    TE.mapLeft((error) => new FileWritingError('An error occurred while writing files to the system.', error)),
   )();
+
+  if (E.isLeft(writeResult)) {
+    return E.left(writeResult.left);
+  }
 
   // Logs any errors that the types might have in their doc comment's error field
   ErrorLogger.logErrors(logger, filteredTypes);
+
+  // If there were recoverable reflection failures, propagate them to the caller for aggregation.
+  if (recoverableErrors.errors.length > 0) {
+    return E.left(
+      new ReflectionErrors(
+        recoverableErrors.errors.map((e) => ({
+          ...e,
+        })),
+      ),
+    );
+  }
+
+  return E.right(undefined);
 }
 
 function filterByScopes(logger: Logger, manifest: Manifest) {

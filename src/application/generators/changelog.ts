@@ -11,11 +11,13 @@ import { writeFiles } from '../file-writer';
 import { generateChangeLog } from '../../core/changelog/generate-change-log';
 import { FileWritingError } from '../errors';
 import { isSkip } from '../../core/shared/utils';
+import type { ReflectionDebugLogger } from '../../core/reflection/apex/reflect-apex-source';
 
 export default function generate(
   oldBundles: UnparsedSourceBundle[],
   newBundles: UnparsedSourceBundle[],
   config: UserDefinedChangelogConfig,
+  debugLogger: ReflectionDebugLogger,
 ) {
   function handleFile(file: ChangeLogPageData | Skip) {
     if (isSkip(file)) {
@@ -25,7 +27,7 @@ export default function generate(
     return writeFilesToSystem(file, config.targetDir);
   }
 
-  return pipe(generateChangeLog(oldBundles, newBundles, config), TE.flatMap(handleFile));
+  return pipe(generateChangeLog(oldBundles, newBundles, config, debugLogger), TE.flatMap(handleFile));
 }
 
 function writeFilesToSystem(pageData: ChangeLogPageData, outputDir: string) {

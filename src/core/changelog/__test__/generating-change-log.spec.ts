@@ -6,6 +6,7 @@ import {
   UnparsedTriggerBundle,
 } from '../../shared/types';
 import { generateChangeLog } from '../generate-change-log';
+import { noopReflectionDebugLogger } from '../../reflection/apex/reflect-apex-source';
 import { assertEither } from '../../test-helpers/assert-either';
 import { isSkip } from '../../shared/utils';
 import { unparsedFieldBundleFromRawString } from '../../test-helpers/test-data-builders';
@@ -28,19 +29,19 @@ const config = {
 
 describe('when generating a changelog', () => {
   it('should not skip when skipIfNoChanges, even if there are no changes', async () => {
-    const result = await generateChangeLog([], [], { ...config })();
+    const result = await generateChangeLog([], [], { ...config }, noopReflectionDebugLogger)();
 
     assertEither(result, (data) => expect(isSkip(data)).toBe(false));
   });
 
   it('should skip when there are no changes', async () => {
-    const result = await generateChangeLog([], [], { ...config, skipIfNoChanges: true })();
+    const result = await generateChangeLog([], [], { ...config, skipIfNoChanges: true }, noopReflectionDebugLogger)();
 
     assertEither(result, (data) => expect(isSkip(data)).toBe(true));
   });
 
   it('should return a file path', async () => {
-    const result = await generateChangeLog([], [], config)();
+    const result = await generateChangeLog([], [], config, noopReflectionDebugLogger)();
 
     assertEither(result, (data) => expect((data as ChangeLogPageData).outputDocPath).toContain('changelog.md'));
   });
@@ -50,7 +51,7 @@ describe('when generating a changelog', () => {
       const oldBundle: UnparsedApexBundle[] = [];
       const newBundle: UnparsedApexBundle[] = [];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).not.toContain('## New Classes'));
     });
@@ -65,7 +66,7 @@ describe('when generating a changelog', () => {
         { type: 'apex', name: 'Test', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('## New Classes'));
     });
@@ -78,7 +79,7 @@ describe('when generating a changelog', () => {
         { type: 'apex', name: 'Test', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('### Test'));
     });
@@ -96,7 +97,7 @@ describe('when generating a changelog', () => {
         { type: 'apex', name: 'Test', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('This is a test class.'));
     });
@@ -111,7 +112,7 @@ describe('when generating a changelog', () => {
         { type: 'apex', name: 'Test', content: newInterfaceSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('## New Interfaces'));
     });
@@ -124,7 +125,7 @@ describe('when generating a changelog', () => {
         { type: 'apex', name: 'Test', content: newInterfaceSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('### Test'));
     });
@@ -142,7 +143,7 @@ describe('when generating a changelog', () => {
         { type: 'apex', name: 'Test', content: newInterfaceSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) =>
         expect((data as ChangeLogPageData).content).toContain('This is a test interface.'),
@@ -159,7 +160,7 @@ describe('when generating a changelog', () => {
         { type: 'apex', name: 'Test', content: newEnumSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('## New Enums'));
     });
@@ -172,7 +173,7 @@ describe('when generating a changelog', () => {
         { type: 'apex', name: 'Test', content: newEnumSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('### Test'));
     });
@@ -190,7 +191,7 @@ describe('when generating a changelog', () => {
         { type: 'apex', name: 'Test', content: newEnumSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('This is a test enum.'));
     });
@@ -205,7 +206,7 @@ describe('when generating a changelog', () => {
         { type: 'customobject', name: 'MyTestObject', content: newObjectSource, filePath: 'MyTestObject.object' },
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('## New Custom Objects'));
     });
@@ -220,7 +221,12 @@ describe('when generating a changelog', () => {
         { type: 'apex', name: 'Test', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, { ...config, scope: ['global'] })();
+      const result = await generateChangeLog(
+        oldBundle,
+        newBundle,
+        { ...config, scope: ['global'] },
+        noopReflectionDebugLogger,
+      )();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).not.toContain('## New Classes'));
     });
@@ -235,7 +241,7 @@ describe('when generating a changelog', () => {
       ];
       const newBundle: UnparsedApexBundle[] = [];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('## Removed Types'));
     });
@@ -248,7 +254,7 @@ describe('when generating a changelog', () => {
       ];
       const newBundle: UnparsedApexBundle[] = [];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('- Test'));
     });
@@ -263,7 +269,7 @@ describe('when generating a changelog', () => {
       ];
       const newBundle: UnparsedCustomObjectBundle[] = [];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) =>
         expect((data as ChangeLogPageData).content).toContain('## Removed Custom Objects'),
@@ -278,7 +284,7 @@ describe('when generating a changelog', () => {
       ];
       const newBundle: UnparsedCustomObjectBundle[] = [];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('- MyTestObject'));
     });
@@ -297,7 +303,7 @@ describe('when generating a changelog', () => {
         { type: 'apex', name: 'Test', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) =>
         expect((data as ChangeLogPageData).content).toContain('## New or Modified Members in Existing Types'),
@@ -316,7 +322,7 @@ describe('when generating a changelog', () => {
         { type: 'apex', name: 'Test', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('### Test'));
     });
@@ -333,7 +339,7 @@ describe('when generating a changelog', () => {
         { type: 'apex', name: 'Test', content: newClassSource, filePath: 'Test.cls', metadataContent: null },
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('myMethod'));
     });
@@ -355,7 +361,7 @@ describe('when generating a changelog', () => {
         }),
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) =>
         expect((data as ChangeLogPageData).content).toContain(
@@ -379,7 +385,7 @@ describe('when generating a changelog', () => {
         }),
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('New Field: TestField__c'));
     });
@@ -399,7 +405,7 @@ describe('when generating a changelog', () => {
         { type: 'customobject', name: 'MyTestObject', content: newObjectSource, filePath: 'MyTestObject.object' },
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) =>
         expect((data as ChangeLogPageData).content).toContain('Removed Field: TestField__c'),
@@ -430,7 +436,7 @@ describe('when generating a changelog', () => {
         },
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).not.toContain('MyTestObject'));
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).not.toContain('PhotoUrl__c'));
@@ -450,7 +456,7 @@ describe('when generating a changelog', () => {
         },
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('MyTestObject'));
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('PhotoUrl__c'));
@@ -470,7 +476,7 @@ describe('when generating a changelog', () => {
       ];
       const newBundle: UnparsedSourceBundle[] = [];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('MyTestObject'));
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('PhotoUrl__c'));
@@ -483,7 +489,12 @@ describe('when generating a changelog', () => {
         frontmatter: '---\ntitle: Custom Title\n---',
       });
 
-      const result = await generateChangeLog([], [], { ...config, transformChangeLogPage: hook })();
+      const result = await generateChangeLog(
+        [],
+        [],
+        { ...config, skipIfNoChanges: false, transformChangeLogPage: hook },
+        noopReflectionDebugLogger,
+      )();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).frontmatter).toContain('title: Custom Title'));
     });
@@ -503,7 +514,7 @@ describe('when generating a changelog', () => {
         },
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('## New Triggers'));
     });
@@ -521,7 +532,7 @@ describe('when generating a changelog', () => {
         },
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => {
         const content = (data as ChangeLogPageData).content;
@@ -544,7 +555,7 @@ describe('when generating a changelog', () => {
       ];
       const newBundle: UnparsedSourceBundle[] = [];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => expect((data as ChangeLogPageData).content).toContain('## Removed Triggers'));
     });
@@ -562,7 +573,7 @@ describe('when generating a changelog', () => {
       ];
       const newBundle: UnparsedSourceBundle[] = [];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => {
         const content = (data as ChangeLogPageData).content;
@@ -592,7 +603,7 @@ describe('when generating a changelog', () => {
         },
       ];
 
-      const result = await generateChangeLog(oldBundle, newBundle, config)();
+      const result = await generateChangeLog(oldBundle, newBundle, config, noopReflectionDebugLogger)();
 
       assertEither(result, (data) => {
         const content = (data as ChangeLogPageData).content;

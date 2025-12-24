@@ -5,6 +5,7 @@ import {
   UnparsedSourceBundle,
   UnparsedTriggerBundle,
 } from '../../shared/types';
+import { noopReflectionDebugLogger } from '../../reflection/apex/reflect-apex-source';
 import { generateDocs as gen, MarkdownGeneratorConfig } from '../generate-docs';
 import { referenceGuideTemplate } from '../templates/reference-guide';
 
@@ -60,28 +61,32 @@ export function unparsedLwcBundleFromRawString(meta: {
 }
 
 export function generateDocs(bundles: UnparsedSourceBundle[], config?: Partial<MarkdownGeneratorConfig>) {
-  return gen(bundles, {
-    targetDir: 'target',
-    scope: ['global', 'public'],
-    customObjectVisibility: ['public'],
-    defaultGroupName: 'Miscellaneous',
-    customObjectsGroupName: 'Custom Objects',
-    triggersGroupName: 'Triggers',
-    sortAlphabetically: false,
-    referenceGuideTemplate: referenceGuideTemplate,
-    linkingStrategy: 'relative',
-    excludeTags: [],
-    referenceGuideTitle: 'Apex Reference Guide',
-    includeFieldSecurityMetadata: true,
-    includeInlineHelpTextMetadata: true,
-    exclude: [],
-    lwcGroupName: 'Lightning Web Components',
-    experimentalLwcSupport: true,
-    // Unit tests should avoid spawning worker threads by default.
-    parallelReflection: false,
-    parallelReflectionMaxWorkers: undefined,
-    ...config,
-  });
+  return gen(
+    bundles,
+    {
+      targetDir: 'target',
+      scope: ['global', 'public'],
+      customObjectVisibility: ['public'],
+      defaultGroupName: 'Miscellaneous',
+      customObjectsGroupName: 'Custom Objects',
+      triggersGroupName: 'Triggers',
+      sortAlphabetically: false,
+      referenceGuideTemplate: referenceGuideTemplate,
+      linkingStrategy: 'relative',
+      excludeTags: [],
+      referenceGuideTitle: 'Apex Reference Guide',
+      includeFieldSecurityMetadata: true,
+      includeInlineHelpTextMetadata: true,
+      exclude: [],
+      lwcGroupName: 'Lightning Web Components',
+      experimentalLwcSupport: true,
+      // Unit tests should avoid spawning worker threads by default.
+      parallelReflection: false,
+      parallelReflectionMaxWorkers: undefined,
+      ...config,
+    },
+    noopReflectionDebugLogger,
+  );
 }
 
 export const customFieldPickListValues = `

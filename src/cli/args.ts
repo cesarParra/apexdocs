@@ -15,6 +15,15 @@ import { changeLogOptions, validateChangelogArgs } from './commands/changelog';
 import { pipe } from 'fp-ts/function';
 import { validateSourceDirectoryConfig } from '#utils/source-directory-resolver';
 
+const globalOptions = {
+  debug: {
+    type: 'boolean',
+    demandOption: false,
+    default: false,
+    describe: 'Enable debug logging.',
+  },
+} as const;
+
 const configOnlyMarkdownDefaults: Partial<UserDefinedMarkdownConfig> = {
   targetGenerator: 'markdown',
   excludeTags: [],
@@ -226,6 +235,7 @@ function getConfigType(config: ConfigResult): E.Either<Error, NoConfig | SingleC
 function extractYargsDemandingCommand(extractFromProcessFn: ExtractArgsFromProcess, config: ConfigResult) {
   return yargs
     .config(config.config as Record<string, unknown>)
+    .options(globalOptions)
     .command('markdown', 'Generate documentation from Apex classes as a Markdown site.', (yargs) =>
       yargs.options(markdownOptions).check(validateMarkdownArgs),
     )
@@ -271,6 +281,7 @@ function extractMultiCommandConfig(
   return E.tryCatch(() => {
     return yargs(extractFromProcessFn())
       .config(config)
+      .options(globalOptions)
       .options(options)
       .check(validator)
       .fail((msg) => {

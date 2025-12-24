@@ -4,14 +4,13 @@ import {
   ParsedType,
   Skip,
   TransformChangelogPage,
-  UnparsedApexBundle,
   UnparsedSourceBundle,
   UserDefinedChangelogConfig,
 } from '../shared/types';
 import { mergeTranslations } from '../translations';
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
-import { reflectApexSource } from '../reflection/apex/reflect-apex-source';
+import { reflectApexSourceBestEffort, ReflectionDebugLogger } from '../reflection/apex/reflect-apex-source';
 import { Changelog, hasChanges, processChangelog, VersionManifest } from './process-changelog';
 import { convertToRenderableChangelog, RenderableChangelog } from './renderable-changelog';
 import { CompilationRequest, Template } from '../template';
@@ -36,10 +35,16 @@ function changelogReflectionConfig(config: Omit<UserDefinedChangelogConfig, 'tar
 
 type Config = Omit<UserDefinedChangelogConfig, 'targetGenerator'>;
 
+type Reflected = {
+  parsedFiles: ParsedFile[];
+  errors: ReflectionErrors;
+};
+
 export function generateChangeLog(
   oldBundles: UnparsedSourceBundle[],
   newBundles: UnparsedSourceBundle[],
   config: Config,
+  debugLogger: ReflectionDebugLogger,
 ): TE.TaskEither<ReflectionErrors | HookError, ChangeLogPageData | Skip> {
   const convertToPageData = apply(toPageData, config.fileName);
 
@@ -55,45 +60,101 @@ export function generateChangeLog(
     );
   }
 
-  return pipe(
-    reflect(oldBundles, config),
-    TE.bindTo('oldVersion'),
-    TE.bind('newVersion', () => reflect(newBundles, config)),
-    TE.map(toManifests),
-    TE.map(({ oldManifest, newManifest }) => ({
-      changelog: processChangelog(oldManifest, newManifest),
-      newManifest,
-    })),
-    TE.map(handleConversion),
-    TE.flatMap(transformChangelogPageHook(config)),
-    TE.map(postHookCompile),
-  );
-}
+  const reflectVersionBestEffort = (
+    bundles: UnparsedSourceBundle[],
+  ): TE.TaskEither<ReflectionErrors | HookError, Reflected> => {
+    const filterOutOfScopeApex = apply(filterScope, config.scope);
 
-function reflect(bundles: UnparsedSourceBundle[], config: Omit<UserDefinedChangelogConfig, 'targetGenerator'>) {
-  const filterOutOfScopeApex = apply(filterScope, config.scope);
+    const apexConfig = changelogReflectionConfig(config);
 
-  function reflectApexFiles(sourceFiles: UnparsedApexBundle[]) {
-    return pipe(reflectApexSource(sourceFiles, changelogReflectionConfig(config)), TE.map(filterOutOfScopeApex));
-  }
-
-  return pipe(
-    // Filter out LWC. These will be implemented at a later date
-    reflectApexFiles(filterApexSourceFiles(bundles.filter((b) => b.type !== 'lwc'))),
-    TE.chain((parsedApexFiles) => {
-      return pipe(
-        reflectCustomFieldsAndObjectsAndMetadataRecords(
-          filterCustomObjectsFieldsAndMetadataRecords(bundles),
-          config.customObjectVisibility,
+    return pipe(
+      TE.right(bundles),
+      TE.bindTo('bundles'),
+      TE.bind('apex', ({ bundles }) =>
+        pipe(
+          reflectApexSourceBestEffort(
+            filterApexSourceFiles(bundles.filter((b) => b.type !== 'lwc')),
+            apexConfig,
+            debugLogger,
+          ),
+          TE.map(({ successes, errors }) => ({
+            parsedFiles: filterOutOfScopeApex(successes),
+            errors,
+          })),
+          TE.orElseW((errs) => TE.right({ parsedFiles: [] as ParsedFile[], errors: errs })),
         ),
-        TE.map((parsedObjectFiles) => [...parsedApexFiles, ...parsedObjectFiles]),
-      );
-    }),
-    TE.chain((parsedFiles) => {
-      return pipe(
-        reflectTriggerSource(filterTriggerFiles(bundles)),
-        TE.map((parsedTriggerFiles) => [...parsedFiles, ...parsedTriggerFiles]),
-      );
+      ),
+      TE.bind('objects', ({ bundles, apex }) =>
+        pipe(
+          reflectCustomFieldsAndObjectsAndMetadataRecords(
+            filterCustomObjectsFieldsAndMetadataRecords(bundles),
+            config.customObjectVisibility,
+          ),
+          TE.map((parsedObjectFiles) => ({
+            parsedFiles: [...apex.parsedFiles, ...parsedObjectFiles],
+            errors: apex.errors,
+          })),
+          // We swallow failures here and keep going, because this helper's left type is `never`.
+          // Any such failures are treated as if this step produced no additional parsed files.
+          TE.orElseW(() => TE.right({ parsedFiles: apex.parsedFiles, errors: apex.errors })),
+        ),
+      ),
+      TE.bind('all', ({ objects, bundles }) =>
+        pipe(
+          reflectTriggerSource(filterTriggerFiles(bundles)),
+          TE.map((parsedTriggerFiles) => ({
+            parsedFiles: [...objects.parsedFiles, ...parsedTriggerFiles],
+            errors: objects.errors,
+          })),
+          // We swallow failures here and keep going, because this helper's left type is `never`.
+          // Any such failures are treated as if no triggers were parsed.
+          TE.orElseW(() => TE.right({ parsedFiles: objects.parsedFiles, errors: objects.errors })),
+        ),
+      ),
+      TE.map(({ all }) => all),
+    );
+  };
+
+  return pipe(
+    TE.Do,
+    TE.bind('old', () => reflectVersionBestEffort(oldBundles)),
+    TE.bind('nw', () => reflectVersionBestEffort(newBundles)),
+    TE.map(({ old, nw }) => ({
+      oldVersion: old.parsedFiles,
+      newVersion: nw.parsedFiles,
+      // Keep all recoverable Apex reflection errors from both versions.
+      combinedReflectionErrors: new ReflectionErrors([...old.errors.errors, ...nw.errors.errors]),
+    })),
+    TE.map(({ oldVersion, newVersion, combinedReflectionErrors }) => ({
+      manifests: toManifests({ oldVersion, newVersion }),
+      combinedReflectionErrors,
+    })),
+    TE.map(({ manifests, combinedReflectionErrors }) => ({
+      changelog: processChangelog(manifests.oldManifest, manifests.newManifest),
+      newManifest: manifests.newManifest,
+      combinedReflectionErrors,
+    })),
+    TE.map(({ changelog, newManifest, combinedReflectionErrors }) => ({
+      page: handleConversion({ changelog, newManifest }),
+      combinedReflectionErrors,
+    })),
+    TE.flatMap(({ page, combinedReflectionErrors }) =>
+      pipe(
+        transformChangelogPageHook(config)(page),
+        TE.map((transformed) => ({ page: transformed, combinedReflectionErrors })),
+      ),
+    ),
+    TE.map(({ page, combinedReflectionErrors }) => ({
+      page: postHookCompile(page),
+      combinedReflectionErrors,
+    })),
+    // Fail at the very end if we had any recoverable Apex reflection errors,
+    // so the CLI can present them after completing the work.
+    TE.flatMap(({ page, combinedReflectionErrors }) => {
+      if (combinedReflectionErrors.errors.length > 0) {
+        return TE.left(combinedReflectionErrors);
+      }
+      return TE.right(page);
     }),
   );
 }

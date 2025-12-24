@@ -2,7 +2,7 @@
   "name": "vitepress-example",
   "scripts": {
     "docs:clean": "rimraf --glob 'docs/!(.vitepress|index-frontmatter.md|api-examples.md|markdown-examples.md)'",
-    "apexdocs:build": "npm run docs:clean && ts-node ../../src/cli/generate.ts",
+    "apexdocs:build": "npm run docs:clean && ts-node ../../src/cli/generate.ts --parallelReflection=false --debug",
     "docs:dev": "vitepress dev docs"
   },
   "devDependencies": {

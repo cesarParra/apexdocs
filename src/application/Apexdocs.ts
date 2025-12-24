@@ -9,6 +9,7 @@ import changelog from './generators/changelog';
 import { allComponentTypes, processFiles } from './source-code-file-reader';
 import { DefaultFileSystem } from './file-system';
 import { Logger } from '#utils/logger';
+import type { ReflectionDebugLogger } from '../core/reflection/apex/reflect-apex-source';
 import {
   UnparsedApexBundle,
   UserDefinedChangelogConfig,
@@ -28,18 +29,34 @@ export class Apexdocs {
   /**
    * Generates documentation out of Apex source files.
    */
-  static async generate(config: UserDefinedConfig, logger: Logger): Promise<E.Either<unknown[], string>> {
+  static async generate(
+    config: UserDefinedConfig,
+    deps: {
+      logger: Logger;
+      reflectionDebugLogger: ReflectionDebugLogger;
+    },
+  ): Promise<E.Either<unknown[], string>> {
+    const { logger, reflectionDebugLogger } = deps;
     logger.logSingle(`Generating ${config.targetGenerator} documentation...`);
 
     try {
       switch (config.targetGenerator) {
-        case 'markdown':
-          return (await processMarkdown(config))();
-        case 'openapi':
-          await processOpenApi(config, logger);
+        case 'markdown': {
+          return (await processMarkdown(config, logger, reflectionDebugLogger))();
+        }
+        case 'openapi': {
+          const task = await processOpenApi(config, logger);
+          const openApiResult = await task();
+
+          if (E.isLeft(openApiResult)) {
+            return E.left([openApiResult.left]);
+          }
+
           return E.right('✔️ Documentation generated successfully!');
-        case 'changelog':
-          return (await processChangeLog(config))();
+        }
+        case 'changelog': {
+          return (await processChangeLog(config, logger, reflectionDebugLogger))();
+        }
       }
     } catch (error) {
       return E.left([error]);
@@ -49,7 +66,13 @@ export class Apexdocs {
 
 const readFiles = apply(processFiles, new DefaultFileSystem());
 
-async function processMarkdown(config: UserDefinedMarkdownConfig) {
+async function processMarkdown(
+  config: UserDefinedMarkdownConfig,
+  logger: Logger,
+  reflectionDebugLogger: ReflectionDebugLogger,
+) {
+  const debugLogger = reflectionDebugLogger;
+
   return pipe(
     resolveAndValidateSourceDirectories(config),
     E.mapLeft((error) => new FileReadingError(`Failed to resolve source directories: ${error.message}`, error)),
@@ -63,9 +86,15 @@ async function processMarkdown(config: UserDefinedMarkdownConfig) {
       ),
     ),
     TE.fromEither,
-    TE.flatMap((fileBodies) => markdown(fileBodies, config)),
+    TE.flatMap((fileBodies) => markdown(fileBodies, config, debugLogger)),
     TE.map(() => '✔️ Documentation generated successfully!'),
-    TE.mapLeft(toErrors),
+    TE.mapLeft((err) => {
+      const errors = toErrors(err);
+      if (logger.isDebugEnabled()) {
+        logger.debug(`markdown generator finished with ${Array.isArray(errors) ? errors.length : 1} error item(s)`);
+      }
+      return errors;
+    }),
   );
 }
 
@@ -89,7 +118,11 @@ async function processOpenApi(config: UserDefinedOpenApiConfig, logger: Logger) 
   );
 }
 
-async function processChangeLog(config: UserDefinedChangelogConfig) {
+async function processChangeLog(
+  config: UserDefinedChangelogConfig,
+  logger: Logger,
+  reflectionDebugLogger: ReflectionDebugLogger,
+) {
   function loadFiles() {
     const previousVersionConfig = {
       sourceDir: config.previousVersionDir,
@@ -129,8 +162,14 @@ async function processChangeLog(config: UserDefinedChangelogConfig) {
   return pipe(
     loadFiles(),
     TE.fromEither,
-    TE.flatMap(([previous, current]) => changelog(previous, current, config)),
-    TE.mapLeft(toErrors),
+    TE.flatMap(([previous, current]) => changelog(previous, current, config, reflectionDebugLogger)),
+    TE.mapLeft((err) => {
+      const errors = toErrors(err);
+      if (logger.isDebugEnabled()) {
+        logger.debug(`changelog generator finished with ${Array.isArray(errors) ? errors.length : 1} error item(s)`);
+      }
+      return errors;
+    }),
   );
 }
 

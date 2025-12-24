@@ -17,6 +17,25 @@ import os from 'node:os';
 import fs from 'node:fs';
 import { WorkerPool } from '#utils/worker-pool';
 
+export type ReflectionWithRecoverableErrors<T> = {
+  successes: T;
+  errors: ReflectionErrors;
+};
+
+export type ReflectionDebugLogger = {
+  onStart: (filePath: string) => void;
+  onSuccess: (filePath: string) => void;
+  onFailure: (filePath: string, errorMessage: string) => void;
+};
+
+export const noopReflectionDebugLogger: ReflectionDebugLogger = {
+  onStart: () => {},
+  onSuccess: () => {},
+  onFailure: () => {},
+};
+
+const noopDebugLogger: ReflectionDebugLogger = noopReflectionDebugLogger;
+
 async function reflectAsync(rawSource: string): Promise<Type> {
   return new Promise((resolve, reject) => {
     const result = mirrorReflection(rawSource);
@@ -67,67 +86,112 @@ function getWorkerEntrypointPath(): string {
   return candidate;
 }
 
-function reflectAsTaskParallel(
-  apexBundles: UnparsedApexBundle[],
-  config?: Pick<UserDefinedMarkdownConfig, 'parallelReflectionMaxWorkers'>,
-): TE.TaskEither<ReflectionErrors, Type[]> {
-  return TE.tryCatch(
-    async () => {
-      // Default: cap to 8 to avoid over-saturating smaller machines while still getting meaningful speedups.
-      const cpu = os.cpus()?.length ?? 1;
-      const defaultMax = Math.max(1, Math.min(cpu, 8));
-      const maxWorkers = Math.max(1, config?.parallelReflectionMaxWorkers ?? defaultMax);
-
-      const pool = new WorkerPool(() => new Worker(getWorkerEntrypointPath()), {
-        maxWorkers,
-      });
-
-      try {
-        return await Promise.all(
-          apexBundles.map(async (bundle) => {
-            return await pool.run<{ content: string }, Type>({ content: bundle.content });
-          }),
-        );
-      } finally {
-        await pool.terminate();
-      }
-    },
-    (error) => {
-      // If the pool-level execution fails, surface as a generic reflection error.
-      // Individual parse errors are handled per-file in the worker and will be propagated as rejects.
-      const message = (error as Error | { message?: unknown })?.message;
-      return new ReflectionErrors([new ReflectionError('', typeof message === 'string' ? message : 'Worker failure')]);
-    },
-  );
+function toRecoverableResult<T>(successes: T, errors: ReflectionErrors): ReflectionWithRecoverableErrors<T> {
+  return { successes, errors };
 }
 
-export function reflectApexSource(
+function errorMessageFromUnknown(err: unknown): string {
+  if (err instanceof Error) return err.message;
+  const msg = (err as { message?: unknown } | null | undefined)?.message;
+  return typeof msg === 'string' ? msg : String(err);
+}
+export function reflectApexSourceBestEffort(
   apexBundles: UnparsedApexBundle[],
   config?: Pick<UserDefinedMarkdownConfig, 'parallelReflection' | 'parallelReflectionMaxWorkers'>,
-) {
+  debugLogger: ReflectionDebugLogger = noopDebugLogger,
+): TE.TaskEither<ReflectionErrors, ReflectionWithRecoverableErrors<ParsedFile<Type>[]>> {
   const semiGroupReflectionError: Semigroup<ReflectionErrors> = {
     concat: (x, y) => new ReflectionErrors([...x.errors, ...y.errors]),
   };
   const Ap = TE.getApplicativeTaskValidation(T.ApplyPar, semiGroupReflectionError);
 
   if (!isWorkerReflectionEnabled(config) || !supportsWorkerThreads()) {
-    return pipe(apexBundles, A.traverse(Ap)(reflectBundle));
+    return pipe(
+      apexBundles,
+      A.traverse(Ap)((bundle) => {
+        debugLogger.onStart(bundle.filePath);
+        return pipe(
+          reflectBundle(bundle),
+          TE.map((parsed) => {
+            debugLogger.onSuccess(bundle.filePath);
+            return parsed;
+          }),
+          TE.mapLeft((errs) => {
+            const msg = errs.errors.map((e) => e.message).join(' | ');
+            debugLogger.onFailure(bundle.filePath, msg);
+            return errs;
+          }),
+        );
+      }),
+      TE.map((parsed) => toRecoverableResult(parsed, new ReflectionErrors([]))),
+    );
   }
 
   return pipe(
-    reflectAsTaskParallel(apexBundles, config),
-    TE.map((typeMirrors) => typeMirrors.map((t, idx) => ({ t, idx }))),
+    TE.tryCatch(
+      async () => {
+        // Default: cap to 8 to avoid over-saturating smaller machines while still getting meaningful speedups.
+        const cpu = os.cpus()?.length ?? 1;
+        const defaultMax = Math.max(1, Math.min(cpu, 8));
+        const maxWorkers = Math.max(1, config?.parallelReflectionMaxWorkers ?? defaultMax);
+
+        const pool = new WorkerPool(() => new Worker(getWorkerEntrypointPath()), {
+          maxWorkers,
+        });
+
+        try {
+          const results = await Promise.allSettled(
+            apexBundles.map(async (bundle) => {
+              debugLogger.onStart(bundle.filePath);
+              return await pool.run<{ content: string }, Type>({ content: bundle.content });
+            }),
+          );
+
+          const errors: ReflectionError[] = [];
+          const successes: Array<{ t: Type; idx: number }> = [];
+
+          results.forEach((r, idx) => {
+            if (r.status === 'fulfilled') {
+              debugLogger.onSuccess(apexBundles[idx].filePath);
+              successes.push({ t: r.value, idx });
+              return;
+            }
+
+            const msg = errorMessageFromUnknown(r.reason);
+            debugLogger.onFailure(apexBundles[idx].filePath, msg);
+            errors.push(new ReflectionError(apexBundles[idx].filePath, msg));
+          });
+
+          return toRecoverableResult(successes, new ReflectionErrors(errors));
+        } finally {
+          await pool.terminate();
+        }
+      },
+      (error) => {
+        const message = (error as Error | { message?: unknown })?.message;
+        return new ReflectionErrors([
+          new ReflectionError('', typeof message === 'string' ? message : 'Worker failure'),
+        ]);
+      },
+    ),
     TE.mapLeft((errs) => errs),
-    TE.flatMap((pairs) => {
-      // Rebuild ParsedFile list and attach per-file metadata sequentially.
-      const parsedTasks = pairs.map(({ t, idx }) => {
+    TE.flatMap((recoverableOrPairs) => {
+      const recoverable = recoverableOrPairs as unknown as ReflectionWithRecoverableErrors<
+        Array<{ t: Type; idx: number }>
+      >;
+
+      const parsedTasks = recoverable.successes.map(({ t, idx }) => {
         const bundle = apexBundles[idx];
         const convertToParsedFile: (typeMirror: Type) => ParsedFile<Type> = apply(toParsedFile, bundle.filePath);
         const withMetadata = apply(addMetadata, bundle.metadataContent);
         return pipe(TE.right(t), TE.map(convertToParsedFile), TE.flatMap(withMetadata));
       });
 
-      return pipe(parsedTasks, A.sequence(Ap));
+      return pipe(
+        parsedTasks,
+        A.sequence(Ap),
+        TE.map((parsed) => toRecoverableResult(parsed, recoverable.errors)),
+      );
     }),
   );
 }
