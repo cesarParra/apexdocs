@@ -1,7 +1,7 @@
 import * as TE from 'fp-ts/TaskEither';
 import * as T from 'fp-ts/Task';
 import * as A from 'fp-ts/lib/Array';
-import { reflectTriggerAsync as mirrorReflection, TriggerMirror } from '@cparra/apex-reflection';
+import { reflectTrigger as mirrorReflection, TriggerMirror } from '@cparra/apex-reflection';
 import { pipe } from 'fp-ts/function';
 import { ParsingError } from '@cparra/apex-reflection';
 import { apply } from '#utils/fp';
@@ -51,14 +51,14 @@ function toParsedFile(filePath: string, triggerMirror: TriggerMirror): ParsedFil
 
 function reflectAsTask(triggerContent: UnparsedTriggerBundle): TE.TaskEither<ReflectionErrors, TriggerMirror> {
   return TE.tryCatch(
-    () => reflectAsync(triggerContent.content),
+    () => reflect(triggerContent.content),
     (error) =>
       new ReflectionErrors([new ReflectionError(triggerContent.filePath, (error as ParsingError | Error).message)]),
   );
 }
 
-async function reflectAsync(triggerContent: string): Promise<TriggerMirror> {
-  const reflectionResult = await mirrorReflection(triggerContent);
+async function reflect(triggerContent: string): Promise<TriggerMirror> {
+  const reflectionResult = mirrorReflection(triggerContent);
   if (reflectionResult.error) {
     throw reflectionResult.error;
   }

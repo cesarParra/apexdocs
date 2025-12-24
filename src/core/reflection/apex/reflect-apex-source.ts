@@ -23,11 +23,13 @@ export type ReflectionWithRecoverableErrors<T> = {
 };
 
 export type ReflectionDebugLogger = {
+  onStart: (filePath: string) => void;
   onSuccess: (filePath: string) => void;
   onFailure: (filePath: string, errorMessage: string) => void;
 };
 
 export const noopReflectionDebugLogger: ReflectionDebugLogger = {
+  onStart: () => {},
   onSuccess: () => {},
   onFailure: () => {},
 };
@@ -107,6 +109,7 @@ export function reflectApexSourceBestEffort(
     return pipe(
       apexBundles,
       A.traverse(Ap)((bundle) => {
+        debugLogger.onStart(bundle.filePath);
         return pipe(
           reflectBundle(bundle),
           TE.map((parsed) => {
@@ -139,6 +142,7 @@ export function reflectApexSourceBestEffort(
         try {
           const results = await Promise.allSettled(
             apexBundles.map(async (bundle) => {
+              debugLogger.onStart(bundle.filePath);
               return await pool.run<{ content: string }, Type>({ content: bundle.content });
             }),
           );

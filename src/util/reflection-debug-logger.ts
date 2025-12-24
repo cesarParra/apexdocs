@@ -7,6 +7,9 @@ export function createReflectionDebugLogger(logger: Logger): ReflectionDebugLogg
   }
 
   return {
+    onStart: (filePath: string) => {
+      logger.debug(`Parsing: ${filePath}...`);
+    },
     onSuccess: (filePath: string) => {
       logger.debug(`Parsing: ${filePath} OK`);
     },
