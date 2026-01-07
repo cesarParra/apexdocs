@@ -63,7 +63,6 @@ export class ErrorCollector {
     return this.items.length > 0;
   }
 
-  /** Count of collected error items (post de-duplication). */
   public count(): number {
     return this.items.length;
   }
