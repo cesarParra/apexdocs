@@ -24,7 +24,6 @@ export async function process(config: CallableConfig): Promise<void> {
     throw new Error('sourceDir is required');
   }
 
-  // Group errors by generator run, consistent with CLI behavior.
   const errorCollector = new ErrorCollector(configWithDefaults.targetGenerator);
 
   const reflectionDebugLogger = createReflectionDebugLogger(logger, (filePath, errorMessage) => {
@@ -39,7 +38,6 @@ export async function process(config: CallableConfig): Promise<void> {
 
   E.match(
     (errors) => {
-      // Do not rely on returned error shapes/details. The ErrorCollector is the source of truth.
       if (errorCollector.hasErrors()) {
         const details = errorCollector.all().map(ErrorCollector.format).join('\n');
         throw new Error(details);

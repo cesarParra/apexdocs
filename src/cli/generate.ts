@@ -34,8 +34,6 @@ function main() {
   }
 
   function printResultMessage(result: E.Either<unknown, string>) {
-    // Keep CLI output stable for integrations/tests that assert on this message.
-    // We intentionally do not rely on returned error shapes for details; the ErrorCollector is the source of truth.
     if (E.isRight(result)) {
       logger.logSingle('Documentation generated successfully');
     }
@@ -61,8 +59,6 @@ function main() {
             errorCollector,
           });
 
-          printResultMessage(result);
-
           if (logger.isDebugEnabled()) {
             logger.logSingle(
               `${config.targetGenerator}: ${E.isRight(result) ? 'success' : 'failure'}`,
@@ -75,6 +71,8 @@ function main() {
           if (errorCollector.hasErrors()) {
             process.exitCode = 1;
           }
+
+          printResultMessage(result);
         }
       })(maybeConfigs);
     })

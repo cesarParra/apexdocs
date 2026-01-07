@@ -17,30 +17,16 @@ export type ErrorItem = {
   stage: ErrorStage;
   filePath?: string;
   message: string;
-  /**
-   * Optional raw object for additional debugging if callers want to preserve it.
-   * Not used for counting/deduping.
-   */
   raw?: unknown;
-  /**
-   * Optional timestamp to help with debugging ordering. Not used for equality.
-   */
   at?: string;
 };
 
 /**
- * Collects per-file (and other) error items during a single generator run.
- *
- * This is meant to be the source of truth for end-of-run error reporting,
- * so callers don't need to understand the varying shapes of internal error returns.
+ * Collects errors during a single generator run.
  */
 export class ErrorCollector {
   private readonly generator: GeneratorName;
   private readonly items: ErrorItem[] = [];
-
-  // Basic de-dupe to avoid double-recording the same failure if the same layer reports it twice.
-  // Keyed by generator|stage|filePath|message.
-  private readonly seen = new Set<string>();
 
   constructor(generator: GeneratorName) {
     this.generator = generator;
@@ -53,19 +39,6 @@ export class ErrorCollector {
       ...item,
     };
 
-    const key = [
-      fullItem.generator,
-      fullItem.stage,
-      fullItem.filePath ?? '',
-      // Normalize whitespace a bit so trivial formatting differences don't explode the log.
-      (fullItem.message ?? '').trim().replace(/\s+/g, ' '),
-    ].join('|');
-
-    if (this.seen.has(key)) {
-      return;
-    }
-
-    this.seen.add(key);
     this.items.push(fullItem);
   }
 
@@ -100,23 +73,10 @@ export class ErrorCollector {
   }
 
   /**
-   * Groups error items by file path. Items with no file path are grouped under `__global__`.
-   */
-  public groupByFilePath(): Record<string, ErrorItem[]> {
-    return this.items.reduce<Record<string, ErrorItem[]>>((acc, item) => {
-      const key = item.filePath ?? '__global__';
-      acc[key] = acc[key] ?? [];
-      acc[key].push(item);
-      return acc;
-    }, {});
-  }
-
-  /**
-   * A compact human-readable representation of the error item.
-   * Useful for CLI output.
+   * Human-readable representation of the error item.
    */
   public static format(item: ErrorItem): string {
-    const location = item.filePath ? `${item.filePath}` : '(no file)';
+    const location = item.filePath ? `${item.filePath}` : '';
     return `[${item.generator}] ${location}: ${item.message}`;
   }
 }
