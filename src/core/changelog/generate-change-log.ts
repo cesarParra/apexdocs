@@ -89,6 +89,7 @@ export function generateChangeLog(
           reflectCustomFieldsAndObjectsAndMetadataRecords(
             filterCustomObjectsFieldsAndMetadataRecords(bundles),
             config.customObjectVisibility,
+            debugLogger,
           ),
           TE.map((parsedObjectFiles) => ({
             parsedFiles: [...apex.parsedFiles, ...parsedObjectFiles],
@@ -101,7 +102,7 @@ export function generateChangeLog(
       ),
       TE.bind('all', ({ objects, bundles }) =>
         pipe(
-          reflectTriggerSource(filterTriggerFiles(bundles)),
+          reflectTriggerSource(filterTriggerFiles(bundles), debugLogger),
           TE.map((parsedTriggerFiles) => ({
             parsedFiles: [...objects.parsedFiles, ...parsedTriggerFiles],
             errors: objects.errors,

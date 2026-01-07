@@ -11,10 +11,12 @@ import { CustomFieldMetadata, reflectCustomFieldSources } from './reflect-custom
 import { pipe } from 'fp-ts/function';
 import { TaskEither } from 'fp-ts/TaskEither';
 import { CustomMetadataMetadata, reflectCustomMetadataSources } from './reflect-custom-metadata-source';
+import { noopReflectionDebugLogger, type ReflectionDebugLogger } from '../apex/reflect-apex-source';
 
 export function reflectCustomFieldsAndObjectsAndMetadataRecords(
   objectBundles: (UnparsedCustomObjectBundle | UnparsedCustomFieldBundle | UnparsedCustomMetadataBundle)[],
   visibilitiesToDocument: string[],
+  debugLogger: ReflectionDebugLogger = noopReflectionDebugLogger,
 ): TaskEither<ReflectionErrors, ParsedFile<CustomObjectMetadata>[]> {
   function filterNonPublished(parsedFiles: ParsedFile<CustomObjectMetadata>[]): ParsedFile<CustomObjectMetadata>[] {
     return parsedFiles.filter((parsedFile) => parsedFile.type.deploymentStatus === 'Deployed');
@@ -51,18 +53,18 @@ export function reflectCustomFieldsAndObjectsAndMetadataRecords(
   function generateForFields(
     fields: UnparsedCustomFieldBundle[],
   ): TE.TaskEither<ReflectionErrors, ParsedFile<CustomFieldMetadata>[]> {
-    return pipe(fields, reflectCustomFieldSources);
+    return pipe(fields, (bundles) => reflectCustomFieldSources(bundles, debugLogger));
   }
 
   function generateForMetadata(
     metadata: UnparsedCustomMetadataBundle[],
   ): TE.TaskEither<ReflectionErrors, ParsedFile<CustomMetadataMetadata>[]> {
-    return pipe(metadata, reflectCustomMetadataSources);
+    return pipe(metadata, (bundles) => reflectCustomMetadataSources(bundles, debugLogger));
   }
 
   return pipe(
     customObjects,
-    reflectCustomObjectSources,
+    (bundles) => reflectCustomObjectSources(bundles, debugLogger),
     TE.map(filterNonPublished),
     TE.map(filter),
     TE.bindTo('filterResult'),

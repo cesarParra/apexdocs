@@ -1,6 +1,6 @@
 {
   "name": "@cparra/apexdocs",
-  "version": "3.19.9-beta.1",
+  "version": "3.19.9-beta.3",
   "description": "Library with CLI capabilities to generate documentation for Salesforce Apex classes.",
   "engines": {
     "node": ">=18"

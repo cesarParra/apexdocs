@@ -10,6 +10,7 @@ import * as E from 'fp-ts/Either';
 import { CustomFieldMetadata } from './reflect-custom-field-source';
 import { getPickListValues } from './parse-picklist-values';
 import { CustomMetadataMetadata } from './reflect-custom-metadata-source';
+import { noopReflectionDebugLogger, type ReflectionDebugLogger } from '../apex/reflect-apex-source';
 
 export type PublishBehavior = 'PublishImmediately' | 'PublishAfterCommit';
 
@@ -27,18 +28,25 @@ export type CustomObjectMetadata = {
 
 export function reflectCustomObjectSources(
   objectBundles: UnparsedCustomObjectBundle[],
+  debugLogger: ReflectionDebugLogger = noopReflectionDebugLogger,
 ): TE.TaskEither<ReflectionErrors, ParsedFile<CustomObjectMetadata>[]> {
   const semiGroupReflectionError: Semigroup<ReflectionErrors> = {
     concat: (x, y) => new ReflectionErrors([...x.errors, ...y.errors]),
   };
   const Ap = TE.getApplicativeTaskValidation(T.ApplyPar, semiGroupReflectionError);
 
-  return pipe(objectBundles, A.traverse(Ap)(reflectCustomObjectSource));
+  return pipe(
+    objectBundles,
+    A.traverse(Ap)((bundle) => reflectCustomObjectSource(bundle, debugLogger)),
+  );
 }
 
 function reflectCustomObjectSource(
   objectSource: UnparsedCustomObjectBundle,
+  debugLogger: ReflectionDebugLogger,
 ): TE.TaskEither<ReflectionErrors, ParsedFile<CustomObjectMetadata>> {
+  debugLogger.onStart(objectSource.filePath);
+
   return pipe(
     E.tryCatch(() => new XMLParser().parse(objectSource.content), E.toError),
     E.flatMap(validate),
@@ -47,7 +55,14 @@ function reflectCustomObjectSource(
     E.map(parseInlineFields),
     E.map(addTypeName),
     E.map((metadata) => toParsedFile(objectSource.filePath, metadata)),
-    E.mapLeft((error) => new ReflectionErrors([new ReflectionError(objectSource.filePath, error.message)])),
+    E.mapLeft((error) => {
+      debugLogger.onFailure(objectSource.filePath, error.message);
+      return new ReflectionErrors([new ReflectionError(objectSource.filePath, error.message)]);
+    }),
+    E.map((parsedFile) => {
+      debugLogger.onSuccess(objectSource.filePath);
+      return parsedFile;
+    }),
     TE.fromEither,
   );
 }
@@ -109,7 +124,9 @@ function convertInlineFieldsToCustomFieldMetadata(
   const label = inlineField.label ? (inlineField.label as string) : name;
   const type = inlineField.type ? (inlineField.type as string) : null;
   const required = inlineField.required ? (inlineField.required as boolean) : false;
-  const securityClassification = inlineField.securityClassification ? (inlineField.securityClassification as string) : null;
+  const securityClassification = inlineField.securityClassification
+    ? (inlineField.securityClassification as string)
+    : null;
   const complianceGroup = inlineField.complianceGroup ? (inlineField.complianceGroup as string) : null;
   const inlineHelpText = inlineField.inlineHelpText ? (inlineField.inlineHelpText as string) : null;
 

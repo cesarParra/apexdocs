@@ -8,6 +8,7 @@ import * as A from 'fp-ts/Array';
 import { XMLParser } from 'fast-xml-parser';
 import * as E from 'fp-ts/Either';
 import { getPickListValues } from './parse-picklist-values';
+import { noopReflectionDebugLogger, type ReflectionDebugLogger } from '../apex/reflect-apex-source';
 
 export type CustomFieldMetadata = {
   type_name: 'customfield';
@@ -25,18 +26,25 @@ export type CustomFieldMetadata = {
 
 export function reflectCustomFieldSources(
   customFieldSources: UnparsedCustomFieldBundle[],
+  debugLogger: ReflectionDebugLogger = noopReflectionDebugLogger,
 ): TE.TaskEither<ReflectionErrors, ParsedFile<CustomFieldMetadata>[]> {
   const semiGroupReflectionError: Semigroup<ReflectionErrors> = {
     concat: (x, y) => new ReflectionErrors([...x.errors, ...y.errors]),
   };
   const Ap = TE.getApplicativeTaskValidation(T.ApplyPar, semiGroupReflectionError);
 
-  return pipe(customFieldSources, A.traverse(Ap)(reflectCustomFieldSource));
+  return pipe(
+    customFieldSources,
+    A.traverse(Ap)((bundle) => reflectCustomFieldSource(bundle, debugLogger)),
+  );
 }
 
 function reflectCustomFieldSource(
   customFieldSource: UnparsedCustomFieldBundle,
+  debugLogger: ReflectionDebugLogger,
 ): TE.TaskEither<ReflectionErrors, ParsedFile<CustomFieldMetadata>> {
+  debugLogger.onStart(customFieldSource.filePath);
+
   return pipe(
     E.tryCatch(() => new XMLParser().parse(customFieldSource.content), E.toError),
     E.flatMap(validate),
@@ -44,7 +52,14 @@ function reflectCustomFieldSource(
     E.map((metadata) => addName(metadata, customFieldSource.name)),
     E.map((metadata) => addParentName(metadata, customFieldSource.parentName)),
     E.map((metadata) => toParsedFile(customFieldSource.filePath, metadata)),
-    E.mapLeft((error) => new ReflectionErrors([new ReflectionError(customFieldSource.filePath, error.message)])),
+    E.map((parsed) => {
+      debugLogger.onSuccess(customFieldSource.filePath);
+      return parsed;
+    }),
+    E.mapLeft((error) => {
+      debugLogger.onFailure(customFieldSource.filePath, error.message);
+      return new ReflectionErrors([new ReflectionError(customFieldSource.filePath, error.message)]);
+    }),
     TE.fromEither,
   );
 }
