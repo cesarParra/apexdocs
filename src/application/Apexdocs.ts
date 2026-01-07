@@ -99,11 +99,8 @@ async function processMarkdown(
     TE.flatMap((fileBodies) => markdown(fileBodies, config, debugLogger)),
     TE.map(() => '✔️ Documentation generated successfully!'),
     TE.mapLeft((err) => {
-      // Keep the "completed with errors" messaging, but do NOT record it as an error item,
-      // otherwise it inflates the aggregated failure count (which is intended to represent
-      // file-level failures).
       if (logger.isDebugEnabled()) {
-        logger.debug(`markdown generator finished with errors (see collector for details)`);
+        logger.debug(`markdown generator finished with errors`);
       }
       return toErrors(err);
     }),
@@ -209,7 +206,7 @@ async function processChangeLog(
       // Details are recorded in the ErrorCollector; return value only indicates failure.
       errorCollector.addGlobalFailure('other', 'Changelog generation completed with errors.', err);
       if (logger.isDebugEnabled()) {
-        logger.debug(`changelog generator finished with errors (see collector for details)`);
+        logger.debug(`changelog generator finished with errors`);
       }
       return toErrors(err);
     }),
