@@ -203,8 +203,6 @@ async function processChangeLog(
     TE.fromEither,
     TE.flatMap(([previous, current]) => changelog(previous, current, config, reflectionDebugLogger)),
     TE.mapLeft((err) => {
-      // Details are recorded in the ErrorCollector; return value only indicates failure.
-      errorCollector.addGlobalFailure('other', 'Changelog generation completed with errors.', err);
       if (logger.isDebugEnabled()) {
         logger.debug(`changelog generator finished with errors`);
       }
