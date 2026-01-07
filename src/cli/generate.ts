@@ -15,8 +15,6 @@ const logger = new StdOutLogger();
 logger.setDebug(isDebugEnabledFromProcessArgs());
 
 function main() {
-  let commandsRun = 0;
-
   function printFailuresAtEnd(collector: ErrorCollector, config: UserDefinedConfig) {
     if (!collector.hasErrors()) {
       return;
@@ -28,15 +26,6 @@ function main() {
     for (const item of collector.all()) {
       logger.error(ErrorCollector.format(item));
     }
-  }
-
-  function printDebugSummary(collector: ErrorCollector) {
-    if (!logger.isDebugEnabled()) {
-      return;
-    }
-
-    logger.debug(`commandsRun=${commandsRun}`);
-    logger.debug(`aggregatedFailures=${collector.count()}`);
   }
 
   function catchUnexpectedError(error: Error | unknown) {
@@ -56,8 +45,6 @@ function main() {
     .then(async (maybeConfigs) => {
       E.match(catchUnexpectedError, async (configs: readonly UserDefinedConfig[]) => {
         for (const config of configs) {
-          commandsRun++;
-
           const errorCollector = new ErrorCollector(config.targetGenerator);
 
           const reflectionDebugLogger = createReflectionDebugLogger(logger, (filePath, errorMessage) => {
@@ -84,7 +71,6 @@ function main() {
           }
 
           printFailuresAtEnd(errorCollector, config);
-          printDebugSummary(errorCollector);
 
           if (errorCollector.hasErrors()) {
             process.exitCode = 1;
