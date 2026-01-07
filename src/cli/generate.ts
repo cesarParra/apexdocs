@@ -22,12 +22,8 @@ function main() {
       return;
     }
 
-    // Source of truth: the per-generator error collector
     const count = collector.count();
-    logger.logSingle(
-      `⚠️ ${config.targetGenerator}: ${count} error item(s) occurred. Please review the following:`,
-      'red',
-    );
+    logger.logSingle(`⚠️ ${config.targetGenerator}: ${count} error(s) occurred. Please review the following:`, 'red');
 
     for (const item of collector.all()) {
       logger.error(ErrorCollector.format(item));
@@ -65,8 +61,6 @@ function main() {
           const errorCollector = new ErrorCollector(config.targetGenerator);
 
           const reflectionDebugLogger = createReflectionDebugLogger(logger, (filePath, errorMessage) => {
-            // We treat reflection parsing failures as "other" here because the callback doesn't
-            // provide component-type context. Parsers still log stage-specific failures where available.
             errorCollector.addFailure('other', filePath, errorMessage);
           });
 
@@ -74,14 +68,12 @@ function main() {
             logger.debug(`Currently processing generator: ${config.targetGenerator}`);
           }
 
-          // Failure details are tracked via the collector; the return value now only indicates success/failure.
           const result = await Apexdocs.generate(config, {
             logger,
             reflectionDebugLogger,
             errorCollector,
           });
 
-          // Preserve the historical success message expected by integration tests.
           printResultMessage(result);
 
           if (logger.isDebugEnabled()) {
@@ -91,7 +83,6 @@ function main() {
             );
           }
 
-          // End-of-run reporting per generator
           printFailuresAtEnd(errorCollector, config);
           printDebugSummary(errorCollector);
 

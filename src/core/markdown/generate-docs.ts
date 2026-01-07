@@ -107,9 +107,6 @@ export function generateDocs(
       const sorted = sort(filterOutCustomFieldsAndMetadata(allParsed));
 
       // Signal failure (for exit code) after we've attempted to parse everything.
-      //
-      // We intentionally do NOT propagate individual error item details here.
-      // Those are recorded via the per-generator ErrorCollector as they happen.
       if (apex.reflectionErrors.errors.length > 0) {
         return TE.left(new ReflectionErrors([]));
       }
@@ -178,8 +175,7 @@ function generateForApex(
         debugLogger,
       ),
     TE.flatMap(({ successes, errors }) => {
-      // Continue with whatever we could parse. We only fail at the end (after
-      // triggers/objects/LWC have also been processed) so ALL failures can be
+      // Continue with whatever we could parse. We only fail at the end so all failures can be
       // aggregated and reported together.
       const filtered = pipe(
         TE.right(successes),
