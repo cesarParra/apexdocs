@@ -149,11 +149,14 @@ export function generateChangeLog(
       page: postHookCompile(page),
       combinedReflectionErrors,
     })),
-    // Fail at the very end if we had any recoverable Apex reflection errors,
-    // so the CLI can present them after completing the work.
+    // Fail at the very end if we had any recoverable reflection errors,
+    // so the CLI can set an exit code after completing the work.
+    //
+    // We intentionally do NOT propagate individual error item details here.
+    // Those are recorded via the per-generator ErrorCollector as they happen.
     TE.flatMap(({ page, combinedReflectionErrors }) => {
       if (combinedReflectionErrors.errors.length > 0) {
-        return TE.left(combinedReflectionErrors);
+        return TE.left(new ReflectionErrors([]));
       }
       return TE.right(page);
     }),

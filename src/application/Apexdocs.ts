@@ -17,6 +17,7 @@ import {
   UserDefinedMarkdownConfig,
   UserDefinedOpenApiConfig,
 } from '../core/shared/types';
+import type { ErrorCollector } from '#utils/error-collector';
 import { resolveAndValidateSourceDirectories } from '#utils/source-directory-resolver';
 import { ReflectionError, ReflectionErrors, HookError } from '../core/errors/errors';
 import { FileReadingError, FileWritingError } from './errors';
@@ -34,18 +35,19 @@ export class Apexdocs {
     deps: {
       logger: Logger;
       reflectionDebugLogger: ReflectionDebugLogger;
+      errorCollector: ErrorCollector;
     },
   ): Promise<E.Either<unknown[], string>> {
-    const { logger, reflectionDebugLogger } = deps;
+    const { logger, reflectionDebugLogger, errorCollector } = deps;
     logger.logSingle(`Generating ${config.targetGenerator} documentation...`);
 
     try {
       switch (config.targetGenerator) {
         case 'markdown': {
-          return (await processMarkdown(config, logger, reflectionDebugLogger))();
+          return (await processMarkdown(config, logger, reflectionDebugLogger, errorCollector))();
         }
         case 'openapi': {
-          const task = await processOpenApi(config, logger);
+          const task = await processOpenApi(config, logger, errorCollector);
           const openApiResult = await task();
 
           if (E.isLeft(openApiResult)) {
@@ -55,10 +57,11 @@ export class Apexdocs {
           return E.right('✔️ Documentation generated successfully!');
         }
         case 'changelog': {
-          return (await processChangeLog(config, logger, reflectionDebugLogger))();
+          return (await processChangeLog(config, logger, reflectionDebugLogger, errorCollector))();
         }
       }
     } catch (error) {
+      errorCollector.addGlobalFailure('other', String(error), error);
       return E.left([error]);
     }
   }
@@ -70,38 +73,50 @@ async function processMarkdown(
   config: UserDefinedMarkdownConfig,
   logger: Logger,
   reflectionDebugLogger: ReflectionDebugLogger,
+  errorCollector: ErrorCollector,
 ) {
   const debugLogger = reflectionDebugLogger;
 
   return pipe(
     resolveAndValidateSourceDirectories(config),
-    E.mapLeft((error) => new FileReadingError(`Failed to resolve source directories: ${error.message}`, error)),
+    E.mapLeft((error) => {
+      errorCollector.addGlobalFailure('read', `Failed to resolve source directories: ${error.message}`, error);
+      return new FileReadingError(`Failed to resolve source directories: ${error.message}`, error);
+    }),
     E.flatMap((sourceDirs) =>
       E.tryCatch(
         () =>
           readFiles({ experimentalLwcSupport: config.experimentalLwcSupport })(allComponentTypes, {
             includeMetadata: config.includeMetadata,
           })(sourceDirs, config.exclude),
-        (e) => new FileReadingError('An error occurred while reading files.', e),
+        (e) => {
+          errorCollector.addGlobalFailure('read', 'An error occurred while reading files.', e);
+          return new FileReadingError('An error occurred while reading files.', e);
+        },
       ),
     ),
     TE.fromEither,
     TE.flatMap((fileBodies) => markdown(fileBodies, config, debugLogger)),
     TE.map(() => '✔️ Documentation generated successfully!'),
     TE.mapLeft((err) => {
-      const errors = toErrors(err);
+      // Keep the "completed with errors" messaging, but do NOT record it as an error item,
+      // otherwise it inflates the aggregated failure count (which is intended to represent
+      // file-level failures).
       if (logger.isDebugEnabled()) {
-        logger.debug(`markdown generator finished with ${Array.isArray(errors) ? errors.length : 1} error item(s)`);
+        logger.debug(`markdown generator finished with errors (see collector for details)`);
       }
-      return errors;
+      return toErrors(err);
     }),
   );
 }
 
-async function processOpenApi(config: UserDefinedOpenApiConfig, logger: Logger) {
+async function processOpenApi(config: UserDefinedOpenApiConfig, logger: Logger, errorCollector: ErrorCollector) {
   return pipe(
     resolveAndValidateSourceDirectories(config),
-    E.mapLeft((error) => new FileReadingError(`Failed to resolve source directories: ${error.message}`, error)),
+    E.mapLeft((error) => {
+      errorCollector.addGlobalFailure('read', `Failed to resolve source directories: ${error.message}`, error);
+      return new FileReadingError(`Failed to resolve source directories: ${error.message}`, error);
+    }),
     TE.fromEither,
     TE.flatMap((sourceDirs) =>
       TE.tryCatch(
@@ -110,9 +125,12 @@ async function processOpenApi(config: UserDefinedOpenApiConfig, logger: Logger) 
             sourceDirs,
             config.exclude,
           ) as UnparsedApexBundle[];
-          return openApi(logger, fileBodies, config);
+          return openApi(logger, fileBodies, config, errorCollector);
         },
-        (e) => new FileReadingError('An error occurred while generating OpenAPI documentation.', e),
+        (e) => {
+          errorCollector.addGlobalFailure('other', 'An error occurred while generating OpenAPI documentation.', e);
+          return new FileReadingError('An error occurred while generating OpenAPI documentation.', e);
+        },
       ),
     ),
   );
@@ -122,6 +140,7 @@ async function processChangeLog(
   config: UserDefinedChangelogConfig,
   logger: Logger,
   reflectionDebugLogger: ReflectionDebugLogger,
+  errorCollector: ErrorCollector,
 ) {
   function loadFiles() {
     const previousVersionConfig = {
@@ -137,25 +156,48 @@ async function processChangeLog(
       E.bind('previousVersionDirs', () =>
         pipe(
           resolveAndValidateSourceDirectories(previousVersionConfig),
-          E.mapLeft(
-            (error) =>
-              new FileReadingError(`Failed to resolve previous version source directories: ${error.message}`, error),
-          ),
+          E.mapLeft((error) => {
+            errorCollector.addGlobalFailure(
+              'read',
+              `Failed to resolve previous version source directories: ${error.message}`,
+              error,
+            );
+            return new FileReadingError(
+              `Failed to resolve previous version source directories: ${error.message}`,
+              error,
+            );
+          }),
         ),
       ),
       E.bind('currentVersionDirs', () =>
         pipe(
           resolveAndValidateSourceDirectories(currentVersionConfig),
-          E.mapLeft(
-            (error) =>
-              new FileReadingError(`Failed to resolve current version source directories: ${error.message}`, error),
-          ),
+          E.mapLeft((error) => {
+            errorCollector.addGlobalFailure(
+              'read',
+              `Failed to resolve current version source directories: ${error.message}`,
+              error,
+            );
+            return new FileReadingError(
+              `Failed to resolve current version source directories: ${error.message}`,
+              error,
+            );
+          }),
         ),
       ),
-      E.map(({ previousVersionDirs, currentVersionDirs }) => [
-        readFiles({ experimentalLwcSupport: false })(allComponentTypes)(previousVersionDirs, config.exclude),
-        readFiles({ experimentalLwcSupport: false })(allComponentTypes)(currentVersionDirs, config.exclude),
-      ]),
+      E.map(({ previousVersionDirs, currentVersionDirs }) => {
+        const previous = readFiles({ experimentalLwcSupport: false })(allComponentTypes)(
+          previousVersionDirs,
+          config.exclude,
+        );
+
+        const current = readFiles({ experimentalLwcSupport: false })(allComponentTypes)(
+          currentVersionDirs,
+          config.exclude,
+        );
+
+        return [previous, current] as const;
+      }),
     );
   }
 
@@ -164,11 +206,12 @@ async function processChangeLog(
     TE.fromEither,
     TE.flatMap(([previous, current]) => changelog(previous, current, config, reflectionDebugLogger)),
     TE.mapLeft((err) => {
-      const errors = toErrors(err);
+      // Details are recorded in the ErrorCollector; return value only indicates failure.
+      errorCollector.addGlobalFailure('other', 'Changelog generation completed with errors.', err);
       if (logger.isDebugEnabled()) {
-        logger.debug(`changelog generator finished with ${Array.isArray(errors) ? errors.length : 1} error item(s)`);
+        logger.debug(`changelog generator finished with errors (see collector for details)`);
       }
-      return errors;
+      return toErrors(err);
     }),
   );
 }

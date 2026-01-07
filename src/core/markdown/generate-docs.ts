@@ -34,7 +34,7 @@ import { sortTypesAndMembers } from '../reflection/sort-types-and-members';
 import { isSkip, passThroughHook, toFrontmatterString } from '../shared/utils';
 import { parsedFilesToReferenceGuide } from './adapters/reference-guide';
 import { removeExcludedTags } from '../reflection/apex/remove-excluded-tags';
-import { HookError } from '../errors/errors';
+import { HookError, ReflectionErrors } from '../errors/errors';
 import { reflectCustomFieldsAndObjectsAndMetadataRecords } from '../reflection/sobject/reflectCustomFieldsAndObjectsAndMetadataRecords';
 import {
   filterApexSourceFiles,
@@ -106,10 +106,12 @@ export function generateDocs(
       const allParsed = [...apex.parsed, ...objects, ...triggers, ...lwcs];
       const sorted = sort(filterOutCustomFieldsAndMetadata(allParsed));
 
-      // Surface ALL failures (including Apex reflection failures) after we've attempted
-      // to parse everything, so the caller can aggregate + report all failures together.
+      // Signal failure (for exit code) after we've attempted to parse everything.
+      //
+      // We intentionally do NOT propagate individual error item details here.
+      // Those are recorded via the per-generator ErrorCollector as they happen.
       if (apex.reflectionErrors.errors.length > 0) {
-        return TE.left(apex.reflectionErrors);
+        return TE.left(new ReflectionErrors([]));
       }
 
       return TE.right(sorted);

@@ -4,6 +4,7 @@ import { Apexdocs } from '../application/Apexdocs';
 import * as E from 'fp-ts/Either';
 import { changeLogDefaults, markdownDefaults, openApiDefaults } from '../defaults';
 import { createReflectionDebugLogger } from '#utils/reflection-debug-logger';
+import { ErrorCollector } from '#utils/error-collector';
 
 type CallableConfig = Partial<UserDefinedConfig> & { sourceDir: string; targetGenerator: Generators };
 
@@ -13,7 +14,6 @@ type CallableConfig = Partial<UserDefinedConfig> & { sourceDir: string; targetGe
  */
 export async function process(config: CallableConfig): Promise<void> {
   const logger = new NoLogger();
-  const reflectionDebugLogger = createReflectionDebugLogger(logger);
 
   const configWithDefaults = {
     ...getDefault(config),
@@ -24,9 +24,26 @@ export async function process(config: CallableConfig): Promise<void> {
     throw new Error('sourceDir is required');
   }
 
-  const result = await Apexdocs.generate(configWithDefaults as UserDefinedConfig, { logger, reflectionDebugLogger });
+  // Group errors by generator run, consistent with CLI behavior.
+  const errorCollector = new ErrorCollector(configWithDefaults.targetGenerator);
+
+  const reflectionDebugLogger = createReflectionDebugLogger(logger, (filePath, errorMessage) => {
+    errorCollector.addFailure('other', filePath, errorMessage);
+  });
+
+  const result = await Apexdocs.generate(configWithDefaults as UserDefinedConfig, {
+    logger,
+    reflectionDebugLogger,
+    errorCollector,
+  });
+
   E.match(
     (errors) => {
+      // Do not rely on returned error shapes/details. The ErrorCollector is the source of truth.
+      if (errorCollector.hasErrors()) {
+        const details = errorCollector.all().map(ErrorCollector.format).join('\n');
+        throw new Error(details);
+      }
       throw errors;
     },
     () => {},

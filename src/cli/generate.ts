@@ -5,6 +5,7 @@ import { StdOutLogger } from '#utils/logger';
 import * as E from 'fp-ts/Either';
 import { UserDefinedConfig } from '../core/shared/types';
 import { createReflectionDebugLogger } from '#utils/reflection-debug-logger';
+import { ErrorCollector } from '#utils/error-collector';
 
 function isDebugEnabledFromProcessArgs(): boolean {
   return process.argv.includes('--debug');
@@ -12,47 +13,47 @@ function isDebugEnabledFromProcessArgs(): boolean {
 
 const logger = new StdOutLogger();
 logger.setDebug(isDebugEnabledFromProcessArgs());
-const reflectionDebugLogger = createReflectionDebugLogger(logger);
 
 function main() {
-  const aggregatedFailures: unknown[] = [];
   let commandsRun = 0;
 
-  function printDebugSummary() {
+  function printFailuresAtEnd(collector: ErrorCollector, config: UserDefinedConfig) {
+    if (!collector.hasErrors()) {
+      return;
+    }
+
+    // Source of truth: the per-generator error collector
+    const count = collector.count();
+    logger.logSingle(
+      `⚠️ ${config.targetGenerator}: ${count} error item(s) occurred. Please review the following:`,
+      'red',
+    );
+
+    for (const item of collector.all()) {
+      logger.error(ErrorCollector.format(item));
+    }
+  }
+
+  function printDebugSummary(collector: ErrorCollector) {
     if (!logger.isDebugEnabled()) {
       return;
     }
 
     logger.debug(`commandsRun=${commandsRun}`);
-    logger.debug(`aggregatedFailures=${aggregatedFailures.length}`);
-  }
-
-  function printFailuresAtEnd() {
-    if (aggregatedFailures.length === 0) {
-      return;
-    }
-
-    logger.logSingle('⚠️ Some operations completed with errors. Please review the following issues:', 'red');
-    for (const failure of aggregatedFailures) {
-      logger.error(failure);
-    }
-  }
-
-  function parseResult(result: E.Either<unknown, string>, config: UserDefinedConfig) {
-    E.match(
-      (failure) => {
-        logger.logSingle(`${config.targetGenerator}: completed with errors`, 'red');
-        aggregatedFailures.push(failure);
-      },
-      (successMessage: string) => {
-        logger.logSingle(successMessage);
-      },
-    )(result);
+    logger.debug(`aggregatedFailures=${collector.count()}`);
   }
 
   function catchUnexpectedError(error: Error | unknown) {
     logger.error(`❌ An error occurred while processing the request: ${error}`);
     process.exit(1);
+  }
+
+  function printResultMessage(result: E.Either<unknown, string>) {
+    // Keep CLI output stable for integrations/tests that assert on this message.
+    // We intentionally do not rely on returned error shapes for details; the ErrorCollector is the source of truth.
+    if (E.isRight(result)) {
+      logger.logSingle('Documentation generated successfully');
+    }
   }
 
   extractArgs()
@@ -61,11 +62,27 @@ function main() {
         for (const config of configs) {
           commandsRun++;
 
+          const errorCollector = new ErrorCollector(config.targetGenerator);
+
+          const reflectionDebugLogger = createReflectionDebugLogger(logger, (filePath, errorMessage) => {
+            // We treat reflection parsing failures as "other" here because the callback doesn't
+            // provide component-type context. Parsers still log stage-specific failures where available.
+            errorCollector.addFailure('other', filePath, errorMessage);
+          });
+
           if (logger.isDebugEnabled()) {
             logger.debug(`Currently processing generator: ${config.targetGenerator}`);
           }
 
-          const result = await Apexdocs.generate(config, { logger, reflectionDebugLogger });
+          // Failure details are tracked via the collector; the return value now only indicates success/failure.
+          const result = await Apexdocs.generate(config, {
+            logger,
+            reflectionDebugLogger,
+            errorCollector,
+          });
+
+          // Preserve the historical success message expected by integration tests.
+          printResultMessage(result);
 
           if (logger.isDebugEnabled()) {
             logger.logSingle(
@@ -74,14 +91,13 @@ function main() {
             );
           }
 
-          parseResult(result, config);
-        }
+          // End-of-run reporting per generator
+          printFailuresAtEnd(errorCollector, config);
+          printDebugSummary(errorCollector);
 
-        printFailuresAtEnd();
-        printDebugSummary();
-
-        if (aggregatedFailures.length > 0) {
-          process.exitCode = 1;
+          if (errorCollector.hasErrors()) {
+            process.exitCode = 1;
+          }
         }
       })(maybeConfigs);
     })

@@ -17,11 +17,13 @@ import { ReflectionErrors } from '../../core/errors/errors';
 import * as E from 'fp-ts/Either';
 import { FileWritingError } from '../errors';
 import { createReflectionDebugLogger } from '#utils/reflection-debug-logger';
+import type { ErrorCollector } from '#utils/error-collector';
 
 export default async function openApi(
   logger: Logger,
   fileBodies: UnparsedApexBundle[],
   config: UserDefinedOpenApiConfig,
+  errorCollector: ErrorCollector,
 ) {
   // For backwards compatibility, use sourceDir if provided, otherwise derive from file paths or use current directory
   // If sourceDir is an array, use the first directory
@@ -38,7 +40,9 @@ export default async function openApi(
     version: config.apiVersion,
   });
 
-  const debugLogger = createReflectionDebugLogger(logger);
+  const debugLogger = createReflectionDebugLogger(logger, (filePath, errorMessage) => {
+    errorCollector.addFailure('apex', filePath, errorMessage);
+  });
 
   const reflectedEither = await reflectApexSourceBestEffort(
     fileBodies,
@@ -58,17 +62,10 @@ export default async function openApi(
   const { successes: parsedFiles, errors: recoverableErrors } = reflectedEither.right;
 
   if (recoverableErrors.errors.length > 0) {
+    // Error details are recorded via the ErrorCollector callback; keep messaging consistent and high-level here.
     logger.logSingle(
       `⚠️ ${recoverableErrors.errors.length} file(s) failed to parse/reflect. Continuing with successfully reflected files.`,
       'red',
-    );
-
-    logger.error(
-      new ReflectionErrors(
-        recoverableErrors.errors.map((e) => ({
-          ...e,
-        })),
-      ),
     );
   }
 
@@ -113,15 +110,16 @@ export default async function openApi(
   // Logs any errors that the types might have in their doc comment's error field
   ErrorLogger.logErrors(logger, filteredTypes);
 
-  // If there were recoverable reflection failures, propagate them to the caller for aggregation.
+  // If there were recoverable reflection failures, fail the generator so callers can set exit code.
+  // Detailed per-file failures are recorded via the ErrorCollector callback.
   if (recoverableErrors.errors.length > 0) {
-    return E.left(
-      new ReflectionErrors(
-        recoverableErrors.errors.map((e) => ({
-          ...e,
-        })),
-      ),
+    errorCollector.addGlobalFailure(
+      'other',
+      `OpenAPI generation completed with ${recoverableErrors.errors.length} reflection error item(s).`,
+      recoverableErrors,
     );
+    // Fail the generator so callers can set exit code. Details already recorded in the collector.
+    return E.left(new ReflectionErrors([]));
   }
 
   return E.right(undefined);
