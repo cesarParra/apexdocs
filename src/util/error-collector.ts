@@ -76,6 +76,6 @@ export class ErrorCollector {
    */
   public static format(item: ErrorItem): string {
     const location = item.filePath ? `${item.filePath}` : '';
-    return `[${item.generator}] ${location}: ${item.message}`;
+    return `[${item.generator}] ${location}: ${item.message} - ${item.raw}`;
   }
 }
