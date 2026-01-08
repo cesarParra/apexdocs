@@ -1,5 +1,4 @@
 import { ClassMirror, InterfaceMirror, ReflectionResult, Type } from '@cparra/apex-reflection';
-import { Logger } from '#utils/logger';
 import { UnparsedApexBundle } from '../shared/types';
 
 export interface TypeParser {
@@ -9,15 +8,11 @@ export interface TypeParser {
 type NameAware = { name: string };
 
 export class RawBodyParser implements TypeParser {
-  constructor(
-    private logger: Logger,
-    public typeBundles: UnparsedApexBundle[],
-  ) {}
+  constructor(public typeBundles: UnparsedApexBundle[]) {}
 
   parse(reflect: (apexBundle: UnparsedApexBundle) => ReflectionResult): Type[] {
     const types = this.typeBundles
       .map((currentBundle) => {
-        this.logger.log(`Parsing file: ${currentBundle.filePath}`);
         return reflect(currentBundle);
       })
       .filter((reflectionResult) => {

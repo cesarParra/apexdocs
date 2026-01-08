@@ -89,7 +89,7 @@ export default async function openApi(
     return { typeMirror: null, error: new Error('Unknown error') } as unknown as ReflectionResult;
   }
 
-  const manifest = createManifest(new RawBodyParser(logger, fileBodies), reflectFromMap);
+  const manifest = createManifest(new RawBodyParser(fileBodies), reflectFromMap);
   TypesRepository.getInstance().populateAll(manifest.types);
   const filteredTypes = filterByScopes(logger, manifest);
   const processor = new OpenApiDocsProcessor(logger);
