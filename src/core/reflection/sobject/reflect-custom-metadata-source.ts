@@ -5,6 +5,7 @@ import { pipe } from 'fp-ts/function';
 import * as A from 'fp-ts/Array';
 import * as E from 'fp-ts/Either';
 import { XMLParser } from 'fast-xml-parser';
+import { noopReflectionDebugLogger, type ReflectionDebugLogger } from '../apex/reflect-apex-source';
 
 export type CustomMetadataMetadata = {
   type_name: 'custommetadata';
@@ -17,13 +18,20 @@ export type CustomMetadataMetadata = {
 
 export function reflectCustomMetadataSources(
   customMetadataSources: UnparsedCustomMetadataBundle[],
+  debugLogger: ReflectionDebugLogger = noopReflectionDebugLogger,
 ): TE.TaskEither<ReflectionErrors, ParsedFile<CustomMetadataMetadata>[]> {
-  return pipe(customMetadataSources, A.traverse(TE.ApplicativePar)(reflectCustomMetadataSource));
+  return pipe(
+    customMetadataSources,
+    A.traverse(TE.ApplicativePar)((bundle) => reflectCustomMetadataSource(bundle, debugLogger)),
+  );
 }
 
 function reflectCustomMetadataSource(
   customMetadataSource: UnparsedCustomMetadataBundle,
+  debugLogger: ReflectionDebugLogger,
 ): TE.TaskEither<ReflectionErrors, ParsedFile<CustomMetadataMetadata>> {
+  debugLogger.onStart(customMetadataSource.filePath);
+
   return pipe(
     E.tryCatch(() => new XMLParser().parse(customMetadataSource.content), E.toError),
     E.flatMap(validate),
@@ -31,7 +39,14 @@ function reflectCustomMetadataSource(
     E.map((metadata) => addNames(metadata, customMetadataSource.name, customMetadataSource.apiName)),
     E.map((metadata) => addParentName(metadata, customMetadataSource.parentName)),
     E.map((metadata) => toParsedFile(customMetadataSource.filePath, metadata)),
-    E.mapLeft((error) => new ReflectionErrors([new ReflectionError(customMetadataSource.filePath, error.message)])),
+    E.mapLeft((error) => {
+      debugLogger.onFailure(customMetadataSource.filePath, error.message);
+      return new ReflectionErrors([new ReflectionError(customMetadataSource.filePath, error.message)]);
+    }),
+    E.map((parsed) => {
+      debugLogger.onSuccess(customMetadataSource.filePath);
+      return parsed;
+    }),
     TE.fromEither,
   );
 }

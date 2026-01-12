@@ -34,7 +34,7 @@ import { sortTypesAndMembers } from '../reflection/sort-types-and-members';
 import { isSkip, passThroughHook, toFrontmatterString } from '../shared/utils';
 import { parsedFilesToReferenceGuide } from './adapters/reference-guide';
 import { removeExcludedTags } from '../reflection/apex/remove-excluded-tags';
-import { HookError } from '../errors/errors';
+import { HookError, ReflectionErrors } from '../errors/errors';
 import { reflectCustomFieldsAndObjectsAndMetadataRecords } from '../reflection/sobject/reflectCustomFieldsAndObjectsAndMetadataRecords';
 import {
   filterApexSourceFiles,
@@ -79,33 +79,40 @@ export function generateDocs(
 
   return pipe(
     TE.right(replaceMacros(unparsedBundles, config.macros)),
-    TE.flatMap((unparsedBundles) => generateForApex(filterApexSourceFiles(unparsedBundles), config, debugLogger)),
-    TE.chain((parsedApexFiles) => {
-      return pipe(
-        reflectCustomFieldsAndObjectsAndMetadataRecords(
-          filterCustomObjectsFieldsAndMetadataRecords(unparsedBundles),
-          config.customObjectVisibility,
-        ),
-        TE.map((parsedObjectFiles) => [...parsedApexFiles, ...parsedObjectFiles]),
-      );
-    }),
-    TE.chain((parsedFiles) => {
-      return pipe(
-        reflectTriggerSource(filterTriggerFiles(unparsedBundles)),
-        TE.map((parsedTriggerFiles) => [...parsedFiles, ...parsedTriggerFiles]),
-      );
-    }),
-    TE.chain((parsedFiles) => {
+    TE.bindW('unparsedBundles', (unparsedBundles) => TE.right(unparsedBundles)),
+    TE.bindW('apex', ({ unparsedBundles }) =>
+      generateForApex(filterApexSourceFiles(unparsedBundles), config, debugLogger),
+    ),
+    TE.bindW('objects', ({ unparsedBundles }) =>
+      reflectCustomFieldsAndObjectsAndMetadataRecords(
+        filterCustomObjectsFieldsAndMetadataRecords(unparsedBundles),
+        config.customObjectVisibility,
+        debugLogger,
+      ),
+    ),
+    TE.bindW('triggers', ({ unparsedBundles }) =>
+      reflectTriggerSource(filterTriggerFiles(unparsedBundles), debugLogger),
+    ),
+    TE.bindW('lwcs', ({ unparsedBundles }) => {
       if (!config.experimentalLwcSupport) {
-        return TE.right(parsedFiles);
+        return TE.right([]);
       }
       return pipe(
-        reflectLwcSource(filterLwcFiles(unparsedBundles)),
-        TE.map((parsedFiles) => parsedFiles.filter((file) => file.type.isExposed)),
-        TE.map((parsedLwcFiles) => [...parsedFiles, ...parsedLwcFiles]),
+        reflectLwcSource(filterLwcFiles(unparsedBundles), debugLogger),
+        TE.map((files) => files.filter((file) => file.type.isExposed)),
       );
     }),
-    TE.map((parsedFiles) => sort(filterOutCustomFieldsAndMetadata(parsedFiles))),
+    TE.flatMap(({ apex, objects, triggers, lwcs }) => {
+      const allParsed = [...apex.parsed, ...objects, ...triggers, ...lwcs];
+      const sorted = sort(filterOutCustomFieldsAndMetadata(allParsed));
+
+      // Signal failure (for exit code) after we've attempted to parse everything.
+      if (apex.reflectionErrors.errors.length > 0) {
+        return TE.left(new ReflectionErrors([]));
+      }
+
+      return TE.right(sorted);
+    }),
     TE.bindTo('parsedFiles'),
     TE.bind('references', ({ parsedFiles }) =>
       TE.right(
@@ -168,8 +175,8 @@ function generateForApex(
         debugLogger,
       ),
     TE.flatMap(({ successes, errors }) => {
-      // Proceed with whatever we could parse, but if any Apex files failed
-      // reflection, fail at the end so the CLI can aggregate and report all failures.
+      // Continue with whatever we could parse. We only fail at the end so all failures can be
+      // aggregated and reported together.
       const filtered = pipe(
         TE.right(successes),
         TE.map(filterOutOfScope),
@@ -180,12 +187,10 @@ function generateForApex(
 
       return pipe(
         filtered,
-        TE.flatMap((parsed) => {
-          if (errors.errors.length > 0) {
-            return TE.left(errors);
-          }
-          return TE.right(parsed);
-        }),
+        TE.map((parsed) => ({
+          parsed,
+          reflectionErrors: errors,
+        })),
       );
     }),
   );

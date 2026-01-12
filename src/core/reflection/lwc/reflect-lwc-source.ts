@@ -9,6 +9,7 @@ import * as E from 'fp-ts/Either';
 
 import { UnparsedLightningComponentBundle } from '../../shared/types';
 import { XMLParser } from 'fast-xml-parser';
+import { noopReflectionDebugLogger, type ReflectionDebugLogger } from '../apex/reflect-apex-source';
 
 export type LwcMetadata = {
   type_name: 'lwc';
@@ -44,18 +45,27 @@ export type TargetConfig = {
   '@_targets': string;
 };
 
-export function reflectLwcSource(triggerBundles: UnparsedLightningComponentBundle[]) {
+export function reflectLwcSource(
+  triggerBundles: UnparsedLightningComponentBundle[],
+  debugLogger: ReflectionDebugLogger = noopReflectionDebugLogger,
+) {
   const semiGroupReflectionError: Semigroup<ReflectionErrors> = {
     concat: (x, y) => new ReflectionErrors([...x.errors, ...y.errors]),
   };
   const Ap = TE.getApplicativeTaskValidation(T.ApplyPar, semiGroupReflectionError);
 
-  return pipe(triggerBundles, A.traverse(Ap)(reflectBundle));
+  return pipe(
+    triggerBundles,
+    A.traverse(Ap)((bundle) => reflectBundle(bundle, debugLogger)),
+  );
 }
 
 function reflectBundle(
   lwcBundle: UnparsedLightningComponentBundle,
+  debugLogger: ReflectionDebugLogger,
 ): TE.TaskEither<ReflectionErrors, ParsedFile<LwcMetadata>> {
+  debugLogger.onStart(lwcBundle.filePath);
+
   return pipe(
     E.tryCatch(() => {
       const alwaysArray = [
@@ -74,8 +84,15 @@ function reflectBundle(
       const bundle = result['LightningComponentBundle'] as LightningComponentBundle;
       return transformBooleanProperties(bundle);
     }, E.toError),
+    E.map((parsed) => {
+      debugLogger.onSuccess(lwcBundle.filePath);
+      return parsed;
+    }),
     E.map((parsed) => toParsedFile(lwcBundle.filePath, lwcBundle.name, parsed)),
-    E.mapLeft((error) => new ReflectionErrors([new ReflectionError(lwcBundle.filePath, error.message)])),
+    E.mapLeft((error) => {
+      debugLogger.onFailure(lwcBundle.filePath, error.message);
+      return new ReflectionErrors([new ReflectionError(lwcBundle.filePath, error.message)]);
+    }),
     TE.fromEither,
   );
 }

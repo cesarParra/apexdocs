@@ -89,6 +89,7 @@ export function generateChangeLog(
           reflectCustomFieldsAndObjectsAndMetadataRecords(
             filterCustomObjectsFieldsAndMetadataRecords(bundles),
             config.customObjectVisibility,
+            debugLogger,
           ),
           TE.map((parsedObjectFiles) => ({
             parsedFiles: [...apex.parsedFiles, ...parsedObjectFiles],
@@ -101,7 +102,7 @@ export function generateChangeLog(
       ),
       TE.bind('all', ({ objects, bundles }) =>
         pipe(
-          reflectTriggerSource(filterTriggerFiles(bundles)),
+          reflectTriggerSource(filterTriggerFiles(bundles), debugLogger),
           TE.map((parsedTriggerFiles) => ({
             parsedFiles: [...objects.parsedFiles, ...parsedTriggerFiles],
             errors: objects.errors,
@@ -148,11 +149,11 @@ export function generateChangeLog(
       page: postHookCompile(page),
       combinedReflectionErrors,
     })),
-    // Fail at the very end if we had any recoverable Apex reflection errors,
-    // so the CLI can present them after completing the work.
+    // Fail at the very end if we had any recoverable reflection errors,
+    // so the CLI can set an exit code after completing the work.
     TE.flatMap(({ page, combinedReflectionErrors }) => {
       if (combinedReflectionErrors.errors.length > 0) {
-        return TE.left(combinedReflectionErrors);
+        return TE.left(new ReflectionErrors([]));
       }
       return TE.right(page);
     }),

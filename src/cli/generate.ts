@@ -5,6 +5,7 @@ import { StdOutLogger } from '#utils/logger';
 import * as E from 'fp-ts/Either';
 import { UserDefinedConfig } from '../core/shared/types';
 import { createReflectionDebugLogger } from '#utils/reflection-debug-logger';
+import { ErrorCollector } from '#utils/error-collector';
 
 function isDebugEnabledFromProcessArgs(): boolean {
   return process.argv.includes('--debug');
@@ -12,42 +13,19 @@ function isDebugEnabledFromProcessArgs(): boolean {
 
 const logger = new StdOutLogger();
 logger.setDebug(isDebugEnabledFromProcessArgs());
-const reflectionDebugLogger = createReflectionDebugLogger(logger);
 
 function main() {
-  const aggregatedFailures: unknown[] = [];
-  let commandsRun = 0;
-
-  function printDebugSummary() {
-    if (!logger.isDebugEnabled()) {
+  function printFailuresAtEnd(collector: ErrorCollector, config: UserDefinedConfig) {
+    if (!collector.hasErrors()) {
       return;
     }
 
-    logger.debug(`commandsRun=${commandsRun}`);
-    logger.debug(`aggregatedFailures=${aggregatedFailures.length}`);
-  }
+    const count = collector.count();
+    logger.logSingle(`⚠️ ${config.targetGenerator}: ${count} error(s) occurred. Please review the following:`, 'red');
 
-  function printFailuresAtEnd() {
-    if (aggregatedFailures.length === 0) {
-      return;
+    for (const item of collector.all()) {
+      logger.error(ErrorCollector.format(item));
     }
-
-    logger.logSingle('⚠️ Some operations completed with errors. Please review the following issues:', 'red');
-    for (const failure of aggregatedFailures) {
-      logger.error(failure);
-    }
-  }
-
-  function parseResult(result: E.Either<unknown, string>, config: UserDefinedConfig) {
-    E.match(
-      (failure) => {
-        logger.logSingle(`${config.targetGenerator}: completed with errors`, 'red');
-        aggregatedFailures.push(failure);
-      },
-      (successMessage: string) => {
-        logger.logSingle(successMessage);
-      },
-    )(result);
   }
 
   function catchUnexpectedError(error: Error | unknown) {
@@ -55,17 +33,31 @@ function main() {
     process.exit(1);
   }
 
+  function printResultMessage(result: E.Either<unknown, string>) {
+    if (E.isRight(result)) {
+      logger.logSingle('Documentation generated successfully');
+    }
+  }
+
   extractArgs()
     .then(async (maybeConfigs) => {
       E.match(catchUnexpectedError, async (configs: readonly UserDefinedConfig[]) => {
         for (const config of configs) {
-          commandsRun++;
+          const errorCollector = new ErrorCollector(config.targetGenerator);
+
+          const reflectionDebugLogger = createReflectionDebugLogger(logger, (filePath, errorMessage) => {
+            errorCollector.addFailure('other', filePath, errorMessage);
+          });
 
           if (logger.isDebugEnabled()) {
             logger.debug(`Currently processing generator: ${config.targetGenerator}`);
           }
 
-          const result = await Apexdocs.generate(config, { logger, reflectionDebugLogger });
+          const result = await Apexdocs.generate(config, {
+            logger,
+            reflectionDebugLogger,
+            errorCollector,
+          });
 
           if (logger.isDebugEnabled()) {
             logger.logSingle(
@@ -74,14 +66,13 @@ function main() {
             );
           }
 
-          parseResult(result, config);
-        }
+          printFailuresAtEnd(errorCollector, config);
 
-        printFailuresAtEnd();
-        printDebugSummary();
+          if (errorCollector.hasErrors()) {
+            process.exitCode = 1;
+          }
 
-        if (aggregatedFailures.length > 0) {
-          process.exitCode = 1;
+          printResultMessage(result);
         }
       })(maybeConfigs);
     })

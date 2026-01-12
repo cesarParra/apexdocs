@@ -8,6 +8,7 @@ import { apply } from '#utils/fp';
 import { Semigroup } from 'fp-ts/Semigroup';
 import { ParsedFile } from '../../shared/types';
 import { ReflectionError, ReflectionErrors } from '../../errors/errors';
+import { noopReflectionDebugLogger, type ReflectionDebugLogger } from '../apex/reflect-apex-source';
 
 import { UnparsedTriggerBundle } from '../../shared/types';
 
@@ -15,24 +16,46 @@ export type TriggerMetadata = TriggerMirror & {
   type_name: 'trigger';
 };
 
-export function reflectTriggerSource(triggerBundles: UnparsedTriggerBundle[]) {
+export function reflectTriggerSource(
+  triggerBundles: UnparsedTriggerBundle[],
+  debugLogger: ReflectionDebugLogger = noopReflectionDebugLogger,
+) {
   const semiGroupReflectionError: Semigroup<ReflectionErrors> = {
     concat: (x, y) => new ReflectionErrors([...x.errors, ...y.errors]),
   };
   const Ap = TE.getApplicativeTaskValidation(T.ApplyPar, semiGroupReflectionError);
 
-  return pipe(triggerBundles, A.traverse(Ap)(reflectBundle));
+  return pipe(
+    triggerBundles,
+    A.traverse(Ap)((bundle) => reflectBundle(bundle, debugLogger)),
+  );
 }
 
 function reflectBundle(
   triggerBundle: UnparsedTriggerBundle,
+  debugLogger: ReflectionDebugLogger,
 ): TE.TaskEither<ReflectionErrors, ParsedFile<TriggerMetadata>> {
   const convertToParsedFile: (triggerMirror: TriggerMirror) => ParsedFile<TriggerMetadata> = apply(
     toParsedFile,
     triggerBundle.filePath,
   );
 
-  return pipe(triggerBundle, reflectAsTask, TE.map(convertToParsedFile));
+  debugLogger.onStart(triggerBundle.filePath);
+
+  return pipe(
+    triggerBundle,
+    reflectAsTask,
+    TE.map((triggerMirror) => {
+      debugLogger.onSuccess(triggerBundle.filePath);
+      return triggerMirror;
+    }),
+    TE.map(convertToParsedFile),
+    TE.mapLeft((errs) => {
+      const msg = errs.errors.map((e) => e.message).join(' | ');
+      debugLogger.onFailure(triggerBundle.filePath, msg);
+      return errs;
+    }),
+  );
 }
 
 function toParsedFile(filePath: string, triggerMirror: TriggerMirror): ParsedFile<TriggerMetadata> {
