@@ -10,7 +10,7 @@
     "ts-node": "^10.9.2"
   },
   "dependencies": {
-    "rimraf": "^5.0.7"
+    "rimraf": "^6.1.3"
   },
   "apexdocs": {
     "sourceDir": "force-app",
