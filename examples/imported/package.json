@@ -4,6 +4,6 @@
     "exec": "node scripts/process-docs.mjs"
   },
   "dependencies": {
-    "@cparra/apexdocs": "^3.7.2"
+    "@cparra/apexdocs": "^3.20.1"
   }
 }
