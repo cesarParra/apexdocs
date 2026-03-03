@@ -1,0 +1,48 @@
+public class Upload_Images_Apex {
+    
+    public static void onAfterInsert(List<ContentDocumentLink> cdlList) {
+        Set<ID> contentDocIds = new Set<ID>();
+        for(ContentDocumentLink cdl: cdlList){
+            contentDocIds.add(cdl.ContentDocumentId);
+        }
+        
+        Set<Id> oppIds = new Set<Id>();
+        Map<String,String> oppMap = new Map<String,String>();
+        
+        for(ContentDocumentLink cdlObj: cdlList)
+        {
+            if(String.valueOf(cdlObj.LinkedEntityId).startsWith('0065')){ //Check if file is uploaded on Opp object
+                oppIds.add(cdlObj.LinkedEntityId);
+            }
+            
+            
+            for(Opportunity o:[select id,Case__c   from Opportunity where Id IN:oppIds]){
+                oppMap.put(o.Id, o.Case__c);
+            }
+            Map<String,String> Cases = new Map<String,String>();
+            for(ContentDocumentLink cdl: cdlList){
+                if(String.valueOf(cdl.LinkedEntityId).startsWith('0065')){ //Check if file is uploaded on opp object
+                    if(String.valueOf(oppMap.get(cdl.LinkedEntityId)).startsWith('5005')) //Check if opp related record is Case 
+                        Cases.put(cdl.ContentDocumentId, oppMap.get(cdl.LinkedEntityId)); //Map<ContentDocumentId,CaseId>
+                }
+                
+            }
+            List<ContentDocumentLink> cdl_List = new List<ContentDocumentLink>();
+            for(String str: Cases.keySet()){
+                ContentDocumentLink cdl = new ContentDocumentLink(); // Content Document Link to share the file with Case record
+                cdl.LinkedEntityId = Cases.get(str); // case ID
+                cdl.ContentDocumentId = str; //Content Dcoument ID
+                cdl.ShareType = 'V';
+                cdl.Visibility = 'InternalUsers';
+                cdl_List.add(cdl);
+                
+        
+        }
+        system.debug('Size : '+ cdl_List);
+        if(cdl_List.size()>0)
+            insert cdl_List;
+        
+    }
+    
+}
+}
