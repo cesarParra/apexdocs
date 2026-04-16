@@ -96,7 +96,7 @@
     ]
   },
   "dependencies": {
-    "@cparra/apex-reflection": "2.24.3",
+    "@cparra/apex-reflection": "2.24.4",
     "@salesforce/source-deploy-retrieve": "^12.20.1",
     "@types/js-yaml": "^4.0.9",
     "@types/yargs": "^17.0.32",
