@@ -76,8 +76,12 @@ function reflectBundle(
 
       const options = {
         ignoreAttributes: false,
-        isArray: (_name: string, jpath: string) => {
-          return alwaysArray.indexOf(jpath) !== -1;
+        isArray: (
+          _name: string,
+          jPathOrMatcher: string | { toString: (separator?: string, includeNamespace?: boolean) => string },
+        ) => {
+          const path = typeof jPathOrMatcher === 'string' ? jPathOrMatcher : jPathOrMatcher.toString();
+          return alwaysArray.indexOf(path) !== -1;
         },
       };
       const result = new XMLParser(options).parse(lwcBundle.metadataContent);
