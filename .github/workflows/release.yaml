@@ -2,7 +2,7 @@ name: Release
 
 on:
   pull_request:
-    branches: ['main']
+    branches: ['master']
     types: ['closed']
     paths:
       - 'src/**'
