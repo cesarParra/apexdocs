@@ -13,7 +13,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: release-main
+  group: release-master
   cancel-in-progress: false
 
 jobs:
@@ -23,10 +23,10 @@ jobs:
     environment: release
 
     steps:
-      - name: Check out main
+      - name: Check out master
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: master
 
       - name: Setup node
         uses: actions/setup-node@v4
@@ -59,7 +59,7 @@ jobs:
           echo "new_version=${NEW_VERSION#v}" >> "$GITHUB_OUTPUT"
 
       - name: Push version commit and tag
-        run: git push origin HEAD:main --follow-tags
+        run: git push origin HEAD:master --follow-tags
 
       - name: Publish to npm
         run: npm publish --access public
