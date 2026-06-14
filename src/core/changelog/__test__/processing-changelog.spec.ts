@@ -4,8 +4,8 @@ import CustomFieldMetadataBuilder from './helpers/custom-field-metadata-builder'
 import CustomObjectMetadataBuilder from './helpers/custom-object-metadata-builder';
 import CustomMetadataMetadataBuilder from './helpers/custom-metadata-metadata-builder';
 
-function apexTypeFromRawString(raw: string): Type {
-  const result = reflect(raw);
+async function apexTypeFromRawString(raw: string): Promise<Type> {
+  const result = await reflect(raw);
   if (result.error) {
     throw new Error(result.error.message);
   }
@@ -33,9 +33,9 @@ describe('when generating a changelog', () => {
   });
 
   describe('with apex code', () => {
-    it('has no new types when both the old and new versions are the same', () => {
+    it('has no new types when both the old and new versions are the same', async () => {
       const anyClassBody = 'public class AnyClass {}';
-      const anyClass = apexTypeFromRawString(anyClassBody);
+      const anyClass = await apexTypeFromRawString(anyClassBody);
       const oldVersion = { types: [anyClass] };
       const newVersion = { types: [anyClass] };
 
@@ -44,9 +44,9 @@ describe('when generating a changelog', () => {
       expect(changeLog.newApexTypes).toEqual([]);
     });
 
-    it('has no removed types when both the old and new versions are the same', () => {
+    it('has no removed types when both the old and new versions are the same', async () => {
       const anyClassBody = 'public class AnyClass {}';
-      const anyClass = apexTypeFromRawString(anyClassBody);
+      const anyClass = await apexTypeFromRawString(anyClassBody);
       const oldVersion = { types: [anyClass] };
       const newVersion = { types: [anyClass] };
 
@@ -55,12 +55,12 @@ describe('when generating a changelog', () => {
       expect(changeLog.removedApexTypes).toEqual([]);
     });
 
-    it('lists all new types', () => {
+    it('lists all new types', async () => {
       const existingInBoth = 'public class ExistingInBoth {}';
-      const existingClass = apexTypeFromRawString(existingInBoth);
+      const existingClass = await apexTypeFromRawString(existingInBoth);
       const oldVersion = { types: [existingClass] };
       const newClassBody = 'public class NewClass {}';
-      const newClass = apexTypeFromRawString(newClassBody);
+      const newClass = await apexTypeFromRawString(newClassBody);
       const newVersion = { types: [existingClass, newClass] };
 
       const changeLog = processChangelog(oldVersion, newVersion);
@@ -68,11 +68,11 @@ describe('when generating a changelog', () => {
       expect(changeLog.newApexTypes).toEqual([newClass.name]);
     });
 
-    it('lists all removed types', () => {
+    it('lists all removed types', async () => {
       const existingInBoth = 'public class ExistingInBoth {}';
-      const existingClass = apexTypeFromRawString(existingInBoth);
+      const existingClass = await apexTypeFromRawString(existingInBoth);
       const existingOnlyInOld = 'public class ExistingOnlyInOld {}';
-      const existingOnlyInOldClass = apexTypeFromRawString(existingOnlyInOld);
+      const existingOnlyInOldClass = await apexTypeFromRawString(existingOnlyInOld);
       const oldVersion = { types: [existingClass, existingOnlyInOldClass] };
       const newVersion = { types: [existingClass] };
 
@@ -168,11 +168,11 @@ describe('when generating a changelog', () => {
   });
 
   describe('with enum code', () => {
-    it('lists all new values of a modified enum', () => {
+    it('lists all new values of a modified enum', async () => {
       const enumBefore = 'public enum MyEnum { VALUE1 }';
-      const oldEnum = apexTypeFromRawString(enumBefore);
+      const oldEnum = await apexTypeFromRawString(enumBefore);
       const enumAfter = 'public enum MyEnum { VALUE1, VALUE2 }';
-      const newEnum = apexTypeFromRawString(enumAfter);
+      const newEnum = await apexTypeFromRawString(enumAfter);
 
       const oldVersion = { types: [oldEnum] };
       const newVersion = { types: [newEnum] };
@@ -192,11 +192,11 @@ describe('when generating a changelog', () => {
       ]);
     });
 
-    it('list all removed values of a modified enum', () => {
+    it('list all removed values of a modified enum', async () => {
       const enumBefore = 'public enum MyEnum { VALUE1, VALUE2 }';
-      const oldEnum = apexTypeFromRawString(enumBefore);
+      const oldEnum = await apexTypeFromRawString(enumBefore);
       const enumAfter = 'public enum MyEnum { VALUE1 }';
-      const newEnum = apexTypeFromRawString(enumAfter);
+      const newEnum = await apexTypeFromRawString(enumAfter);
 
       const oldVersion = { types: [oldEnum] };
       const newVersion = { types: [newEnum] };
@@ -218,11 +218,11 @@ describe('when generating a changelog', () => {
   });
 
   describe('with interface code', () => {
-    it('lists all new methods of an interface', () => {
+    it('lists all new methods of an interface', async () => {
       const interfaceBefore = 'public interface MyInterface {}';
-      const oldInterface = apexTypeFromRawString(interfaceBefore);
+      const oldInterface = await apexTypeFromRawString(interfaceBefore);
       const interfaceAfter = 'public interface MyInterface { void newMethod(); }';
-      const newInterface = apexTypeFromRawString(interfaceAfter);
+      const newInterface = await apexTypeFromRawString(interfaceAfter);
 
       const oldVersion = { types: [oldInterface] };
       const newVersion = { types: [newInterface] };
@@ -242,11 +242,11 @@ describe('when generating a changelog', () => {
       ]);
     });
 
-    it('lists all removed methods of an interface', () => {
+    it('lists all removed methods of an interface', async () => {
       const interfaceBefore = 'public interface MyInterface { void oldMethod(); }';
-      const oldInterface = apexTypeFromRawString(interfaceBefore);
+      const oldInterface = await apexTypeFromRawString(interfaceBefore);
       const interfaceAfter = 'public interface MyInterface {}';
-      const newInterface = apexTypeFromRawString(interfaceAfter);
+      const newInterface = await apexTypeFromRawString(interfaceAfter);
 
       const oldVersion = { types: [oldInterface] };
       const newVersion = { types: [newInterface] };
@@ -268,11 +268,11 @@ describe('when generating a changelog', () => {
   });
 
   describe('with class code', () => {
-    it('lists all new methods of a class', () => {
+    it('lists all new methods of a class', async () => {
       const classBefore = 'public class MyClass { }';
-      const oldClass = apexTypeFromRawString(classBefore);
+      const oldClass = await apexTypeFromRawString(classBefore);
       const classAfter = 'public class MyClass { void newMethod() {} }';
-      const newClass = apexTypeFromRawString(classAfter);
+      const newClass = await apexTypeFromRawString(classAfter);
 
       const oldVersion = { types: [oldClass] };
       const newVersion = { types: [newClass] };
@@ -292,11 +292,11 @@ describe('when generating a changelog', () => {
       ]);
     });
 
-    it('lists all new properties of a class', () => {
+    it('lists all new properties of a class', async () => {
       const classBefore = 'public class MyClass { }';
-      const oldClass = apexTypeFromRawString(classBefore);
+      const oldClass = await apexTypeFromRawString(classBefore);
       const classAfter = 'public class MyClass { String newProperty { get; set; } }';
-      const newClass = apexTypeFromRawString(classAfter);
+      const newClass = await apexTypeFromRawString(classAfter);
 
       const oldVersion = { types: [oldClass] };
       const newVersion = { types: [newClass] };
@@ -316,11 +316,11 @@ describe('when generating a changelog', () => {
       ]);
     });
 
-    it('lists all removed properties of a class', () => {
+    it('lists all removed properties of a class', async () => {
       const classBefore = 'public class MyClass { String oldProperty { get; set; } }';
-      const oldClass = apexTypeFromRawString(classBefore);
+      const oldClass = await apexTypeFromRawString(classBefore);
       const classAfter = 'public class MyClass { }';
-      const newClass = apexTypeFromRawString(classAfter);
+      const newClass = await apexTypeFromRawString(classAfter);
 
       const oldVersion = { types: [oldClass] };
       const newVersion = { types: [newClass] };
@@ -340,11 +340,11 @@ describe('when generating a changelog', () => {
       ]);
     });
 
-    it('lists all new fields of a class', () => {
+    it('lists all new fields of a class', async () => {
       const classBefore = 'public class MyClass { }';
-      const oldClass = apexTypeFromRawString(classBefore);
+      const oldClass = await apexTypeFromRawString(classBefore);
       const classAfter = 'public class MyClass { String newField; }';
-      const newClass = apexTypeFromRawString(classAfter);
+      const newClass = await apexTypeFromRawString(classAfter);
 
       const oldVersion = { types: [oldClass] };
       const newVersion = { types: [newClass] };
@@ -364,11 +364,11 @@ describe('when generating a changelog', () => {
       ]);
     });
 
-    it('lists all removed fields of a class', () => {
+    it('lists all removed fields of a class', async () => {
       const classBefore = 'public class MyClass { String oldField; }';
-      const oldClass = apexTypeFromRawString(classBefore);
+      const oldClass = await apexTypeFromRawString(classBefore);
       const classAfter = 'public class MyClass { }';
-      const newClass = apexTypeFromRawString(classAfter);
+      const newClass = await apexTypeFromRawString(classAfter);
 
       const oldVersion = { types: [oldClass] };
       const newVersion = { types: [newClass] };
@@ -388,11 +388,11 @@ describe('when generating a changelog', () => {
       ]);
     });
 
-    it('lists new inner classes of a class', () => {
+    it('lists new inner classes of a class', async () => {
       const classBefore = 'public class MyClass { }';
-      const oldClass = apexTypeFromRawString(classBefore);
+      const oldClass = await apexTypeFromRawString(classBefore);
       const classAfter = 'public class MyClass { class NewInnerClass { } }';
-      const newClass = apexTypeFromRawString(classAfter);
+      const newClass = await apexTypeFromRawString(classAfter);
 
       const oldVersion = { types: [oldClass] };
       const newVersion = { types: [newClass] };
@@ -412,11 +412,11 @@ describe('when generating a changelog', () => {
       ]);
     });
 
-    it('lists removed inner classes of a class', () => {
+    it('lists removed inner classes of a class', async () => {
       const classBefore = 'public class MyClass { class OldInnerClass { } }';
-      const oldClass = apexTypeFromRawString(classBefore);
+      const oldClass = await apexTypeFromRawString(classBefore);
       const classAfter = 'public class MyClass { }';
-      const newClass = apexTypeFromRawString(classAfter);
+      const newClass = await apexTypeFromRawString(classAfter);
 
       const oldVersion = { types: [oldClass] };
       const newVersion = { types: [newClass] };
@@ -436,11 +436,11 @@ describe('when generating a changelog', () => {
       ]);
     });
 
-    it('lists new inner interfaces of a class', () => {
+    it('lists new inner interfaces of a class', async () => {
       const classBefore = 'public class MyClass { }';
-      const oldClass = apexTypeFromRawString(classBefore);
+      const oldClass = await apexTypeFromRawString(classBefore);
       const classAfter = 'public class MyClass { interface NewInterface { } }';
-      const newClass = apexTypeFromRawString(classAfter);
+      const newClass = await apexTypeFromRawString(classAfter);
 
       const oldVersion = { types: [oldClass] };
       const newVersion = { types: [newClass] };
@@ -460,11 +460,11 @@ describe('when generating a changelog', () => {
       ]);
     });
 
-    it('lists removed inner interfaces of a class', () => {
+    it('lists removed inner interfaces of a class', async () => {
       const classBefore = 'public class MyClass { interface OldInterface { } }';
-      const oldClass = apexTypeFromRawString(classBefore);
+      const oldClass = await apexTypeFromRawString(classBefore);
       const classAfter = 'public class MyClass { }';
-      const newClass = apexTypeFromRawString(classAfter);
+      const newClass = await apexTypeFromRawString(classAfter);
 
       const oldVersion = { types: [oldClass] };
       const newVersion = { types: [newClass] };
@@ -484,11 +484,11 @@ describe('when generating a changelog', () => {
       ]);
     });
 
-    it('lists new inner enums of a class', () => {
+    it('lists new inner enums of a class', async () => {
       const classBefore = 'public class MyClass { }';
-      const oldClass = apexTypeFromRawString(classBefore);
+      const oldClass = await apexTypeFromRawString(classBefore);
       const classAfter = 'public class MyClass { enum NewEnum { } }';
-      const newClass = apexTypeFromRawString(classAfter);
+      const newClass = await apexTypeFromRawString(classAfter);
 
       const oldVersion = { types: [oldClass] };
       const newVersion = { types: [newClass] };
@@ -508,11 +508,11 @@ describe('when generating a changelog', () => {
       ]);
     });
 
-    it('lists removed inner enums of a class', () => {
+    it('lists removed inner enums of a class', async () => {
       const classBefore = 'public class MyClass { interface OldEnum { } }';
-      const oldClass = apexTypeFromRawString(classBefore);
+      const oldClass = await apexTypeFromRawString(classBefore);
       const classAfter = 'public class MyClass { }';
-      const newClass = apexTypeFromRawString(classAfter);
+      const newClass = await apexTypeFromRawString(classAfter);
 
       const oldVersion = { types: [oldClass] };
       const newVersion = { types: [newClass] };

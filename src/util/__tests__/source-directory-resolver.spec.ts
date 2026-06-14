@@ -1,3 +1,4 @@
+import type { MockedFunction } from 'vitest';
 import * as E from 'fp-ts/Either';
 import {
   resolveSourceDirectories,
@@ -8,18 +9,18 @@ import {
 import { getSfdxSourceDirectories } from '../sfdx-project-reader';
 
 // Mock the sfdx-project-reader module
-jest.mock('../sfdx-project-reader');
-const mockGetSfdxSourceDirectories = getSfdxSourceDirectories as jest.MockedFunction<typeof getSfdxSourceDirectories>;
+vi.mock('../sfdx-project-reader');
+const mockGetSfdxSourceDirectories = getSfdxSourceDirectories as MockedFunction<typeof getSfdxSourceDirectories>;
 
 describe('source-directory-resolver', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     // Mock process.cwd()
-    jest.spyOn(process, 'cwd').mockReturnValue('/current/working/directory');
+    vi.spyOn(process, 'cwd').mockReturnValue('/current/working/directory');
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe('resolveSourceDirectories', () => {

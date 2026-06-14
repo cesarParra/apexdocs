@@ -37,16 +37,12 @@ export const noopReflectionDebugLogger: ReflectionDebugLogger = {
 const noopDebugLogger: ReflectionDebugLogger = noopReflectionDebugLogger;
 
 async function reflectAsync(rawSource: string): Promise<Type> {
-  return new Promise((resolve, reject) => {
-    const result = mirrorReflection(rawSource);
-    if (result.typeMirror) {
-      return resolve(result.typeMirror);
-    } else if (result.error) {
-      return reject(result.error);
-    } else {
-      return reject(new Error('Unknown error'));
-    }
-  });
+  const result = await mirrorReflection(rawSource);
+  if (result.typeMirror) {
+    return result.typeMirror;
+  }
+
+  throw new Error(result.error?.message ?? 'Unknown error');
 }
 
 function supportsWorkerThreads(): boolean {

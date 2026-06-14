@@ -23,7 +23,7 @@ describe('when parsing SObject metadata', () => {
       if (isInSource(data[0].source)) {
         expect(data[0].source.filePath).toBe('src/object/MyFirstObject__c.object-meta.xml');
       } else {
-        fail('Expected the source to be in the source');
+        throw new Error('Expected the source to be in the source');
       }
     });
   });

@@ -1,15 +1,16 @@
+import type { Mocked } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as E from 'fp-ts/Either';
 import { readSfdxProjectConfig, getSfdxSourceDirectories, getSfdxDefaultSourceDirectory } from '../sfdx-project-reader';
 
 // Mock fs module
-jest.mock('fs');
-const mockFs = fs as jest.Mocked<typeof fs>;
+vi.mock('fs');
+const mockFs = fs as Mocked<typeof fs>;
 
 describe('sfdx-project-reader', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('readSfdxProjectConfig', () => {

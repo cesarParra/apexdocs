@@ -81,7 +81,7 @@ function reflectAsTask(triggerContent: UnparsedTriggerBundle): TE.TaskEither<Ref
 }
 
 async function reflect(triggerContent: string): Promise<TriggerMirror> {
-  const reflectionResult = mirrorReflection(triggerContent);
+  const reflectionResult = await mirrorReflection(triggerContent);
   if (reflectionResult.error) {
     throw reflectionResult.error;
   }

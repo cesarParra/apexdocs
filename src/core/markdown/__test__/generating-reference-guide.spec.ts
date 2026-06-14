@@ -176,7 +176,9 @@ describe('When generating the Reference Guide', () => {
         zGroupIndex: (data.referenceGuide as ReferenceGuidePageData).content.indexOf('## ZGroup'),
       })),
       E.match(
-        () => fail('Expected data'),
+        () => {
+          throw new Error('Expected data');
+        },
         (data) => expect(data.aGroupIndex).toBeLessThan(data.zGroupIndex),
       ),
     );

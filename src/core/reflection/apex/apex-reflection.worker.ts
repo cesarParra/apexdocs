@@ -57,8 +57,8 @@ function post(responseMessage: SuccessResponse | ErrorResponse): void {
   parentPort.postMessage(responseMessage);
 }
 
-function reflectOrThrow(rawSource: string): Type {
-  const result = mirrorReflection(rawSource);
+async function reflectOrThrow(rawSource: string): Promise<Type> {
+  const result = await mirrorReflection(rawSource);
 
   if (result.typeMirror) {
     return result.typeMirror;
@@ -75,7 +75,7 @@ if (!parentPort) {
   throw new Error('apex-reflection.worker started without a parentPort');
 }
 
-parentPort.on('message', (message: unknown) => {
+parentPort.on('message', async (message: unknown) => {
   if (!isRequestMessage(message)) {
     // Can't correlate without a valid id; ignore.
     return;
@@ -84,7 +84,7 @@ parentPort.on('message', (message: unknown) => {
   const { id, payload } = message;
 
   try {
-    const typeMirror = reflectOrThrow(payload.content);
+    const typeMirror = await reflectOrThrow(payload.content);
     post({ id, ok: true, result: typeMirror });
   } catch (caughtError) {
     const candidateMessage = (caughtError as ParsingError | Error | { message?: unknown })?.message;

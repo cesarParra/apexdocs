@@ -4,7 +4,7 @@ import { parsedFileFromRawString } from './helpers';
 import { filterScope } from '../filter-scope';
 
 describe('When filtering scope', () => {
-  it('filters out files with the @ignore annotation', () => {
+  it('filters out files with the @ignore annotation', async () => {
     const properties: [string, number][] = [
       [
         `
@@ -19,7 +19,7 @@ describe('When filtering scope', () => {
     ];
 
     for (const [input, expected] of properties) {
-      const parsedFile = parsedFileFromRawString(input);
+      const parsedFile = await parsedFileFromRawString(input);
 
       const result = filterScope(['global'], [parsedFile]);
 
@@ -28,7 +28,7 @@ describe('When filtering scope', () => {
   });
 
   describe('when scoping a class', () => {
-    it('filters out methods tagged with @ignore', () => {
+    it('filters out methods tagged with @ignore', async () => {
       const properties: [string, number][] = [
         [
           `
@@ -52,7 +52,7 @@ describe('When filtering scope', () => {
       ];
 
       for (const [input, expected] of properties) {
-        const parsedFile = parsedFileFromRawString(input);
+        const parsedFile = await parsedFileFromRawString(input);
 
         const result = filterScope(['global'], [parsedFile]);
 
@@ -60,7 +60,7 @@ describe('When filtering scope', () => {
       }
     });
 
-    it('filters out properties tagged with @ignore', () => {
+    it('filters out properties tagged with @ignore', async () => {
       const properties: [string, number][] = [
         [
           `
@@ -84,7 +84,7 @@ describe('When filtering scope', () => {
       ];
 
       for (const [input, expected] of properties) {
-        const parsedFile = parsedFileFromRawString(input);
+        const parsedFile = await parsedFileFromRawString(input);
 
         const result = filterScope(['global'], [parsedFile]);
 
@@ -92,7 +92,7 @@ describe('When filtering scope', () => {
       }
     });
 
-    it('filters out fields tagged with @ignore', () => {
+    it('filters out fields tagged with @ignore', async () => {
       const properties: [string, number][] = [
         [
           `
@@ -116,7 +116,7 @@ describe('When filtering scope', () => {
       ];
 
       for (const [input, expected] of properties) {
-        const parsedFile = parsedFileFromRawString(input);
+        const parsedFile = await parsedFileFromRawString(input);
 
         const result = filterScope(['global'], [parsedFile]);
 
@@ -124,7 +124,7 @@ describe('When filtering scope', () => {
       }
     });
 
-    it('filters out inner classes tagged with @ignore', () => {
+    it('filters out inner classes tagged with @ignore', async () => {
       const properties: [string, number][] = [
         [
           `
@@ -148,7 +148,7 @@ describe('When filtering scope', () => {
       ];
 
       for (const [input, expected] of properties) {
-        const parsedFile = parsedFileFromRawString(input);
+        const parsedFile = await parsedFileFromRawString(input);
 
         const result = filterScope(['global'], [parsedFile]);
 
@@ -156,7 +156,7 @@ describe('When filtering scope', () => {
       }
     });
 
-    it('filters out inner interfaces tagged with @ignore', () => {
+    it('filters out inner interfaces tagged with @ignore', async () => {
       const properties: [string, number][] = [
         [
           `
@@ -180,7 +180,7 @@ describe('When filtering scope', () => {
       ];
 
       for (const [input, expected] of properties) {
-        const parsedFile = parsedFileFromRawString(input);
+        const parsedFile = await parsedFileFromRawString(input);
 
         const result = filterScope(['global'], [parsedFile]);
 
@@ -188,7 +188,7 @@ describe('When filtering scope', () => {
       }
     });
 
-    it('filters out inner enums tagged with @ignore', () => {
+    it('filters out inner enums tagged with @ignore', async () => {
       const properties: [string, number][] = [
         [
           `
@@ -212,7 +212,7 @@ describe('When filtering scope', () => {
       ];
 
       for (const [input, expected] of properties) {
-        const parsedFile = parsedFileFromRawString(input);
+        const parsedFile = await parsedFileFromRawString(input);
 
         const result = filterScope(['global'], [parsedFile]);
 
@@ -222,7 +222,7 @@ describe('When filtering scope', () => {
   });
 
   describe('when scoping an interface', () => {
-    it('filters out methods tagged with @ignore', () => {
+    it('filters out methods tagged with @ignore', async () => {
       const properties: [string, number][] = [
         [
           `
@@ -246,7 +246,7 @@ describe('When filtering scope', () => {
       ];
 
       for (const [input, expected] of properties) {
-        const parsedFile = parsedFileFromRawString(input);
+        const parsedFile = await parsedFileFromRawString(input);
 
         const result = filterScope(['global'], [parsedFile]);
 
@@ -256,7 +256,7 @@ describe('When filtering scope', () => {
   });
 
   describe('when scoping an enum', () => {
-    it('never filters out enum values, even if tagged with @ignore', () => {
+    it('never filters out enum values, even if tagged with @ignore', async () => {
       const properties: [string, number][] = [
         [
           `
@@ -280,7 +280,7 @@ describe('When filtering scope', () => {
       ];
 
       for (const [input, expected] of properties) {
-        const parsedFile = parsedFileFromRawString(input);
+        const parsedFile = await parsedFileFromRawString(input);
 
         const result = filterScope(['global'], [parsedFile]);
 
