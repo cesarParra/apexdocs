@@ -2,9 +2,9 @@ import { ResponsesBuilder } from '../ResponsesBuilder';
 import { Reference } from '../ReferenceBuilder';
 import { ApexDocHttpResponse } from '../../../../core/openapi/apex-doc-types';
 
-jest.mock('../ReferenceBuilder', () => {
+vi.mock('../ReferenceBuilder', () => {
   return {
-    ReferenceBuilder: jest.fn().mockImplementation(() => {
+    ReferenceBuilder: vi.fn().mockImplementation(function () {
       return {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         build: (): Reference => {

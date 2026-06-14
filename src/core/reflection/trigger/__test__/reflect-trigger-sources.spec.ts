@@ -19,7 +19,7 @@ describe('when parsing Triggers', () => {
       if (isInSource(data[0].source)) {
         expect(data[0].source.filePath).toBe('src/triggers/MyFirstTrigger.trigger');
       } else {
-        fail('Expected the source to be in the source');
+        throw new Error('Expected the source to be in the source');
       }
     });
   });

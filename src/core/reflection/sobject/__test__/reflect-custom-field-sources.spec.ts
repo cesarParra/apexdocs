@@ -35,7 +35,7 @@ describe('when parsing custom field metadata', () => {
       if (isInSource(data[0].source)) {
         expect(data[0].source.filePath).toBe('src/field/PhotoUrl__c.field-meta.xml');
       } else {
-        fail('Expected the source to be in the source');
+        throw new Error('Expected the source to be in the source');
       }
     });
   });

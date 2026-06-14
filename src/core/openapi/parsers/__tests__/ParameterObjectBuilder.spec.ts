@@ -3,9 +3,9 @@ import { Reference } from '../ReferenceBuilder';
 import { ReferenceObject } from '../../../../core/openapi/open-api-types';
 import { ApexDocParameterObject } from '../../../../core/openapi/apex-doc-types';
 
-jest.mock('../ReferenceBuilder', () => {
+vi.mock('../ReferenceBuilder', () => {
   return {
-    ReferenceBuilder: jest.fn().mockImplementation(() => {
+    ReferenceBuilder: vi.fn().mockImplementation(function () {
       return {
         build: (): Reference => {
           return {

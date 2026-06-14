@@ -16,11 +16,11 @@ describe('when extracting arguments', () => {
     // Remove all cached modules. The cache needs to be cleared before running
     // each command, otherwise you will see the same results from the command
     // run in your first test in subsequent tests.
-    jest.resetModules();
+    vi.resetModules();
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
   });
 
   describe('and no configuration is provided', () => {
@@ -85,8 +85,8 @@ describe('when extracting arguments', () => {
     });
 
     it('prints an error to the console when no command is provided', async () => {
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      const mockExit = jest.spyOn(process, 'exit').mockImplementation(exitFake);
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const mockExit = vi.spyOn(process, 'exit').mockImplementation(exitFake);
       function getFromProcess() {
         return [];
       }
@@ -105,8 +105,8 @@ describe('when extracting arguments', () => {
     });
 
     it('prints an error to the console when a required argument is not provided', async () => {
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      const mockExit = jest.spyOn(process, 'exit').mockImplementation(exitFake);
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const mockExit = vi.spyOn(process, 'exit').mockImplementation(exitFake);
       function getFromProcess() {
         return ['markdown'];
       }

@@ -3,7 +3,7 @@
   "version": "3.21.8",
   "description": "Library with CLI capabilities to generate documentation for Salesforce Apex classes.",
   "engines": {
-    "node": ">=18"
+    "node": ">=22.12.0"
   },
   "keywords": [
     "apex",
@@ -23,7 +23,7 @@
   },
   "scripts": {
     "test": "wireit",
-    "test:cov": "npm run build && jest --coverage",
+    "test:cov": "npm run build && vitest run --coverage",
     "build": "wireit",
     "lint": "wireit",
     "prepare": "npm run build",
@@ -39,7 +39,7 @@
       "output": []
     },
     "build": {
-      "command": "tsc --noEmit --pretty && pkgroll --target node18 && tsc --project ./tsconfig.worker.json",
+      "command": "tsc --noEmit --pretty && pkgroll --target node22 && tsc --project ./tsconfig.worker.json",
       "dependencies": [
         "lint"
       ],
@@ -53,12 +53,13 @@
       ]
     },
     "test": {
-      "command": "jest",
+      "command": "vitest run",
       "dependencies": [
         "build"
       ],
       "files": [
-        "src/**/*.ts"
+        "src/**/*.ts",
+        "vitest.config.ts"
       ],
       "output": []
     }
@@ -71,18 +72,17 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.34.0",
-    "@types/jest": "^29.5.12",
     "@types/node": "^24.3.0",
+    "@vitest/coverage-v8": "^4.1.8",
     "eslint": "^9.34.0",
     "eslint-config-prettier": "^9.1.0",
     "husky": "^9.0.11",
-    "jest": "^30.0.5",
     "lint-staged": "^15.2.7",
     "pkgroll": "^2.4.2",
     "prettier": "^3.3.2",
-    "ts-jest": "^29.2.0",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.41.0",
+    "vitest": "^4.1.8",
     "wireit": "^0.14.12"
   },
   "husky": {
@@ -96,7 +96,7 @@
     ]
   },
   "dependencies": {
-    "@cparra/apex-reflection": "2.24.4",
+    "@cparra/apex-reflection": "3.0.0-dev.20260614084225",
     "@salesforce/source-deploy-retrieve": "^12.20.1",
     "@types/js-yaml": "^4.0.9",
     "@types/yargs": "^17.0.32",

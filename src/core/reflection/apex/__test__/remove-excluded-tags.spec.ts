@@ -4,7 +4,7 @@ import { removeExcludedTags } from '../remove-excluded-tags';
 
 describe('when removing excluded tags', () => {
   describe('from any type', () => {
-    it('removes annotations', () => {
+    it('removes annotations', async () => {
       const tagsToExclude = ['group'];
       const content = `
         /**
@@ -13,7 +13,7 @@ describe('when removing excluded tags', () => {
          */
         global class MyClass {}
         `;
-      const parsedFile = parsedFileFromRawString(content);
+      const parsedFile = await parsedFileFromRawString(content);
 
       const result = removeExcludedTags(tagsToExclude, [parsedFile]);
 
@@ -21,7 +21,7 @@ describe('when removing excluded tags', () => {
       expect(result[0].type.docComment?.annotations[0].name).toBe('custom');
     });
 
-    it('removes example annotations', () => {
+    it('removes example annotations', async () => {
       const tagsToExclude = ['example'];
       const content = `
         /**
@@ -31,14 +31,14 @@ describe('when removing excluded tags', () => {
          */
         global class MyClass {}
         `;
-      const parsedFile = parsedFileFromRawString(content);
+      const parsedFile = await parsedFileFromRawString(content);
 
       const result = removeExcludedTags(tagsToExclude, [parsedFile]);
 
       expect(result[0].type.docComment?.exampleAnnotation).toBeNull();
     });
 
-    it('removes params annotations', () => {
+    it('removes params annotations', async () => {
       const tagsToExclude = ['param'];
       const content = `
         /**
@@ -47,14 +47,14 @@ describe('when removing excluded tags', () => {
          */
         global class MyClass {}
         `;
-      const parsedFile = parsedFileFromRawString(content);
+      const parsedFile = await parsedFileFromRawString(content);
 
       const result = removeExcludedTags(tagsToExclude, [parsedFile]);
 
       expect(result[0].type.docComment?.paramAnnotations).toHaveLength(0);
     });
 
-    it('removes the return annotation', () => {
+    it('removes the return annotation', async () => {
       const tagsToExclude = ['return'];
       const content = `
         /**
@@ -63,14 +63,14 @@ describe('when removing excluded tags', () => {
          */
         global class MyClass {}
         `;
-      const parsedFile = parsedFileFromRawString(content);
+      const parsedFile = await parsedFileFromRawString(content);
 
       const result = removeExcludedTags(tagsToExclude, [parsedFile]);
 
       expect(result[0].type.docComment?.returnAnnotation).toBeNull();
     });
 
-    it('removes the throws annotations', () => {
+    it('removes the throws annotations', async () => {
       const tagsToExclude = ['throws'];
       const content = `
         /**
@@ -79,14 +79,14 @@ describe('when removing excluded tags', () => {
          */
         global class MyClass {}
         `;
-      const parsedFile = parsedFileFromRawString(content);
+      const parsedFile = await parsedFileFromRawString(content);
 
       const result = removeExcludedTags(tagsToExclude, [parsedFile]);
 
       expect(result[0].type.docComment?.throwsAnnotations).toHaveLength(0);
     });
 
-    it('removes the exception annotations', () => {
+    it('removes the exception annotations', async () => {
       const tagsToExclude = ['exception'];
       const content = `
         /**
@@ -95,14 +95,14 @@ describe('when removing excluded tags', () => {
          */
         global class MyClass {}
         `;
-      const parsedFile = parsedFileFromRawString(content);
+      const parsedFile = await parsedFileFromRawString(content);
 
       const result = removeExcludedTags(tagsToExclude, [parsedFile]);
 
       expect(result[0].type.docComment?.throwsAnnotations).toHaveLength(0);
     });
 
-    it('removes descriptions', () => {
+    it('removes descriptions', async () => {
       const tagsToExclude = ['description'];
       const content = `
         /**
@@ -111,7 +111,7 @@ describe('when removing excluded tags', () => {
          */
         global class MyClass {}
         `;
-      const parsedFile = parsedFileFromRawString(content);
+      const parsedFile = await parsedFileFromRawString(content);
 
       const result = removeExcludedTags(tagsToExclude, [parsedFile]);
 
@@ -121,7 +121,7 @@ describe('when removing excluded tags', () => {
   });
 
   describe('from an interface', () => {
-    it('removes annotations from methods', () => {
+    it('removes annotations from methods', async () => {
       const tagsToExclude = ['throws'];
       const content = `
         global interface MyInterface {
@@ -131,7 +131,7 @@ describe('when removing excluded tags', () => {
           void myMethod();
         }
         `;
-      const parsedFile = parsedFileFromRawString(content);
+      const parsedFile = await parsedFileFromRawString(content);
 
       const result = removeExcludedTags(tagsToExclude, [parsedFile]);
 
@@ -140,7 +140,7 @@ describe('when removing excluded tags', () => {
   });
 
   describe('from a class', () => {
-    it('removes annotations from members', () => {
+    it('removes annotations from members', async () => {
       const tagsToExclude = ['throws'];
       const content = `
         global class MyClass {
@@ -179,7 +179,7 @@ describe('when removing excluded tags', () => {
           class MyInnerClass {}
         }
         `;
-      const parsedFile = parsedFileFromRawString(content);
+      const parsedFile = await parsedFileFromRawString(content);
 
       const result = removeExcludedTags(tagsToExclude, [parsedFile]);
 
