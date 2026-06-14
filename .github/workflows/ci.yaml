@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ "master", "develop" ]
+    branches: ['master', 'develop']
   pull_request:
-    branches: [ "main", "master", "develop" ]
+    branches: ['main', 'master', 'develop']
   workflow_dispatch:
 
 jobs:
@@ -15,8 +15,8 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: "20"
-          cache: "npm"
+          node-version: '22'
+          cache: 'npm'
 
       # Set up GitHub Actions caching for Wireit.
       - uses: google/wireit@setup-github-actions-caching/v2
