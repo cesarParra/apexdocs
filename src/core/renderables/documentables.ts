@@ -74,7 +74,7 @@ export function adaptDocumentable(
   subHeadingLevel: number,
 ): RenderableDocumentation {
   function extractCustomTags(type: Documentable): CustomTag[] {
-    const baseTags = ['description', 'group', 'author', 'date', 'see', 'example', 'throws', 'exception'];
+    const baseTags = ['description', 'group', 'author', 'date', 'see', 'example', 'throws', 'exception', 'deprecated'];
 
     return (
       type.docComment?.annotations
@@ -92,13 +92,27 @@ export function adaptDocumentable(
     )?.body;
   }
 
-  function extractSeeAnnotations(type: Documentable): string[] {
+  function extractAnnotationBodies(type: Documentable, annotationName: string): string[] {
     return (
       type.docComment?.annotations
-        .filter((currentAnnotation) => currentAnnotation.name.toLowerCase() === 'see')
+        .filter((currentAnnotation) => currentAnnotation.name.toLowerCase() === annotationName)
         .map((currentAnnotation) => currentAnnotation.body) ?? []
     );
   }
+
+  function extractDeprecated(type: Documentable): { description?: RenderableContent[] } | undefined {
+    const deprecatedAnnotation = type.docComment?.annotations.find(
+      (currentAnnotation) => currentAnnotation.name.toLowerCase() === 'deprecated',
+    );
+    if (!deprecatedAnnotation) {
+      return undefined;
+    }
+    return {
+      description: describableToRenderableContent(deprecatedAnnotation.bodyLines, linkGenerator),
+    };
+  }
+
+  const authors = extractAnnotationBodies(documentable, 'author');
 
   return {
     ...adaptDescribable(documentable.docComment?.descriptionLines, linkGenerator),
@@ -110,8 +124,10 @@ export function adaptDocumentable(
       value: describableToRenderableContent(documentable.docComment?.exampleAnnotation?.bodyLines, linkGenerator),
     },
     group: extractAnnotationBody(documentable, 'group'),
-    author: extractAnnotationBody(documentable, 'author'),
+    author: authors[0],
+    authors,
     date: extractAnnotationBody(documentable, 'date'),
-    sees: extractSeeAnnotations(documentable).map(linkGenerator),
+    sees: extractAnnotationBodies(documentable, 'see').map(linkGenerator),
+    deprecated: extractDeprecated(documentable),
   };
 }

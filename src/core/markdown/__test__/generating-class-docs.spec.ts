@@ -360,5 +360,96 @@ describe('When generating documentation for a class', () => {
         expect(data.docs.find((doc) => doc.source.name === 'AnotherClass')?.content).toContain('Inherited'),
       );
     });
+
+    it('displays member-level @see tags', async () => {
+      const input = `
+        public class MyClass {
+          /**
+           * @see ClassRef
+           */
+          public void myMethod() {}
+        }
+      `;
+
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('**See** ClassRef'));
+    });
+
+    it('displays member-level @author tags', async () => {
+      const input = `
+        public class MyClass {
+          /**
+           * @author John Doe
+           */
+          public void myMethod() {}
+        }
+      `;
+
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('**Author** John Doe'));
+    });
+
+    it('displays a deprecation notice on members with the @deprecated tag', async () => {
+      const input = `
+        public class MyClass {
+          /**
+           * @deprecated Use anotherMethod instead
+           */
+          public void myMethod() {}
+        }
+      `;
+
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('> **Deprecated**'));
+      assertEither(result, (data) => expect(data).firstDocContains('Use anotherMethod instead'));
+    });
+
+    it('groups members by their doc comment @group tag', async () => {
+      const input = `
+        public class MyClass {
+          /**
+           * @group Accounts
+           */
+          public void accountMethod() {}
+
+          /**
+           * @group Contacts
+           */
+          public void contactMethod() {}
+        }
+      `;
+
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => {
+        const accountsIndex = data.docs[0].content.indexOf('Accounts');
+        const accountMethodIndex = data.docs[0].content.indexOf('accountMethod()');
+        const contactsIndex = data.docs[0].content.indexOf('Contacts');
+        expect(accountsIndex).toBeGreaterThan(-1);
+        expect(accountsIndex).toBeLessThan(accountMethodIndex);
+        expect(accountMethodIndex).toBeLessThan(contactsIndex);
+      });
+    });
+
+    it('does not generate documentation for members whose doc comment contains {@hidden}', async () => {
+      const input = `
+        public class MyClass {
+          /**
+           * {@hidden}
+           */
+          public void secretMethod() {}
+
+          public void visibleMethod() {}
+        }
+      `;
+
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContainsNot('secretMethod'));
+      assertEither(result, (data) => expect(data).firstDocContains('visibleMethod'));
+    });
   });
 });

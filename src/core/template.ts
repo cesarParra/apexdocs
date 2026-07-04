@@ -1,5 +1,6 @@
 import Handlebars from 'handlebars';
 import { typeDocPartial } from './markdown/templates/type-doc-partial';
+import { docDetailsPartial } from './markdown/templates/doc-details-partial';
 import { documentablePartialTemplate } from './markdown/templates/documentable-partial-template';
 import { methodsPartialTemplate } from './markdown/templates/methods-partial-template';
 import { groupedMembersPartialTemplate } from './markdown/templates/grouped-members-partial-template';
@@ -33,6 +34,7 @@ export class Template {
 
   private constructor() {
     Handlebars.registerPartial('typeDocumentation', typeDocPartial);
+    Handlebars.registerPartial('docDetailsPartial', docDetailsPartial);
     Handlebars.registerPartial('documentablePartialTemplate', documentablePartialTemplate);
     Handlebars.registerPartial('methodsPartialTemplate', methodsPartialTemplate);
     Handlebars.registerPartial('constructorsPartialTemplate', constructorsPartialTemplate);

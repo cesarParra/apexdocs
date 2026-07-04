@@ -15,6 +15,7 @@ export const fieldsPartialTemplate = `
 {{ heading type.headingLevel type.heading }}
 {{link type.value}}
 
+{{> docDetailsPartial}}
 {{/documentablePartialTemplate}}
 
 {{#unless @last}}---{{/unless}}

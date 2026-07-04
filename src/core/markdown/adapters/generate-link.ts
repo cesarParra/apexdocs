@@ -9,6 +9,11 @@ export type LinkingStrategyFn = (
 ) => StringOrLink;
 
 export const generateLink = (strategy: LinkingStrategy): LinkingStrategyFn => {
+  const resolveTypeName = getStrategyFn(strategy);
+  return (references, from, referenceName) => resolveReference(resolveTypeName, references, from, referenceName);
+};
+
+const getStrategyFn = (strategy: LinkingStrategy): LinkingStrategyFn => {
   switch (strategy) {
     case 'relative':
       return generateRelativeLink;
@@ -18,6 +23,67 @@ export const generateLink = (strategy: LinkingStrategy): LinkingStrategyFn => {
       return returnReferenceAsIs;
   }
 };
+
+/**
+ * Resolves a reference from an `@see` tag or `{@link}` inline tag. Besides
+ * plain type names, the reference forms from the ApexDoc specification are
+ * supported:
+ * - `TypeName#member` or `TypeName#member(paramTypes)`: links to the member's
+ *   section within the type's page.
+ * - `"text"`: plain text, displayed without the quotes and never linked.
+ * - `<a href="URL">label</a>`: an arbitrary URL link.
+ */
+function resolveReference(
+  resolveTypeName: LinkingStrategyFn,
+  references: Record<string, { referencePath: string; displayName: string } | undefined>,
+  from: string,
+  referenceName: string,
+): StringOrLink {
+  const reference = referenceName.trim();
+
+  const quotedText = reference.match(/^"([\s\S]*)"$/);
+  if (quotedText) {
+    return quotedText[1];
+  }
+
+  const htmlAnchor = reference.match(/^<a\s+href="([^"]*)"[^>]*>([\s\S]*?)<\/a>$/i);
+  if (htmlAnchor) {
+    return {
+      __type: 'link',
+      title: htmlAnchor[2].trim(),
+      url: htmlAnchor[1],
+    };
+  }
+
+  const memberReference = reference.match(/^([\w.]*)#([\w.]+(?:\([^)]*\))?)$/);
+  if (memberReference) {
+    const [, typeName, member] = memberReference;
+    // Anchor for the member's heading within the page. Headings for members
+    // with parameters include the parameter names, so for those the anchor is
+    // a best-effort approximation that at least lands on the right page.
+    const anchor = member.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+    if (!typeName) {
+      // A same-page reference, e.g. `#myMethod()`
+      return {
+        __type: 'link',
+        title: member,
+        url: `#${anchor}`,
+      };
+    }
+    const resolvedType = resolveTypeName(references, from, typeName);
+    if (typeof resolvedType === 'string') {
+      // The type could not be linked; degrade to plain text.
+      return reference;
+    }
+    return {
+      __type: 'link',
+      title: `${resolvedType.title}.${member}`,
+      url: `${resolvedType.url}#${anchor}`,
+    };
+  }
+
+  return resolveTypeName(references, from, reference);
+}
 
 const generateRelativeLink = (
   references: Record<string, { referencePath: string; displayName: string } | undefined>,

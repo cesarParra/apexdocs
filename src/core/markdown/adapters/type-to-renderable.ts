@@ -1,4 +1,4 @@
-import { ClassMirror, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
+import { ClassMirror, DocComment, EnumMirror, InterfaceMirror, Type } from '@cparra/apex-reflection';
 import {
   RenderableType,
   RenderableClass,
@@ -219,7 +219,18 @@ function classTypeToClassSource(
   };
 }
 
-type Groupable = { group?: string; groupDescription?: string };
+type Groupable = { group?: string; groupDescription?: string; docComment?: DocComment };
+
+/**
+ * A member's group can come from `// @start-group`/`// @end-group` block
+ * markers or from a `@group` tag in the member's own doc comment.
+ */
+function getGroupName(member: Groupable): string | undefined {
+  return (
+    member.group ??
+    member.docComment?.annotations.find((annotation) => annotation.name.toLowerCase() === 'group')?.body
+  );
+}
 
 function adaptMembers<T extends Groupable, K>(
   heading: string,
@@ -245,7 +256,7 @@ function adaptMembers<T extends Groupable, K>(
 }
 
 function hasGroup(members: Groupable[]): boolean {
-  return members.some((member) => member.group);
+  return members.some((member) => getGroupName(member));
 }
 
 function toFlat<T extends Groupable, K>(
@@ -284,7 +295,7 @@ function toGroupedMembers<T extends Groupable, K>(
 function groupByGroupName<T extends Groupable>(members: T[]): Record<string, T[]> {
   return members.reduce(
     (acc, member) => {
-      const groupName = member.group ?? 'Other';
+      const groupName = getGroupName(member) ?? 'Other';
       acc[groupName] = acc[groupName] ?? [];
       acc[groupName].push(member);
       return acc;

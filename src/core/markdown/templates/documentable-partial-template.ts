@@ -3,6 +3,10 @@ export const documentablePartialTemplate = `
 \`{{this}}\`
 {{/each}}
 
+{{#if doc.deprecated}}
+> **{{@root.translations.markdown.details.deprecated}}** {{{renderContent doc.deprecated.description}}}
+{{/if}}
+
 {{{renderContent doc.description}}}
 
 {{#each doc.customTags}}
