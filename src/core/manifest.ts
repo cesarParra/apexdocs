@@ -78,9 +78,7 @@ export default class Manifest {
   static shouldFilterType(accessAndDocAware: AccessAndDocAware, modifiers: string[]) {
     // Both the @ignore tag and the {@hidden} inline tag exclude the element
     // from the generated documentation.
-    // The cast can be removed once the apex-reflection type definitions
-    // declare the `hidden` property.
-    const docComment = accessAndDocAware.docComment as (DocComment & { hidden?: boolean }) | undefined;
+    const docComment = accessAndDocAware.docComment;
     const isExcluded =
       docComment?.hidden === true ||
       docComment?.annotations.some((annotation: DocCommentAnnotation) => annotation.name.toLowerCase() === 'ignore');
