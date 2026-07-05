@@ -13,17 +13,19 @@ export const constructorsPartialTemplate = `
 | Name | Type | Description |
 |------|------|-------------|
 {{#each parameters.value}}
-| {{name}} | {{link type}} | {{description}} |
+| {{name}} | {{link type}} | {{{renderContent description}}} |
 {{/each}}
 {{/if}}
 
 {{#if throws.value}}
 {{ heading throws.headingLevel throws.heading }}
 {{#each throws.value}}
-{{link this.type}}: {{this.description}}
+{{link this.type}}: {{{renderContent this.description}}}
 
 {{/each}}
 {{/if}}
+
+{{> docDetailsPartial}}
 {{/documentablePartialTemplate}}
 
 {{#unless @last}}---{{/unless}}

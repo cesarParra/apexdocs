@@ -84,9 +84,12 @@ type RenderableDocumentation = {
   customTags?: CustomTag[];
   example?: RenderableSection<RenderableContent[] | undefined>;
   group?: string;
+  /** The first author. Kept for backwards compatibility with custom templates; prefer `authors`. */
   author?: string;
+  authors?: string[];
   date?: string;
   sees?: StringOrLink[];
+  deprecated?: { description?: RenderableContent[] };
 };
 
 type RenderableType = {

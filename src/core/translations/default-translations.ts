@@ -88,6 +88,7 @@ export type Translations = {
       author: string;
       date: string;
       see: string;
+      deprecated: string;
       possibleValues: string; // for picklist fields
       parameters: string;
       throws: string;
@@ -217,6 +218,7 @@ export const defaultTranslations: Translations = {
       author: 'Author',
       date: 'Date',
       see: 'See',
+      deprecated: 'Deprecated',
       possibleValues: 'Possible values are',
       parameters: 'Parameters',
       throws: 'Throws',

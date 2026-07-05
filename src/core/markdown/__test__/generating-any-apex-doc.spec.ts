@@ -265,5 +265,154 @@ describe('When generating documentation', () => {
       expect(result).documentationBundleHasLength(1);
       assertEither(result, (data) => expect(data).firstDocContainsNot('See'));
     });
+
+    it('displays {@code} tags in descriptions as inline code', async () => {
+      const input = `
+          /**
+            * @description Returns {@code null} when the record is missing
+            */
+          public class MyClass {}`;
+
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('`null`'));
+      assertEither(result, (data) => expect(data).firstDocContainsNot('{@code'));
+    });
+
+    it('displays {@literal} tags in descriptions as their plain text content', async () => {
+      const input = `
+          /**
+            * @description Use a value {@literal <not a tag>} here
+            */
+          public class MyClass {}`;
+
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContainsNot('{@literal'));
+      assertEither(result, (data) => expect(data).firstDocContains('not a tag'));
+    });
+
+    it('displays quoted @sees as plain text without the quotes', async () => {
+      const input = `
+        /**
+          * @see "The Salesforce Security Guide"
+          */
+        public class MyClass {}
+        `;
+
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
+
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('The Salesforce Security Guide'));
+      assertEither(result, (data) => expect(data).firstDocContainsNot('"The Salesforce Security Guide"'));
+    });
+
+    it('displays @sees with an HTML anchor as a link to the URL', async () => {
+      const input = `
+        /**
+          * @see <a href="https://example.com">Example Site</a>
+          */
+        public class MyClass {}
+        `;
+
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
+
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('[Example Site](https://example.com)'));
+    });
+
+    it('displays @sees that reference a member as a link to the member section', async () => {
+      const input1 = `
+          /**
+            * @see ClassRef#myMethod()
+            */
+          public class MyClass {}
+          `;
+
+      const input2 = `
+        public class ClassRef {
+          public void myMethod() {}
+        }`;
+
+      const result = await generateDocs([
+        unparsedApexBundleFromRawString(input1),
+        unparsedApexBundleFromRawString(input2),
+      ])();
+      expect(result).documentationBundleHasLength(2);
+      assertEither(result, (data) => expect(data).firstDocContains('[ClassRef.myMethod()](ClassRef.md#mymethod)'));
+    });
+
+    it('displays {@link} references to members as links to the member section', async () => {
+      const input1 = `
+          /**
+            * @description Delegates to {@link ClassRef#myMethod()} internally
+            */
+          public class MyClass {}
+          `;
+
+      const input2 = `
+        public class ClassRef {
+          public void myMethod() {}
+        }`;
+
+      const result = await generateDocs([
+        unparsedApexBundleFromRawString(input1),
+        unparsedApexBundleFromRawString(input2),
+      ])();
+      expect(result).documentationBundleHasLength(2);
+      assertEither(result, (data) => expect(data).firstDocContains('[ClassRef.myMethod()](ClassRef.md#mymethod)'));
+    });
+
+    it('displays a deprecation notice when the @deprecated tag is used', async () => {
+      const input = `
+          /**
+            * @deprecated Use NewClass instead
+            */
+          public class MyClass {}`;
+
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('> **Deprecated**'));
+      assertEither(result, (data) => expect(data).firstDocContains('Use NewClass instead'));
+    });
+
+    it('displays a deprecation notice when the @deprecated tag has no body', async () => {
+      const input = `
+          /**
+            * @deprecated
+            */
+          public class MyClass {}`;
+
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('> **Deprecated**'));
+    });
+
+    it('displays all authors when multiple @author tags are used', async () => {
+      const input = `
+          /**
+           * @author John Doe
+           * @author Jane Doe
+           */
+          public class MyClass {}`;
+
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
+      expect(result).documentationBundleHasLength(1);
+      assertEither(result, (data) => expect(data).firstDocContains('**Author** John Doe'));
+      assertEither(result, (data) => expect(data).firstDocContains('**Author** Jane Doe'));
+    });
+
+    it('does not generate documentation for types whose doc comment contains {@hidden}', async () => {
+      const input = `
+        /**
+          * {@hidden}
+          */
+        public class MyClass {}
+        `;
+
+      const result = await generateDocs([unparsedApexBundleFromRawString(input)])();
+
+      expect(result).documentationBundleHasLength(0);
+    });
   });
 });

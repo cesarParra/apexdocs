@@ -133,6 +133,12 @@ This description has several lines
 
 ## SampleGroup
 
+### [SampleAccountService](samplegroup/SampleAccountService.md)
+
+Manages sample accounts. Returns `null` when an account is missing, 
+and treats &lt;NULL&gt; markers literally. Delegates most work to 
+ [SampleClass.sayHello()](samplegroup/SampleClass.md#sayhello) .
+
 ### [SampleClass](samplegroup/SampleClass.md)
 
 aliquip ex sunt officia ullamco anim deserunt magna aliquip nisi eiusmod in sit officia veniam ex 

@@ -22,7 +22,35 @@ export function replaceInlineReferences(
   const inlineLinks = apply(replaceInlineLinks, linkReplacer);
   const inlineEmails = apply(replaceInlineEmails, emailReplacer);
 
-  return pipe(inlineCode([text]), inlineLinks, inlineEmails);
+  return pipe(inlineCodeTags([text]), inlineLiteralTags, inlineCode, inlineLinks, inlineEmails);
+}
+
+// Replace '{@code text}' with inline code
+function inlineCodeTags(renderableContents: RenderableContent[]): RenderableContent[] {
+  return renderableContents.flatMap((renderableContent) => {
+    if (typeof renderableContent !== 'string') {
+      return [renderableContent];
+    }
+
+    const matches = match('{@code (.*?)}', renderableContent);
+    return createRenderableContents(matches, renderableContent, (content) => ({
+      __type: 'inline-code',
+      content: content.trim(),
+    }));
+  });
+}
+
+// Replace '{@literal text}' with its plain text content, which gets escaped
+// during rendering instead of being interpreted as HTML.
+function inlineLiteralTags(renderableContents: RenderableContent[]): RenderableContent[] {
+  return renderableContents.flatMap((renderableContent) => {
+    if (typeof renderableContent !== 'string') {
+      return [renderableContent];
+    }
+
+    const matches = match('{@literal (.*?)}', renderableContent);
+    return createRenderableContents(matches, renderableContent, (content) => content.trim());
+  });
 }
 
 function inlineCode(renderableContents: RenderableContent[]): RenderableContent[] {

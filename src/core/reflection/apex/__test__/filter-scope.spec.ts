@@ -255,6 +255,63 @@ describe('When filtering scope', () => {
     });
   });
 
+  describe('when the {@hidden} tag is used', () => {
+    it('filters out files whose doc comment contains {@hidden}', async () => {
+      const properties: [string, number][] = [
+        [
+          `
+          /**
+           * {@hidden}
+           */
+          global class MyClass {}
+          `,
+          0,
+        ],
+        ['global class MyClass {}', 1],
+      ];
+
+      for (const [input, expected] of properties) {
+        const parsedFile = await parsedFileFromRawString(input);
+
+        const result = filterScope(['global'], [parsedFile]);
+
+        expect(result).toHaveLength(expected);
+      }
+    });
+
+    it('filters out methods whose doc comment contains {@hidden}', async () => {
+      const properties: [string, number][] = [
+        [
+          `
+          global class MyClass {
+            /**
+             * {@hidden This method is for internal use only}
+             */
+            global void myMethod() {}
+          }
+          `,
+          0,
+        ],
+        [
+          `
+          global class MyClass {
+            global void myMethod() {}
+          }
+          `,
+          1,
+        ],
+      ];
+
+      for (const [input, expected] of properties) {
+        const parsedFile = await parsedFileFromRawString(input);
+
+        const result = filterScope(['global'], [parsedFile]);
+
+        expect((result[0].type as ClassMirror).methods).toHaveLength(expected);
+      }
+    });
+  });
+
   describe('when scoping an enum', () => {
     it('never filters out enum values, even if tagged with @ignore', async () => {
       const properties: [string, number][] = [

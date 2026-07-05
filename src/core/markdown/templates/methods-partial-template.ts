@@ -25,16 +25,18 @@ export const methodsPartialTemplate = `
 **{{link returnType.value.type}}**
 
 {{#if returnType.value.description}}
-{{returnType.value.description}}
+{{{renderContent returnType.value.description}}}
 {{/if}}
 
 {{#if throws.value}}
 {{ heading throws.headingLevel throws.heading }}
 {{#each throws.value}}
-{{link this.type}}: {{this.description}}
+{{link this.type}}: {{{renderContent this.description}}}
 
 {{/each}}
 {{/if}}
+
+{{> docDetailsPartial}}
 {{/documentablePartialTemplate}}
 
 {{#unless @last}}---{{/unless}}

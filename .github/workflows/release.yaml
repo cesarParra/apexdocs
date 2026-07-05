@@ -50,17 +50,29 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Bump patch version and create tag
+      - name: Determine version and create tag
         id: version
         run: |
-          NEW_VERSION=$(npm version patch --no-git-tag-version --ignore-scripts)
-          git add package.json package-lock.json
-          git commit -m "chore(release): ${NEW_VERSION} [skip ci]"
-          git tag "${NEW_VERSION}"
+          # If the merged PR already set a version that isn't on npm (e.g. a
+          # minor or major bump), release it as-is. Otherwise bump the patch.
+          PKG_NAME=$(node -p "require('./package.json').name")
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          PUBLISHED=$(npm view "${PKG_NAME}@${PKG_VERSION}" version 2>/dev/null || true)
+          if [ -z "${PUBLISHED}" ]; then
+            NEW_VERSION="v${PKG_VERSION}"
+          else
+            NEW_VERSION=$(npm version patch --no-git-tag-version --ignore-scripts)
+            git add package.json package-lock.json
+            git commit -m "chore(release): ${NEW_VERSION} [skip ci]"
+          fi
+          # The tag must be annotated: --follow-tags does not push lightweight tags.
+          git tag -a "${NEW_VERSION}" -m "${NEW_VERSION}"
           echo "new_version=${NEW_VERSION#v}" >> "$GITHUB_OUTPUT"
 
       - name: Push version commit and tag
-        run: git push origin HEAD:master --follow-tags
+        run: |
+          git push origin HEAD:master --follow-tags
+          git push origin "refs/tags/v${{ steps.version.outputs.new_version }}"
 
       - name: Publish to npm
         run: npm publish --access public

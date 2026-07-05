@@ -76,10 +76,13 @@ export default class Manifest {
   }
 
   static shouldFilterType(accessAndDocAware: AccessAndDocAware, modifiers: string[]) {
-    const hasIgnoreDocAnnotation = accessAndDocAware.docComment?.annotations.some(
-      (annotation: DocCommentAnnotation) => annotation.name.toLowerCase() === 'ignore',
-    );
-    if (hasIgnoreDocAnnotation) {
+    // Both the @ignore tag and the {@hidden} inline tag exclude the element
+    // from the generated documentation.
+    const docComment = accessAndDocAware.docComment;
+    const isExcluded =
+      docComment?.hidden === true ||
+      docComment?.annotations.some((annotation: DocCommentAnnotation) => annotation.name.toLowerCase() === 'ignore');
+    if (isExcluded) {
       return false;
     }
     return (
