@@ -8,6 +8,7 @@ on:
       - 'src/**'
       - 'package.json'
       - 'package-lock.json'
+  workflow_dispatch:
 
 permissions:
   id-token: write
@@ -19,7 +20,7 @@ concurrency:
 
 jobs:
   release:
-    if: github.event.pull_request.merged == true
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     environment: release
 
