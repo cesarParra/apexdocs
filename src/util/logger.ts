@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import { styleText } from 'node:util';
 
 export interface Logger {
   log(message: string, ...args: string[]): void;
@@ -59,12 +59,10 @@ export class StdOutLogger implements Logger {
   }
 
   public logSingle(text: unknown, color: 'green' | 'red' = 'green') {
-    const logMessage = `${this.getChalkFn(color)(new Date().toLocaleString() + ': ')}${text}\n`;
-    process.stdout.write(logMessage);
-  }
-
-  private getChalkFn(color: 'green' | 'red') {
-    return color === 'green' ? chalk.green : chalk.red;
+    // styleText exists on Node >=20.12; fall back to plain text on older runtimes
+    const timestamp = new Date().toLocaleString() + ': ';
+    const styled = typeof styleText === 'function' ? styleText(color, timestamp) : timestamp;
+    process.stdout.write(`${styled}${text}\n`);
   }
 }
 
