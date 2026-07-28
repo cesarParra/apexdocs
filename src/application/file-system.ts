@@ -1,8 +1,8 @@
 import * as fs from 'fs';
-import { MetadataResolver } from '@salesforce/source-deploy-retrieve';
-import { SourceComponentAdapter } from './source-code-file-reader';
-import { pipe } from 'fp-ts/function';
 import * as nodePath from 'path';
+import { SourceComponentAdapter } from './source-code-file-reader';
+import { ForceIgnore } from './force-ignore';
+import { classify } from './metadata-registry';
 
 export interface FileSystem {
   getComponents(path: string): SourceComponentAdapter[];
@@ -11,33 +11,48 @@ export interface FileSystem {
 
 export class DefaultFileSystem implements FileSystem {
   getComponents(path: string): SourceComponentAdapter[] {
-    const components = new MetadataResolver().getComponentsFromPath(path);
+    const forceIgnore = ForceIgnore.findAndCreate(path);
+    const files = walk(path, forceIgnore);
+    const fileSet = new Set(files);
+    const ctx = { has: (p: string) => fileSet.has(p) };
 
-    const fieldComponents = pipe(
-      components,
-      (components) => components.filter((component) => component.type.name === 'CustomObject'),
-      (components) => components.map((component) => component.content),
-      (contents) => contents.filter((content) => content !== undefined),
-      (contents) => contents.map((content) => nodePath.join(content!, 'fields')),
-      (potentialFieldLocations) =>
-        potentialFieldLocations.filter((potentialFieldLocation) => fs.existsSync(potentialFieldLocation)),
-      (potentialFieldLocations) =>
-        potentialFieldLocations.map((potentialFieldLocation) =>
-          new MetadataResolver().getComponentsFromPath(potentialFieldLocation),
-        ),
-      (fieldComponents) => fieldComponents.flat(),
-      (fieldComponents) => fieldComponents.filter((fieldComponent) => fieldComponent.type.name === 'CustomField'),
-    );
-
-    return [...components, ...fieldComponents];
+    return files
+      .map((file) => classify(file, ctx))
+      .filter((component): component is SourceComponentAdapter => component !== null);
   }
 
   readFile(pathToRead: string): string | null {
     try {
       return fs.readFileSync(pathToRead, 'utf8');
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
+    } catch {
       return null;
     }
   }
+}
+
+/**
+ * Recursively collects all files under `root`, skipping anything excluded by .forceignore.
+ * Ignored directories are pruned so their contents are excluded too.
+ */
+function walk(root: string, forceIgnore: ForceIgnore): string[] {
+  if (!fs.existsSync(root)) {
+    return [];
+  }
+  if (fs.statSync(root).isFile()) {
+    return forceIgnore.denies(root) ? [] : [root];
+  }
+
+  const files: string[] = [];
+  for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
+    const fullPath = nodePath.join(root, entry.name);
+    if (forceIgnore.denies(fullPath)) {
+      continue;
+    }
+    if (entry.isDirectory()) {
+      files.push(...walk(fullPath, forceIgnore));
+    } else if (entry.isFile()) {
+      files.push(fullPath);
+    }
+  }
+  return files;
 }
